@@ -68,7 +68,9 @@ export default function App() {
       </Route>
 
       {/* Protected */}
-      <Route element={<ProtectedRoute />}>
+      <Route
+      //  element={<ProtectedRoute />}
+       >
         <Route element={<AppRoutes />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/hosting" element={<ManageHosting />} />
