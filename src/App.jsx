@@ -24,6 +24,7 @@ import Invoices from './pages/billing/Invoices';
 import PaymentMethods from './pages/billing/PaymentMethods';
 import Settings from './pages/settings/Settings';
 
+
 const PageShell = ({ title, subtitle }) => (
   <motion.div
     className="max-w-5xl mx-auto"
