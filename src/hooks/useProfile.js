@@ -34,7 +34,11 @@ export const useUpdatePassword = () =>
       return res.data?.data;
     },
     onSuccess: () => toast.success('Password updated'),
-    onError: () => toast.error('Password update failed'),
+    onError: (error) => {
+      const message = error?.response?.data?.message || 'Password update failed';
+      toast.error(message);
+    },
+   
   });
 
 export const useSessions = () =>

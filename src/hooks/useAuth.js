@@ -16,12 +16,16 @@ export const useLogin = () =>
       queryClient.invalidateQueries({ queryKey: ['auth', 'me'] });
       toast.success('Logged in successfully');
     },
-    onError: () => toast.error('Login failed'),
+    onError: (error) => {
+      const message = error?.response?.data?.message || 'Login failed';
+      toast.error(message);
+    },
   });
 
 export const useRegister = () =>
   useMutation({
     mutationFn: async (payload) => {
+      console.log("REGISTER PAYLOAD:", payload);
       const res = await api.post('/auth/register', payload);
       return res.data?.data;
     },

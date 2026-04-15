@@ -31,9 +31,13 @@ api.interceptors.response.use(
   async (error) => {
     const original = error.config;
 
-    if (error.response?.status !== 401 || original?._retry) {
-      return Promise.reject(error);
-    }
+  if (
+  error.response?.status !== 401 ||
+  original?._retry ||
+  original?.url?.includes("/auth/refresh-token")
+) {
+  return Promise.reject(error);
+}
 
     original._retry = true;
 
@@ -65,11 +69,14 @@ api.interceptors.response.use(
       original.headers = original.headers || {};
       original.headers.Authorization = `Bearer ${newToken}`;
       return api(original);
-    } catch (refreshErr) {
-      processQueue(refreshErr, null);
-      useAuthStore.getState().clearAuth();
-      return Promise.reject(refreshErr);
-    } finally {
+    }catch (refreshErr) {
+  processQueue(refreshErr, null);
+  const { clearAuth } = useAuthStore.getState();
+  clearAuth();
+  window.location.href = "/login";
+
+  return Promise.reject(refreshErr);
+} finally {
       isRefreshing = false;
     }
   }

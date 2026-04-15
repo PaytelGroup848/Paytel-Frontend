@@ -1,7 +1,10 @@
+import { useEffect } from 'react';
 import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 import { useAuthStore } from './store/authStore';
+import { api } from './services/api';
+import Spinner from './components/ui/Spinner';
 import AuthLayout from './components/layout/AuthLayout';
 import DashboardLayout from './components/layout/DashboardLayout';
 import { pageTransition } from './animations/variants';
@@ -37,8 +40,19 @@ const PageShell = ({ title, subtitle }) => (
 
 const ProtectedRoute = () => {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const authBootstrapped = useAuthStore((s) => s.authBootstrapped);
   const location = useLocation();
 
+  if (!authBootstrapped) {
+    return (
+      <div className="min-h-[60vh] grid place-items-center">
+        <div className="flex items-center gap-3 text-textMuted">
+          <Spinner />
+          <span className="text-sm">Loading…</span>
+        </div>
+      </div>
+    );
+  }
   if (!isAuthenticated) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   return <Outlet />;
 };
@@ -56,6 +70,34 @@ const AppRoutes = () => (
 );
 
 export default function App() {
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const setAuthBootstrapped = useAuthStore((s) => s.setAuthBootstrapped);
+  const clearAuth = useAuthStore((s) => s.clearAuth);
+
+  useEffect(() => {
+    let alive = true;
+
+    const bootstrap = async () => {
+      try {
+        const refreshRes = await api.post('/auth/refresh-token');
+        const newToken = refreshRes.data?.data?.accessToken;
+        const user = refreshRes.data?.data?.user;
+
+        if (alive && newToken) setAuth({ user, accessToken: newToken });
+        else if (alive) clearAuth();
+      } catch {
+        if (alive) clearAuth();
+      } finally {
+        if (alive) setAuthBootstrapped(true);
+      }
+    };
+
+    bootstrap();
+    return () => {
+      alive = false;
+    };
+  }, [clearAuth, setAuth, setAuthBootstrapped]);
+
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -69,7 +111,7 @@ export default function App() {
 
       {/* Protected */}
       <Route
-      //  element={<ProtectedRoute />}
+        element={<ProtectedRoute />}
        >
         <Route element={<AppRoutes />}>
           <Route path="/dashboard" element={<Dashboard />} />

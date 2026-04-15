@@ -5,10 +5,12 @@ import { ChevronDown, LogOut, User as UserIcon } from 'lucide-react';
 import Avatar from '../ui/Avatar';
 import Button from '../ui/Button';
 import { useAuthStore } from '../../store/authStore';
+import { useLogout } from '../../hooks/useAuth';
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const { user, clearAuth } = useAuthStore();
+  const { user } = useAuthStore();
+  const logout = useLogout();
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -22,8 +24,10 @@ export default function Navbar() {
   }, []);
 
   const onLogout = () => {
-    clearAuth();
-    navigate('/login');
+    setOpen(false);
+    logout.mutate(undefined, {
+      onSettled: () => navigate('/login'),
+    });
   };
 
   return (
@@ -31,7 +35,7 @@ export default function Navbar() {
       <div className="px-4 sm:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="text-lg font-bold tracking-tight">
-            <span className="text-primary">Host</span>Flow
+            <span className="text-primary">Cloud</span>Data
           </div>
         </div>
 
