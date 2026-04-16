@@ -14,12 +14,22 @@ export const useBillingPlans = () =>
     staleTime: 1000 * 60 * 10,
   });
 
-export const useInvoices = () =>
+export const useInvoices = (params = { page: 1, limit: 10 }) =>
   useQuery({
-    queryKey: ['billing', 'invoices'],
+    queryKey: ['billing', 'invoices', params],
     queryFn: async () => {
-      const res = await api.get('/billing/invoices');
-      return res.data?.data;
+      const res = await api.get('/billing/invoices', { params });
+      return res.data;
+    },
+    staleTime: 0,
+  });
+
+export const useBillingInvoices = (params = { page: 1, limit: 10 }) =>
+  useQuery({
+    queryKey: ['billing', 'invoices', params],
+    queryFn: async () => {
+      const res = await api.get('/billing/invoices', { params });
+      return res.data;
     },
     staleTime: 0,
   });
@@ -48,7 +58,9 @@ export const useSubscription = () =>
 export const useCreateOrder = () =>
   useMutation({
     mutationFn: async (payload) => {
+      
       const res = await api.post('/billing/create-order', payload);
+  
       return res.data?.data;
     },
     onError: () => toast.error('Failed to create order'),

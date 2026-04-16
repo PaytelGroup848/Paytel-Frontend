@@ -28,7 +28,7 @@ export default function Navbar({ onMenuClick }) {
   };
 
   return (
-    <div className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm">
+    <div className="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-sm">
       <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
 
         {/* Left: hamburger (mobile) */}

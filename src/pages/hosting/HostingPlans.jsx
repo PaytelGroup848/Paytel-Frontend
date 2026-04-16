@@ -56,6 +56,7 @@ export default function HostingPlans() {
   }
 
   const list = Array.isArray(plans.data) ? plans.data : [];
+  console.log("PLANS RESPONSE:", list);
   const bySlug = Object.fromEntries(list.map((p) => [p.slug, p]));
 
   const starter = bySlug.starter || list[0];
@@ -69,14 +70,20 @@ export default function HostingPlans() {
   ].filter((c) => c.plan);
 
   return (
+    
     <div className="max-w-6xl mx-auto space-y-6">
       <div>
         <div className="text-2xl font-bold">Hosting Plans</div>
         <div className="text-sm text-textMuted mt-1">Choose a plan that fits your needs.</div>
       </div>
 
+      {list.length === 0 ?  <div className="text-textMuted flex justify-center">
+      No plans available.
+    </div>:(
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {cards.map(({ label, plan, popular }) => (
+          
           <Card
             key={label}
             className={[
@@ -117,6 +124,7 @@ export default function HostingPlans() {
           </Card>
         ))}
       </div>
+      )}
     </div>
   );
 }

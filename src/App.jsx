@@ -23,6 +23,9 @@ import Billing from './pages/billing/Billing';
 import Invoices from './pages/billing/Invoices';
 import PaymentMethods from './pages/billing/PaymentMethods';
 import Settings from './pages/settings/Settings';
+import Plans from "./pages/plans/Plan";
+import BillingHistory from './pages/billing/BillingHistory';
+
 
 
 const PageShell = ({ title, subtitle }) => (
@@ -112,7 +115,10 @@ export default function App() {
 
       {/* Protected */}
       <Route
-        element={<ProtectedRoute />}
+        // element={
+        // <ProtectedRoute />
+          
+        // }
        >
         <Route element={<AppRoutes />}>
           <Route path="/dashboard" element={<Dashboard />} />
@@ -126,6 +132,8 @@ export default function App() {
           <Route path="/billing/invoices" element={<Invoices />} />
           <Route path="/billing/payment-methods" element={<PaymentMethods />} />
           <Route path="/settings/*" element={<Settings />} />
+          <Route path="/plans" element={<Plans/>}/>
+          <Route path="/billing/history" element={<BillingHistory/>}/>
         </Route>
       </Route>
 

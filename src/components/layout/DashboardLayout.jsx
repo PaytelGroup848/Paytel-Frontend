@@ -9,21 +9,29 @@ export default function DashboardLayout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-dark text-textPrimary flex overflow-hidden">
+    <div className="min-h-screen bg-dark text-textPrimary flex">
+      
       <Sidebar
         mobileOpen={mobileOpen}
         onMobileClose={() => setMobileOpen(false)}
       />
-      <div className="flex-1 min-w-0 flex flex-col overflow-auto">
+
+      <div className="flex-1 flex flex-col min-h-screen">
+
         <Navbar onMenuClick={() => setMobileOpen(true)} />
+
         <motion.main
-          className="flex-1 px-4 sm:px-6 py-6"
+          className="
+            flex-1
+            overflow-y-auto
+          "
           initial={pageTransition.initial}
           animate={pageTransition.animate}
           exit={pageTransition.exit}
         >
           {children}
         </motion.main>
+
       </div>
     </div>
   );
