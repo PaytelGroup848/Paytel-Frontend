@@ -27,6 +27,8 @@ const PlanModal = ({ plan, onClose }) => {
 
       const orderData = await createOrder.mutateAsync({
         planId: plan.id,
+        duration,
+        amount: Math.round(grandTotal * 100), // Convert to paisa
       });
 
       const options = {
@@ -79,12 +81,14 @@ const PlanModal = ({ plan, onClose }) => {
 
   if (!plan) return null;
 
-  const getMonthlyBase = (m) => {
-    if (m === 48) return plan.monthly || plan.price;
-    if (m === 24) return Math.round((plan.monthly || plan.price) * 1.25);
-    if (m === 12) return Math.round((plan.monthly || plan.price) * 1.5);
-    return Math.round((plan.monthly || plan.price) * 2.5);
-  };
+const getMonthlyBase = (m) => {
+  const basePrice = (plan.monthly || plan.price) / 100;
+
+  if (m === 48) return basePrice;
+  if (m === 24) return Math.round(basePrice * 1.25);
+  if (m === 12) return Math.round(basePrice * 1.5);
+  return Math.round(basePrice * 2.5);
+};
 
   const currentMonthlyBase = getMonthlyBase(duration);
   const subtotal = currentMonthlyBase * duration;
@@ -190,7 +194,6 @@ export default function Plans() {
     if (backendPlans && backendPlans.length > 0) {
       return backendPlans;
     }
-    // Fallback/Mock data if backend is empty, but with VALID Mongo IDs
     return [
       {
         id: "661d4a8e2f3a1c001f8e4a01",
@@ -243,6 +246,7 @@ export default function Plans() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {console.log("this is my plans",plans)}
           {plans.map((plan, index) => (
             
             <motion.div
@@ -267,7 +271,10 @@ export default function Plans() {
                 <h3 className="text-sm font-bold tracking-widest text-slate-400 mb-3">{plan.name}</h3>
               
                 <div className="flex items-baseline">
-                  <span className="text-6xl font-black tracking-tighter text-slate-900">₹{plan.price}</span>
+                  <span className="text-6xl font-black tracking-tighter text-slate-900">
+  ₹{(plan.price / 100).toLocaleString()}
+</span>
+                  {console.log("this is my plan",plan)}
                   <span className="text-slate-400 ml-2 font-medium">/month</span>
                 </div>
               </div>
