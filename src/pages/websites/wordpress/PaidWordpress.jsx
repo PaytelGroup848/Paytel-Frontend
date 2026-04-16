@@ -53,7 +53,7 @@ export default function PaidWordpress() {
   }, [searchTerm, filter, websites]);
 
   return (
-    <div className="min-h-screen bg-[#FAFBFC] font-sans text-slate-900 selection:bg-indigo-100">
+    <div className="min-h-screen  bg-[#FAFBFC] font-sans text-slate-900 selection:bg-indigo-100">
       <div className="flex pt-24">
         <main className="flex-1 p-6 sm:p-10 lg:p-16">
           <div className="max-w-5xl mx-auto">
