@@ -121,9 +121,9 @@ export default function App() {
 
       {/* Protected */}
       <Route
-        element={
-        <ProtectedRoute />
-        }
+        // element={
+        // <ProtectedRoute />
+        // }
        >
         <Route element={<AppRoutes />}>
           <Route path="/dashboard" element={<Dashboard />} />

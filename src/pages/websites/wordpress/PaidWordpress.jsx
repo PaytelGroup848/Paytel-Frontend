@@ -1,6 +1,22 @@
 //@ts-nocheck
 import { useState, useMemo, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { 
+  Plus, 
+  Search, 
+  Layout, 
+  Server, 
+  ShieldCheck, 
+  Settings, 
+  ExternalLink, 
+  Activity, 
+  Calendar,
+  Database,
+  FolderTree,
+  Terminal,
+  Cpu,
+  Layers
+} from "lucide-react";
 
 export default function PaidWordpress() {
   const navigate = useNavigate();
@@ -12,21 +28,21 @@ export default function PaidWordpress() {
       id: 1,
       domain: "mywebsite.com",
       status: "Active",
-      type: "WordPress",
-      plan: "Pro",
+      plan: "Production Pro",
       visitors: "12.4k",
-      storage: 45,
+      createdAt: "Oct 12, 2025"
     },
     {
       id: 2,
       domain: "store-demo.com",
       status: "Pending",
-      type: "WordPress",
-      plan: "Business",
+      plan: "Business Node",
       visitors: "0",
-      storage: 0,
+      createdAt: "April 16, 2026"
     },
   ]);
+
+  const siteLimit = 10;
 
   const filteredWebsites = useMemo(() => {
     return websites.filter(site => {
@@ -37,66 +53,63 @@ export default function PaidWordpress() {
   }, [searchTerm, filter, websites]);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] font-sans">
-      <div className="flex pt-16">
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">
-          <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-[#FAFBFC] font-sans text-slate-900 selection:bg-indigo-100">
+      <div className="flex pt-24">
+        <main className="flex-1 p-6 sm:p-10 lg:p-16">
+          <div className="max-w-5xl mx-auto">
             
-            {/* HEADER */}
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-                  My <span className="text-indigo-600">Websites</span>
+            {/* ── MNC HEADER ── */}
+            <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-indigo-600 font-bold tracking-tight text-[10px] uppercase">
+                  <div className="p-1.5 bg-indigo-50 rounded-lg"><Cpu size={14} /></div>
+                  Cluster: US-EAST-1
+                </div>
+                <h1 className="text-5xl font-black text-slate-900 tracking-tight">
+                  Cloude<span className="text-slate-300">Data</span>
                 </h1>
-                <p className="text-slate-400 text-[11px] font-semibold uppercase tracking-widest mt-1">
-                  Manage your CloudeData cloud instances
-                </p>
+                <p className="text-slate-400 text-sm font-medium">Manage and monitor your WordPress cloud instances.</p>
               </div>
 
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => window.open('https://wordpress.org/support/', '_blank')}
-                  className="px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center gap-2"
-                >
-                  <i className="fa-solid fa-book text-[11px]"></i>
-                  WP Overview
-                </button>
+              {/* Quota Integrated Button */}
+              <div className="inline-flex items-center bg-white border border-slate-200 rounded-2xl shadow-sm p-1.5 group hover:border-slate-300 transition-all">
+                <div className="px-4 py-2 border-r border-slate-100 flex flex-col justify-center">
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Slots Used</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-black text-slate-800">{websites.length} <span className="text-slate-300">/</span> {siteLimit}</span>
+                    <div className="w-8 h-1 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${(websites.length/siteLimit)*100}%` }}></div>
+                    </div>
+                  </div>
+                </div>
                 <button 
                   onClick={() => navigate("/websites/wordpress/new")}
-                  className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-100 transition-all active:scale-95 text-[10px] font-bold uppercase tracking-widest"
+                  className="bg-slate-900 hover:bg-indigo-600 text-white px-6 py-3 rounded-xl transition-all active:scale-95 text-xs font-bold flex items-center gap-2 ml-1"
                 >
-                  <i className="fa-solid fa-plus text-[9px]"></i>
+                  <Plus size={16} strokeWidth={3} />
                   New Instance
                 </button>
               </div>
             </header>
 
-            {/* QUICK STATS */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
-               <MiniStat label="Total Sites" value={websites.length} icon="fa-globe" color="text-indigo-600" />
-               <MiniStat label="Active" value={websites.filter(s => s.status === "Active").length} icon="fa-check-circle" color="text-emerald-600" />
-               <MiniStat label="Storage" value="45%" icon="fa-database" color="text-blue-600" />
-               <MiniStat label="Visitors" value="12.4k" icon="fa-chart-line" color="text-amber-600" />
-            </div>
-
-            {/* SEARCH & FILTERS */}
-            <div className="flex flex-col sm:flex-row items-center gap-3 mb-6">
-              <div className="flex-1 flex items-center gap-3 bg-white border border-slate-200 px-4 py-2.5 rounded-xl focus-within:ring-2 ring-indigo-50 transition-all w-full shadow-sm">
-                <i className="fa-solid fa-magnifying-glass text-slate-400 text-xs"></i>
+            {/* ── SEARCH & TOOLS ── */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 mb-8">
+              <div className="flex-1 flex items-center gap-3 bg-white border border-slate-200 px-5 py-3.5 rounded-2xl focus-within:ring-4 ring-indigo-500/5 transition-all w-full group">
+                <Search size={18} className="text-slate-300 group-focus-within:text-indigo-600" />
                 <input 
                   type="text" 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Filter by domain..." 
-                  className="w-full bg-transparent border-none outline-none text-[13px] font-medium text-slate-600 placeholder:text-slate-300"
+                  placeholder="Search instances by domain or UUID..." 
+                  className="w-full bg-transparent border-none outline-none text-[15px] font-medium text-slate-700 placeholder:text-slate-300"
                 />
               </div>
-              <div className="flex bg-slate-200/50 p-1 rounded-xl">
+              <div className="flex bg-slate-100/50 p-1.5 rounded-2xl border border-slate-200/50">
                 {["All", "Active", "Pending"].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setFilter(tab)}
-                    className={`px-5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${filter === tab ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                    className={`px-6 py-2 rounded-xl text-xs font-bold transition-all ${filter === tab ? 'bg-white text-slate-900 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
                   >
                     {tab}
                   </button>
@@ -104,14 +117,16 @@ export default function PaidWordpress() {
               </div>
             </div>
 
-            {/* LIST */}
+            {/* ── RESOURCE LIST ── */}
             {filteredWebsites.length === 0 ? (
               <EmptyState />
             ) : (
-              <div className="space-y-4">
-                {filteredWebsites.map((site) => (
-                  <WebsiteRow key={site.id} site={site} />
-                ))}
+              <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)]">
+                <div className="grid grid-cols-1 divide-y divide-slate-100">
+                  {filteredWebsites.map((site) => (
+                    <WebsiteRow key={site.id} site={site} />
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -127,69 +142,64 @@ function WebsiteRow({ site }) {
   const [showTools, setShowTools] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown on click outside
   useEffect(() => {
     function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowTools(false);
-      }
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setShowTools(false);
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
-    <div className="group bg-white border border-slate-200 rounded-2xl p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4 hover:border-indigo-300 transition-all shadow-sm">
+    <div className="group flex flex-col lg:flex-row lg:items-center justify-between p-6 hover:bg-slate-50/80 transition-all duration-300">
       
-      <div className="flex items-center gap-4 flex-1">
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-all ${isActive ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-50 text-slate-300'}`}>
-          <i className={isActive ? "fa-brands fa-wordpress" : "fa-solid fa-circle-notch fa-spin text-sm"}></i>
+      <div className="flex items-center gap-6 flex-1">
+        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 ${isActive ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100 group-hover:scale-105' : 'bg-slate-100 text-slate-400'}`}>
+          <Server size={24} strokeWidth={1.5} />
         </div>
 
-        <div>
-          <div className="flex items-center gap-2 mb-0.5">
-            <h3 className="text-[15px] font-bold text-slate-800 tracking-tight">{site.domain}</h3>
-            <span className={`px-2 py-0.5 rounded-md text-[8px] font-bold uppercase tracking-widest ${isActive ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-amber-50 text-amber-600 border border-amber-100'}`}>
-              {site.status}
-            </span>
+        <div className="space-y-1">
+          <div className="flex items-center gap-3">
+            <h3 className="text-xl font-bold text-slate-900 tracking-tight leading-none">{site.domain}</h3>
+            <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[9px] font-black uppercase border ${isActive ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-100 text-slate-400 border-slate-200'}`}>
+               <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+               {site.status}
+            </div>
           </div>
-          <div className="flex items-center gap-3 text-[10px] font-medium text-slate-400">
-             <span>{site.plan} Plan</span>
-             <span>•</span>
-             <span className="flex items-center gap-1"><i className="fa-solid fa-bolt text-[9px] text-amber-400"></i> {site.visitors} visits</span>
+          <div className="flex items-center gap-5 text-[11px] font-bold text-slate-400 uppercase tracking-tight">
+             <span className="flex items-center gap-1.5"><Layers size={12} /> {site.plan}</span>
+             <span className="flex items-center gap-1.5"><Calendar size={12} /> {site.createdAt}</span>
+             <span className="flex items-center gap-1.5 text-indigo-500"><Activity size={12} /> {site.visitors} Req/mo</span>
           </div>
         </div>
       </div>
 
-      {/* ACTIONS AREA */}
-      <div className="flex flex-wrap items-center gap-2 pt-3 lg:pt-0 border-t lg:border-none">
+      <div className="flex items-center gap-2 mt-4 lg:mt-0">
         {isActive && (
           <>
-            {/* WordPress Admin Button */}
             <button 
               onClick={() => window.open(`https://${site.domain}/wp-admin`, '_blank')}
-              className="px-4 py-2 bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-xl text-[10px] font-bold uppercase tracking-widest border border-slate-200 transition-all flex items-center gap-2"
+              className="w-11 h-11 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-white rounded-xl transition-all border border-transparent hover:border-slate-200"
+              title="Open Admin"
             >
-              <i className="fa-brands fa-wordpress-simple"></i>
-              WP Admin
+              <ExternalLink size={18} />
             </button>
 
-            {/* Tools Dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button 
                 onClick={() => setShowTools(!showTools)}
-                className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all border flex items-center gap-2 ${showTools ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'}`}
+                className={`w-11 h-11 flex items-center justify-center rounded-xl transition-all border ${showTools ? 'bg-slate-900 text-white border-slate-900' : 'text-slate-400 hover:text-slate-900 border-transparent hover:border-slate-200'}`}
               >
-                Tools
-                <i className={`fa-solid fa-chevron-down text-[8px] transition-transform ${showTools ? 'rotate-180' : ''}`}></i>
+                <Settings size={18} />
               </button>
 
               {showTools && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-100 rounded-xl shadow-xl z-20 py-2 animate-in fade-in slide-in-from-top-1">
-                  <DropdownLink icon="fa-folder-tree" label="File Manager" onClick={() => navigate('/tools/files')} />
-                  <DropdownLink icon="fa-database" label="SQL Database" onClick={() => navigate('/tools/databases')} />
-                  <div className="h-px bg-slate-100 my-1 mx-2"></div>
-                  <DropdownLink icon="fa-shield-halved" label="Security SSL" onClick={() => navigate('/tools/security')} />
+                <div className="absolute right-0 mt-3 w-56 bg-white border border-slate-100 rounded-2xl shadow-2xl z-30 py-2.5 overflow-hidden animate-in fade-in zoom-in-95">
+                  <p className="px-5 py-2 text-[9px] font-black text-slate-300 uppercase tracking-widest">Instance Tools</p>
+                  <DropdownLink icon={<FolderTree size={14}/>} label="File Manager" />
+                  <DropdownLink icon={<Database size={14}/>} label="SQL Database" />
+                  <DropdownLink icon={<ShieldCheck size={14}/>} label="SSL Config" />
+                  <DropdownLink icon={<Terminal size={14}/>} label="Web Terminal" />
                 </div>
               )}
             </div>
@@ -198,50 +208,33 @@ function WebsiteRow({ site }) {
         
         <button 
           onClick={() => navigate("/wordpress/websitedashboard")}
-          className={`px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${isActive ? 'bg-slate-900 text-white hover:bg-indigo-600 shadow-md shadow-slate-200 hover:shadow-indigo-100' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`}
+          className={`ml-2 px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${isActive ? 'bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900 shadow-sm' : 'bg-slate-50 text-slate-300 cursor-not-allowed border border-slate-50'}`}
         >
-          {isActive ? "Dashboard" : "Setting up..."}
+          {isActive ? "Manage" : "Provisioning..."}
         </button>
       </div>
     </div>
   );
 }
 
-function DropdownLink({ icon, label, onClick }) {
+function DropdownLink({ icon, label }) {
   return (
-    <button 
-      onClick={onClick}
-      className="w-full text-left px-4 py-2 text-[11px] font-semibold text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all flex items-center gap-3"
-    >
-      <i className={`fa-solid ${icon} w-4 text-center opacity-70`}></i>
+    <button className="w-full text-left px-5 py-2.5 text-xs font-bold text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all flex items-center gap-3">
+      <span className="opacity-60">{icon}</span>
       {label}
     </button>
   );
 }
 
-function MiniStat({ label, value, icon, color }) {
-  return (
-    <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-      <div className={`w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center ${color} text-sm`}>
-        <i className={`fa-solid ${icon}`}></i>
-      </div>
-      <div>
-        <p className="text-[13px] font-bold text-slate-900 leading-none">{value}</p>
-        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-1">{label}</p>
-      </div>
-    </div>
-  );
-}
-
 function EmptyState() {
   return (
-    <div className="bg-white border-2 border-dashed border-slate-200 rounded-[2rem] p-16 text-center">
-      <div className="w-16 h-16 bg-slate-50 text-slate-200 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
-        <i className="fa-solid fa-cloud-arrow-up"></i>
+    <div className="bg-white border-2 border-dashed border-slate-200 rounded-[2.5rem] p-24 text-center">
+      <div className="w-20 h-20 bg-slate-50 text-slate-200 rounded-3xl flex items-center justify-center mx-auto mb-8">
+        <Server size={40} strokeWidth={1} />
       </div>
-      <h2 className="text-lg font-bold text-slate-900">No websites found</h2>
-      <p className="text-slate-400 text-xs mb-8">Deploy your first WordPress instance in seconds.</p>
-      <button className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold uppercase tracking-widest text-[10px]">Create Instance</button>
+      <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Infrastructure Empty</h2>
+      <p className="text-slate-400 text-sm mb-10 max-w-xs mx-auto">No active instances found on CloudeData. Start by provisioning a new WordPress node.</p>
+      <button className="bg-indigo-600 text-white px-10 py-4 rounded-xl font-bold text-xs shadow-xl shadow-indigo-100">Provision First Node</button>
     </div>
   );
 }
