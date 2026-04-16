@@ -13,6 +13,8 @@ import {
   Zap,
   LayoutDashboard
 } from 'lucide-react';
+import { useSubscription } from '../../hooks/useBilling';
+
 
 const navItems = [
   { label: 'Home', to: '/dashboard', icon: Home },
@@ -21,6 +23,7 @@ const navItems = [
     icon: Globe, 
     children: [
       { label: 'WordPress', to: '/websites/wordpress' },
+      {label: 'Your WordPress', to: 'websites/wordpress/paid'},
       { label: 'PHP',       to: '/websites/php' },
       { label: 'HTML',      to: '/websites/html' },
       { label: 'NodeJS',    to: '/websites/nodejs' },
@@ -33,6 +36,7 @@ const navItems = [
     children: [
       { label: 'Plans',           to: '/plans' },
       { label: 'Billing',         to: '/billing' },
+      {label: 'Billing-History', to:"/billing/history"}
     ],
   },
   { label: 'Settings', to: '/settings', icon: Settings },
@@ -43,7 +47,52 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
   const [openMenu, setOpenMenu] = useState(null);
   const location = useLocation();
 
+  const subscription = useSubscription();
+
+  // subscription status
+  const isSubscriptionActive =
+    subscription?.data?.status === "active";
+
+  console.log("your data active:", isSubscriptionActive);
+
   const isExpanded = hovered || mobileOpen;
+
+  const navItems = [
+    { label: 'Home', to: '/dashboard', icon: Home },
+
+    {
+      label: 'Websites',
+      icon: Globe,
+      children: [
+        ...(isSubscriptionActive
+          ? []
+          : [{ label: 'WordPress', to: '/websites/wordpress' }]),
+
+        
+        ...(isSubscriptionActive
+          ? [{ label: 'Your WordPress', to: '/websites/wordpress/paid' }]
+          : []),
+
+        { label: 'PHP', to: '/websites/php' },
+        { label: 'HTML', to: '/websites/html' },
+        { label: 'NodeJS', to: '/websites/nodejs' },
+      ],
+    },
+
+    { label: 'Hosting', to: '/websites/hosting', icon: Server },
+
+    {
+      label: 'Billing',
+      icon: CreditCard,
+      children: [
+        { label: 'Plans', to: '/plans' },
+        { label: 'Billing', to: '/billing' },
+        { label: 'Billing-History', to: '/billing/history' },
+      ],
+    },
+
+    { label: 'Settings', to: '/settings', icon: Settings },
+  ];
 
   return (
     <>
