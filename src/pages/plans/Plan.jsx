@@ -27,6 +27,8 @@ const PlanModal = ({ plan, onClose }) => {
 
       const orderData = await createOrder.mutateAsync({
         planId: plan.id,
+        duration,
+        amount: Math.round(grandTotal * 100), // Convert to paisa
       });
 
       const options = {
