@@ -45,7 +45,7 @@ function BillingHistory() {
                 invoices.map((invoice) => (
                   <tr key={invoice._id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="px-6 py-4 text-sm font-bold text-slate-900">
-                      #{invoice.invoiceNumber || invoice._id.slice(-6).toUpperCase()}
+                      #{invoice.invoiceNumber || invoice._id?.slice(-6).toUpperCase()}
                     </td>
                     <td className="px-6 py-4 text-sm text-slate-600 font-medium">
                       {invoice.planName || 'Standard Plan'}
