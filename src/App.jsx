@@ -25,6 +25,12 @@ import PaymentMethods from './pages/billing/PaymentMethods';
 import Settings from './pages/settings/Settings';
 import Plans from "./pages/plans/Plan";
 import BillingHistory from './pages/billing/BillingHistory';
+import Wordpress_Page from './pages/websites/wordpress/WordPress_Page';
+import WordpressNew from './pages/websites/wordpress/WordpressNew';
+import PaidWordpress from './pages/websites/wordpress/PaidWordpress';
+import Home from './pages/dashboard/Home';
+import WebsiteDashboard from './pages/websites/wordpress/websiteDashboard';
+import DomainEnter from './pages/websites/wordpress/domainEnter';
 
 
 
@@ -134,6 +140,13 @@ export default function App() {
           <Route path="/settings/*" element={<Settings />} />
           <Route path="/plans" element={<Plans/>}/>
           <Route path="/billing/history" element={<BillingHistory/>}/>
+          <Route path="websites/wordpress" element  = {<Wordpress_Page/>} />
+          <Route path="websites/wordpress/new" element={<WordpressNew />} />
+          <Route path="websites/wordpress/paid" element={<PaidWordpress />} />
+          <Route path ="wordpress/websiteDashboard" element={<WebsiteDashboard/>} />
+          <Route path ="wordpress/domainEnter" element={<DomainEnter/>} />
+          <Route path ="/home" element ={<Home/>} />
+          {/* <Route path="websites/wordpress/:id" element={<WordPress_Page />} /> */}
         </Route>
       </Route>
 

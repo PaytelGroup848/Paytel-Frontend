@@ -1,222 +1,177 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronRight,
   CreditCard,
   Globe,
-  LayoutDashboard,
-  RectangleEllipsis,
+  Home,
   Server,
   Settings,
+  X, 
+  Cloudy,
   Zap,
+  LayoutDashboard
 } from 'lucide-react';
 
 const navItems = [
-  { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
-  { label: 'Wordpress', to: '/wordpress', icon: RectangleEllipsis },
-  { label: 'Hosting',   to: '/hosting',   icon: Server },
-  { label: 'Domains',   to: '/domains',   icon: Globe },
+  { label: 'Home', to: '/dashboard', icon: Home },
+  { 
+    label: 'Websites', 
+    icon: Globe, 
+    children: [
+      { label: 'WordPress', to: '/websites/wordpress' },
+      { label: 'PHP',       to: '/websites/php' },
+      { label: 'HTML',      to: '/websites/html' },
+      { label: 'NodeJS',    to: '/websites/nodejs' },
+    ]
+  },
+  { label: 'Hosting',   to: '/websites/hosting',   icon: Server },
   {
     label: 'Billing',
     icon: CreditCard,
     children: [
-      { icon: CreditCard, label: 'Plans',           to: '/plans' },
-      { icon: CreditCard, label: 'Billing',         to: '/billing' },
-      { icon: CreditCard, label: 'Billing History', to: '/billing/history' },
+      { label: 'Plans',           to: '/plans' },
+      { label: 'Billing',         to: '/billing' },
     ],
   },
   { label: 'Settings', to: '/settings', icon: Settings },
 ];
 
-export default function Sidebar({ mobileOpen, onMobileClose }) {
-  const [hovered, setHovered]     = useState(false);
-  const [openMenu, setOpenMenu]   = useState(null);
-  const expanded = hovered;
+export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }) {
+  const [hovered, setHovered] = useState(false);
+  const [openMenu, setOpenMenu] = useState(null);
+  const location = useLocation();
+
+  const isExpanded = hovered || mobileOpen;
 
   return (
     <>
-      {/* Mobile overlay */}
+      {/* Mobile Overlay with Blur */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onMobileClose}
+            className="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-md md:hidden"
           />
         )}
       </AnimatePresence>
 
       <motion.aside
         onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        animate={{ width: expanded || mobileOpen ? 240 : 68 }}
-        transition={{ duration: 0.22, ease: 'easeInOut' }}
-        className={`
-          h-screen sticky top-0 z-50 flex flex-col overflow-hidden
-          bg-white border-r border-slate-200
-          shadow-[2px_0_12px_rgba(0,0,0,0.06)]
-          md:relative
-          ${mobileOpen ? 'fixed left-0 top-0' : 'hidden md:flex'}
-        `}
+        onMouseLeave={() => { setHovered(false); setOpenMenu(null); }}
+        animate={{ 
+          width: mobileOpen ? '280px' : (isExpanded ? '260px' : '80px'),
+          x: (mobileOpen || window.innerWidth > 768) ? 0 : -350 
+        }}
+        transition={{ type: 'spring', damping: 20, stiffness: 150 }}
+        className="fixed md:sticky top-0 left-0 h-screen z-[70] flex flex-col bg-white border-r border-slate-100 shadow-[20px_0_50px_rgba(0,0,0,0.02)]"
       >
-        {/* Logo */}
-        <div className="h-16 flex items-center gap-2.5 px-4 border-b border-slate-100 shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0">
-            <Zap size={16} className="text-white" />
+        {/* Animated Logo Section */}
+        <div className="h-24 flex items-center px-5 justify-between relative">
+          <div className="flex items-center gap-4 cursor-pointer group">
+            <motion.div 
+              animate={{ 
+                y: [0, -4, 0],
+                filter: ["drop-shadow(0px 0px 0px #6366f100)", "drop-shadow(0px 4px 12px #6366f140)", "drop-shadow(0px 0px 0px #6366f100)"]
+              }}
+              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+              className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shrink-0 shadow-lg shadow-indigo-200"
+            >
+              <Cloudy size={26} className="text-white fill-white/10" />
+            </motion.div>
+            
+            <AnimatePresence>
+              {isExpanded && (
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -10 }}
+                  className="flex flex-col"
+                >
+                  <span className="font-black text-slate-800 text-xl tracking-tight leading-none">
+                    Cloude<span className="text-indigo-600">Data</span>
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mt-1">v2.0 Pro</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-          <AnimatePresence>
-            {(expanded || mobileOpen) && (
-              <motion.span
-                initial={{ opacity: 0, x: -6 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -6 }}
-                transition={{ duration: 0.15 }}
-                className="font-bold text-slate-800 text-[15px] whitespace-nowrap"
-              >
-                Cloud<span className="text-indigo-600">Flow</span>
-              </motion.span>
-            )}
-          </AnimatePresence>
+
+          {mobileOpen && (
+            <button onClick={onMobileClose} className="p-2 rounded-full bg-slate-50 text-slate-400 hover:text-indigo-600 transition-colors">
+              <X size={20} />
+            </button>
+          )}
         </div>
 
-        {/* Nav */}
-        <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto overflow-x-hidden">
+        {/* Navigation */}
+        <nav className="flex-1 px-4 py-2 space-y-2 overflow-y-auto scrollbar-hide">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const hasChildren = !!item.children?.length;
+            const hasChildren = !!item.children;
+            const isMenuOpen = openMenu === item.label;
+            const isActive = location.pathname.startsWith(item.to) && !hasChildren;
 
             return (
-              <div key={item.label}>
-
-                {/* ── If it has children → toggle div, else NavLink ── */}
+              <div key={item.label} className="relative">
                 {hasChildren ? (
-                  <div
-                    onClick={() =>
-                      setOpenMenu(openMenu === item.label ? null : item.label)
-                    }
-                    className="
-                      group relative flex items-center gap-3
-                      rounded-xl px-2.5 py-2.5
-                      text-sm font-medium cursor-pointer
-                      transition-all duration-150
-                      text-slate-500 hover:bg-slate-50 hover:text-slate-800
-                    "
+                  <button
+                    onClick={() => setOpenMenu(isMenuOpen ? null : item.label)}
+                    className={`
+                      w-full flex items-center gap-4 rounded-2xl px-3 py-3.5 text-sm font-semibold transition-all group
+                      ${isMenuOpen ? 'bg-indigo-50/50 text-indigo-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}
+                    `}
                   >
-                    <div className="shrink-0">
-                      <Icon size={18} strokeWidth={1.8} />
-                    </div>
-
-                    <AnimatePresence>
-                      {(expanded || mobileOpen) && (
-                        <motion.span
-                          initial={{ opacity: 0, x: -4 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: -4 }}
-                          transition={{ duration: 0.13 }}
-                          className="whitespace-nowrap flex-1"
-                        >
-                          {item.label}
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
-
-                    {(expanded || mobileOpen) && (
-                      <motion.span
-                        animate={{ rotate: openMenu === item.label ? 90 : 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <ChevronRight size={15} />
-                      </motion.span>
+                    <Icon size={22} strokeWidth={isMenuOpen ? 2.5 : 2} className="shrink-0 transition-transform group-hover:scale-110" />
+                    {isExpanded && (
+                      <>
+                        <span className="flex-1 text-left">{item.label}</span>
+                        <ChevronRight size={16} className={`transition-transform duration-300 ${isMenuOpen ? 'rotate-90' : 'opacity-40'}`} />
+                      </>
                     )}
-                  </div>
+                  </button>
                 ) : (
-                  /* ── Regular NavLink ── */
                   <NavLink
                     to={item.to}
-                    onClick={() => onMobileClose?.()}
+                    onClick={() => mobileOpen && onMobileClose()}
                     className={({ isActive }) => `
-                      group relative flex items-center gap-3
-                      rounded-xl px-2.5 py-2.5
-                      text-sm font-medium
-                      transition-all duration-150
-                      ${isActive
-                        ? 'bg-indigo-50 text-indigo-700'
-                        : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+                      relative flex items-center gap-4 rounded-2xl px-3 py-3.5 text-sm font-semibold transition-all group
+                      ${isActive 
+                        ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-200' 
+                        : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
                       }
                     `}
                   >
-                    {({ isActive }) => (
-                      <>
-                        {/* Active left bar */}
-                        {isActive && (
-                          <motion.div
-                            layoutId="active-bar"
-                            className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-indigo-600 rounded-r-full"
-                            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                          />
-                        )}
-
-                        <div className={`shrink-0 ${isActive ? 'text-indigo-600' : ''}`}>
-                          <Icon size={18} strokeWidth={isActive ? 2.2 : 1.8} />
-                        </div>
-
-                        <AnimatePresence>
-                          {(expanded || mobileOpen) && (
-                            <motion.span
-                              initial={{ opacity: 0, x: -4 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, x: -4 }}
-                              transition={{ duration: 0.13 }}
-                              className="whitespace-nowrap"
-                            >
-                              {item.label}
-                            </motion.span>
-                          )}
-                        </AnimatePresence>
-
-                        {/* Tooltip when collapsed */}
-                        {!expanded && !mobileOpen && (
-                          <div className="
-                            absolute left-full ml-3 px-2.5 py-1.5
-                            bg-slate-800 text-white text-xs rounded-lg
-                            whitespace-nowrap pointer-events-none
-                            opacity-0 group-hover:opacity-100
-                            transition-opacity duration-150 z-50
-                          ">
-                            {item.label}
-                            <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-slate-800" />
-                          </div>
-                        )}
-                      </>
+                    <Icon size={22} strokeWidth={2} className="shrink-0 transition-transform group-hover:scale-110" />
+                    {isExpanded && <span>{item.label}</span>}
+                    
+                    {/* Active Indicator Line */}
+                    {isActive && isExpanded && (
+                      <motion.div layoutId="activeTab" className="absolute right-2 w-1 h-5 bg-white/40 rounded-full" />
                     )}
                   </NavLink>
                 )}
 
-                {/* Submenu */}
+                {/* Submenu with floating effect */}
                 <AnimatePresence>
-                  {hasChildren && openMenu === item.label && (
+                  {hasChildren && isMenuOpen && isExpanded && (
                     <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="overflow-hidden ml-9 mt-1 space-y-0.5"
+                      initial={{ height: 0, opacity: 0, y: -10 }}
+                      animate={{ height: 'auto', opacity: 1, y: 0 }}
+                      exit={{ height: 0, opacity: 0, y: -10 }}
+                      className="ml-10 mt-2 space-y-1 border-l-2 border-slate-100 pl-4"
                     >
                       {item.children.map((child) => (
                         <NavLink
                           key={child.to}
                           to={child.to}
-                          onClick={() => onMobileClose?.()}
                           className={({ isActive }) => `
-                            block text-sm px-3 py-2 rounded-lg
-                            transition-all duration-150
-                            ${isActive
-                              ? 'bg-indigo-50 text-indigo-700 font-medium'
-                              : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
-                            }
+                            block py-2 text-sm font-medium transition-all rounded-lg px-2
+                            ${isActive ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-400 hover:text-slate-700 hover:translate-x-1'}
                           `}
                         >
                           {child.label}
@@ -225,28 +180,32 @@ export default function Sidebar({ mobileOpen, onMobileClose }) {
                     </motion.div>
                   )}
                 </AnimatePresence>
-
               </div>
             );
           })}
         </nav>
 
-        {/* Footer */}
-        <div className="px-3 py-3 border-t border-slate-100 shrink-0">
-          <div className="flex items-center gap-2 px-2 py-2 rounded-lg bg-indigo-50 border border-indigo-100">
-            <div className="w-2 h-2 rounded-full bg-indigo-500 shrink-0 animate-pulse" />
-            <AnimatePresence>
-              {(expanded || mobileOpen) && (
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="text-xs text-indigo-600 font-medium whitespace-nowrap"
-                >
-                  All systems operational
-                </motion.span>
+        {/* Premium Footer Info */}
+        <div className="p-4 mt-auto">
+          <div className={`
+            p-4 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white relative overflow-hidden
+            ${!isExpanded ? 'p-2 flex justify-center' : ''}
+          `}>
+            {/* Background Decorative Circles */}
+            <div className="absolute -top-4 -right-4 w-12 h-12 bg-indigo-500/20 rounded-full blur-xl" />
+            
+            <div className="flex items-center gap-3 relative z-10">
+              <div className="relative">
+                <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]" />
+                <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping opacity-30" />
+              </div>
+              {isExpanded && (
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black tracking-widest text-slate-300">CLOUD STATUS</span>
+                  <span className="text-[11px] font-bold text-white">All Nodes Active</span>
+                </div>
               )}
-            </AnimatePresence>
+            </div>
           </div>
         </div>
       </motion.aside>
