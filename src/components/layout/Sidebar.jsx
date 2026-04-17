@@ -11,57 +11,24 @@ import {
   X, 
   Cloudy,
   Zap,
-  LayoutDashboard
+  LayoutDashboard,
+  ShieldCheck,
+  Activity
 } from 'lucide-react';
 import { useSubscription } from '../../hooks/useBilling';
-
-
-const navItems = [
-  { label: 'Home', to: '/dashboard', icon: Home },
-  { 
-    label: 'Websites', 
-    icon: Globe, 
-    children: [
-      { label: 'WordPress', to: '/websites/wordpress' },
-      {label: 'Your WordPress', to: 'websites/wordpress/paid'},
-      { label: 'PHP',       to: '/websites/php' },
-      { label: 'HTML',      to: '/websites/html' },
-      { label: 'NodeJS',    to: '/websites/nodejs' },
-    ]
-  },
-  { label: 'Hosting',   to: '/websites/hosting',   icon: Server },
-  {
-    label: 'Billing',
-    icon: CreditCard,
-    children: [
-      { label: 'Plans',           to: '/plans' },
-      { label: 'Billing',         to: '/billing' },
-      {label: 'Billing-History', to:"/billing/history"}
-    ],
-  },
-  { label: 'Settings', to: '/settings', icon: Settings },
-];
 
 export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }) {
   const [hovered, setHovered] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
   const location = useLocation();
-
   const subscription = useSubscription();
 
-  // subscription status
-  const isSubscriptionActive =
-    subscription?.data?.status === "active";
-
-  console.log("your data active:", isSubscriptionActive);
-
+  const isSubscriptionActive = subscription?.data?.status === "active";
   const isExpanded = hovered || mobileOpen;
 
+  // Optimized NavItems
   const navItems = [
-    // { label: 'Home', to: '/dashboard', icon: Home },
-    { label: 'Home', to: '/home', icon: Home },
-
-
+    { label: 'Home', to: '/home', icon: LayoutDashboard },
     {
       label: 'Websites',
       icon: Globe,
@@ -69,39 +36,30 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
         ...(isSubscriptionActive
           ? []
           : [{ label: 'WordPress', to: '/websites/wordpress' }]),
-
-        
         ...(isSubscriptionActive
           ? [{ label: 'Your WordPress', to: '/websites/wordpress/paid' }]
           : []),
-
-        { label: 'PHP', to: '/websites/php' },
-        { label: 'HTML', to: '/websites/html' },
-        { label: 'NodeJS', to: '/websites/nodejs' },
+        { label: 'PHP Hosting', to: '/websites/php' },
+        { label: 'Static HTML', to: '/websites/html' },
+        { label: 'NodeJS App', to: '/websites/nodejs' },
       ],
     },
-
-    { label: 'VPS', to: '/vps', icon: Home },
-
-
-    // { label: 'Hosting', to: '/websites/hosting', icon: Server },
-
+    // VPS Redirect is now correct
+    { label: 'Cloud VPS', to: '/vps', icon: Zap }, 
     {
       label: 'Billing',
       icon: CreditCard,
       children: [
         { label: 'Plans', to: '/plans' },
-        { label: 'Billing', to: '/billing' },
-        { label: 'Billing-History', to: '/billing/history' },
+        { label: 'Payment Methods', to: '/billing' },
+        { label: 'Invoices', to: '/billing/history' },
       ],
     },
-
     { label: 'Settings', to: '/settings', icon: Settings },
   ];
 
   return (
     <>
-      {/* Mobile Overlay with Blur */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -109,7 +67,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onMobileClose}
-            className="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-md md:hidden"
+            className="fixed inset-0 z-[60] bg-slate-900/40 backdrop-blur-sm md:hidden"
           />
         )}
       </AnimatePresence>
@@ -118,25 +76,18 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => { setHovered(false); setOpenMenu(null); }}
         animate={{ 
-          width: mobileOpen ? '280px' : (isExpanded ? '260px' : '80px'),
+          width: mobileOpen ? '280px' : (isExpanded ? '260px' : '84px'),
           x: (mobileOpen || window.innerWidth > 768) ? 0 : -350 
         }}
-        transition={{ type: 'spring', damping: 20, stiffness: 150 }}
-        className="fixed md:sticky top-0 left-0 h-screen z-[70] flex flex-col bg-white border-r border-slate-100 shadow-[20px_0_50px_rgba(0,0,0,0.02)]"
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        className="fixed md:sticky top-0 left-0 h-screen z-[70] flex flex-col bg-white border-r border-slate-100 shadow-[4px_0_24px_rgba(0,0,0,0.02)]"
       >
-        {/* Animated Logo Section */}
-        <div className="h-24 flex items-center px-5 justify-between relative">
-          <div className="flex items-center gap-4 cursor-pointer group">
-            <motion.div 
-              animate={{ 
-                y: [0, -4, 0],
-                filter: ["drop-shadow(0px 0px 0px #6366f100)", "drop-shadow(0px 4px 12px #6366f140)", "drop-shadow(0px 0px 0px #6366f100)"]
-              }}
-              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-              className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shrink-0 shadow-lg shadow-indigo-200"
-            >
-              <Cloudy size={26} className="text-white fill-white/10" />
-            </motion.div>
+        {/* Brand Logo Section */}
+        <div className="h-20 flex items-center px-6 justify-between overflow-hidden">
+          <div className="flex items-center gap-4 cursor-pointer min-w-max">
+            <div className="w-11 h-11 rounded-xl bg-indigo-600 flex items-center justify-center shrink-0 shadow-lg shadow-indigo-100 ring-4 ring-indigo-50">
+              <Cloudy size={24} className="text-white" />
+            </div>
             
             <AnimatePresence>
               {isExpanded && (
@@ -146,24 +97,18 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
                   exit={{ opacity: 0, x: -10 }}
                   className="flex flex-col"
                 >
-                  <span className="font-black text-slate-800 text-xl tracking-tight leading-none">
+                  <span className="font-black text-slate-900 text-lg tracking-tight">
                     Cloude<span className="text-indigo-600">Data</span>
                   </span>
-                  <span className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mt-1">v2.0 Pro</span>
+                  <span className="text-[9px] text-indigo-500 font-bold tracking-[0.2em] uppercase">V2.0 ENTERPRISE</span>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
-
-          {mobileOpen && (
-            <button onClick={onMobileClose} className="p-2 rounded-full bg-slate-50 text-slate-400 hover:text-indigo-600 transition-colors">
-              <X size={20} />
-            </button>
-          )}
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 px-4 py-2 space-y-2 overflow-y-auto scrollbar-hide">
+        {/* Navigation List */}
+        <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto scrollbar-hide">
           {navItems.map((item) => {
             const Icon = item.icon;
             const hasChildren = !!item.children;
@@ -176,15 +121,15 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
                   <button
                     onClick={() => setOpenMenu(isMenuOpen ? null : item.label)}
                     className={`
-                      w-full flex items-center gap-4 rounded-2xl px-3 py-3.5 text-sm font-semibold transition-all group
-                      ${isMenuOpen ? 'bg-indigo-50/50 text-indigo-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}
+                      w-full flex items-center gap-4 rounded-xl px-3 py-3 text-sm font-bold transition-all group
+                      ${isMenuOpen ? 'bg-indigo-50 text-indigo-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}
                     `}
                   >
-                    <Icon size={22} strokeWidth={isMenuOpen ? 2.5 : 2} className="shrink-0 transition-transform group-hover:scale-110" />
+                    <Icon size={20} className={`shrink-0 transition-all ${isMenuOpen ? 'scale-110' : 'group-hover:scale-110'}`} />
                     {isExpanded && (
                       <>
                         <span className="flex-1 text-left">{item.label}</span>
-                        <ChevronRight size={16} className={`transition-transform duration-300 ${isMenuOpen ? 'rotate-90' : 'opacity-40'}`} />
+                        <ChevronRight size={14} className={`transition-transform duration-300 ${isMenuOpen ? 'rotate-90 text-indigo-400' : 'opacity-30'}`} />
                       </>
                     )}
                   </button>
@@ -193,39 +138,38 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
                     to={item.to}
                     onClick={() => mobileOpen && onMobileClose()}
                     className={({ isActive }) => `
-                      relative flex items-center gap-4 rounded-2xl px-3 py-3.5 text-sm font-semibold transition-all group
+                      relative flex items-center gap-4 rounded-xl px-3 py-3 text-sm font-bold transition-all group
                       ${isActive 
-                        ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-200' 
+                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' 
                         : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
                       }
                     `}
                   >
-                    <Icon size={22} strokeWidth={2} className="shrink-0 transition-transform group-hover:scale-110" />
+                    <Icon size={20} className="shrink-0 group-hover:scale-110 transition-transform" />
                     {isExpanded && <span>{item.label}</span>}
                     
-                    {/* Active Indicator Line */}
                     {isActive && isExpanded && (
-                      <motion.div layoutId="activeTab" className="absolute right-2 w-1 h-5 bg-white/40 rounded-full" />
+                      <motion.div layoutId="activeHighlight" className="absolute right-2 w-1.5 h-1.5 bg-white rounded-full" />
                     )}
                   </NavLink>
                 )}
 
-                {/* Submenu with floating effect */}
+                {/* Submenu */}
                 <AnimatePresence>
                   {hasChildren && isMenuOpen && isExpanded && (
                     <motion.div
-                      initial={{ height: 0, opacity: 0, y: -10 }}
-                      animate={{ height: 'auto', opacity: 1, y: 0 }}
-                      exit={{ height: 0, opacity: 0, y: -10 }}
-                      className="ml-10 mt-2 space-y-1 border-l-2 border-slate-100 pl-4"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="ml-9 mt-1 space-y-1 border-l border-slate-100 pl-3"
                     >
                       {item.children.map((child) => (
                         <NavLink
                           key={child.to}
                           to={child.to}
                           className={({ isActive }) => `
-                            block py-2 text-sm font-medium transition-all rounded-lg px-2
-                            ${isActive ? 'text-indigo-600 bg-indigo-50/30' : 'text-slate-400 hover:text-slate-700 hover:translate-x-1'}
+                            block py-2 px-3 text-[13px] font-semibold transition-all rounded-lg
+                            ${isActive ? 'text-indigo-600 bg-indigo-50/50' : 'text-slate-400 hover:text-slate-700 hover:pl-4'}
                           `}
                         >
                           {child.label}
@@ -239,27 +183,37 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
           })}
         </nav>
 
-        {/* Premium Footer Info */}
+        {/* Footer Status Section */}
         <div className="p-4 mt-auto">
           <div className={`
-            p-4 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white relative overflow-hidden
-            ${!isExpanded ? 'p-2 flex justify-center' : ''}
+            p-4 rounded-2xl bg-slate-900 text-white relative overflow-hidden transition-all
+            ${!isExpanded ? 'p-2.5 flex justify-center' : ''}
           `}>
-            {/* Background Decorative Circles */}
-            <div className="absolute -top-4 -right-4 w-12 h-12 bg-indigo-500/20 rounded-full blur-xl" />
-            
-            <div className="flex items-center gap-3 relative z-10">
-              <div className="relative">
-                <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]" />
-                <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping opacity-30" />
-              </div>
-              {isExpanded && (
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black tracking-widest text-slate-300">CLOUD STATUS</span>
-                  <span className="text-[11px] font-bold text-white">All Nodes Active</span>
+            {isExpanded ? (
+              <div className="relative z-10 flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] font-black tracking-widest text-slate-400 uppercase">System Integrity</span>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-[10px] font-bold text-emerald-400">99.9%</span>
+                  </div>
                 </div>
-              )}
-            </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                    <ShieldCheck size={16} className="text-indigo-300" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[11px] font-bold">Secure Cloud</span>
+                    <span className="text-[9px] text-slate-400">All Nodes Active</span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Activity size={18} className="text-emerald-400 animate-pulse" />
+            )}
+            
+            {/* Glossy overlay effect */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-transparent pointer-events-none" />
           </div>
         </div>
       </motion.aside>
