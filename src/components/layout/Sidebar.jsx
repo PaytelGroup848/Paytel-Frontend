@@ -79,7 +79,10 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
       ],
     },
 
-    { label: 'Hosting', to: '/websites/hosting', icon: Server },
+    { label: 'VPS', to: '/vps', icon: Home },
+
+
+    // { label: 'Hosting', to: '/websites/hosting', icon: Server },
 
     {
       label: 'Billing',
