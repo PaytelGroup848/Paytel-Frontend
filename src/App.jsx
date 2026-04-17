@@ -31,6 +31,9 @@ import PaidWordpress from './pages/websites/wordpress/PaidWordpress';
 import Home from './pages/dashboard/Home';
 import WebsiteDashboard from './pages/websites/wordpress/websiteDashboard';
 import DomainEnter from './pages/websites/wordpress/domainEnter';
+import HTML_Page from './pages/websites/html/html_page';
+import PHP_Page from './pages/websites/php/php_page';
+import NodeJS_Page from './pages/websites/nodejs/nodejs';
 
 
 
@@ -144,6 +147,9 @@ export default function App() {
           <Route path="websites/wordpress/paid" element={<PaidWordpress />} />
           <Route path ="wordpress/websiteDashboard" element={<WebsiteDashboard/>} />
           <Route path ="wordpress/domainEnter" element={<DomainEnter/>} />
+          <Route path ="websites/html" element  = {<HTML_Page/>} /> 
+          <Route path ="websites/php" element  = {<PHP_Page/>} />
+          <Route path ="websites/nodejs" element  = {<NodeJS_Page/>} />
           <Route path ="/home" element ={<Home/>} />
           {/* <Route path="websites/wordpress/:id" element={<WordPress_Page />} /> */}
         </Route>
