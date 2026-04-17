@@ -58,7 +58,9 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
   const isExpanded = hovered || mobileOpen;
 
   const navItems = [
-    { label: 'Home', to: '/dashboard', icon: Home },
+    // { label: 'Home', to: '/dashboard', icon: Home },
+    { label: 'Home', to: '/home', icon: Home },
+
 
     {
       label: 'Websites',
