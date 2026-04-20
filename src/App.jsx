@@ -39,6 +39,9 @@ import Servers from './pages/superadmin/Servers';
 import AdminInstances from './pages/superadmin/Instances';
 import FilesPage from './pages/websites/wordpress/FilesPage';
 
+import VPS_Page from './pages/vps/VPS_Page';
+import VPSPricing from './pages/vps/VPS_Page';
+import  VPSDashboard from './pages/vps/vps_paid';
 
 
 const PageShell = ({ title, subtitle }) => (
@@ -159,6 +162,9 @@ export default function App() {
           <Route path ="websites/html" element  = {<HTML_Page/>} /> 
           <Route path ="websites/php" element  = {<PHP_Page/>} />
           <Route path ="websites/nodejs" element  = {<NodeJS_Page/>} />
+          <Route path ="vps" element  = {<VPSPricing/>} />  
+          <Route path ="vps/paid"  element ={< VPSDashboard/>} />    
+           
           <Route path ="/home" element ={<Home/>} />
           {/* <Route path="websites/wordpress/:id" element={<WordPress_Page />} /> */}
         </Route>
