@@ -1,0 +1,82 @@
+import { useMutation, useQuery } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
+
+import { api } from '../services/api';
+import { queryClient } from '../services/queryClient';
+
+export const useInstances = (params = {}) =>
+  useQuery({
+    queryKey: ['wordpress', 'instances', params],
+    queryFn: async () => {
+      const res = await api.get('/wordpress', { params });
+      return { items: res.data?.data || [], meta: res.data?.meta || {} };
+    },
+    staleTime: 0,
+  });
+
+export const useInstance = (id, options = {}) =>
+  useQuery({
+    queryKey: ['wordpress', 'instance', id],
+    queryFn: async () => {
+      const res = await api.get(`/wordpress/${id}`);
+      return res.data?.data;
+    },
+    enabled: Boolean(id) && (options.enabled ?? true),
+    staleTime: 0,
+    refetchInterval: options.refetchInterval,
+  });
+
+export const useCreateInstance = () =>
+  useMutation({
+    mutationFn: async (payload) => {
+      const res = await api.post('/wordpress', payload);
+      return res.data?.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wordpress', 'instances'] });
+    },
+    onError: () => toast.error('Failed to create WordPress instance'),
+  });
+
+export const useVerifyDNS = () =>
+  useMutation({
+    mutationFn: async ({ instanceId }) => {
+      const res = await api.post('/wordpress/verify-dns', { instanceId });
+      return res.data?.data;
+    },
+    onError: () => toast.error('DNS verification failed'),
+  });
+
+export const useResetPassword = () =>
+  useMutation({
+    mutationFn: async ({ id, newPassword }) => {
+      const res = await api.post(`/wordpress/${id}/reset-password`, { newPassword });
+      return res.data?.data;
+    },
+    onSuccess: () => toast.success('Password reset successfully'),
+    onError: () => toast.error('Password reset failed'),
+  });
+
+export const useGetFiles = (id, path = '') =>
+  useQuery({
+    queryKey: ['wordpress', 'files', id, path],
+    queryFn: async () => {
+      const res = await api.get(`/wordpress/${id}/files`, { params: { path } });
+      return res.data?.data || [];
+    },
+    enabled: Boolean(id),
+    staleTime: 0,
+  });
+
+export const useDeleteInstance = () =>
+  useMutation({
+    mutationFn: async (id) => {
+      const res = await api.delete(`/wordpress/${id}`);
+      return res.data?.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wordpress', 'instances'] });
+      toast.success('Instance deleted');
+    },
+    onError: () => toast.error('Failed to delete instance'),
+  });

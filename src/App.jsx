@@ -34,6 +34,10 @@ import DomainEnter from './pages/websites/wordpress/domainEnter';
 import HTML_Page from './pages/websites/html/html_page';
 import PHP_Page from './pages/websites/php/php_page';
 import NodeJS_Page from './pages/websites/nodejs/nodejs';
+import SuperAdminLayout from './pages/superadmin/SuperAdminLayout';
+import Servers from './pages/superadmin/Servers';
+import AdminInstances from './pages/superadmin/Instances';
+import FilesPage from './pages/websites/wordpress/FilesPage';
 
 
 
@@ -113,7 +117,10 @@ export default function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/" element={<Navigate 
+      // to="/dashboard"
+      to="/home"
+      replace />} />
 
       {/* Public (no auth) */}
       <Route element={<AuthRoutes />}>
@@ -146,12 +153,18 @@ export default function App() {
           <Route path="websites/wordpress/new" element={<WordpressNew />} />
           <Route path="websites/wordpress/paid" element={<PaidWordpress />} />
           <Route path ="wordpress/websiteDashboard" element={<WebsiteDashboard/>} />
+          <Route path ="wordpress/websitedashboard/:id" element={<WebsiteDashboard/>} />
           <Route path ="wordpress/domainEnter" element={<DomainEnter/>} />
+          <Route path ="wordpress/:id/files" element={<FilesPage/>} />
           <Route path ="websites/html" element  = {<HTML_Page/>} /> 
           <Route path ="websites/php" element  = {<PHP_Page/>} />
           <Route path ="websites/nodejs" element  = {<NodeJS_Page/>} />
           <Route path ="/home" element ={<Home/>} />
           {/* <Route path="websites/wordpress/:id" element={<WordPress_Page />} /> */}
+        </Route>
+        <Route path="/superadmin" element={<SuperAdminLayout />}>
+          <Route path="servers" element={<Servers />} />
+          <Route path="instances" element={<AdminInstances />} />
         </Route>
       </Route>
 
