@@ -1,56 +1,32 @@
-//@ts-nocheck
-import { useState, useMemo, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Plus, 
   Search, 
-  Layout, 
   Server, 
-  ShieldCheck, 
-  Settings, 
-  ExternalLink, 
-  Activity, 
+  Activity,
   Calendar,
-  Database,
-  FolderTree,
-  Terminal,
-  Cpu,
+  Cpu, 
   Layers
-} from "lucide-react";
+} from 'lucide-react';
+import SkeletonTable from '../../../components/ui/skeletons/SkeletonTable';
+import { useInstances } from '../../../hooks/useWordPress';
 
 export default function PaidWordpress() {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState("All");
-
-  const [websites] = useState([
-    {
-      id: 1,
-      domain: "mywebsite.com",
-      status: "Active",
-      plan: "Production Pro",
-      visitors: "12.4k",
-      createdAt: "Oct 12, 2025"
-    },
-    {
-      id: 2,
-      domain: "store-demo.com",
-      status: "Pending",
-      plan: "Business Node",
-      visitors: "0",
-      createdAt: "April 16, 2026"
-    },
-  ]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState('');
+  const { data, isLoading } = useInstances({ status: filter || undefined });
+  const websites = data?.items || [];
 
   const siteLimit = 10;
 
   const filteredWebsites = useMemo(() => {
-    return websites.filter(site => {
+    return websites.filter((site) => {
       const matchesSearch = site.domain.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesFilter = filter === "All" || site.status === filter;
-      return matchesSearch && matchesFilter;
+      return matchesSearch;
     });
-  }, [searchTerm, filter, websites]);
+  }, [searchTerm, websites]);
 
   return (
     <div className="min-h-screen  bg-[#FAFBFC] font-sans text-slate-900 selection:bg-indigo-100">
@@ -83,7 +59,7 @@ export default function PaidWordpress() {
                   </div>
                 </div>
                 <button 
-                  onClick={() => navigate("/websites/wordpress/new")}
+                  onClick={() => navigate("/wordpress/domainEnter")}
                   className="bg-slate-900 hover:bg-indigo-600 text-white px-6 py-3 rounded-xl transition-all active:scale-95 text-xs font-bold flex items-center gap-2 ml-1"
                 >
                   <Plus size={16} strokeWidth={3} />
@@ -105,20 +81,28 @@ export default function PaidWordpress() {
                 />
               </div>
               <div className="flex bg-slate-100/50 p-1.5 rounded-2xl border border-slate-200/50">
-                {["All", "Active", "Pending"].map((tab) => (
+                {[
+                  { label: 'All', value: '' },
+                  { label: 'Active', value: 'active' },
+                  { label: 'Pending', value: 'pending_dns' },
+                  { label: 'Provisioning', value: 'provisioning' },
+                  { label: 'Failed', value: 'failed' },
+                ].map((tab) => (
                   <button
-                    key={tab}
-                    onClick={() => setFilter(tab)}
-                    className={`px-6 py-2 rounded-xl text-xs font-bold transition-all ${filter === tab ? 'bg-white text-slate-900 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
+                    key={tab.label}
+                    onClick={() => setFilter(tab.value)}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${filter === tab.value ? 'bg-white text-slate-900 shadow-sm border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
                   >
-                    {tab}
+                    {tab.label}
                   </button>
                 ))}
               </div>
             </div>
 
             {/* ── RESOURCE LIST ── */}
-            {filteredWebsites.length === 0 ? (
+            {isLoading ? (
+              <SkeletonTable rows={6} cols={6} />
+            ) : filteredWebsites.length === 0 ? (
               <EmptyState />
             ) : (
               <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)]">
@@ -137,18 +121,8 @@ export default function PaidWordpress() {
 }
 
 function WebsiteRow({ site }) {
-  const isActive = site.status === "Active";
+  const isActive = site.status === 'active';
   const navigate = useNavigate();
-  const [showTools, setShowTools] = useState(false);
-  const dropdownRef = useRef(null);
-
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setShowTools(false);
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   return (
     <div className="group flex flex-col lg:flex-row lg:items-center justify-between p-6 hover:bg-slate-50/80 transition-all duration-300">
@@ -167,62 +141,23 @@ function WebsiteRow({ site }) {
             </div>
           </div>
           <div className="flex items-center gap-5 text-[11px] font-bold text-slate-400 uppercase tracking-tight">
-             <span className="flex items-center gap-1.5"><Layers size={12} /> {site.plan}</span>
-             <span className="flex items-center gap-1.5"><Calendar size={12} /> {site.createdAt}</span>
-             <span className="flex items-center gap-1.5 text-indigo-500"><Activity size={12} /> {site.visitors} Req/mo</span>
+             <span className="flex items-center gap-1.5"><Layers size={12} /> {site.planType || '-'}</span>
+             <span className="flex items-center gap-1.5"><Calendar size={12} /> {new Date(site.createdAt).toLocaleDateString()}</span>
+             <span className="flex items-center gap-1.5 text-indigo-500"><Activity size={12} /> {site.visitors || 0} Req/mo</span>
           </div>
         </div>
       </div>
 
       <div className="flex items-center gap-2 mt-4 lg:mt-0">
-        {isActive && (
-          <>
-            <button 
-              onClick={() => window.open(`https://${site.domain}/wp-admin`, '_blank')}
-              className="w-11 h-11 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-white rounded-xl transition-all border border-transparent hover:border-slate-200"
-              title="Open Admin"
-            >
-              <ExternalLink size={18} />
-            </button>
-
-            <div className="relative" ref={dropdownRef}>
-              <button 
-                onClick={() => setShowTools(!showTools)}
-                className={`w-11 h-11 flex items-center justify-center rounded-xl transition-all border ${showTools ? 'bg-slate-900 text-white border-slate-900' : 'text-slate-400 hover:text-slate-900 border-transparent hover:border-slate-200'}`}
-              >
-                <Settings size={18} />
-              </button>
-
-              {showTools && (
-                <div className="absolute right-0 mt-3 w-56 bg-white border border-slate-100 rounded-2xl shadow-2xl z-30 py-2.5 overflow-hidden animate-in fade-in zoom-in-95">
-                  <p className="px-5 py-2 text-[9px] font-black text-slate-300 uppercase tracking-widest">Instance Tools</p>
-                  <DropdownLink icon={<FolderTree size={14}/>} label="File Manager" />
-                  <DropdownLink icon={<Database size={14}/>} label="SQL Database" />
-                  <DropdownLink icon={<ShieldCheck size={14}/>} label="SSL Config" />
-                  <DropdownLink icon={<Terminal size={14}/>} label="Web Terminal" />
-                </div>
-              )}
-            </div>
-          </>
-        )}
-        
         <button 
-          onClick={() => navigate("/wordpress/websitedashboard")}
+          onClick={() => navigate(`/wordpress/websitedashboard/${site.id || site._id}`)}
           className={`ml-2 px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${isActive ? 'bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-900 hover:text-white hover:border-slate-900 shadow-sm' : 'bg-slate-50 text-slate-300 cursor-not-allowed border border-slate-50'}`}
+          disabled={!isActive}
         >
           {isActive ? "Manage" : "Provisioning..."}
         </button>
       </div>
     </div>
-  );
-}
-
-function DropdownLink({ icon, label }) {
-  return (
-    <button className="w-full text-left px-5 py-2.5 text-xs font-bold text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all flex items-center gap-3">
-      <span className="opacity-60">{icon}</span>
-      {label}
-    </button>
   );
 }
 

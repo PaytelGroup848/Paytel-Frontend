@@ -170,7 +170,7 @@ function NavBtn({ item, active, setActive, sub }) {
   return (
     <button
       onClick={handleNavigation} // setActive ki jagah handleNavigation use karein
-      className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl mb-0.5 transition-all duration-150 text-left
+      className={`w-full flex items-center gap-2.5 px-3 py-2.5 r.exitounded-xl mb-0.5 transition-all duration-150 text-left
         ${isActive ? "bg-indigo-600 text-white shadow-md shadow-indigo-300/40" : "text-slate-500 hover:bg-white/70 hover:text-indigo-700"}
         ${sub ? "pl-5" : ""}
       `}
@@ -262,7 +262,7 @@ function DashboardPage({ stats, chart }) {
       {/* Metric cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { title: "CPU Usage",  val: `${stats.cpu}%`,    sub: "4 cores",       icon: Cpu,      accent: "#4F46E5", bg: "#EEF2FF", pct: stats.cpu },
+          { title: "CPU Usage",  val: `${stats.cpu}%`,    sub: "4 cores",       icon: Cpu,      accent: "#4139ce", bg: "#EEF2FF", pct: stats.cpu },
           { title: "RAM Used",   val: `${stats.ram} GB`,  sub: "of 8 GB",       icon: Database, accent: "#7C3AED", bg: "#F5F3FF", pct: (stats.ram/8)*100 },
           { title: "Disk Used",  val: `${stats.disk} GB`, sub: "of 80 GB NVMe", icon: HardDrive,accent: "#0EA5E9", bg: "#F0F9FF", pct: (stats.disk/80)*100 },
           { title: "Uptime",     val: stats.uptime,       sub: "99.98% SLA",    icon: Clock,    accent: "#059669", bg: "#ECFDF5", pct: null },
