@@ -1,14 +1,12 @@
 import { useEffect } from 'react';
 import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-
 import { useAuthStore } from './store/authStore';
 import { api } from './services/api';
 import Spinner from './components/ui/Spinner';
 import AuthLayout from './components/layout/AuthLayout';
 import DashboardLayout from './components/layout/DashboardLayout';
 import { pageTransition } from './animations/variants';
-
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
@@ -38,13 +36,14 @@ import SuperAdminLayout from './pages/superadmin/SuperAdminLayout';
 import Servers from './pages/superadmin/Servers';
 import AdminInstances from './pages/superadmin/Instances';
 import FilesPage from './pages/websites/wordpress/FilesPage';
-
 import VPS_Page from './pages/vps/VPS_Page';
 import VPSPricing from './pages/vps/VPS_Page';
 import  VPSDashboard from './pages/vps/vps_paid';
 import VPSOverviewPage from './pages/vps/slidebar/vps_overview';
 import VPSDocumentation from './pages/vps/slidebar/support/docs';
 import BackupManager from './pages/vps/slidebar/BackupManager';
+import {useMe} from "./hooks/useAuth";
+
 
 const PageShell = ({ title, subtitle }) => (
   <motion.div
@@ -95,6 +94,11 @@ export default function App() {
   const setAuth = useAuthStore((s) => s.setAuth);
   const setAuthBootstrapped = useAuthStore((s) => s.setAuthBootstrapped);
   const clearAuth = useAuthStore((s) => s.clearAuth);
+
+  const ourRoles = useMe()
+  const userRoles = ourRoles?.data?.role
+
+// console.log("this is me",ourme.data.role )
 
   useEffect(() => {
     let alive = true;
@@ -173,10 +177,13 @@ export default function App() {
           <Route path ="/home" element ={<Home/>} />
           {/* <Route path="websites/wordpress/:id" element={<WordPress_Page />} /> */}
         </Route>
+
+        {userRoles === "superadmin" ? (""):(
         <Route path="/superadmin" element={<SuperAdminLayout />}>
           <Route path="servers" element={<Servers />} />
           <Route path="instances" element={<AdminInstances />} />
         </Route>
+        )}
       </Route>
 
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
