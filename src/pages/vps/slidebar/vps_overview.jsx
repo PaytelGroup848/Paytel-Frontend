@@ -30,7 +30,6 @@ const ROUTES = [
     group: null,
     items: [
       { id: "dashboard", label: "Dashboard",    icon: LayoutDashboard, ready: true  },
-      { id: "analytics", label: "Performance",  icon: BarChart3,       ready: false },
     ],
   },
   {
@@ -38,7 +37,9 @@ const ROUTES = [
     items: [
       { id: "vps",     label: "VPS Instances", icon: Server,   ready: false },
       { id: "storage", label: "Disk & Storage",icon: HardDrive,ready: false },
-      { id: "backups", label: "Backups",        icon: History,  ready: false },
+       { id: "backupmgr",label: "Backup Manager",icon: Archive,  ready: true },
+       {id: "os&panel", label: "OS & Control Panels", icon: BarChart3, ready: true },
+     
     ],
   },
   {
@@ -54,8 +55,8 @@ const ROUTES = [
     items: [
       { id: "docker",   label: "Docker",        icon: Container,ready: false },
       { id: "tutorials",label: "Tutorials",     icon: BookOpen, ready: false },
-      { id: "blog",     label: "Blog",          icon: Rss,      ready: false },
-      { id: "backupmgr",label: "Backup Manager",icon: Archive,  ready: false },
+      { id: "blog",     label: "Blog",          icon: Rss,      ready: true },
+     
     ],
   },
   {
@@ -160,7 +161,16 @@ function NavBtn({ item, active, setActive, sub }) {
     if (item.id === "blog") {
       // Direct redirect to the specific path
       window.location.href = "/vps/support/docs";
-    } else {
+    } else if (item.id === "backupmgr") {
+      // Direct redirect to the specific path
+      window.location.href = "/vps/backupmgr";
+    }
+      else if (item.id === "os&panel") {
+      // Direct redirect to the specific path
+      window.location.href = "/vps/OSPanel";
+    }
+    
+    else {
       // Normal state update for other pages
       setActive(item.id);
     }

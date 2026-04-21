@@ -45,6 +45,7 @@ import  VPSDashboard from './pages/vps/vps_paid';
 import VPSOverviewPage from './pages/vps/slidebar/vps_overview';
 import VPSDocumentation from './pages/vps/slidebar/support/docs';
 import BackupManager from './pages/vps/slidebar/BackupManager';
+import OSPanel from './pages/vps/slidebar/Os_panel';
 
 const PageShell = ({ title, subtitle }) => (
   <motion.div
@@ -168,8 +169,8 @@ export default function App() {
           <Route path ="vps/paid"  element ={< VPSDashboard/>} />  
           <Route path ="vps/vps_overview"  element ={< VPSOverviewPage/>} />   
           <Route path = "/vps/support/docs" element ={<VPSDocumentation/>} />
-          <Route path ="/vps/backup" element = {<BackupManager/>} />  
-           
+          <Route path ="/vps/backupmgr" element = {<BackupManager/>} />  
+          <Route path = "/vps/OSPanel" element = {<OSPanel/>} />
           <Route path ="/home" element ={<Home/>} />
           {/* <Route path="websites/wordpress/:id" element={<WordPress_Page />} /> */}
         </Route>
