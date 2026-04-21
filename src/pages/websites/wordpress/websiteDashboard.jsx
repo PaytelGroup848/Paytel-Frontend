@@ -350,7 +350,7 @@ export default function WebsiteDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           {/* Performance Insight (Left Column) */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="lg:col-span-4 space-y-6 mt-4">
             <div className="bg-slate-900 rounded-2xl p-6 text-white relative overflow-hidden group">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Core Performance</h3>
@@ -358,16 +358,16 @@ export default function WebsiteDashboard() {
               </div>
               
               <div className="flex items-center gap-6">
-                 <div className="relative w-24 h-24 flex items-center justify-center">
+                 <div className="relative w-24 h-34 flex items-center justify-center">
                     <svg className="w-full h-full transform -rotate-90">
-                      <circle cx="48" cy="48" r="42" stroke="currentColor" strokeWidth="6" fill="transparent" className="text-white/10" />
+                      <circle cx="41" cy="65" r="38" stroke="currentColor" strokeWidth="6" fill="transparent" className="text-white/10" />
                       <motion.circle 
                         initial={{ strokeDashoffset: 264 }}
                         animate={{ strokeDashoffset: 264 - (264 * siteData.performanceScore) / 100 }}
                         transition={{ duration: 1.5 }}
                         cx="48" cy="48" r="42" stroke="currentColor" strokeWidth="6" fill="transparent" strokeDasharray={264} className="text-indigo-500" strokeLinecap="round" />
                     </svg>
-                    <span className="absolute text-2xl font-bold">{siteData.performanceScore}</span>
+                    <span className="absolute text-xl font-bold">{siteData.performanceScore}</span>
                  </div>
                  <div>
                    <p className="text-sm font-bold text-indigo-300">Excellent Score</p>
@@ -376,7 +376,7 @@ export default function WebsiteDashboard() {
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-5">
+            {/* <div className="bg-white border border-slate-200 rounded-2xl p-5">
               <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase mb-3">
                 <span>Disk Usage</span>
                 <span className="text-slate-900">{siteData.diskUsage}%</span>
@@ -384,8 +384,9 @@ export default function WebsiteDashboard() {
               <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-2">
                  <div className="h-full bg-indigo-600" style={{ width: `${siteData.diskUsage}%` }} />
               </div>
+            
               <p className="text-[10px] text-slate-400 font-medium tracking-tight">Using {instance.diskUsed || 0}MB of 1024MB total SSD storage.</p>
-            </div>
+            </div> */}
           </div>
 
           {/* Quick Tools Grid (Right Column) */}
@@ -400,12 +401,12 @@ export default function WebsiteDashboard() {
         </div>
 
         {/* BOTTOM STATS STRIP */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
            <CompactStat label="Avg. Response" value={`${siteData.avgResponseTime}ms`} />
            <CompactStat label="Uptime 30d" value={`${siteData.uptime30d}%`} />
            <CompactStat label="Visitors" value={String(siteData.visitors)} />
            <CompactStat label="PHP Version" value={siteData.phpVersion} />
-        </div>
+        </div> */}
 
         <ConfigureModal 
           instanceId={id} 
