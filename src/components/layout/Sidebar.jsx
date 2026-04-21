@@ -63,7 +63,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
         { label: 'Invoices', to: '/billing/history' },
       ],
     },
-    ...(isSuperAdmin ?[{ label: 'SuperAdmin', to: '/superadmin', icon: Zap }]: [] ),
+    ...(isSuperAdmin ?[{ label: 'SuperAdmin', to: '/superadmin/servers', icon: Zap }]: [] ),
     { label: 'Settings', to: '/settings', icon: Settings },
   ];
 
