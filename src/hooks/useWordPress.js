@@ -19,6 +19,7 @@ export const useInstance = (id, options = {}) =>
     queryKey: ['wordpress', 'instance', id],
     queryFn: async () => {
       const res = await api.get(`/wordpress/${id}`);
+      
       return res.data?.data;
     },
     enabled: Boolean(id) && (options.enabled ?? true),
@@ -49,12 +50,19 @@ export const useVerifyDNS = () =>
 
 export const useResetPassword = () =>
   useMutation({
-    mutationFn: async ({ id, newPassword }) => {
-      const res = await api.post(`/wordpress/${id}/reset-password`, { newPassword });
-      return res.data?.data;
-    },
-    onSuccess: () => toast.success('Password reset successfully'),
-    onError: () => toast.error('Password reset failed'),
+    mutationFn: ({ id, newPassword }) =>
+      api.post(`/wordpress/${id}/reset-password`, { newPassword })
+        .then(r => r.data),
+  });
+
+export const useInstanceCredentials = (id, enabled) =>
+  useQuery({
+    queryKey: ['wordpress', 'credentials', id],
+    queryFn: () =>
+      api.get(`/wordpress/${id}/credentials`).then(r => r.data?.data),
+    enabled: !!id && enabled,
+    staleTime: 0,
+    
   });
 
 export const useGetFiles = (id, path = '') =>
