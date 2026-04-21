@@ -36,6 +36,7 @@ import SuperAdminLayout from './pages/superadmin/SuperAdminLayout';
 import Servers from './pages/superadmin/Servers';
 import AdminInstances from './pages/superadmin/Instances';
 import FilesPage from './pages/websites/wordpress/FilesPage';
+import DatabasePage from './pages/websites/wordpress/DatabasePage';
 import VPS_Page from './pages/vps/VPS_Page';
 import VPSDashboard from './pages/vps/vps_paid';
 import VpsDashboard from "./pages/vps/slidebar/vpsOverview";
@@ -84,8 +85,6 @@ export default function App() {
   const setAuthBootstrapped = useAuthStore((s) => s.setAuthBootstrapped);
   const clearAuth = useAuthStore((s) => s.clearAuth);
 
-  const { data: userData } = useMe();   // renamed for clarity
-  const userRoles = userData?.role;
 
   
   useEffect(() => {

@@ -16,6 +16,7 @@ import {
   Activity
 } from 'lucide-react';
 import { useSubscription } from '../../hooks/useBilling';
+import { useMe } from '../../hooks/useAuth';
 
 export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }) {
   const [hovered, setHovered] = useState(false);
@@ -25,6 +26,13 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
 
   const isSubscriptionActive = subscription?.data?.status === "active";
   const isExpanded = hovered || mobileOpen;
+
+  const userRoles = useMe()
+  const Roles = userRoles?.data?.role
+
+  const isSuperAdmin = Roles === "superadmin"
+
+  console.log("this is our role", isSuperAdmin)
 
   // Optimized NavItems
   const navItems = [
@@ -55,6 +63,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
         { label: 'Invoices', to: '/billing/history' },
       ],
     },
+    ...(isSuperAdmin ?[{ label: 'SuperAdmin', to: '/superadmin/servers', icon: Zap }]: [] ),
     { label: 'Settings', to: '/settings', icon: Settings },
   ];
 
