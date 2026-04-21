@@ -36,6 +36,7 @@ import SuperAdminLayout from './pages/superadmin/SuperAdminLayout';
 import Servers from './pages/superadmin/Servers';
 import AdminInstances from './pages/superadmin/Instances';
 import FilesPage from './pages/websites/wordpress/FilesPage';
+import DatabasePage from './pages/websites/wordpress/DatabasePage';
 import VPS_Page from './pages/vps/VPS_Page';
 import VPSPricing from './pages/vps/VPS_Page';
 import  VPSDashboard from './pages/vps/vps_paid';
@@ -162,6 +163,7 @@ export default function App() {
           <Route path ="wordpress/websitedashboard/:id" element={<WebsiteDashboard/>} />
           <Route path ="wordpress/domainEnter" element={<DomainEnter/>} />
           <Route path ="wordpress/:id/files" element={<FilesPage/>} />
+          <Route path ="wordpress/:id/database" element={<DatabasePage/>} />
           <Route path ="websites/html" element  = {<HTML_Page/>} /> 
           <Route path ="websites/php" element  = {<PHP_Page/>} />
           <Route path ="websites/nodejs" element  = {<NodeJS_Page/>} />

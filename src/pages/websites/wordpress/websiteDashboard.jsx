@@ -8,7 +8,7 @@ import {
   Eye, EyeOff, Copy
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useInstance, useInstanceCredentials, useResetPassword } from '../../../hooks/useWordPress';
+import { useInstance, useInstanceCredentials, useResetPassword, useDbCredentials } from '../../../hooks/useWordPress';
 
 function ConfigureModal({ instanceId, isOpen, onClose }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -392,7 +392,7 @@ export default function WebsiteDashboard() {
           {/* Quick Tools Grid (Right Column) */}
           <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
              <ToolCard onClick={() => navigate(`/wordpress/${siteData.id}/files`)} icon={<FolderOpen size={18}/>} title="Files" desc="Access Root" />
-             <ToolCard icon={<Database size={18}/>} title="Databases" desc="MySQL Panel" />
+             <ToolCard onClick={() => navigate(`/wordpress/${siteData.id}/database`)} icon={<Database size={18}/>} title="Databases" desc="MySQL Panel" />
              <ToolCard icon={<ShieldCheck size={18}/>} title="Security" desc="SSL & WAF" />
              <ToolCard icon={<BarChart3 size={18}/>} title="Analytics" desc="Traffic Logs" />
              <ToolCard icon={<Mail size={18}/>} title="Emails" desc="Business Mail" />

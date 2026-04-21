@@ -88,3 +88,21 @@ export const useDeleteInstance = () =>
     },
     onError: () => toast.error('Failed to delete instance'),
   });
+
+export const useDbTables = (id) =>
+  useQuery({
+    queryKey: ['wordpress', 'db-tables', id],
+    queryFn: () =>
+      api.get(`/wordpress/${id}/db-tables`).then(r => r.data?.data),
+    enabled: !!id,
+    staleTime: 0,
+  });
+
+export const useDbCredentials = (id, enabled) =>
+  useQuery({
+    queryKey: ['wordpress', 'db-credentials', id],
+    queryFn: () =>
+      api.get(`/wordpress/${id}/db-credentials`).then(r => r.data?.data),
+    enabled: !!id && enabled,
+    staleTime: 0,
+  });
