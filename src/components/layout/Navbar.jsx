@@ -154,18 +154,18 @@ export default function Navbar({ isSidebarOpen }) {
                   </div>
 
                   <div className="p-1 space-y-1">
-                    <DropdownItem icon={<LayoutDashboard size={18} />} label="Cloud Overview" />
-                    <DropdownItem icon={<ShieldCheck size={18} />} label="Security & Keys" />
-                    <DropdownItem icon={<CreditCard size={18} />} label="Billing & Plan" />
+                    <button className='w-full cursor-pointer'  onClick={() => navigate('/vps')}><DropdownItem icon={<LayoutDashboard size={18} />} label="Cloud Overview" /></button>
+                   <button className='w-full cursor-pointer' onClick={() => navigate('/settings')}> <DropdownItem icon={<ShieldCheck size={18} />} label="Security & Keys" /></button>
+                  <button className='w-full cursor-pointer' onClick={() => navigate('/plans')}>  <DropdownItem icon={<CreditCard size={18} />} label="Billing & Plan" /></button>
                     <div className="h-[1px] bg-slate-100 my-2 mx-4 opacity-50" />
                     <button
-                      onClick={logout}
-                      className="w-full flex items-center gap-4 px-4 py-4 text-sm font-black text-red-500 hover:bg-red-50 rounded-2xl transition-all group"
+                      onClick={() => logout.mutate()}
+                      className="w-full flex items-center gap-4 px-4 py-4 text-sm font-black cursor-pointer text-red-500 hover:bg-red-200 rounded-2xl transition-all group"
                     >
                       <div className="p-2 bg-red-100 group-hover:bg-red-500 group-hover:text-white transition-colors rounded-xl">
                         <LogOut size={16} />
                       </div>
-                      Termniate Session
+                      Logout
                     </button>
                   </div>
                 </motion.div>

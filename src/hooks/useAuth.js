@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { api } from '../services/api';
 import { queryClient } from '../services/queryClient';
 import { useAuthStore } from '../store/authStore';
+import { useNavigate } from 'react-router-dom';
 
 export const useLogin = () =>
   useMutation({
@@ -33,8 +34,10 @@ export const useRegister = () =>
     onError: () => toast.error('Registration failed'),
   });
 
-export const useLogout = () =>
-  useMutation({
+export const useLogout = () => {
+  const navigate = useNavigate();
+
+  return useMutation({
     mutationFn: async () => {
       await api.post('/auth/logout');
       return true;
@@ -43,13 +46,16 @@ export const useLogout = () =>
       useAuthStore.getState().clearAuth();
       queryClient.clear();
       toast.success('Logged out');
+      navigate('/login');
     },
     onError: () => {
       useAuthStore.getState().clearAuth();
       queryClient.clear();
       toast.success('Logged out');
+      navigate('/login');
     },
   });
+};
 
 export const useMe = () =>
   useQuery({

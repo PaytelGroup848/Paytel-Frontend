@@ -5,10 +5,12 @@ import {
   Globe, Settings, ShieldCheck, BarChart3, Database, 
   FolderOpen, Zap, ExternalLink, HardDrive, Mail, 
   RotateCcw, ChevronRight, Cpu, Activity, Lock, Globe2,
-  Eye, EyeOff, Copy
+  Eye, EyeOff, Copy,
+  Check
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useInstance, useInstanceCredentials, useResetPassword, useDbCredentials } from '../../../hooks/useWordPress';
+import CorePerformance from './CorePerformance';
 
 function ConfigureModal({ instanceId, isOpen, onClose }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -37,7 +39,7 @@ function ConfigureModal({ instanceId, isOpen, onClose }) {
         onSuccess: () => {
           toast.success('Password updated!');
           setNewPassword('');
-          setShowNewPassword(false); // Reset eye icon after success
+          setShowNewPassword(false); 
         },
         onError: (err) => {
           toast.error(
@@ -350,7 +352,7 @@ export default function WebsiteDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           {/* Performance Insight (Left Column) */}
-          <div className="lg:col-span-4 space-y-6 mt-4">
+          {/* <div className="lg:col-span-4 space-y-6 mt-4">
             <div className="bg-slate-900 rounded-2xl p-6 text-white relative overflow-hidden group">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Core Performance</h3>
@@ -376,37 +378,41 @@ export default function WebsiteDashboard() {
               </div>
             </div>
 
-            {/* <div className="bg-white border border-slate-200 rounded-2xl p-5">
-              <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase mb-3">
-                <span>Disk Usage</span>
-                <span className="text-slate-900">{siteData.diskUsage}%</span>
-              </div>
-              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-2">
-                 <div className="h-full bg-indigo-600" style={{ width: `${siteData.diskUsage}%` }} />
-              </div>
-            
-              <p className="text-[10px] text-slate-400 font-medium tracking-tight">Using {instance.diskUsed || 0}MB of 1024MB total SSD storage.</p>
-            </div> */}
-          </div>
+          </div> */}
+
+          <div className="lg:col-span-4 ">
+  <CorePerformance siteUrl={`https://${siteData.domain}`} />
+</div>
 
           {/* Quick Tools Grid (Right Column) */}
           <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
              <ToolCard onClick={() => navigate(`/wordpress/${siteData.id}/files`)} icon={<FolderOpen size={18}/>} title="Files" desc="Access Root" />
              <ToolCard onClick={() => navigate(`/wordpress/${siteData.id}/database`)} icon={<Database size={18}/>} title="Databases" desc="MySQL Panel" />
-             <ToolCard icon={<ShieldCheck size={18}/>} title="Security" desc="SSL & WAF" />
+     <div className="bg-gradient-to-br from-emerald-50 to-green-50 border border-emerald-200 p-4 rounded-xl hover:border-emerald-400 hover:shadow-emerald-100 hover:shadow-md transition-all cursor-pointer group shadow-sm relative overflow-hidden">
+  
+  {/* Subtle background glow */}
+  <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-200/30 rounded-full -translate-y-6 translate-x-6 pointer-events-none" />
+
+  {/* Verified badge */}
+  <div className="absolute top-3 right-3 flex items-center gap-1 bg-emerald-500 text-white text-[10px] font-black tracking-widest uppercase px-2 py-0.5 rounded-full">
+    <Check size={12} />
+    Verified
+  </div>
+
+  <div className="w-10 h-10 rounded-lg bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-200 group-hover:scale-110 transition-transform mb-3">
+    <ShieldCheck className="text-white" size={18} />
+  </div>
+
+  <h4 className="font-bold text-slate-800 text-[13px] tracking-tight">Security</h4>
+  <p className="text-[11px] text-emerald-500 font-semibold mt-0.5">SSL & WAF</p>
+</div>
+             {/* <ToolCard icon={<ShieldCheck className='text-green-500' size={18}/>} title="Security" desc="SSL & WAF" /> */}
              <ToolCard icon={<BarChart3 size={18}/>} title="Analytics" desc="Traffic Logs" />
              <ToolCard icon={<Mail size={18}/>} title="Emails" desc="Business Mail" />
              <ToolCard icon={<RotateCcw size={18}/>} title="Backups" desc="Daily Sync" />
           </div>
         </div>
 
-        {/* BOTTOM STATS STRIP */}
-        {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-           <CompactStat label="Avg. Response" value={`${siteData.avgResponseTime}ms`} />
-           <CompactStat label="Uptime 30d" value={`${siteData.uptime30d}%`} />
-           <CompactStat label="Visitors" value={String(siteData.visitors)} />
-           <CompactStat label="PHP Version" value={siteData.phpVersion} />
-        </div> */}
 
         <ConfigureModal 
           instanceId={id} 

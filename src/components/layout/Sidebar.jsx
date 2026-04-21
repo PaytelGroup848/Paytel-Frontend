@@ -13,16 +13,18 @@ import {
   Zap,
   LayoutDashboard,
   ShieldCheck,
-  Activity
+  Activity,
+  LogOut
 } from 'lucide-react';
 import { useSubscription } from '../../hooks/useBilling';
-import { useMe } from '../../hooks/useAuth';
+import { useLogout, useMe } from '../../hooks/useAuth';
 
 export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }) {
   const [hovered, setHovered] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
   const location = useLocation();
   const subscription = useSubscription();
+  const logout = useLogout();
 
   const isSubscriptionActive = subscription?.data?.status === "active";
   const isExpanded = hovered || mobileOpen;
@@ -192,39 +194,33 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
           })}
         </nav>
 
-        {/* Footer Status Section */}
-        <div className="p-4 mt-auto">
-          <div className={`
-            p-4 rounded-2xl bg-slate-900 text-white relative overflow-hidden transition-all
-            ${!isExpanded ? 'p-2.5 flex justify-center' : ''}
-          `}>
-            {isExpanded ? (
-              <div className="relative z-10 flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[9px] font-black tracking-widest text-slate-400 uppercase">System Integrity</span>
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-[10px] font-bold text-emerald-400">99.9%</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                    <ShieldCheck size={16} className="text-indigo-300" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[11px] font-bold">Secure Cloud</span>
-                    <span className="text-[9px] text-slate-400">All Nodes Active</span>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <Activity size={18} className="text-emerald-400 animate-pulse" />
-            )}
-            
-            {/* Glossy overlay effect */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-transparent pointer-events-none" />
-          </div>
-        </div>
+        {/* Footer Logout */}
+<div className="p-4 mt-auto">
+  <button
+    onClick={() => logout.mutate()}
+    disabled={logout.isPending}
+    className={`
+      w-full flex items-center gap-3 rounded-2xl bg-slate-900 text-white
+      hover:bg-red-600 transition-all duration-300 group
+      ${!isExpanded ? 'p-3 justify-center' : 'px-4 py-3.5'}
+    `}
+  >
+    <div className="shrink-0 w-8 h-8 rounded-xl bg-white/10 group-hover:bg-white/20 flex items-center justify-center transition-all">
+      <LogOut size={15} className="text-white" />
+    </div>
+
+    {isExpanded && (
+      <div className="flex flex-col items-start">
+        <span className="text-[13px] font-bold leading-none">
+          {logout.isPending ? 'Logging out...' : 'Logout'}
+        </span>
+        <span className="text-[9px] text-slate-400 group-hover:text-red-200 mt-0.5 transition-colors">
+          End your session
+        </span>
+      </div>
+    )}
+  </button>
+</div>
       </motion.aside>
     </>
   );

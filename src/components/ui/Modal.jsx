@@ -12,7 +12,7 @@ export default function Modal({ isOpen, onClose, title, children }) {
           exit={{ opacity: 0 }}
         >
           <div
-            className="absolute inset-0 bg-black/60"
+            className="absolute inset-0 bg-black/70"
             onClick={onClose}
             role="button"
             tabIndex={-1}
@@ -20,7 +20,7 @@ export default function Modal({ isOpen, onClose, title, children }) {
           />
 
           <motion.div
-            className="relative w-full max-w-lg bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6"
+            className="relative w-full max-w-3xl bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6"
             variants={scaleIn}
             initial="hidden"
             animate="visible"
