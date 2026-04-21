@@ -38,29 +38,15 @@ import AdminInstances from './pages/superadmin/Instances';
 import FilesPage from './pages/websites/wordpress/FilesPage';
 import DatabasePage from './pages/websites/wordpress/DatabasePage';
 import VPS_Page from './pages/vps/VPS_Page';
-import VPSPricing from './pages/vps/VPS_Page';
-import  VPSDashboard from './pages/vps/vps_paid';
-import VPSOverviewPage from './pages/vps/slidebar/vps_overview';
-import VPSDocumentation from './pages/vps/slidebar/support/docs';
+import VPSDashboard from './pages/vps/vps_paid';
+import VpsDashboard from "./pages/vps/slidebar/vpsOverview";
+import VPSDocumentation from './pages/vps/slidebar/docs';
 import BackupManager from './pages/vps/slidebar/BackupManager';
 import OSPanel from './pages/vps/slidebar/Os_panel';
-import {useMe} from "./hooks/useAuth";
+import VpsSettings from "./pages/vps/slidebar/setting";
+import { useMe } from "./hooks/useAuth";
 
-
-const PageShell = ({ title, subtitle }) => (
-  <motion.div
-    className="max-w-5xl mx-auto"
-    initial={pageTransition.initial}
-    animate={pageTransition.animate}
-    exit={pageTransition.exit}
-  >
-    <div className="bg-surface border border-white/10 rounded-2xl p-6">
-      <div className="text-xl font-semibold text-textPrimary">{title}</div>
-      {subtitle ? <div className="mt-2 text-sm text-textMuted">{subtitle}</div> : null}
-    </div>
-  </motion.div>
-);
-
+// Protected Route wrapper
 const ProtectedRoute = () => {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const authBootstrapped = useAuthStore((s) => s.authBootstrapped);
@@ -80,12 +66,14 @@ const ProtectedRoute = () => {
   return <Outlet />;
 };
 
+// Layout for auth pages
 const AuthRoutes = () => (
   <AuthLayout>
     <Outlet />
   </AuthLayout>
 );
 
+// Layout for main app (after login)
 const AppRoutes = () => (
   <DashboardLayout>
     <Outlet />
@@ -98,6 +86,7 @@ export default function App() {
   const clearAuth = useAuthStore((s) => s.clearAuth);
 
 
+  
   useEffect(() => {
     let alive = true;
 
@@ -124,24 +113,18 @@ export default function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate 
-      // to="/dashboard"
-      to="/home"
-      replace />} />
+      {/* Public redirect */}
+      <Route path="/" element={<Navigate to="/home" replace />} />
 
-      {/* Public (no auth) */}
+      {/* Auth routes (no layout needed) */}
       <Route element={<AuthRoutes />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
       </Route>
 
-      {/* Protected */}
-      <Route
-        // element={
-        // <ProtectedRoute />
-        // }
-       >
+      {/* Protected routes */}
+      {/* <Route element={<ProtectedRoute />}> */}
         <Route element={<AppRoutes />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/hosting" element={<ManageHosting />} />
@@ -154,37 +137,37 @@ export default function App() {
           <Route path="/billing/invoices" element={<Invoices />} />
           <Route path="/billing/payment-methods" element={<PaymentMethods />} />
           <Route path="/settings/*" element={<Settings />} />
-          <Route path="/plans" element={<Plans/>}/>
-          <Route path="/billing/history" element={<BillingHistory/>}/>
-          <Route path="websites/wordpress" element  = {<Wordpress_Page/>} />
-          <Route path="websites/wordpress/new" element={<WordpressNew />} />
-          <Route path="websites/wordpress/paid" element={<PaidWordpress />} />
-          <Route path ="wordpress/websiteDashboard" element={<WebsiteDashboard/>} />
-          <Route path ="wordpress/websitedashboard/:id" element={<WebsiteDashboard/>} />
-          <Route path ="wordpress/domainEnter" element={<DomainEnter/>} />
-          <Route path ="wordpress/:id/files" element={<FilesPage/>} />
-          <Route path ="wordpress/:id/database" element={<DatabasePage/>} />
-          <Route path ="websites/html" element  = {<HTML_Page/>} /> 
-          <Route path ="websites/php" element  = {<PHP_Page/>} />
-          <Route path ="websites/nodejs" element  = {<NodeJS_Page/>} />
-          <Route path ="vps" element  = {<VPSPricing/>} />  
-          <Route path ="vps/paid"  element ={< VPSDashboard/>} />  
-          <Route path ="vps/vps_overview"  element ={< VPSOverviewPage/>} />   
-          <Route path = "/vps/support/docs" element ={<VPSDocumentation/>} />
-          <Route path ="/vps/backupmgr" element = {<BackupManager/>} />  
-          <Route path = "/vps/OSPanel" element = {<OSPanel/>} />
-          <Route path ="/home" element ={<Home/>} />
-          {/* <Route path="websites/wordpress/:id" element={<WordPress_Page />} /> */}
+          <Route path="/plans" element={<Plans />} />
+          <Route path="/billing/history" element={<BillingHistory />} />
+          <Route path="/websites/wordpress" element={<Wordpress_Page />} />
+          <Route path="/websites/wordpress/new" element={<WordpressNew />} />
+          <Route path="/websites/wordpress/paid" element={<PaidWordpress />} />
+          <Route path="/wordpress/websiteDashboard" element={<WebsiteDashboard />} />
+          <Route path="/wordpress/websitedashboard/:id" element={<WebsiteDashboard />} />
+          <Route path="/wordpress/domainEnter" element={<DomainEnter />} />
+          <Route path="/wordpress/:id/files" element={<FilesPage />} />
+          <Route path="/websites/html" element={<HTML_Page />} />
+          <Route path="/websites/php" element={<PHP_Page />} />
+          <Route path="/websites/nodejs" element={<NodeJS_Page />} />
+          <Route path="/vps" element={<VPS_Page />} />
+          <Route path="/vps/paid" element={<VPSDashboard />} />
+          <Route path="/vps/vps_overview" element={<VpsDashboard />} />
+          <Route path="/vps/support/docs" element={<VPSDocumentation />} />
+          <Route path="/vps/backup" element={<BackupManager />} />
+          <Route path="/vps/OSPanel" element={<OSPanel />} />
+          <Route path = "/vps/setting" element ={<VpsSettings/>} />
+          <Route path="/home" element={<Home />} />
         </Route>
 
-       
-        <Route path="/superadmin" element={<SuperAdminLayout />}>
-          <Route path="servers" element={<Servers />} />
-          <Route path="instances" element={<AdminInstances />} />
-        </Route>
-        
-      </Route>
+        {/* Superadmin routes – only accessible if role is superadmin */}
+        {userRoles === "superadmin" && (
+          <Route path="/superadmin" element={<SuperAdminLayout />}>
+            <Route path="servers" element={<Servers />} />
+            <Route path="instances" element={<AdminInstances />} />
+          </Route>
+        )}
 
+      {/* Fallback */}
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );
