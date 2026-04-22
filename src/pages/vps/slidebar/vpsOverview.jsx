@@ -104,6 +104,7 @@ function Dashboard({ stats, chart }) {
                     <stop offset="0%" stopColor="#06B6D4" stopOpacity={0.22} />
                     <stop offset="100%" stopColor="#06B6D4" stopOpacity={0} />
                   </linearGradient>
+    
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                 <Tooltip contentStyle={{ borderRadius: 10, border: "none", boxShadow: "0 8px 24px rgba(0,0,0,0.08)", fontSize: 12 }} />
@@ -158,12 +159,13 @@ function Dashboard({ stats, chart }) {
   );
 }
 
+ 
 // ----- GLOBAL STYLES -----
 const GlobalStyle = () => (
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
     *{font-family:'Plus Jakarta Sans',sans-serif;box-sizing:border-box}
-    .mono{font-family:'JetBrains Mono',monospace}
+    .mono{font-family:'JetBrains Mono',monospace, letin words, monosspace, ui-monospace}
     .no-sb::-webkit-scrollbar{display:none}.no-sb{-ms-overflow-style:none;scrollbar-width:none}
     .glass{background:rgba(255,255,255,0.75);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
     @keyframes pulse2{0%,100%{opacity:1}50%{opacity:0.4}}

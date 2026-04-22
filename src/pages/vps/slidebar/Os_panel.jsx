@@ -137,7 +137,7 @@ const OSSelectionModal = ({ isOpen, onClose, onConfirm, currentOSId, loading }) 
           <motion.div 
             initial={{ scale: 0.95, opacity: 0, y: 30 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 30 }}
             className="bg-white dark:bg-slate-900 rounded-3xl max-w-4xl w-full relative z-10 shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"
-          >
+    >
             <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-gradient-to-r from-indigo-50 to-white dark:from-indigo-950/30 dark:to-slate-900">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-indigo-100 dark:bg-indigo-900/50 rounded-xl">
@@ -154,7 +154,7 @@ const OSSelectionModal = ({ isOpen, onClose, onConfirm, currentOSId, loading }) 
             </div>
 
             <div className="p-6 space-y-5 max-h-[60vh] overflow-y-auto custom-scrollbar">
-              {/* Warning Banner */}
+             
               <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl p-4 flex gap-3">
                 <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
                 <div className="text-sm text-amber-800 dark:text-amber-300">
@@ -331,7 +331,8 @@ const SimpleConfirmModal = ({ isOpen, onClose, onConfirm, title, message, loadin
                 disabled={loading}
               >
                 {loading ? <RefreshCcw className="animate-spin" size={14} /> : <CheckCircle2 size={14} />}
-                Confirm
+                Confirm{variant ==='danger' ? 'shutdown' : 'restart'} 
+
               </button>
             </div>
           </motion.div>
@@ -441,11 +442,11 @@ export default function OSPanel() {
               <div className="flex-grow">
                 <div className="flex items-center gap-3 mb-2 flex-wrap">
                   <h2 className="text-xl font-black text-slate-900 dark:text-white">{currentOS.label}</h2>
-                  <span className="bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-[10px] px-2 py-0.5 rounded-full font-black tracking-widest uppercase border border-emerald-200 dark:border-emerald-800">Active</span>
+                  <span className="bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-[10px] px-2 py-0.5  rounded-full font-black tracking-widest uppercase border border-emerald-200 dark:border-emerald-800">Active</span>
                   <span className="text-xs text-slate-400 font-mono">v{currentOS.version}</span>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                  {SERVER_DATA.specs.map((s, i) => (
+                  {SERVER_DATA.specs.map((s, i) => ( 
                     <div key={i} className="flex flex-col p-2 rounded-xl bg-slate-50 dark:bg-slate-800/50">
                       <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">{s.label}</span>
                       <span className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
