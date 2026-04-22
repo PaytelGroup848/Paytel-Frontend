@@ -173,3 +173,17 @@ export const useBackups = (id) =>
     enabled: !!id,
     staleTime: 0,
   });
+
+export const downloadBackupPdf = async (id, domain) => {
+  const response = await api.get(`/wordpress/${id}/backups/download-pdf`, {
+    responseType: 'blob',
+  });
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', `backup-report-${domain}-${new Date().toISOString().slice(0,10)}.pdf`);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+};
