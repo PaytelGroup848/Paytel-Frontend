@@ -157,3 +157,19 @@ export const useDbCredentials = (id, enabled) =>
     enabled: !!id && enabled,
     staleTime: 0,
   });
+
+export const useAnalytics = (id, page = 1) =>
+  useQuery({
+    queryKey: ['wordpress', 'analytics', id, page],
+    queryFn: () => api.get(`/wordpress/${id}/analytics?page=${page}`).then(r => r.data?.data),
+    enabled: !!id,
+    staleTime: 0,
+  });
+
+export const useBackups = (id) =>
+  useQuery({
+    queryKey: ['wordpress', 'backups', id],
+    queryFn: () => api.get(`/wordpress/${id}/backups`).then(r => r.data?.data),
+    enabled: !!id,
+    staleTime: 0,
+  });

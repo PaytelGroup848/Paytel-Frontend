@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import { useSearchParams, useParams } from 'react-router-dom';
-import { Folder, FileText, FolderPlus, FilePlus, Trash2, X } from 'lucide-react';
+import { useSearchParams, useParams, useNavigate } from 'react-router-dom';
+import { Folder, FileText, FolderPlus, FilePlus, Trash2, X, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import { useGetFiles, useCreateFolder, useCreateFile, useDeleteItem } from '../../../hooks/useWordPress';
@@ -9,6 +9,7 @@ export default function FilesPage() {
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const [pathState, setPathState] = useState(searchParams.get('path') || '');
+  const navigate = useNavigate();
   
   const [createFolderOpen, setCreateFolderOpen] = useState(false);
   const [createFileOpen, setCreateFileOpen] = useState(false);
@@ -57,6 +58,12 @@ export default function FilesPage() {
     <div className="min-h-screen bg-[#F8FAFC] p-6">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-4">
+           <button 
+                      onClick={() => navigate(`/wordpress/websitedashboard/${id}`)} 
+                      className="w-18 h-8 flex cursor-pointer border border-gray-200 items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 transition-colors" 
+                    > 
+                      <ArrowLeft size={18} className='mr-2'/>  Back
+                    </button> 
           <h1 className="text-2xl font-bold text-slate-900">File Manager</h1>
           <div className="flex items-center gap-2">
             <button

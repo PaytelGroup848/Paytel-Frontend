@@ -44,6 +44,8 @@ import VPSDocumentation from './pages/vps/slidebar/docs';
 import BackupManager from './pages/vps/slidebar/BackupManager';
 import OSPanel from './pages/vps/slidebar/Os_panel';
 import VpsSettings from "./pages/vps/slidebar/setting";
+import AnalyticsPage from './pages/wordpress/AnalyticsPage';
+import BackupsPage from './pages/wordpress/BackupsPage';
 import { useMe } from "./hooks/useAuth";
 
 // Protected Route wrapper
@@ -146,6 +148,8 @@ export default function App() {
           <Route path="/wordpress/websitedashboard/:id" element={<WebsiteDashboard />} />
           <Route path="/wordpress/domainEnter" element={<DomainEnter />} />
           <Route path="/wordpress/:id/files" element={<FilesPage />} />
+          <Route path="/wordpress/:id/analytics" element={<AnalyticsPage />} />
+          <Route path="/wordpress/:id/backups" element={<BackupsPage />} />
           <Route path ="wordpress/:id/database" element={<DatabasePage/>} />
           <Route path="/websites/html" element={<HTML_Page />} />
           <Route path="/websites/php" element={<PHP_Page />} />

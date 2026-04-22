@@ -170,7 +170,7 @@ export default function DatabasePage() {
         <div className="flex items-center gap-3"> 
           <button 
             onClick={() => navigate(`/wordpress/websitedashboard/${id}`)} 
-            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 transition-colors" 
+            className="w-8 h-8 cursor-pointer flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 transition-colors" 
           > 
             <ArrowLeft size={18} /> 
           </button> 
