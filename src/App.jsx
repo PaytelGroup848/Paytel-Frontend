@@ -146,6 +146,7 @@ export default function App() {
           <Route path="/wordpress/websitedashboard/:id" element={<WebsiteDashboard />} />
           <Route path="/wordpress/domainEnter" element={<DomainEnter />} />
           <Route path="/wordpress/:id/files" element={<FilesPage />} />
+          <Route path ="wordpress/:id/database" element={<DatabasePage/>} />
           <Route path="/websites/html" element={<HTML_Page />} />
           <Route path="/websites/php" element={<PHP_Page />} />
           <Route path="/websites/nodejs" element={<NodeJS_Page />} />
