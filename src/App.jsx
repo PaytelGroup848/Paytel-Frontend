@@ -159,13 +159,13 @@ export default function App() {
           <Route path="/home" element={<Home />} />
         </Route>
 
-        {/* Superadmin routes – only accessible if role is superadmin */}
-        {userRoles === "superadmin" && (
+   
+       
           <Route path="/superadmin" element={<SuperAdminLayout />}>
             <Route path="servers" element={<Servers />} />
             <Route path="instances" element={<AdminInstances />} />
           </Route>
-        )}
+        
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
