@@ -76,6 +76,57 @@ export const useGetFiles = (id, path = '') =>
     staleTime: 0,
   });
 
+export const useCreateFolder = (instanceId) => {
+  return useMutation({
+    mutationFn: ({ name, path }) =>
+      api.post(`/wordpress/${instanceId}/files/folder`, { name, path })
+        .then(r => r.data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['wordpress', 'files', instanceId, variables.path]
+      });
+      toast.success('Folder created successfully!');
+    },
+    onError: (err) => {
+      toast.error(err?.response?.data?.message || 'Failed to create folder');
+    },
+  });
+};
+
+export const useCreateFile = (instanceId) => {
+  return useMutation({
+    mutationFn: ({ name, path }) =>
+      api.post(`/wordpress/${instanceId}/files/create`, { name, path })
+        .then(r => r.data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['wordpress', 'files', instanceId, variables.path]
+      });
+      toast.success('File created successfully!');
+    },
+    onError: (err) => {
+      toast.error(err?.response?.data?.message || 'Failed to create file');
+    },
+  });
+};
+
+export const useDeleteItem = (instanceId) => {
+  return useMutation({
+    mutationFn: ({ name, path }) =>
+      api.delete(`/wordpress/${instanceId}/files/delete`, { data: { name, path } })
+        .then(r => r.data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['wordpress', 'files', instanceId, variables.path]
+      });
+      toast.success('Deleted successfully!');
+    },
+    onError: (err) => {
+      toast.error(err?.response?.data?.message || 'Failed to delete');
+    },
+  });
+};
+
 export const useDeleteInstance = () =>
   useMutation({
     mutationFn: async (id) => {
