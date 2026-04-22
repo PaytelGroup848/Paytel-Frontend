@@ -42,8 +42,11 @@ import VPSDashboard from './pages/vps/vps_paid';
 import VpsDashboard from "./pages/vps/slidebar/vpsOverview";
 import VPSDocumentation from './pages/vps/slidebar/docs';
 import BackupManager from './pages/vps/slidebar/BackupManager';
+import  Catalogs from "./pages/vps/slidebar/docker/catalogs";
 import OSPanel from './pages/vps/slidebar/Os_panel';
 import VpsSettings from "./pages/vps/slidebar/setting";
+import firewall from "./pages/vps/slidebar/security/firewall";
+import GetHelp from "./pages/vps/slidebar/support/GetHelp";
 import { useMe } from "./hooks/useAuth";
 
 // Protected Route wrapper
@@ -157,6 +160,9 @@ export default function App() {
           <Route path="/vps/backup" element={<BackupManager />} />
           <Route path="/vps/OSPanel" element={<OSPanel />} />
           <Route path = "/vps/setting" element ={<VpsSettings/>} />
+          <Route path = "/vps/help" element  = {<GetHelp/>} />
+          <Route path = "/vps/docker/catalogs" element={<Catalogs/>} />
+          <Route path = "/vps/security/firewall" element  = {<firewall/>} /> 
           <Route path="/home" element={<Home />} />
         </Route>
 

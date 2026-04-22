@@ -13,7 +13,8 @@ import BackupManager from "./BackupManager";
 import OSPanel from "./Os_panel";
 import DocumentationPage from "./docs";
 import VpsSettings from "./setting";
-
+import GetHelp  from "./support/GetHelp";
+import firewall from "./security/firewall";
 // Dashboard component (Overview content)
 function Dashboard({ stats, chart }) {
   return (
@@ -22,6 +23,7 @@ function Dashboard({ stats, chart }) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+       
         className="relative overflow-hidden rounded-2xl p-7 text-white"
         style={{ background: "linear-gradient(135deg,#3730A3 0%,#4F46E5 45%,#7C3AED 100%)" }}
       >
@@ -171,23 +173,23 @@ const GlobalStyle = () => (
 
 // ----- SIDEBAR (fixed) -----
 const MENU_ITEMS = [
-  { id: "overview", label: "Overview", icon: LayoutDashboard },   // ← Overview added as default
+  { id: "overview", label: "Overview", icon: LayoutDashboard },   
   { id: "docker", label: "Docker", icon: Container },
   { id: "backupmgr", label: "Backup Manager", icon: Archive },
   { id: "ospanel", label: "OS & Control Panels", icon: BarChart3 },
-  { id: "firewall", label: "Firewall", icon: Shield },
+  { id: "firewall", label: "firewall", icon: Shield },
   { id: "tutorials", label: "Tutorials", icon: BookOpen },
   { id: "blog", label: "Blog", icon: Rss },
-  { id: "help", label: "Get Help", icon: LifeBuoy },
+  { id: "GetHelp", label: "GetHelp", icon: LifeBuoy },
   { id: "setting", label: "Setting", icon: Key },
 ];
 
 function Sidebar({ active, setActive }) {
   const [openGroups, setOpenGroups] = useState({
     infrastructure: true,
-    security: false,
+    security: true,
     apps: true,
-    support: false,
+    support: true,
   });
 
   const toggleGroup = (group) => {
@@ -198,7 +200,7 @@ function Sidebar({ active, setActive }) {
     infrastructure: ["docker", "backupmgr", "ospanel", "setting"],
     security: ["firewall"],
     apps: ["tutorials", "blog"],
-    support: ["help"],
+    support: ["GetHelp"],
   };
 
   return (
@@ -389,6 +391,12 @@ export default function App() {
     case "setting":
       MainComponent = VpsSettings;
       break;
+      case "GetHelp":
+        MainComponent = GetHelp;
+        break;
+        case "firewall": firewall;
+        MainComponent =  firewall;
+        break;
     default:
       MainComponent = () => (
         <div className="flex flex-col items-center justify-center min-h-[72vh] text-center">
