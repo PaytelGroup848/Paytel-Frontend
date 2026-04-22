@@ -407,9 +407,9 @@ export default function WebsiteDashboard() {
   <p className="text-[11px] text-emerald-500 font-semibold mt-0.5">SSL & WAF</p>
 </div>
              {/* <ToolCard icon={<ShieldCheck className='text-green-500' size={18}/>} title="Security" desc="SSL & WAF" /> */}
-             <ToolCard icon={<BarChart3 size={18}/>} title="Analytics" desc="Traffic Logs" />
+             <ToolCard onClick={() => navigate(`/wordpress/${siteData.id}/analytics`)} icon={<BarChart3 size={18}/>} title="Analytics" desc="Traffic Logs" />
              <ToolCard icon={<Mail size={18}/>} title="Emails" desc="Business Mail" />
-             <ToolCard icon={<RotateCcw size={18}/>} title="Backups" desc="Daily Sync" />
+             <ToolCard onClick={() => navigate(`/wordpress/${siteData.id}/backups`)} icon={<RotateCcw size={18}/>} title="Backups" desc="Daily Sync" />
           </div>
         </div>
 

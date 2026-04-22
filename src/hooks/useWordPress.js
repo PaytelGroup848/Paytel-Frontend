@@ -76,6 +76,57 @@ export const useGetFiles = (id, path = '') =>
     staleTime: 0,
   });
 
+export const useCreateFolder = (instanceId) => {
+  return useMutation({
+    mutationFn: ({ name, path }) =>
+      api.post(`/wordpress/${instanceId}/files/folder`, { name, path })
+        .then(r => r.data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['wordpress', 'files', instanceId, variables.path]
+      });
+      toast.success('Folder created successfully!');
+    },
+    onError: (err) => {
+      toast.error(err?.response?.data?.message || 'Failed to create folder');
+    },
+  });
+};
+
+export const useCreateFile = (instanceId) => {
+  return useMutation({
+    mutationFn: ({ name, path }) =>
+      api.post(`/wordpress/${instanceId}/files/create`, { name, path })
+        .then(r => r.data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['wordpress', 'files', instanceId, variables.path]
+      });
+      toast.success('File created successfully!');
+    },
+    onError: (err) => {
+      toast.error(err?.response?.data?.message || 'Failed to create file');
+    },
+  });
+};
+
+export const useDeleteItem = (instanceId) => {
+  return useMutation({
+    mutationFn: ({ name, path }) =>
+      api.delete(`/wordpress/${instanceId}/files/delete`, { data: { name, path } })
+        .then(r => r.data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['wordpress', 'files', instanceId, variables.path]
+      });
+      toast.success('Deleted successfully!');
+    },
+    onError: (err) => {
+      toast.error(err?.response?.data?.message || 'Failed to delete');
+    },
+  });
+};
+
 export const useDeleteInstance = () =>
   useMutation({
     mutationFn: async (id) => {
@@ -106,3 +157,33 @@ export const useDbCredentials = (id, enabled) =>
     enabled: !!id && enabled,
     staleTime: 0,
   });
+
+export const useAnalytics = (id, page = 1) =>
+  useQuery({
+    queryKey: ['wordpress', 'analytics', id, page],
+    queryFn: () => api.get(`/wordpress/${id}/analytics?page=${page}`).then(r => r.data?.data),
+    enabled: !!id,
+    staleTime: 0,
+  });
+
+export const useBackups = (id) =>
+  useQuery({
+    queryKey: ['wordpress', 'backups', id],
+    queryFn: () => api.get(`/wordpress/${id}/backups`).then(r => r.data?.data),
+    enabled: !!id,
+    staleTime: 0,
+  });
+
+export const downloadBackupPdf = async (id, domain) => {
+  const response = await api.get(`/wordpress/${id}/backups/download-pdf`, {
+    responseType: 'blob',
+  });
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', `backup-report-${domain}-${new Date().toISOString().slice(0,10)}.pdf`);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+};
