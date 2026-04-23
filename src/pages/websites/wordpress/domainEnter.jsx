@@ -11,6 +11,10 @@ export default function DomainEnter() {
   const createInstance = useCreateInstance();
   const verifyDns = useVerifyDNS();
 
+  const dnsData = verifyDns?.data;
+
+  console.log("this is my verifydns", verifyDns?.data)
+
   const [domain, setDomain] = useState('');
   const [createdInstanceId, setCreatedInstanceId] = useState('');
   const [serverIp, setServerIp] = useState('');
@@ -122,6 +126,36 @@ export default function DomainEnter() {
                     <div className="px-3 py-2 border-t border-indigo-100 break-all">{serverIp || '-'}</div>
                   </div>
                 </div>
+{dnsData?.verified === false && (
+  <div className="mt-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3">
+    <div className="flex items-start gap-3">
+      <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+        <span className="text-red-500 text-sm font-bold">✕</span>
+      </div>
+      <div className="flex-1">
+        <p className="text-red-700 font-bold text-xs uppercase tracking-wide mb-1">
+          DNS Mismatch Detected
+        </p>
+        <p className="text-red-600 text-xs leading-relaxed mb-2">
+          Your domain is currently pointing to a different server. Please update your DNS A record.
+        </p>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="bg-red-100 rounded-lg px-3 py-2">
+            <p className="text-[10px] font-bold uppercase tracking-wide text-red-400 mb-0.5">Current IP</p>
+            <p className="text-red-700 font-mono font-bold text-xs">{dnsData?.currentIp || 'N/A'}</p>
+          </div>
+          <div className="bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
+            <p className="text-[10px] font-bold uppercase tracking-wide text-emerald-500 mb-0.5">Required IP</p>
+            <p className="text-emerald-700 font-mono font-bold text-xs">{dnsData?.expectedIp || 'N/A'}</p>
+          </div>
+        </div>
+        <p className="text-red-400 text-[10px] mt-2 italic">
+          DNS changes can take up to 24 hours to propagate. Try verifying again in a few minutes.
+        </p>
+      </div>
+    </div>
+  </div>
+)}
                 <div className="mt-3">
                   <button
                     onClick={runVerify}
