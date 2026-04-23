@@ -11,7 +11,7 @@ import { useLogin } from '../../hooks/useAuth';
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from || '/dashboard';
+  const from = location.state?.from || '/home';
 
   const login = useLogin();
 

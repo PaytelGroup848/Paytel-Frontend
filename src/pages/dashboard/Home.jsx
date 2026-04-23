@@ -5,10 +5,13 @@ import {
   Award, Clock, Cloud, Code, Terminal
 } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { useAuthStore } from '../../store/authStore';
+
 
 const Dashboard = () => {
+   const { user : userInfo } = useAuthStore();
   const [user, setUser] = useState({
-    name: "Aryan",
+    name: userInfo?.name || "N/A",
     activeServices: [
       { id: 1, type: 'WordPress', name: 'Portfolio Site', status: 'Active', ip: '192.168.1.1', expiry: 'Oct 2026', color: 'from-blue-500 to-blue-600' },
       { id: 2, type: 'Domain', name: 'cloudedata.io', status: 'Active', ip: '-', expiry: 'Jan 2027', color: 'from-purple-500 to-purple-600' },
@@ -528,7 +531,7 @@ const Dashboard = () => {
           </motion.section>
 
           {/* Activity Feed - with scroll animation */}
-          <motion.div 
+          {/* <motion.div 
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -555,7 +558,7 @@ const Dashboard = () => {
                 </motion.div>
               ))}
             </div>
-          </motion.div>
+          </motion.div> */}
 
         </main>
 
