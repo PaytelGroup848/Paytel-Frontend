@@ -92,9 +92,7 @@ export default function Wordpress_Page() {
                         Start Your Journey
                       </motion.button>
                     </Link>
-                    <motion.button whileHover={{ y: -2 }} className="bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-black uppercase tracking-widest px-10 py-5 rounded-2xl hover:bg-white/20 transition-all">
-                      Explore Features
-                    </motion.button>
+                    
                   </div>
                 </div>
 
