@@ -154,12 +154,8 @@ export default function PaidWordpress() {
                   transition={{ delay: 0.2 }}
                   className="flex items-center gap-2 text-indigo-600 font-bold tracking-tight text-[10px] uppercase"
                 >
-                  <div className="p-1.5 bg-indigo-50/80 backdrop-blur-sm rounded-xl border border-indigo-100/50 shadow-sm">
-                    <Cpu size={14} />
-                  </div>
-                  <span className="bg-indigo-50/60 backdrop-blur-sm px-3 py-1 rounded-full text-[8px] font-black border border-indigo-100/30">
-                    <Sparkles size={10} className="inline mr-1" /> Cluster: US‑EAST‑1
-                  </span>
+                  
+                  
                 </motion.div>
                 <h1 className="text-6xl font-black text-slate-900 tracking-tight flex items-center gap-2">
                   Cloude
@@ -200,7 +196,7 @@ export default function PaidWordpress() {
                 <motion.button
                   whileTap={{ scale: 0.96 }}
                   onClick={() => navigate("/wordpress/domainEnter")}
-                  className="bg-gradient-to-br from-slate-900 to-slate-800 text-white px-6 py-3 rounded-2xl transition-all text-xs font-bold flex items-center gap-2 ml-1 shadow-lg shadow-indigo-500/10 border border-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+                  className="bg-gradient-to-br cursor-pointer from-slate-900 to-slate-800 text-white px-6 py-3 rounded-2xl transition-all text-xs font-bold flex items-center gap-2 ml-1 shadow-lg shadow-indigo-500/10 border border-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
                 >
                   <Plus size={16} strokeWidth={3} />
                   New Instance
@@ -365,6 +361,16 @@ function WebsiteRow({ site }) {
       </div>
 
       <div className="flex items-center gap-3 mt-5 lg:mt-0 ml-20 lg:ml-0">
+      <motion.button
+       
+          className={`px-8 py-3 cursor-pointer rounded-2xl text-xs font-black uppercase tracking-widest transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-green-400 
+            bg-gradient-to-r from-slate-50 to-white text-slate-800 border border-slate-200/80 hover:border-green-200 hover:bg-green-50/50 hover:text-green-700 shadow-sm hover:shadow-md
+            `}
+         
+        >
+           <span className="flex items-center gap-1">C-Panel →</span>
+         
+        </motion.button>
         <motion.button
           whileHover={isActive ? { scale: 1.02 } : {}}
           whileTap={isActive ? { scale: 0.97 } : {}}
@@ -373,7 +379,7 @@ function WebsiteRow({ site }) {
           }
           className={`px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
             isActive
-              ? "bg-gradient-to-r from-slate-50 to-white text-slate-800 border border-slate-200/80 hover:border-indigo-200 hover:bg-indigo-50/50 hover:text-indigo-700 shadow-sm hover:shadow-md"
+              ? "bg-gradient-to-r cursor-pointer from-slate-50 to-white text-slate-800 border border-slate-200/80 hover:border-indigo-200 hover:bg-indigo-50/50 hover:text-indigo-700 shadow-sm hover:shadow-md"
               : "bg-slate-100/80 text-slate-300 cursor-not-allowed border border-slate-100/80"
           }`}
           disabled={!isActive}
