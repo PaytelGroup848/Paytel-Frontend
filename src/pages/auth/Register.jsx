@@ -9,9 +9,7 @@ import Button from "../../components/ui/Button";
 import { slideUp } from "../../animations/variants";
 import { useRegister } from "../../hooks/useAuth";
 
-// ------------------------------
-// 🌥️ Left Side Banner
-// ------------------------------
+
 const RegisterBanner = () => {
   return (
     <div className="relative h-full w-full bg-gradient-to-br from-blue-900 to-indigo-950 overflow-hidden">

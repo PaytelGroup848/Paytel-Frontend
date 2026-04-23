@@ -81,7 +81,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 p-6 md:p-8">
+    <div className="min-h-screen   rounded-2xl w-full flex items-center justify-center bg-slate-50 p-6 md:p-8">
       <motion.div
         variants={slideUp}
         initial="hidden"
@@ -145,7 +145,7 @@ export default function Login() {
               </Button>
 
               <p className="text-center text-sm text-slate-500 mt-10">
-                Create an account? <Link to="/register" className="text-indigo-600 font-bold hover:underline">Create One</Link>
+                Create an account? <Link to="/register" className="text-indigo-600 font-bold hover:underline">Create One →</Link>
               </p>
             </form>
           </div>
