@@ -95,9 +95,7 @@ export default function Login() {
         <div className="flex-1 h-full bg-white p-10 md:p-14 lg:p-20 flex flex-col justify-center border-l border-slate-100">
           <div className="max-w-[380px] mx-auto w-full">
             <header className="mb-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-[11px] font-bold uppercase tracking-wider mb-4 border border-indigo-100 shadow-inner">
-                <Sparkles size={13} className="animate-pulse" /> Platform Access
-              </div>
+             
               <h1 className="text-3xl font-extrabold text-slate-950 tracking-tighter">Sign In to Continue</h1>
               <p className="text-slate-500 text-base mt-2">Access your deployments and settings.</p>
             </header>
@@ -141,28 +139,13 @@ export default function Login() {
               >
                 {!login.isPending && (
                   <>
-                    Sign In to Dashboard <ArrowRight size={17} />
+                    Sign In →
                   </>
                 )}
               </Button>
 
-              <div className="relative pt-6 pb-4">
-                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
-                <div className="relative flex justify-center text-[10px] font-bold uppercase text-slate-400">
-                  <span className="bg-white px-3 tracking-widest">Or login with</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                {['Google', 'GitHub'].map((provider) => (
-                  <button key={provider} type="button" className="flex items-center justify-center gap-3 py-3 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition shadow-sm">
-                    {provider}
-                  </button>
-                ))}
-              </div>
-
-              <p className="text-center text-xs text-slate-500 mt-10">
-                Need an account? <Link to="/register" className="text-indigo-600 font-bold hover:underline">Create One</Link>
+              <p className="text-center text-sm text-slate-500 mt-10">
+                Create an account? <Link to="/register" className="text-indigo-600 font-bold hover:underline">Create One</Link>
               </p>
             </form>
           </div>
