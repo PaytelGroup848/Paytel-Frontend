@@ -151,7 +151,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 p-4 overflow-auto">
+    <div className="min-h-screen rounded-2xl flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 p-4 overflow-auto">
       <motion.div
         variants={slideUp}
         initial="hidden"
@@ -177,11 +177,7 @@ export default function Register() {
                 transition={{ delay: 0.1 }}
                 className="mb-5"
               >
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-50 rounded-full text-[10px] font-bold uppercase tracking-wider text-indigo-600 border border-indigo-100 mb-2.5">
-                  <Sparkles size={10} />
-                  Get Started Free
-                  <Sparkles size={10} />
-                </div>
+             
                 <h2 className="text-2xl font-bold text-slate-900">
                   Create an <span className="text-indigo-600">account</span>
                 </h2>
@@ -257,13 +253,6 @@ export default function Register() {
                   />
                 </div>
 
-                {/* Terms hint */}
-                <p className="text-[10px] text-slate-400 leading-relaxed">
-                  By creating an account you agree to our{" "}
-                  <span className="text-indigo-500 cursor-pointer hover:underline">Terms of Service</span>{" "}
-                  and{" "}
-                  <span className="text-indigo-500 cursor-pointer hover:underline">Privacy Policy</span>.
-                </p>
 
                 {/* Submit */}
                 <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
@@ -274,8 +263,8 @@ export default function Register() {
                   >
                     {!register.isPending && (
                       <>
-                        Create Account
-                        <ArrowRight size={13} />
+                        Create Account →
+                        
                       </>
                     )}
                     {register.isPending && "Creating account..."}
@@ -297,7 +286,7 @@ export default function Register() {
                     to="/login"
                     className="font-semibold text-indigo-600 hover:text-indigo-700 transition hover:underline"
                   >
-                    Sign in instead
+                    Sign in instead →
                   </Link>
                 </p>
               </form>
@@ -305,10 +294,7 @@ export default function Register() {
           </div>
         </div>
 
-        {/* Footer */}
-        <p className="text-center text-[10px] text-slate-400 mt-4 uppercase tracking-widest">
-          CloudData • Secure Cloud Platform
-        </p>
+    
       </motion.div>
     </div>
   );
