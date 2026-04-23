@@ -65,7 +65,7 @@ export default function BackupsPage() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button
+          {/* <button
             onClick={handleDownloadPdf}
             disabled={downloading || isLoading || !data}
             className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-medium transition-all disabled:opacity-50"
@@ -81,7 +81,7 @@ export default function BackupsPage() {
                 Download Report
               </>
             )}
-          </button>
+          </button> */}
           <button onClick={() => refetch()} disabled={isFetching}
             className="flex items-center gap-1.5 px-3 py-2 border border-slate-200 rounded-xl text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-50">
             <RefreshCw size={14} className={isFetching ? 'animate-spin' : ''} />
