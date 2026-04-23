@@ -282,14 +282,7 @@ export default function PaidWordpress() {
               )}
             </AnimatePresence>
 
-            {/* AI‑generated illustration footnote */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.6 }}
-              className="text-center text-[10px] text-slate-400 mt-8 uppercase tracking-widest"
-            >
-              AI‑enhanced dashboard • real‑time monitoring
-            </motion.p>
+           
           </div>
         </main>
       </div>
