@@ -37,7 +37,7 @@ import Servers from './pages/superadmin/Servers';
 import AdminInstances from './pages/superadmin/Instances';
 import FilesPage from './pages/websites/wordpress/FilesPage';
 import DatabasePage from './pages/websites/wordpress/DatabasePage';
-import VPS_Page from './pages/vps/VPS_Page';
+import VPS_Page from './pages/vps/VpsPage';
 import VPSDashboard from './pages/vps/vps_paid';
 import VpsDashboard from "./pages/vps/slidebar/vpsOverview";
 import VPSDocumentation from './pages/vps/slidebar/docs';
@@ -157,7 +157,7 @@ export default function App() {
           <Route path="/websites/html" element={<HTML_Page />} />
           <Route path="/websites/php" element={<PHP_Page />} />
           <Route path="/websites/nodejs" element={<NodeJS_Page />} />
-          <Route path="/vps" element={<VPS_Page />} />
+          <Route path="/vps" element={<VPS_Page/>} />
           <Route path="/vps/paid" element={<VPSDashboard />} />
           <Route path="/vps/vps_overview" element={<VpsDashboard />} />
           <Route path="/vps/support/docs" element={<VPSDocumentation />} />

@@ -93,6 +93,7 @@ export default function Wordpress_Page() {
               desc="Say goodbye to slow HDDs. We use pure NVMe for maximum speed."
             />
           </div>
+          
 
           {/* NEW SECTION: HOW TO GET STARTED */}
           <section className="bg-white rounded-[2.5rem] p-10 border border-slate-200 shadow-sm mb-12">
