@@ -137,7 +137,7 @@ export default function PaidWordpress() {
       {/* 🔥 DYNAMIC BANNER BASED ON WEBSITES */}
       <WebsiteBasedBanner websites={websites} />
 
-      <div className="flex pt-24 relative z-10">
+      <div className="flex relative z-10">
         <main className="flex-1 p-6 sm:p-10 lg:p-16">
           <div className="max-w-6xl mx-auto">
             {/* ── HEADER with Motion & Glass ── */}
@@ -243,7 +243,6 @@ export default function PaidWordpress() {
                   { label: "All", value: "" },
                   { label: "Active", value: "active" },
                   { label: "Pending", value: "pending_dns" },
-                  { label: "Provisioning", value: "provisioning" },
                   { label: "Failed", value: "failed" },
                 ].map((tab) => (
                   <motion.button
@@ -304,6 +303,7 @@ export default function PaidWordpress() {
 
 function WebsiteRow({ site }) {
   const isActive = site.status === "active";
+
   const navigate = useNavigate();
 
   return (
@@ -381,7 +381,7 @@ function WebsiteRow({ site }) {
           {isActive ? (
             <span className="flex items-center gap-1">Manage →</span>
           ) : (
-            "Provisioning..."
+            "pending..."
           )}
         </motion.button>
       </div>
