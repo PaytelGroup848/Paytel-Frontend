@@ -1,13 +1,62 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail, Lock, User, Phone  } from "lucide-react";
+import { Mail, Lock, User, Phone, Sparkles, ArrowRight, Cloud, Shield, Zap } from "lucide-react";
 import toast from "react-hot-toast";
 
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
 import { slideUp } from "../../animations/variants";
 import { useRegister } from "../../hooks/useAuth";
+
+// ------------------------------
+// 🌥️ Left Side Banner
+// ------------------------------
+const RegisterBanner = () => {
+  return (
+    <div className="relative h-full w-full bg-gradient-to-br from-blue-900 to-indigo-950 overflow-hidden">
+      <img
+        src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&auto=format&fit=crop"
+        alt="Cloud Platform"
+        className="absolute inset-0 h-full w-full object-cover opacity-60"
+      />
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 to-indigo-900/50" />
+      <div className="relative z-10 flex h-full flex-col justify-between p-5 text-white">
+        <div className="flex items-center gap-2">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/15 backdrop-blur-md">
+            <Cloud className="h-3.5 w-3.5" />
+          </div>
+          <span className="text-sm font-bold">CloudData</span>
+        </div>
+        <div className="space-y-1.5">
+          <h2 className="text-lg font-bold leading-tight">
+            Join the future of
+            <br />
+            <span className="text-blue-200">cloud infrastructure</span>
+          </h2>
+          <p className="text-[11px] text-white/80 max-w-xs">
+            Get started with enterprise-grade tools, global scalability, and 24/7 support.
+          </p>
+          <div className="flex flex-wrap gap-1 pt-2">
+            {[
+              { icon: Shield, label: "Secure by default" },
+              { icon: Zap, label: "Blazing fast" },
+              { icon: Cloud, label: "99.99% uptime" },
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                className="flex items-center gap-1 rounded-full bg-white/10 backdrop-blur-md px-2 py-0.5 text-[10px] font-medium"
+              >
+                <item.icon className="h-2.5 w-2.5 text-blue-300" />
+                <span>{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function Register() {
   const navigate = useNavigate();
@@ -39,8 +88,7 @@ export default function Register() {
     if (!form.phone) nextErrors.phone = "Phone number is required";
     if (!form.password) nextErrors.password = "Password is required";
 
-
-     if (form.phone && form.phone.length < 10)
+    if (form.phone && form.phone.length < 10)
       nextErrors.phone = "Phone number must be at least 10 digit";
 
     if (form.password && form.password.length < 8)
@@ -67,142 +115,152 @@ export default function Register() {
   };
 
   return (
-    <motion.div
-      variants={slideUp}
-      initial="hidden"
-      animate="visible"
-      className="w-full"
-    >
-      {/* Header Section */}
-      <div className="text-center mb-8">
-        {/* <h2 className="text-3xl font-bold tracking-tight text-gray-800">
-          Create your account
-        </h2> */}
-
-        <p className="text-sm text-gray-500 mt-2">
-          Join CloudData and start managing your cloud effortlessly.
-        </p>
-      </div>
-
-      {/* Form */}
-      <form
-        onSubmit={onSubmit}
-        className="space-y-5"
+    <div className="h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 p-2 overflow-hidden">
+      <motion.div
+        variants={slideUp}
+        initial="hidden"
+        animate="visible"
+        className="w-full max-w-5xl"
       >
-        {/* Name */}
-        <Input
-          label="Full Name"
-          name="name"
-          placeholder="John Doe"
-          value={form.name}
-          onChange={onChange}
-          error={errors.name}
-          icon={User}
-          autoComplete="name"
-        />
+        <div className="grid grid-cols-1 lg:grid-cols-2 bg-white rounded-2xl shadow-2xl overflow-hidden">
+          {/* Left Side - Banner */}
+          <div className="hidden lg:block">
+            <RegisterBanner />
+          </div>
 
-        {/* Email */}
-        <Input
-          label="Email Address"
-          name="email"
-          type="email"
-          placeholder="you@example.com"
-          value={form.email}
-          onChange={onChange}
-          error={errors.email}
-          icon={Mail}
-          autoComplete="email"
-        />
+          {/* Right Side - Registration Form (no scroll) */}
+          <div className="flex flex-col justify-center p-5 md:p-6">
+            <div className="w-full max-w-md mx-auto">
+              {/* Header */}
+              <motion.div
+                initial={{ y: -10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.1 }}
+                className="mb-3"
+              >
+                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-indigo-50 rounded-full text-[9px] font-bold uppercase tracking-wider text-indigo-600 border border-indigo-100 mb-2">
+                  <Sparkles size={10} />
+                  Get Started
+                  <Sparkles size={10} />
+                </div>
+                <h2 className="text-xl font-bold text-slate-900">
+                  Create an <span className="text-indigo-600">account</span>
+                </h2>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  Join CloudData and start managing your cloud effortlessly.
+                </p>
+              </motion.div>
 
-         <Input
-          label="Phone Number"
-          name="phone"
-          type="tel"
-          placeholder="9998887776"
-          value={form.phone}
-          onChange={onChange}
-          error={errors.phone}
-          icon={Phone}
-          autoComplete="phone"
-        />
+              {/* Form */}
+              <form onSubmit={onSubmit} className="space-y-2.5">
+                <Input
+                  label="Full Name"
+                  name="name"
+                  placeholder="John Doe"
+                  value={form.name}
+                  onChange={onChange}
+                  error={errors.name}
+                  icon={User}
+                  autoComplete="name"
+                />
 
-        {/* Password */}
-        <Input
-          label="Password"
-          name="password"
-          type="password"
-          placeholder="••••••••"
-          value={form.password}
-          onChange={onChange}
-          error={errors.password}
-          icon={Lock}
-          autoComplete="new-password"
-        />
+                <Input
+                  label="Email Address"
+                  name="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={form.email}
+                  onChange={onChange}
+                  error={errors.email}
+                  icon={Mail}
+                  autoComplete="email"
+                />
 
-        {/* Confirm Password */}
-        <Input
-          label="Confirm Password"
-          name="confirmPassword"
-          type="password"
-          placeholder="••••••••"
-          value={form.confirmPassword}
-          onChange={onChange}
-          error={errors.confirmPassword}
-          icon={Lock}
-          autoComplete="new-password"
-        />
+                <Input
+                  label="Phone Number"
+                  name="phone"
+                  type="tel"
+                  placeholder="9998887776"
+                  value={form.phone}
+                  onChange={onChange}
+                  error={errors.phone}
+                  icon={Phone}
+                  autoComplete="phone"
+                />
 
-        {/* Submit Button */}
-        <motion.div
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <Button
-            type="submit"
-            loading={register.isPending}
-            className="
-              w-full
-              py-3
-              rounded-xl
-              font-semibold
-              bg-gradient-to-r
-              from-blue-600
-              to-indigo-600
-              hover:from-blue-700
-              hover:to-indigo-700
-              text-white
-              shadow-md
-              transition
-            "
-          >
-            Create Account
-          </Button>
-        </motion.div>
+                <Input
+                  label="Password"
+                  name="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={form.password}
+                  onChange={onChange}
+                  error={errors.password}
+                  icon={Lock}
+                  autoComplete="new-password"
+                />
 
-        {/* Divider */}
-        <div className="flex items-center gap-3 my-2">
-          <div className="flex-1 h-px bg-gray-200" />
-          <span className="text-xs text-gray-400">OR</span>
-          <div className="flex-1 h-px bg-gray-200" />
+                <Input
+                  label="Confirm Password"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="••••••••"
+                  value={form.confirmPassword}
+                  onChange={onChange}
+                  error={errors.confirmPassword}
+                  icon={Lock}
+                  autoComplete="new-password"
+                />
+
+                <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
+                  <Button
+                    type="submit"
+                    loading={register.isPending}
+                    className="
+                      w-full py-2 rounded-xl font-semibold text-sm
+                      bg-gradient-to-r from-indigo-600 to-blue-600
+                      hover:from-indigo-700 hover:to-blue-700
+                      text-white shadow-md shadow-indigo-200
+                      transition-all duration-200
+                      flex items-center justify-center gap-2
+                    "
+                  >
+                    {!register.isPending && (
+                      <>
+                        Create Account
+                        <ArrowRight size={13} />
+                      </>
+                    )}
+                    {register.isPending && "Creating account..."}
+                  </Button>
+                </motion.div>
+
+                <div className="relative my-2">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-slate-200" />
+                  </div>
+                  <div className="relative flex justify-center text-[10px]">
+                    <span className="bg-white px-3 text-slate-500">Already have an account?</span>
+                  </div>
+                </div>
+
+                <div className="text-xs text-center text-slate-600">
+                  <Link
+                    to="/login"
+                    className="font-medium text-indigo-600 hover:text-indigo-700 transition hover:underline"
+                  >
+                    Sign in instead
+                  </Link>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
 
-        {/* Login Link */}
-        <div className="text-sm text-center text-gray-600">
-          Already have an account?{" "}
-          <Link
-            to="/login"
-            className="
-              font-medium
-              text-blue-600
-              hover:text-indigo-600
-              transition
-              hover:underline
-            "
-          >
-            Login
-          </Link>
-        </div>
-      </form>
-    </motion.div>
+        <p className="text-center text-[9px] text-slate-400 mt-2 uppercase tracking-widest">
+          CloudData • Secure Cloud Platform
+        </p>
+      </motion.div>
+    </div>
   );
 }
