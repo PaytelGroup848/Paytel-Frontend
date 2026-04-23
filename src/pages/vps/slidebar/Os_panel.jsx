@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Cpu, Database, HardDrive, Zap, Bell, ShieldCheck, 
-  Terminal, Activity, Power, RefreshCcw, LayoutGrid, 
+import {
+  Cpu, Database, HardDrive, Zap, Bell, ShieldCheck,
+  Terminal, Activity, Power, RefreshCcw, LayoutGrid,
   Globe, AlertCircle, Trash2, Save, ChevronRight,
   Monitor, Info, Clock, Box, Search, CheckCircle2,
   AlertTriangle, X, Server, Cloud, Apple, Laptop,
@@ -90,9 +90,9 @@ const HealthProgress = ({ label, value, color }) => {
         <span className="text-slate-900 dark:text-slate-300">{value}%</span>
       </div>
       <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-        <motion.div 
+        <motion.div
           initial={{ width: 0 }} animate={{ width: `${value}%` }}
-          className={`h-full ${color} rounded-full shadow-sm`} 
+          className={`h-full ${color} rounded-full shadow-sm`}
           transition={{ duration: 0.6, ease: "easeOut" }}
         />
       </div>
@@ -117,8 +117,8 @@ const OSSelectionModal = ({ isOpen, onClose, onConfirm, currentOSId, loading }) 
 
   const categories = ['all', 'Linux', 'Windows', 'Security'];
   const filteredOS = OS_CATALOG.filter(os => {
-    const matchesSearch = os.label.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          os.version.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = os.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      os.version.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = categoryFilter === 'all' || os.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
@@ -129,12 +129,12 @@ const OSSelectionModal = ({ isOpen, onClose, onConfirm, currentOSId, loading }) 
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-slate-900/70 backdrop-blur-sm" 
+            className="absolute inset-0 bg-slate-900/70 backdrop-blur-sm"
           />
-          <motion.div 
+          <motion.div
             initial={{ scale: 0.95, opacity: 0, y: 30 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 30 }}
             className="bg-white dark:bg-slate-900 rounded-3xl max-w-4xl w-full relative z-10 shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"
           >
@@ -154,7 +154,7 @@ const OSSelectionModal = ({ isOpen, onClose, onConfirm, currentOSId, loading }) 
             </div>
 
             <div className="p-6 space-y-5 max-h-[60vh] overflow-y-auto custom-scrollbar">
-              {/* Warning Banner */}
+
               <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl p-4 flex gap-3">
                 <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
                 <div className="text-sm text-amber-800 dark:text-amber-300">
@@ -180,11 +180,10 @@ const OSSelectionModal = ({ isOpen, onClose, onConfirm, currentOSId, loading }) 
                     <button
                       key={cat}
                       onClick={() => setCategoryFilter(cat)}
-                      className={`px-4 py-2 rounded-xl text-sm font-medium transition-all capitalize ${
-                        categoryFilter === cat 
-                          ? 'bg-indigo-600 text-white shadow-md' 
+                      className={`px-4 py-2 rounded-xl text-sm font-medium transition-all capitalize ${categoryFilter === cat
+                          ? 'bg-indigo-600 text-white shadow-md'
                           : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-                      }`}
+                        }`}
                     >
                       {cat}
                     </button>
@@ -199,11 +198,10 @@ const OSSelectionModal = ({ isOpen, onClose, onConfirm, currentOSId, loading }) 
                     key={os.id}
                     whileHover={{ scale: 1.01 }}
                     onClick={() => setSelectedOSId(os.id)}
-                    className={`cursor-pointer rounded-xl border-2 p-4 transition-all ${
-                      selectedOSId === os.id 
-                        ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-950/30 shadow-md' 
+                    className={`cursor-pointer rounded-xl border-2 p-4 transition-all ${selectedOSId === os.id
+                        ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-950/30 shadow-md'
                         : 'border-slate-200 dark:border-slate-700 hover:border-indigo-300 bg-white dark:bg-slate-900'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-start gap-3">
                       <div className="text-3xl">{os.icon}</div>
@@ -238,7 +236,7 @@ const OSSelectionModal = ({ isOpen, onClose, onConfirm, currentOSId, loading }) 
               </div>
               <div className="flex gap-3">
                 <button onClick={onClose} className="px-5 py-2.5 rounded-xl font-medium text-slate-600 hover:bg-slate-100 transition-all">Cancel</button>
-                <button 
+                <button
                   onClick={() => onConfirm(selectedOSId)}
                   disabled={!selectedOSId || loading}
                   className="px-6 py-2.5 rounded-xl font-bold bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all flex items-center gap-2 disabled:opacity-50"
@@ -261,12 +259,12 @@ const ReinstallModal = ({ isOpen, onClose, onConfirm, currentOSLabel, loading })
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" 
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
           />
-          <motion.div 
+          <motion.div
             initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }}
             className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-md w-full relative z-10 shadow-2xl border border-slate-200 dark:border-slate-700"
           >
@@ -283,7 +281,7 @@ const ReinstallModal = ({ isOpen, onClose, onConfirm, currentOSLabel, loading })
             </div>
             <div className="grid grid-cols-2 gap-4">
               <button onClick={onClose} className="py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-sm">Cancel</button>
-              <button 
+              <button
                 onClick={onConfirm}
                 className="py-3 rounded-xl font-bold bg-rose-600 text-white hover:bg-rose-700 shadow-lg shadow-rose-200 transition-all text-sm flex items-center justify-center gap-2"
                 disabled={loading}
@@ -301,20 +299,20 @@ const ReinstallModal = ({ isOpen, onClose, onConfirm, currentOSLabel, loading })
 
 // Simple Confirmation Modal (Shutdown)
 const SimpleConfirmModal = ({ isOpen, onClose, onConfirm, title, message, loading, variant = "danger" }) => {
-  const colors = variant === 'danger' 
+  const colors = variant === 'danger'
     ? { bg: 'bg-rose-50 dark:bg-rose-950/40', text: 'text-rose-600', button: 'bg-rose-600 hover:bg-rose-700 shadow-rose-200' }
     : { bg: 'bg-indigo-50 dark:bg-indigo-950/40', text: 'text-indigo-600', button: 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-200' };
-  
+
   return (
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" 
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
           />
-          <motion.div 
+          <motion.div
             initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }}
             className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-md w-full relative z-10 shadow-2xl border border-slate-200 dark:border-slate-700"
           >
@@ -325,13 +323,14 @@ const SimpleConfirmModal = ({ isOpen, onClose, onConfirm, title, message, loadin
             <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-8">{message}</p>
             <div className="grid grid-cols-2 gap-4">
               <button onClick={onClose} className="py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-sm">Cancel</button>
-              <button 
+              <button
                 onClick={onConfirm}
                 className={`py-3 rounded-xl font-bold text-white ${colors.button} transition-all text-sm flex items-center justify-center gap-2`}
                 disabled={loading}
               >
                 {loading ? <RefreshCcw className="animate-spin" size={14} /> : <CheckCircle2 size={14} />}
-                Confirm
+                Confirm{variant === 'danger' ? 'shutdown' : 'restart'}
+
               </button>
             </div>
           </motion.div>
@@ -385,7 +384,7 @@ export default function OSPanel() {
   const handleOSChange = async (newOSId) => {
     const newOS = OS_CATALOG.find(os => os.id === newOSId);
     if (!newOS) return;
-    
+
     setLoading(true);
     setModalState({ type: null, open: false });
     setStatus('changing');
@@ -402,7 +401,7 @@ export default function OSPanel() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/20 p-4 md:p-10 font-sans text-slate-900 dark:text-slate-100">
-      
+
       {/* Header Area */}
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
@@ -426,14 +425,14 @@ export default function OSPanel() {
       </div>
 
       <div className="max-w-7xl mx-auto grid grid-cols-12 gap-6">
-        
+
         {/* Main Info Card */}
         <div className="col-span-12 lg:col-span-8 space-y-6">
           <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden transition-all">
             <div className="absolute top-0 right-0 p-8 opacity-[0.03] dark:opacity-[0.05] pointer-events-none">
               <Monitor size={200} />
             </div>
-            
+
             <div className="flex flex-col md:flex-row md:items-center gap-6 relative z-10">
               <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-950/60 dark:to-indigo-900/30 border border-indigo-100 dark:border-indigo-800 flex items-center justify-center text-4xl shadow-inner">
                 {currentOS.icon}
@@ -441,7 +440,7 @@ export default function OSPanel() {
               <div className="flex-grow">
                 <div className="flex items-center gap-3 mb-2 flex-wrap">
                   <h2 className="text-xl font-black text-slate-900 dark:text-white">{currentOS.label}</h2>
-                  <span className="bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-[10px] px-2 py-0.5 rounded-full font-black tracking-widest uppercase border border-emerald-200 dark:border-emerald-800">Active</span>
+                  <span className="bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-[10px] px-2 py-0.5  rounded-full font-black tracking-widest uppercase border border-emerald-200 dark:border-emerald-800">Active</span>
                   <span className="text-xs text-slate-400 font-mono">v{currentOS.version}</span>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
@@ -503,12 +502,12 @@ export default function OSPanel() {
             <h3 className="font-black text-slate-900 dark:text-white mb-6 flex items-center gap-2">
               <Activity size={18} className="text-indigo-600" /> Live Health Metrics
             </h3>
-            
+
             <div className="space-y-6">
-              <HealthProgress label="CPU Load" value={42} color="bg-indigo-600" />
-              <HealthProgress label="Memory" value={78} color="bg-cyan-500" />
-              <HealthProgress label="IOPS" value={25} color="bg-emerald-500" />
-              <HealthProgress label="Bandwidth" value={61} color="bg-amber-500" />
+              <HealthProgress label="CPU Load" value={23} color="bg-indigo-600" />
+              <HealthProgress label="Memory" value={76} color="bg-cyan-500" />
+              <HealthProgress label="IOPS" value={42} color="bg-emerald-500" />
+              <HealthProgress label="Bandwidth" value={90} color="bg-amber-500" />
             </div>
 
             <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
@@ -517,7 +516,7 @@ export default function OSPanel() {
                 <p className="text-sm font-black text-slate-900 dark:text-white">14d 7h 23m</p>
               </div>
               <div className="h-10 w-10 rounded-full border-4 border-emerald-500/20 border-t-emerald-500 flex items-center justify-center animate-spin-slow">
-                 <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400">94%</span>
+                <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400">94%</span>
               </div>
             </div>
           </div>
@@ -537,23 +536,23 @@ export default function OSPanel() {
       </div>
 
       {/* Modals */}
-      <OSSelectionModal 
-        isOpen={modalState.type === 'change'} 
-        onClose={closeModal} 
+      <OSSelectionModal
+        isOpen={modalState.type === 'change'}
+        onClose={closeModal}
         onConfirm={handleOSChange}
         currentOSId={currentOS.id}
         loading={loading}
       />
-      <ReinstallModal 
-        isOpen={modalState.type === 'reinstall'} 
-        onClose={closeModal} 
+      <ReinstallModal
+        isOpen={modalState.type === 'reinstall'}
+        onClose={closeModal}
         onConfirm={handleReinstall}
         currentOSLabel={currentOS.label}
         loading={loading}
       />
-      <SimpleConfirmModal 
-        isOpen={modalState.type === 'shutdown'} 
-        onClose={closeModal} 
+      <SimpleConfirmModal
+        isOpen={modalState.type === 'shutdown'}
+        onClose={closeModal}
         onConfirm={() => handlePowerAction('shutdown')}
         title="Shutdown Server"
         message="This will power off your VPS. All running services will be terminated. You can start it again from the dashboard."
