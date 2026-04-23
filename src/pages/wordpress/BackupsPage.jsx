@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, HardDrive, Database, FolderOpen, RefreshCw, Download, DownloadIcon } from 'lucide-react';
-import { useBackups, downloadBackupPdf } from '../../hooks/useWordPress';
+import { ArrowLeft, HardDrive, Database, FolderOpen, RefreshCw, Download } from 'lucide-react';
+import { useBackups, downloadBackupPdf, downloadBackupZip } from '../../hooks/useWordPress';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -9,6 +9,7 @@ export default function BackupsPage() {
   const navigate = useNavigate();
   const { data, isLoading, isError, refetch, isFetching } = useBackups(id);
   const [downloading, setDownloading] = useState(false);
+  const [downloadingBackup, setDownloadingBackup] = useState(null);
 
   const handleDownloadPdf = async () => {
     if (!data) return;
@@ -20,6 +21,18 @@ export default function BackupsPage() {
       toast.error('Failed to download PDF');
     } finally {
       setDownloading(false);
+    }
+  };
+
+  const handleDownloadZip = async (backupName) => {
+    setDownloadingBackup(backupName);
+    try {
+      await downloadBackupZip(id, backupName);
+      toast.success('Zip downloaded successfully!');
+    } catch (err) {
+      toast.error('Failed to download zip. Try again.');
+    } finally {
+      setDownloadingBackup(null);
     }
   };
 
@@ -154,9 +167,25 @@ export default function BackupsPage() {
                 <p className="text-sm font-medium text-slate-700">{backup.size}</p>
                 <p className="text-xs text-slate-400 mt-0.5">Size</p>
               </div>
-                <div className="text-right shrink-0">
-                <p className="text-sm text-center font-medium text-green-700"><DownloadIcon size={18}/></p>
-                <p className="text-xs text-green-400 mt-0.5">Download Zip</p>
+              <div className="shrink-0 ml-2">
+                <button
+                  onClick={() => handleDownloadZip(backup.name)}
+                  disabled={downloadingBackup === backup.name}
+                  className="flex items-center gap-1.5 text-indigo-600 hover:text-indigo-700 text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  title="Download backup as zip"
+                >
+                  {downloadingBackup === backup.name ? (
+                    <>
+                      <div className="w-3.5 h-3.5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                      Zipping...
+                    </>
+                  ) : (
+                    <>
+                      <Download size={14} />
+                      Download Zip
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           ))}

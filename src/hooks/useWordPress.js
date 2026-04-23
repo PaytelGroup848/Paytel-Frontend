@@ -187,3 +187,37 @@ export const downloadBackupPdf = async (id, domain) => {
   link.remove();
   window.URL.revokeObjectURL(url);
 };
+
+export const downloadBackupZip = async (instanceId, backupName) => {
+  const toastId = toast.loading(
+    'Downloading backup... Large folders may take 1-2 minutes.'
+  );
+  try {
+    const response = await api.get(
+      `/wordpress/${instanceId}/backups/${backupName}/download-zip`,
+      {
+        responseType: 'blob',
+        timeout: 600000, // 10 minutes
+      }
+    );
+
+    toast.dismiss(toastId);
+
+    const blob = new Blob([response.data], {
+  type: 'application/gzip',
+});
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+   link.setAttribute('download', `${backupName}.tar.gz`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+
+    toast.success('Download complete!');
+  } catch (err) {
+    toast.dismiss(toastId);
+    throw err;
+  }
+};
