@@ -6,7 +6,8 @@ import {
   FolderOpen, Zap, ExternalLink, HardDrive, Mail, 
   RotateCcw, ChevronRight, Cpu, Activity, Lock, Globe2,
   Eye, EyeOff, Copy,
-  Check
+  Check,
+  Construction
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useInstance, useInstanceCredentials, useResetPassword, useDbCredentials } from '../../../hooks/useWordPress';
@@ -408,7 +409,48 @@ export default function WebsiteDashboard() {
 </div>
              {/* <ToolCard icon={<ShieldCheck className='text-green-500' size={18}/>} title="Security" desc="SSL & WAF" /> */}
              <ToolCard onClick={() => navigate(`/wordpress/${siteData.id}/analytics`)} icon={<BarChart3 size={18}/>} title="Analytics" desc="Traffic Logs" />
-             <ToolCard icon={<Mail size={18}/>} title="Emails" desc="Business Mail" />
+
+
+  <div className="bg-gradient-to-br from-amber-50 via-yellow-50 to-amber-100 border border-amber-300 p-4 rounded-xl hover:border-yellow-500 hover:shadow-yellow-200 hover:shadow-md transition-all cursor-not-allowed group shadow-sm relative overflow-hidden opacity-90">
+
+  {/* Golden glow background */}
+  <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-300/30 rounded-full -translate-y-8 translate-x-8 pointer-events-none blur-xl" />
+
+  {/* Premium shimmer line */}
+  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-200/40 to-transparent opacity-0 group-hover:opacity-100 animate-pulse pointer-events-none" />
+
+  {/* Coming Soon Badge */}
+  <div className="absolute top-3 right-3 flex items-center gap-1 bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-[10px] font-black tracking-widest uppercase px-2.5 py-0.5 rounded-full shadow-md shadow-yellow-200">
+    <Construction  size={12} />
+    Coming Soon
+  </div>
+
+  {/* Icon */}
+  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center shadow-lg shadow-yellow-200 group-hover:scale-110 transition-transform mb-3">
+    <Mail className="text-white" size={18} />
+  </div>
+
+  {/* Title */}
+  <h4 className="font-bold text-slate-800 text-[13px] tracking-tight">
+    Email
+  </h4>
+
+  {/* Subtitle */}
+  <p className="text-[11px] text-amber-600 font-semibold mt-0.5">
+    Business Mail
+  </p>
+
+  {/* Coming Soon Overlay */}
+  <div className="absolute inset-0 bg-yellow-200/20 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition pointer-events-none" />
+
+</div>
+
+
+             {/* <ToolCard icon={<Mail size={18}/>} title="Emails" desc="Business Mail" /> */}
+
+
+
+
              <ToolCard onClick={() => navigate(`/wordpress/${siteData.id}/backups`)} icon={<RotateCcw size={18}/>} title="Backups" desc="Daily Sync" />
           </div>
         </div>
