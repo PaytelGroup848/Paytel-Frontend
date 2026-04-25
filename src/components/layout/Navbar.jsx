@@ -12,14 +12,15 @@ import {
   ShieldCheck,
   Command,
   LayoutDashboard,
-  Cloud
+  Cloud,
+  Menu  // ✅ ADDED: Menu icon for mobile
 } from 'lucide-react';
 
 import Avatar from '../ui/Avatar';
 import { useAuthStore } from '../../store/authStore';
 import { useLogout } from '../../hooks/useAuth';
 
-export default function Navbar({ isSidebarOpen }) {
+export default function Navbar({ isSidebarOpen, onMenuClick }) {  // ✅ ADDED onMenuClick prop
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const logout = useLogout();
@@ -50,8 +51,17 @@ export default function Navbar({ isSidebarOpen }) {
     `}>
       <div className="max-w-[1800px] mx-auto px-4 sm:px-10 flex items-center justify-between">
         
-        {/* LEFT: Branding Coordination (No Toggle Icon) */}
-        <div className="flex items-center min-w-[200px]">
+        {/* LEFT: Branding + Mobile Menu Button */}
+        <div className="flex items-center gap-3 min-w-[200px]">
+          {/* ✅ Hamburger button - only visible on mobile */}
+          <button
+            onClick={onMenuClick}
+            className="md:hidden p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all"
+            aria-label="Open sidebar"
+          >
+            <Menu size={22} />
+          </button>
+
           <AnimatePresence mode="wait">
             {!isSidebarOpen && (
               <motion.div 
@@ -154,9 +164,9 @@ export default function Navbar({ isSidebarOpen }) {
                   </div>
 
                   <div className="p-1 space-y-1">
-                    <button className='w-full cursor-pointer'  onClick={() => navigate('/vps')}><DropdownItem icon={<LayoutDashboard size={18} />} label="Cloud Overview" /></button>
-                   <button className='w-full cursor-pointer' onClick={() => navigate('/settings')}> <DropdownItem icon={<ShieldCheck size={18} />} label="Security & Keys" /></button>
-                  <button className='w-full cursor-pointer' onClick={() => navigate('/plans')}>  <DropdownItem icon={<CreditCard size={18} />} label="Billing & Plan" /></button>
+                    <button className='w-full cursor-pointer' onClick={() => navigate('/vps')}><DropdownItem icon={<LayoutDashboard size={18} />} label="Cloud Overview" /></button>
+                    <button className='w-full cursor-pointer' onClick={() => navigate('/settings')}> <DropdownItem icon={<ShieldCheck size={18} />} label="Security & Keys" /></button>
+                    <button className='w-full cursor-pointer' onClick={() => navigate('/plans')}>  <DropdownItem icon={<CreditCard size={18} />} label="Billing & Plan" /></button>
                     <div className="h-[1px] bg-slate-100 my-2 mx-4 opacity-50" />
                     <button
                       onClick={() => logout.mutate()}

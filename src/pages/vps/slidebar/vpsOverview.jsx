@@ -6,152 +6,266 @@ import {
   ChevronDown, ChevronRight, Server, Shield, Key, Lock,
   Container, BookOpen, Rss, Archive, LifeBuoy,
   TerminalSquare, Globe, Wifi, Activity, RefreshCw, Power,
-  TrendingUp, Database, BarChart3, Rocket, Construction
+  TrendingUp, Database, BarChart3, Rocket, Construction,
+  Upload, Download, ExternalLink, Calendar, RotateCw, Square,
+  Fingerprint, BadgeCheck, AlertCircle, FolderArchive
 } from "lucide-react";
 
 import BackupManager from "./BackupManager";
 import OSPanel from "./Os_panel";
 import DocumentationPage from "./docs";
 import VpsSettings from "./setting";
-import GetHelp  from "./support/GetHelp";
+import GetHelp from "./support/GetHelp";
 import firewall from "./security/firewall";
-// Dashboard component (Overview content)
-function Dashboard({ stats, chart }) {
-  return (
-    <div className="p-7 space-y-6 max-w-[1400px] mx-auto w-full">
-      {/* Hero banner */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-       
-        className="relative overflow-hidden rounded-2xl p-7 text-white"
-        style={{ background: "linear-gradient(135deg,#3730A3 0%,#4F46E5 45%,#7C3AED 100%)" }}
-      >
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center gap-6">
-          <div className="flex-1">
-            <p className="text-indigo-200 text-[11px] font-bold uppercase tracking-widest mb-1">Active Server</p>
-            <h1 className="text-3xl font-extrabold tracking-tight">CLOUDE-MUM-01</h1>
-            <p className="text-indigo-300 text-sm mt-1.5 mono">195.35.21.221 · Ubuntu 24.04 LTS</p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[
-              { label: "Plan", val: "4 vCPU / 8 GB", icon: Cpu },
-              { label: "Storage", val: "80 GB NVMe", icon: HardDrive },
-              { label: "Region", val: "Mumbai, IN", icon: Globe },
-              { label: "Bandwidth", val: "10 Gbps", icon: Wifi },
-            ].map(({ label, val, icon: Icon }) => (
-              <div key={label} className="bg-white/10 backdrop-blur rounded-xl px-4 py-3 border border-white/10">
-                <div className="flex items-center gap-1.5 mb-1.5">
-                  <Icon size={11} className="text-indigo-200" />
-                  <p className="text-[10px] text-indigo-200 font-bold uppercase tracking-wider">{label}</p>
-                </div>
-                <p className="text-[13px] font-bold mono leading-tight">{val}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </motion.div>
 
-      {/* Metric cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { title: "CPU Usage", val: `${stats.cpu}%`, sub: "4 cores", icon: Cpu, accent: "#4139ce", bg: "#EEF2FF", pct: stats.cpu },
-          { title: "RAM Used", val: `${stats.ram} GB`, sub: "of 8 GB", icon: Database, accent: "#7C3AED", bg: "#F5F3FF", pct: (stats.ram/8)*100 },
-          { title: "Disk Used", val: `${stats.disk} GB`, sub: "of 80 GB NVMe", icon: HardDrive, accent: "#0EA5E9", bg: "#F0F9FF", pct: (stats.disk/80)*100 },
-          { title: "Uptime", val: stats.uptime, sub: "99.98% SLA", icon: Clock, accent: "#059669", bg: "#ECFDF5", pct: null },
-        ].map((m, i) => (
-          <motion.div key={m.title} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-            className="bg-white rounded-2xl border border-slate-200/60 shadow-sm p-5 hover:-translate-y-0.5 hover:shadow-md transition-all"
-          >
-            <div className="flex items-start justify-between mb-4">
-              <div className="p-2.5 rounded-xl" style={{ background: m.bg, color: m.accent }}>
-                <m.icon size={20} />
-              </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: m.bg, color: m.accent }}>{m.sub}</span>
-            </div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{m.title}</p>
-            <p className="text-2xl font-extrabold text-slate-800 mt-0.5">{m.val}</p>
-            {m.pct !== null && (
-              <div className="mt-3 h-1 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full rounded-full" style={{ width: `${m.pct}%`, background: m.accent }} />
-              </div>
-            )}
-          </motion.div>
-        ))}
+// ========== HELPER FUNCTIONS & COMPONENTS FOR THE NEW DASHBOARD ==========
+const generateRandomData = (length = 12, base = 20, range = 15) =>
+  Array.from({ length }, (_, i) => ({ time: i, value: Math.floor(Math.random() * range) + base }));
+
+// Modified graph: only line, no fill
+const MetricGraph = ({ title, icon: Icon, unit, currentValue, data }) => (
+  <div className="bg-white rounded-xl border border-black/20 shadow-sm p-4 transition-all hover:shadow-md">
+    <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center gap-2">
+        <div className="p-1.5 rounded-lg bg-blue-50">
+          <Icon size={14} className="text-blue-600" />
+        </div>
+        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{title}</span>
+      </div>
+      <span className="text-xl font-black text-slate-800">{currentValue}{unit}</span>
+    </div>
+    <div className="h-12 w-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={data}>
+          <Area type="monotone" dataKey="value" stroke="#3B82F6" strokeWidth={2} fill="transparent" dot={false} />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+);
+
+const DetailItem = ({ label, value, icon, action, valueClassName = "" }) => (
+  <div className="flex flex-wrap justify-between items-center py-3 border-b border-gray-100 last:border-0">
+    <span className="text-slate-500 text-[13px] font-medium">{label}:</span>
+    <div className="flex items-center gap-2">
+      <span className={`text-slate-800 text-sm font-semibold flex items-center gap-1 ${valueClassName}`}>{icon} {value}</span>
+      {action && action}
+    </div>
+  </div>
+);
+
+// Security status card component (no longer used directly, wrapped in button)
+const SecurityCard = ({ title, value, icon: Icon, status, bgColor }) => (
+  <div className="bg-white rounded-xl border border-black/10 shadow-sm p-4 flex items-center justify-between w-full">
+    <div className="flex items-center gap-3">
+      <div className={`p-2 rounded-lg ${bgColor}`}>
+        <Icon size={18} className="text-indigo-600" />
+      </div>
+      <div>
+        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{title}</p>
+        <p className="text-lg font-black text-slate-800">{value}</p>
+      </div>
+    </div>
+    <div className={`text-xs font-semibold px-2 py-1 rounded-full ${status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'}`}>
+      {status}
+    </div>
+  </div>
+);
+
+// ========== REDESIGNED DASHBOARD (Overview) ==========
+function Dashboard({ setActive }) {
+  // States for real-time metrics
+  const [osName] = useState("Ubuntu 22.04 LTS");
+  const [vpsStatus, setVpsStatus] = useState("running");
+  const [hostname] = useState("srv1596088.hstgr.cloud");
+  const [uptime, setUptime] = useState("1 hour");
+  const [expiration, setExpiration] = useState("2026-05-17");
+  const [autoRenew, setAutoRenew] = useState(true);
+
+  const [cpu, setCpu] = useState(18);
+  const [ram, setRam] = useState(1.24);
+  const [disk, setDisk] = useState(15.4);
+  const [incoming, setIncoming] = useState(7.6);
+  const [outgoing, setOutgoing] = useState(0.1);
+  const [bandwidth, setBandwidth] = useState(0.001);
+
+  // Chart data
+  const [cpuData, setCpuData] = useState(() => generateRandomData(12, 18, 15));
+  const [ramData, setRamData] = useState(() => generateRandomData(12, 1, 1));
+  const [diskData, setDiskData] = useState(() => generateRandomData(12, 15, 5));
+  const [incomingData, setIncomingData] = useState(() => generateRandomData(12, 7, 3));
+  const [outgoingData, setOutgoingData] = useState(() => generateRandomData(12, 0, 1));
+  const [bandwidthData, setBandwidthData] = useState(() => generateRandomData(12, 0, 1));
+
+  // Real-time simulation (every 3 seconds)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newCpu = Math.floor(Math.random() * 35) + 5;
+      const newRam = Number((Math.random() * 2.5 + 0.8).toFixed(2));
+      const newDisk = Number((Math.random() * 20 + 5).toFixed(1));
+      const newIncoming = Number((Math.random() * 12 + 1).toFixed(1));
+      const newOutgoing = Number((Math.random() * 0.5 + 0.05).toFixed(1));
+      const newBandwidth = Number((Math.random() * 0.003 + 0.0005).toFixed(3));
+
+      setCpu(newCpu);
+      setRam(newRam);
+      setDisk(newDisk);
+      setIncoming(newIncoming);
+      setOutgoing(newOutgoing);
+      setBandwidth(newBandwidth);
+      setUptime(prev => {
+        let hrs = parseInt(prev) || 1;
+        return `${hrs + 1} hours`;
+      });
+
+      setCpuData(prev => [...prev.slice(1), { time: prev.length, value: newCpu }]);
+      setRamData(prev => [...prev.slice(1), { time: prev.length, value: newRam }]);
+      setDiskData(prev => [...prev.slice(1), { time: prev.length, value: newDisk }]);
+      setIncomingData(prev => [...prev.slice(1), { time: prev.length, value: newIncoming }]);
+      setOutgoingData(prev => [...prev.slice(1), { time: prev.length, value: newOutgoing }]);
+      setBandwidthData(prev => [...prev.slice(1), { time: prev.length, value: newBandwidth }]);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleReboot = () => alert("Rebooting VPS...");
+  const handleStopVPS = () => setVpsStatus(vpsStatus === "running" ? "stopped" : "running");
+  const handleRenew = () => alert("Renewal process started");
+  const handleUpgrade = () => alert("Upgrade plan dialog");
+  const handleChangePassword = () => alert("Change password functionality");
+
+  return (
+    <div className="p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto w-full space-y-6 bg-gradient-to-br from-slate-50 to-white">
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="text-2xl font-black tracking-tight text-slate-800">  VPS</span>
+            <span className="text-slate-300 text-xl font-light">/</span>
+            <span className="text-sm font-semibold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">Overview</span>
+          </div>
+          <p className="text-xs text-slate-400 mt-0.5">VPS management · real-time metrics</p>
+        </div>
       </div>
 
-      {/* Chart + Server details */}
-      <div className="grid grid-cols-12 gap-5">
-        <div className="col-span-12 lg:col-span-8 bg-white rounded-2xl border border-slate-200/60 shadow-sm">
-          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-            <div>
-              <h3 className="font-extrabold text-slate-800 text-[15px]">Resource Usage</h3>
-              <p className="text-[11px] text-slate-400 mt-0.5">CPU % · Network Mbps · live every 3s</p>
+      {/* VPS Status Card */}
+      <div className="bg-white rounded-2xl border border-black/10 shadow-lg overflow-hidden">
+        <div className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <Globe size={18} className="text-indigo-500" />
+                <span className="font-bold text-slate-800 text-lg">{osName}</span>
+              </div>
+              <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
+                vpsStatus === "running" 
+                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200" 
+                  : "bg-red-50 text-red-700 border border-red-200"
+              }`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${vpsStatus === "running" ? "bg-emerald-500 animate-pulse" : "bg-red-500"}`} />
+                KVM | {vpsStatus === "running" ? "Running" : "Stopped"}
+              </div>
             </div>
-            <div className="flex items-center gap-1.5 text-[11px] font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" /> Live
+            <div className="flex items-center gap-2">
+              <Key size={14} className="text-indigo-500" />
+              <span className="text-xs font-medium text-slate-500">Root access</span>
+              <code className="text-sm font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-700">ssh root@195.35.21.221</code>
+            </div>
+            <div className="flex items-center gap-2">
+              <Lock size={14} className="text-amber-500" />
+              <span className="text-xs font-medium text-slate-500">Root password</span>
+              <button onClick={handleChangePassword} className="text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                Change <ExternalLink size={12} />
+              </button>
             </div>
           </div>
-          <div className="p-5 h-[260px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chart}>
-                <defs>
-                  <linearGradient id="gcpu" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#4F46E5" stopOpacity={0.28} />
-                    <stop offset="100%" stopColor="#4F46E5" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="gnet" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#06B6D4" stopOpacity={0.22} />
-                    <stop offset="100%" stopColor="#06B6D4" stopOpacity={0} />
-                  </linearGradient>
-    
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                <Tooltip contentStyle={{ borderRadius: 10, border: "none", boxShadow: "0 8px 24px rgba(0,0,0,0.08)", fontSize: 12 }} />
-                <Area type="monotone" dataKey="cpu" stroke="#4F46E5" strokeWidth={2.5} fill="url(#gcpu)" dot={false} />
-                <Area type="monotone" dataKey="net" stroke="#06B6D4" strokeWidth={2} fill="url(#gnet)" dot={false} />
-              </AreaChart>
-            </ResponsiveContainer>
+          <button onClick={handleReboot} className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-md transition-all self-start md:self-center">
+            <RotateCw size={16} /> Reboot VPS
+          </button>
+        </div>
+      </div>
+
+      {/* 6 Mini Graphs (line only) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <MetricGraph title="CPU Usage" icon={Cpu} unit="%" currentValue={cpu} data={cpuData} />
+        <MetricGraph title="RAM Used" icon={Database} unit=" GB" currentValue={ram} data={ramData} />
+        <MetricGraph title="Disk Used" icon={HardDrive} unit=" GB" currentValue={disk} data={diskData} />
+        <MetricGraph title="Incoming Traffic" icon={Download} unit=" MB" currentValue={incoming} data={incomingData} />
+        <MetricGraph title="Outgoing Traffic" icon={Upload} unit=" MB" currentValue={outgoing} data={outgoingData} />
+        <MetricGraph title="Bandwidth" icon={Wifi} unit=" TB" currentValue={bandwidth} data={bandwidthData} />
+      </div>
+
+      {/* Quick Actions + Uptime */}
+      <div className="flex flex-wrap gap-3 justify-between items-center bg-white/80 rounded-xl p-4 border border-black/10 shadow-sm">
+        <div className="flex gap-3 flex-wrap">
+          <button onClick={handleStopVPS} className="flex items-center gap-1.5 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 text-sm font-semibold rounded-lg transition-all">
+            <Square size={14} /> {vpsStatus === 'running' ? 'Stop VPS' : 'Start VPS'}
+          </button>
+          <button onClick={handleRenew} className="flex items-center gap-1.5 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-sm font-semibold rounded-lg transition-all">
+            <RefreshCw size={14} /> Renew
+          </button>
+          <button onClick={handleUpgrade} className="flex items-center gap-1.5 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-semibold rounded-lg transition-all">
+            <TrendingUp size={14} /> Upgrade
+          </button>
+        </div>
+        <div className="text-xs text-slate-500 flex items-center gap-1 bg-slate-100 px-3 py-1 rounded-full">
+          <Clock size={12} /> Uptime: {uptime}
+        </div>
+      </div>
+
+      {/* Security Status Cards - 3 clickable cards (Malware scanner removed) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <button onClick={() => setActive("setting")} className="text-left w-full">
+          <SecurityCard title="SSH key" value="Manage" icon={Key} status="Active" bgColor="bg-indigo-50" />
+        </button>
+        <button onClick={() => setActive("firewall")} className="text-left w-full">
+          <SecurityCard title="Firewall rules" value="1" icon={Shield} status="Active" bgColor="bg-blue-50" />
+        </button>
+        <button onClick={() => setActive("backupmgr")} className="text-left w-full">
+          <SecurityCard title="Snapshot & backups" value="2" icon={FolderArchive} status="Active" bgColor="bg-purple-50" />
+        </button>
+      </div>
+
+      {/* VPS Details & Plan Details */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-2xl border border-black/10 shadow-lg overflow-hidden">
+          <div className="border-b border-gray-200 px-6 py-4 bg-gray-50/50">
+            <div className="flex items-center gap-2"><Server size={18} className="text-indigo-500" /><h3 className="font-extrabold text-slate-800">VPS details</h3></div>
+          </div>
+          <div className="p-5">
+            <DetailItem label="Server location" value="India - Mumbai" icon={<Globe size={12} />} />
+            <DetailItem label="OS" value={osName} />
+            <DetailItem label="Hostname" value={hostname} />
+            <DetailItem label="VPS uptime" value={uptime} icon={<Clock size={12} />} />
+            <DetailItem label="SSH username" value="root" />
+            <DetailItem label="IPv4" value="195.35.21.221" />
           </div>
         </div>
 
-        <div className="col-span-12 lg:col-span-4 flex flex-col gap-4">
-          <div className="bg-slate-900 rounded-2xl p-6 text-white relative overflow-hidden">
-            <div className="absolute -bottom-8 -right-8 w-36 h-36 rounded-full bg-indigo-500/10" />
-            <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-300 mb-4">Server Details</p>
-            <div className="space-y-3 relative z-10">
-              {[
-                ["CPU", "AMD EPYC™ 7763"],
-                ["Hypervisor", "KVM / QEMU"],
-                ["Kernel", "6.8.0-39-generic"],
-                ["Uptime", "2d 17h 42m"],
-                ["Region", "Mumbai, IN 🇮🇳"],
-              ].map(([l, v]) => (
-                <div key={l} className="flex justify-between items-center">
-                  <span className="text-[12px] text-white/45 font-medium">{l}</span>
-                  <span className="text-[11px] font-semibold mono text-white/90">{v}</span>
-                </div>
-              ))}
-            </div>
-            <button className="w-full mt-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold text-[13px] flex items-center justify-center gap-2 transition-all">
-              <Power size={14} /> Manage Node
-            </button>
+        <div className="bg-white rounded-2xl border border-black/10 shadow-lg overflow-hidden">
+          <div className="border-b border-gray-200 px-6 py-4 bg-gray-50/50 flex justify-between items-center">
+            <div className="flex items-center gap-2"><Database size={18} className="text-indigo-500" /><h3 className="font-extrabold text-slate-800">Plan details</h3></div>
+            <span className="text-[10px] font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">KVM 1</span>
           </div>
-
-          <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm p-4">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">Quick Actions</p>
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { icon: RefreshCw, label: "Reboot" },
-                { icon: Activity, label: "Console" },
-                { icon: TrendingUp, label: "Upgrade" },
-              ].map(({ icon: Icon, label }) => (
-                <button key={label} className="flex flex-col items-center gap-1.5 py-3 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 text-slate-500 transition-all text-[11px] font-semibold">
-                  <Icon size={16} />
-                  {label}
-                </button>
-              ))}
-            </div>
+          <div className="p-5 space-y-1">
+            <DetailItem 
+              label="Current plan" 
+              value="KVM 1" 
+              action={<button onClick={handleUpgrade} className="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md hover:bg-indigo-100">Upgrade</button>}
+            />
+            <DetailItem 
+              label="Expiration date" 
+              value={expiration} 
+              action={<button onClick={handleRenew} className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full hover:bg-emerald-100">Renew</button>}
+            />
+            <DetailItem 
+              label="Auto-renewal" 
+              value={autoRenew ? "On" : "Off"} 
+              icon={autoRenew ? <span className="w-2 h-2 rounded-full bg-emerald-500"></span> : <span className="w-2 h-2 rounded-full bg-red-500"></span>}
+            />
+            <DetailItem label="CPU core" value="1 vCPU" icon={<Cpu size={12} />} />
+            <DetailItem label="Memory" value="4 GB" icon={<Database size={12} />} />
+            <DetailItem label="Disk space" value="50 GB NVMe" icon={<HardDrive size={12} />} />
           </div>
         </div>
       </div>
@@ -159,8 +273,7 @@ function Dashboard({ stats, chart }) {
   );
 }
 
- 
-// ----- GLOBAL STYLES -----
+// ----- GLOBAL STYLES (unchanged) -----
 const GlobalStyle = () => (
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -173,7 +286,7 @@ const GlobalStyle = () => (
   `}</style>
 );
 
-// ----- SIDEBAR (fixed) -----
+// ========== SIDEBAR WITH SUBOPTIONS ==========
 const MENU_ITEMS = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },   
   { id: "docker", label: "Docker", icon: Container },
@@ -186,6 +299,18 @@ const MENU_ITEMS = [
   { id: "setting", label: "Setting", icon: Key },
 ];
 
+// Sub-items configuration
+const SUB_ITEMS = {
+  ospanel: [
+    { id: "license", label: "License", icon: BadgeCheck }
+  ],
+  backupmgr: [
+    { id: "snapshot", label: "Snapshot", icon: FolderArchive },
+    { id: "serverusage", label: "Server Usage", icon: Activity },
+    { id: "latestaction", label: "Latest Action", icon: Clock }
+  ]
+};
+
 function Sidebar({ active, setActive }) {
   const [openGroups, setOpenGroups] = useState({
     infrastructure: true,
@@ -193,9 +318,14 @@ function Sidebar({ active, setActive }) {
     apps: true,
     support: true,
   });
+  const [openSubMenus, setOpenSubMenus] = useState({}); // track which menu items have open submenu
 
   const toggleGroup = (group) => {
     setOpenGroups(prev => ({ ...prev, [group]: !prev[group] }));
+  };
+
+  const toggleSubMenu = (id) => {
+    setOpenSubMenus(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
   const grouped = {
@@ -203,6 +333,55 @@ function Sidebar({ active, setActive }) {
     security: ["firewall"],
     apps: ["tutorials", "blog"],
     support: ["GetHelp"],
+  };
+
+  // Helper to render a menu item (could be parent with children)
+  const renderMenuItem = (item, isSub = false, parentId = null) => {
+    const hasSub = SUB_ITEMS[item.id];
+    const isOpen = openSubMenus[item.id];
+    const Icon = item.icon;
+    const isActive = active === item.id;
+
+    return (
+      <div key={item.id} className="mb-0.5">
+        <button
+          onClick={() => {
+            if (hasSub) {
+              toggleSubMenu(item.id);
+            }
+            setActive(item.id);
+          }}
+          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-150 text-left
+            ${isActive ? "bg-indigo-600 text-white shadow-md shadow-indigo-300/40" : "text-slate-500 hover:bg-white/70 hover:text-indigo-700"}
+            ${isSub ? "pl-5" : ""}
+          `}
+        >
+          <div className="flex items-center gap-2.5">
+            <Icon size={isSub ? 14 : 16} className={isActive ? "text-white/90" : "text-slate-400"} />
+            <span className={`text-[13px] ${isActive ? "font-bold" : "font-medium"}`}>{item.label}</span>
+          </div>
+          {hasSub && (
+            <ChevronDown size={12} className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+          )}
+        </button>
+        {hasSub && isOpen && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden ml-2">
+            {SUB_ITEMS[item.id].map(sub => (
+              <button
+                key={sub.id}
+                onClick={() => setActive(sub.id)}
+                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl mb-0.5 transition-all duration-150 text-left pl-8
+                  ${active === sub.id ? "bg-indigo-600 text-white shadow-md shadow-indigo-300/40" : "text-slate-500 hover:bg-white/70 hover:text-indigo-700"}
+                `}
+              >
+                <sub.icon size={14} className={active === sub.id ? "text-white/90" : "text-slate-400"} />
+                <span className="text-[12px] font-medium">{sub.label}</span>
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -221,82 +400,26 @@ function Sidebar({ active, setActive }) {
       </div>
 
       <nav className="flex-1 overflow-y-auto no-sb py-3 px-2.5">
-        {/* Overview is ungrouped and shown first */}
-        {MENU_ITEMS.filter(item => item.id === "overview").map(item => (
-          <NavButton key={item.id} item={item} active={active} setActive={setActive} />
+        {MENU_ITEMS.filter(item => item.id === "overview").map(item => renderMenuItem(item))}
+
+        {Object.entries(grouped).map(([group, ids]) => (
+          <div key={group} className="mb-1">
+            <button onClick={() => toggleGroup(group)} className="w-full flex items-center justify-between px-3 py-2 text-slate-400 hover:text-slate-600">
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em]">{group}</span>
+              <ChevronDown size={12} className={`transition-transform duration-200 ${openGroups[group] ? "rotate-180" : ""}`} />
+            </button>
+            <AnimatePresence>
+              {openGroups[group] && (
+                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                  {ids.map(id => {
+                    const item = MENU_ITEMS.find(i => i.id === id);
+                    return item && renderMenuItem(item, false);
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         ))}
-
-        {/* Infrastructure group */}
-        <div className="mb-1">
-          <button onClick={() => toggleGroup("infrastructure")} className="w-full flex items-center justify-between px-3 py-2 text-slate-400 hover:text-slate-600">
-            <span className="text-[10px] font-bold uppercase tracking-[0.14em]">Infrastructure</span>
-            <ChevronDown size={12} className={`transition-transform duration-200 ${openGroups.infrastructure ? "rotate-180" : ""}`} />
-          </button>
-          <AnimatePresence>
-            {openGroups.infrastructure && (
-              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                {grouped.infrastructure.map(id => {
-                  const item = MENU_ITEMS.find(i => i.id === id);
-                  return item && <NavButton key={item.id} item={item} active={active} setActive={setActive} sub />;
-                })}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Security group */}
-        <div className="mb-1">
-          <button onClick={() => toggleGroup("security")} className="w-full flex items-center justify-between px-3 py-2 text-slate-400 hover:text-slate-600">
-            <span className="text-[10px] font-bold uppercase tracking-[0.14em]">Security</span>
-            <ChevronDown size={12} className={`transition-transform ${openGroups.security ? "rotate-180" : ""}`} />
-          </button>
-          <AnimatePresence>
-            {openGroups.security && (
-              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
-                {grouped.security.map(id => {
-                  const item = MENU_ITEMS.find(i => i.id === id);
-                  return item && <NavButton key={item.id} item={item} active={active} setActive={setActive} sub />;
-                })}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Apps group */}
-        <div className="mb-1">
-          <button onClick={() => toggleGroup("apps")} className="w-full flex items-center justify-between px-3 py-2 text-slate-400 hover:text-slate-600">
-            <span className="text-[10px] font-bold uppercase tracking-[0.14em]">Apps</span>
-            <ChevronDown size={12} className={`transition-transform ${openGroups.apps ? "rotate-180" : ""}`} />
-          </button>
-          <AnimatePresence>
-            {openGroups.apps && (
-              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
-                {grouped.apps.map(id => {
-                  const item = MENU_ITEMS.find(i => i.id === id);
-                  return item && <NavButton key={item.id} item={item} active={active} setActive={setActive} sub />;
-                })}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Support group */}
-        <div className="mb-1">
-          <button onClick={() => toggleGroup("support")} className="w-full flex items-center justify-between px-3 py-2 text-slate-400 hover:text-slate-600">
-            <span className="text-[10px] font-bold uppercase tracking-[0.14em]">Support</span>
-            <ChevronDown size={12} className={`transition-transform ${openGroups.support ? "rotate-180" : ""}`} />
-          </button>
-          <AnimatePresence>
-            {openGroups.support && (
-              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
-                {grouped.support.map(id => {
-                  const item = MENU_ITEMS.find(i => i.id === id);
-                  return item && <NavButton key={item.id} item={item} active={active} setActive={setActive} sub />;
-                })}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
       </nav>
 
       <div className="p-3 border-t border-slate-100/60">
@@ -308,29 +431,13 @@ function Sidebar({ active, setActive }) {
   );
 }
 
-// NavButton component
 function NavButton({ item, active, setActive, sub }) {
-  const Icon = item.icon;
-  const isActive = active === item.id;
-
-  return (
-    <button
-      onClick={() => setActive(item.id)}
-      className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl mb-0.5 transition-all duration-150 text-left
-        ${isActive ? "bg-indigo-600 text-white shadow-md shadow-indigo-300/40" : "text-slate-500 hover:bg-white/70 hover:text-indigo-700"}
-        ${sub ? "pl-5" : ""}
-      `}
-    >
-      <Icon size={sub ? 14 : 16} className={isActive ? "text-white/90" : "text-slate-400"} />
-      <span className={`text-[13px] ${isActive ? "font-bold" : "font-medium"} flex-1`}>{item.label}</span>
-      {item.id === "docker" && !isActive && (
-        <span className="text-[9px] font-bold bg-slate-100 text-slate-400 px-1.5 py-0.5 rounded-full">SOON</span>
-      )}
-    </button>
-  );
+  // This is kept for backward compatibility but not used in the new Sidebar
+  // The Sidebar now uses renderMenuItem directly.
+  return null;
 }
 
-// ----- HEADER -----
+// ----- HEADER (unchanged) -----
 function Header({ page }) {
   return (
     <header className="h-16 bg-white/80 backdrop-blur-xl border-b border-slate-200/50 flex items-center justify-between px-7 sticky top-0 z-40">
@@ -341,45 +448,60 @@ function Header({ page }) {
         <ChevronRight size={13} />
         <span className="text-slate-600">{page}</span>
       </div>
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-bold px-3 py-1.5 rounded-full">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          Running
-        </div>
-        <button className="relative p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">
-          <Bell size={18} />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
-        </button>
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-[12px] font-black shadow-sm">
-          CD
-        </div>
-      </div>
+
     </header>
   );
 }
 
-// ----- MAIN APP -----
-export default function App() {
-  // Default active is now "overview"
-  const [active, setActive] = useState("overview");
-  const [stats, setStats] = useState({ cpu: 18, ram: 1.24, disk: 15.4, uptime: "2d 17h 42m" });
-  const [chart, setChart] = useState(() => 
-    Array.from({ length: 24 }, (_, i) => ({ t: i, cpu: Math.random() * 22 + 8, net: Math.random() * 60 + 15 }))
-  );
+// ----- PLACEHOLDER COMPONENTS FOR SUBPAGES -----
+const LicensePlaceholder = () => (
+  <div className="flex flex-col items-center justify-center min-h-[72vh] text-center">
+    <div className="w-20 h-20 rounded-3xl bg-indigo-50 flex items-center justify-center mb-6">
+      <BadgeCheck size={34} className="text-indigo-400" />
+    </div>
+    <h2 className="text-2xl font-extrabold text-slate-800 mb-2">License Management</h2>
+    <p className="text-slate-400 max-w-sm">Manage your software licenses and subscriptions.</p>
+  </div>
+);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newCpu = Math.floor(Math.random() * 24) + 8;
-      setStats(prev => ({ ...prev, cpu: newCpu }));
-      setChart(prev => [...prev.slice(1), { t: prev.length, cpu: newCpu, net: Math.floor(Math.random() * 60) + 15 }]);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+const SnapshotPlaceholder = () => (
+  <div className="flex flex-col items-center justify-center min-h-[72vh] text-center">
+    <div className="w-20 h-20 rounded-3xl bg-indigo-50 flex items-center justify-center mb-6">
+      <FolderArchive size={34} className="text-indigo-400" />
+    </div>
+    <h2 className="text-2xl font-extrabold text-slate-800 mb-2">Snapshots</h2>
+    <p className="text-slate-400 max-w-sm">Manage VPS snapshots and restores.</p>
+  </div>
+);
+
+const ServerUsagePlaceholder = () => (
+  <div className="flex flex-col items-center justify-center min-h-[72vh] text-center">
+    <div className="w-20 h-20 rounded-3xl bg-indigo-50 flex items-center justify-center mb-6">
+      <Activity size={34} className="text-indigo-400" />
+    </div>
+    <h2 className="text-2xl font-extrabold text-slate-800 mb-2">Server Usage</h2>
+    <p className="text-slate-400 max-w-sm">View detailed server resource usage analytics.</p>
+  </div>
+);
+
+const LatestActionPlaceholder = () => (
+  <div className="flex flex-col items-center justify-center min-h-[72vh] text-center">
+    <div className="w-20 h-20 rounded-3xl bg-indigo-50 flex items-center justify-center mb-6">
+      <Clock size={34} className="text-indigo-400" />
+    </div>
+    <h2 className="text-2xl font-extrabold text-slate-800 mb-2">Latest Actions</h2>
+    <p className="text-slate-400 max-w-sm">Recent activities and task history.</p>
+  </div>
+);
+
+// ----- MAIN APP (routing with new subpage ids) -----
+export default function App() {
+  const [active, setActive] = useState("overview");
 
   let MainComponent;
   switch (active) {
     case "overview":
-      MainComponent = () => <Dashboard stats={stats} chart={chart} />;
+      MainComponent = () => <Dashboard setActive={setActive} />;
       break;
     case "backupmgr":
       MainComponent = BackupManager;
@@ -393,12 +515,26 @@ export default function App() {
     case "setting":
       MainComponent = VpsSettings;
       break;
-      case "GetHelp":
-        MainComponent = GetHelp;
-        break;
-        case "firewall": firewall;
-        MainComponent =  firewall;
-        break;
+    case "GetHelp":
+      MainComponent = GetHelp;
+      break;
+    case "firewall":
+      MainComponent = firewall;
+      break;
+    // Sub-options for OS Panel
+    case "license":
+      MainComponent = LicensePlaceholder;
+      break;
+    // Sub-options for Backup Manager
+    case "snapshot":
+      MainComponent = SnapshotPlaceholder;
+      break;
+    case "serverusage":
+      MainComponent = ServerUsagePlaceholder;
+      break;
+    case "latestaction":
+      MainComponent = LatestActionPlaceholder;
+      break;
     default:
       MainComponent = () => (
         <div className="flex flex-col items-center justify-center min-h-[72vh] text-center">
@@ -411,7 +547,16 @@ export default function App() {
       );
   }
 
-  const pageLabel = MENU_ITEMS.find(i => i.id === active)?.label || "VPS";
+  const pageLabel = (() => {
+    const found = MENU_ITEMS.find(i => i.id === active);
+    if (found) return found.label;
+    // Handle subpages label
+    if (active === "license") return "License";
+    if (active === "snapshot") return "Snapshot";
+    if (active === "serverusage") return "Server Usage";
+    if (active === "latestaction") return "Latest Action";
+    return "VPS";
+  })();
 
   return (
     <>

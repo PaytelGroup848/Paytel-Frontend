@@ -52,7 +52,7 @@ export const useSubscription = () =>
       const res = await api.get('/billing/subscription');
       return res.data?.data;
     },
-    staleTime: 0,
+    staleTime: 1000*60*5,
   });
 
 export const useCreateOrder = () =>
