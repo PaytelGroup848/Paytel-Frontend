@@ -129,7 +129,9 @@ export default function App() {
       </Route>
 
       {/* Protected routes */}
-      {/* <Route element={<ProtectedRoute />}> */}
+     <Route
+        element={<ProtectedRoute />}
+       >
         <Route element={<AppRoutes />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/hosting" element={<ManageHosting />} />
@@ -169,8 +171,8 @@ export default function App() {
           <Route path = "/vps/security/firewall" element  = {<firewall/>} /> 
           <Route path="/home" element={<Home />} />
         </Route>
+        </Route>
 
-   
        
           <Route path="/superadmin" element={<SuperAdminLayout />}>
             <Route path="servers" element={<Servers />} />
