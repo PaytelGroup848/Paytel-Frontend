@@ -93,15 +93,55 @@ const GetHelp = () => {
           </p>
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          <QuickCard icon={Headphones} title="24/7 Live Chat" desc="Talk to an expert instantly" bgColor="bg-indigo-50" textColor="text-indigo-600" />
-          <QuickCard icon={Mail} title="Email Support" desc="support@cloudedata.com" bgColor="bg-emerald-50" textColor="text-emerald-600" />
-          <QuickCard icon={Phone} title="Call Us" desc="+1 (800) 123-4567" bgColor="bg-amber-50" textColor="text-amber-600" />
+        {/* Recent Tickets */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <Clock size={18} className="text-slate-500" />
+              <h3 className="font-bold text-slate-800">Your Recent Support Tickets</h3>
+            </div>
+            <a href="/support/tickets" className="text-sm text-indigo-600 hover:underline">View all</a>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="text-xs font-semibold text-slate-500 bg-white">
+                <tr>
+                  <th className="px-6 py-3">Ticket ID</th>
+                  <th className="px-6 py-3">Subject</th>
+                  <th className="px-6 py-3">Status</th>
+                  <th className="px-6 py-3">Date</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {recentTickets.map((ticket) => (
+                  <tr key={ticket.id} className="hover:bg-slate-50 transition">
+                    <td className="px-6 py-3 font-mono text-sm font-medium text-slate-700">{ticket.id}</td>
+                    <td className="px-6 py-3 text-slate-600">{ticket.subject}</td>
+                    <td className="px-6 py-3">
+                      <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full ${
+                        ticket.status === 'Open' ? 'bg-emerald-100 text-amber-700' :
+                        ticket.status === 'close' ? 'bg-amber-100 text-emerald-700' :
+                        'bg-blue-100 text-blue-700'
+                      }`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${
+                          ticket.status === 'Open' ? 'bg-emerald-500' :
+                          ticket.status === 'closed' ? 'bg-amber-500' : 'bg-blue-500'
+                        }`} />
+                        {ticket.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-3 text-sm text-slate-500">{ticket.date}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
+      
+
         {/* Main Grid: FAQ + Contact Form */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-16">
+        <div className="grid lg:grid-cols-2 gap-8 mb-16 mt-5">
           {/* FAQ Section */}
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
             <div className="flex items-center gap-2 mb-6">
@@ -229,62 +269,6 @@ const GetHelp = () => {
             ))}
           </div>
         </div>
-
-        {/* Recent Tickets */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <Clock size={18} className="text-slate-500" />
-              <h3 className="font-bold text-slate-800">Your Recent Support Tickets</h3>
-            </div>
-            <a href="/support/tickets" className="text-sm text-indigo-600 hover:underline">View all</a>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="text-xs font-semibold text-slate-500 bg-white">
-                <tr>
-                  <th className="px-6 py-3">Ticket ID</th>
-                  <th className="px-6 py-3">Subject</th>
-                  <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3">Date</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {recentTickets.map((ticket) => (
-                  <tr key={ticket.id} className="hover:bg-slate-50 transition">
-                    <td className="px-6 py-3 font-mono text-sm font-medium text-slate-700">{ticket.id}</td>
-                    <td className="px-6 py-3 text-slate-600">{ticket.subject}</td>
-                    <td className="px-6 py-3">
-                      <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full ${
-                        ticket.status === 'Open' ? 'bg-amber-100 text-amber-700' :
-                        ticket.status === 'Resolved' ? 'bg-emerald-100 text-emerald-700' :
-                        'bg-blue-100 text-blue-700'
-                      }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${
-                          ticket.status === 'Open' ? 'bg-amber-500' :
-                          ticket.status === 'Resolved' ? 'bg-emerald-500' : 'bg-blue-500'
-                        }`} />
-                        {ticket.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-3 text-sm text-slate-500">{ticket.date}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Live Chat Floating Button */}
-        <motion.button
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          whileHover={{ scale: 1.05 }}
-          className="fixed bottom-6 right-6 bg-indigo-600 text-white p-4 rounded-full shadow-xl hover:bg-indigo-700 transition z-50 flex items-center gap-2"
-        >
-          <MessageCircle size={24} />
-          <span className="hidden md:inline font-semibold">Live Chat</span>
-        </motion.button>
       </div>
     </div>
   );

@@ -10,7 +10,7 @@ export default function DashboardLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-dark text-textPrimary flex">
-      
+
       <Sidebar
         mobileOpen={mobileOpen}
         onMobileClose={() => setMobileOpen(false)}
@@ -18,7 +18,10 @@ export default function DashboardLayout({ children }) {
 
       <div className="flex-1 flex flex-col min-h-screen">
 
-        <Navbar onMenuClick={() => setMobileOpen(true)} />
+        <Navbar
+          isSidebarOpen={mobileOpen}
+          onMenuClick={() => setMobileOpen(true)}
+        />
 
         <motion.main
           className="
