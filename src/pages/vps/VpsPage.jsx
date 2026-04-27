@@ -15,23 +15,28 @@ const VPS_Page = () => {
   const [popupOS, setPopupOS] = useState('ubuntu2404');
   const pricingRef = useRef(null);
 
+
   // OS options (scrollable in popup)
-  const osOptions = [
-    { id: 'ubuntu2404', name: 'Ubuntu 24.04 LTS', monthlyExtra: 0 },
-    { id: 'ubuntu2204', name: 'Ubuntu 22.04', monthlyExtra: 0 },
-    { id: 'debian12', name: 'Debian 12 Bookworm', monthlyExtra: 0 },
-    { id: 'debian11', name: 'Debian 11 Bullseye', monthlyExtra: 0 },
-    { id: 'rocky9', name: 'Rocky Linux 9', monthlyExtra: 0 },
-    { id: 'almalinux9', name: 'AlmaLinux 9', monthlyExtra: 0 },
-    { id: 'centos9', name: 'CentOS Stream 9', monthlyExtra: 0 },
-    { id: 'fedora40', name: 'Fedora 40', monthlyExtra: 0 },
-    { id: 'arch', name: 'Arch Linux', monthlyExtra: 0 },
-    { id: 'alpine', name: 'Alpine Linux 3.19', monthlyExtra: 0 },
-    { id: 'opensuse', name: 'openSUSE Leap 15.5', monthlyExtra: 0 },
-    { id: 'windows2025', name: 'Windows Server 2025', monthlyExtra: 600 },
-    { id: 'windows2022', name: 'Windows Server 2022', monthlyExtra: 600 },
-    { id: 'kali', name: 'Kali Linux', monthlyExtra: 0 },
-  ];
+const osOptions = [
+  ...(activeOS === "windows"
+    ? [
+        { id: 'windows2025', name: 'Windows Server 2025', monthlyExtra: 600 },
+        { id: 'windows2022', name: 'Windows Server 2022', monthlyExtra: 600 },
+      ]
+    : [
+        { id: 'ubuntu2404', name: 'Ubuntu 24.04 LTS', monthlyExtra: 0 },
+        { id: 'ubuntu2204', name: 'Ubuntu 22.04', monthlyExtra: 0 },
+        { id: 'debian12', name: 'Debian 12 Bookworm', monthlyExtra: 0 },
+        { id: 'debian11', name: 'Debian 11 Bullseye', monthlyExtra: 0 },
+        { id: 'rocky9', name: 'Rocky Linux 9', monthlyExtra: 0 },
+        { id: 'almalinux9', name: 'AlmaLinux 9', monthlyExtra: 0 },
+        { id: 'centos9', name: 'CentOS Stream 9', monthlyExtra: 0 },
+        { id: 'fedora40', name: 'Fedora 40', monthlyExtra: 0 },
+        { id: 'arch', name: 'Arch Linux', monthlyExtra: 0 },
+        { id: 'alpine', name: 'Alpine Linux 3.19', monthlyExtra: 0 },
+        { id: 'opensuse', name: 'openSUSE Leap 15.5', monthlyExtra: 0 }
+      ]),
+];
 
   const getMonthsFromDuration = (duration) => {
     const parts = duration.split(' ');
@@ -349,7 +354,7 @@ const VPS_Page = () => {
       {/* 5. POPUP - Large, scrollable OS, light checkout button */}
       <AnimatePresence>
         {selectedPlan && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -375,36 +380,13 @@ const VPS_Page = () => {
               </div>
 
               {/* Scrollable content area - but we make OS list scrollable only */}
-              <div className="flex-1 overflow-y-auto p-6">
+              <div className="flex-1 overflow-y-auto p-6 ">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* LEFT COLUMN: Plan specs */}
-                  <div className="bg-slate-50 rounded-2xl p-5 h-fit sticky top-0">
-                    <h5 className="text-sm font-black uppercase tracking-wider text-slate-400 mb-4">Instance Specifications</h5>
-                    <div className="space-y-4">
-                      {[
-                        { icon: Cpu, label: 'vCPU Cores', value: selectedPlan.vCPU },
-                        { icon: Database, label: 'DDR4 RAM', value: selectedPlan.RAM },
-                        { icon: HardDrive, label: 'NVMe Storage', value: selectedPlan.Storage },
-                        { icon: Network, label: 'Port Speed', value: selectedPlan.Port },
-                        { icon: RotateCcw, label: 'Backup Policy', value: selectedPlan.Backup }
-                      ].map((item, idx) => (
-                        <div key={idx} className="flex items-center justify-between py-2 border-b border-slate-200 last:border-0">
-                          <div className="flex items-center gap-3">
-                            <item.icon size={18} className="text-indigo-500" />
-                            <span className="text-xs font-bold text-slate-500 uppercase">{item.label}</span>
-                          </div>
-                          <span className="text-sm font-black text-slate-800">{item.value}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
 
-                  {/* RIGHT COLUMN: dynamic options */}
-                  <div className="flex flex-col gap-6">
-                    {/* OS Selection - Scrollable container */}
-                    <div>
+                   <div>
                       <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider block mb-3">Operating System</label>
-                      <div className="max-h-56 overflow-y-auto pr-2 custom-scrollbar">
+                      <div className=" overflow-y-auto pr-2 custom-scrollbar">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                           {osOptions.map((os) => (
                             <button
@@ -429,6 +411,11 @@ const VPS_Page = () => {
                         </div>
                       </div>
                     </div>
+
+                  {/* RIGHT COLUMN: dynamic options */}
+                  <div className="flex flex-col gap-6">
+                    {/* OS Selection - Scrollable container */}
+                   
 
                     {/* Billing Cycle */}
                     <div>
