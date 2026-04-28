@@ -12,10 +12,10 @@ import {
 } from "lucide-react";
 
 import BackupManager from "./BackupManager";
+import SnapShot from "./SnapShot";
 import OSPanel from "./Os_panel";
 import DocumentationPage from "./docs";
 import VpsSettings from "./setting";
-import GetHelp from "./support/GetHelp";
 import firewall from "./security/firewall";
 
 // ========== HELPER FUNCTIONS & COMPONENTS FOR THE NEW DASHBOARD ==========
@@ -144,7 +144,7 @@ function Dashboard({ setActive }) {
             <span className="text-slate-300 text-xl font-light">/</span>
             <span className="text-sm font-semibold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">Overview</span>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">VPS management · real-time metrics</p>
+          <p className="text-xs text-slate-400 mt-0.5">VPS management</p>
         </div>
       </div>
 
@@ -295,17 +295,13 @@ const MENU_ITEMS = [
   { id: "firewall", label: "firewall", icon: Shield },
   { id: "tutorials", label: "Tutorials", icon: BookOpen },
   { id: "blog", label: "Blog", icon: Rss },
-  { id: "GetHelp", label: "GetHelp", icon: LifeBuoy },
   { id: "setting", label: "Setting", icon: Key },
 ];
 
 // Sub-items configuration
 const SUB_ITEMS = {
-  ospanel: [
-    { id: "license", label: "License", icon: BadgeCheck }
-  ],
   backupmgr: [
-    { id: "snapshot", label: "Snapshot", icon: FolderArchive },
+    { id: "SnapShot", label: "Snapshot", icon: FolderArchive },
     { id: "serverusage", label: "Server Usage", icon: Activity },
     { id: "latestaction", label: "Latest Action", icon: Clock }
   ]
@@ -316,7 +312,6 @@ function Sidebar({ active, setActive }) {
     infrastructure: true,
     security: true,
     apps: true,
-    support: true,
   });
   const [openSubMenus, setOpenSubMenus] = useState({}); // track which menu items have open submenu
 
@@ -332,7 +327,6 @@ function Sidebar({ active, setActive }) {
     infrastructure: ["docker", "backupmgr", "ospanel", "setting"],
     security: ["firewall"],
     apps: ["tutorials", "blog"],
-    support: ["GetHelp"],
   };
 
   // Helper to render a menu item (could be parent with children)
@@ -386,19 +380,6 @@ function Sidebar({ active, setActive }) {
 
   return (
     <aside className="glass w-60 h-full flex flex-col flex-shrink-0 border-r border-white/50 z-50">
-      <div className="h-16 px-5 flex items-center gap-3 border-b border-slate-100/60">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-200">
-          <Zap size={15} fill="white" className="text-white" />
-        </div>
-        <div>
-          <p className="font-extrabold text-[14px] text-slate-800 tracking-tight leading-none">CloudeData</p>
-          <p className="text-[10px] text-emerald-500 font-semibold mt-0.5 flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            All systems go
-          </p>
-        </div>
-      </div>
-
       <nav className="flex-1 overflow-y-auto no-sb py-3 px-2.5">
         {MENU_ITEMS.filter(item => item.id === "overview").map(item => renderMenuItem(item))}
 
@@ -432,8 +413,7 @@ function Sidebar({ active, setActive }) {
 }
 
 function NavButton({ item, active, setActive, sub }) {
-  // This is kept for backward compatibility but not used in the new Sidebar
-  // The Sidebar now uses renderMenuItem directly.
+  
   return null;
 }
 
@@ -515,19 +495,12 @@ export default function App() {
     case "setting":
       MainComponent = VpsSettings;
       break;
-    case "GetHelp":
-      MainComponent = GetHelp;
-      break;
     case "firewall":
       MainComponent = firewall;
       break;
-    // Sub-options for OS Panel
-    case "license":
-      MainComponent = LicensePlaceholder;
-      break;
     // Sub-options for Backup Manager
-    case "snapshot":
-      MainComponent = SnapshotPlaceholder;
+    case "SnapShot":
+      MainComponent = SnapShot;
       break;
     case "serverusage":
       MainComponent = ServerUsagePlaceholder;
@@ -551,7 +524,6 @@ export default function App() {
     const found = MENU_ITEMS.find(i => i.id === active);
     if (found) return found.label;
     // Handle subpages label
-    if (active === "license") return "License";
     if (active === "snapshot") return "Snapshot";
     if (active === "serverusage") return "Server Usage";
     if (active === "latestaction") return "Latest Action";

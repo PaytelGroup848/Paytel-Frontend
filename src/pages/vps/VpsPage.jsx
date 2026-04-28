@@ -522,5 +522,4 @@ const VPS_Page = () => {
     </div>
   );
 };
-
 export default VPS_Page;
