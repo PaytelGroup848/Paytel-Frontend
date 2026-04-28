@@ -118,11 +118,9 @@ const VPSDashboard = () => {
                 onClick={() => handleManageClick(vps.id)}
                 className="flex-grow lg:flex-none px-6 py-3.5 bg-slate-50 text-slate-900 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition-all duration-300"
                >
-                 Manage <ChevronRight size={18} />
+                 Dashnoard <ChevronRight size={18} />
                </button>
-               <button className="p-3.5 bg-slate-50 text-slate-400 rounded-2xl hover:text-slate-900 transition-colors">
-                  <MoreHorizontal size={20} />
-               </button>
+               
             </div>
 
             {/* Subtle Progress Background */}
