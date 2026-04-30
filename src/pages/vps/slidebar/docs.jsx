@@ -40,11 +40,6 @@ const DocumentationPage = () => {
             <span className="text-slate-900">Documentation</span>
           </div>
           <div className="hidden md:flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 text-slate-400 text-sm w-64">
-            <Search size={14} />
-            <span>Search docs...</span>
-            <div className="ml-auto flex items-center gap-1 opacity-50">
-              <Command size={12} /> <span className="text-[10px]">K</span>
-            </div>
           </div>
         </div>
       </div>

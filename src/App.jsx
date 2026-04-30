@@ -42,6 +42,7 @@ import VpsPlans from './pages/vps/VpsPlans';
 import VpsOverview from './pages/vps/VpsOverview';
 import VPSDocumentation from './pages/vps/slidebar/docs';
 import BackupManager from './pages/vps/slidebar/BackupManager';
+import SnapShot from './pages/vps/slidebar/SnapShot';
 import  Catalogs from "./pages/vps/slidebar/docker/catalogs";
 import OSPanel from './pages/vps/slidebar/Os_panel';
 import VpsSettings from "./pages/vps/slidebar/setting";
@@ -174,9 +175,10 @@ export default function App() {
           <Route path="/vps/vps_overview/:id" element={<VpsOverview />} />
           <Route path="/vps/support/docs" element={<VPSDocumentation />} />
           <Route path="/vps/backup" element={<BackupManager />} />
+          <Route path = "vps/backup/snapshot" element =  {<SnapShot/>} />
           <Route path="/vps/OSPanel" element={<OSPanel />} />
           <Route path = "/vps/setting" element ={<VpsSettings/>} />
-          <Route path = "/vps/help" element  = {<GetHelp/>} />
+          <Route path = "/help" element  = {<GetHelp/>} />
           <Route path = "/vps/docker/catalogs" element={<Catalogs/>} />
           <Route path = "/vps/security/firewall" element  = {<firewall/>} /> 
           <Route path="/home" element={<Home />} />
@@ -188,6 +190,8 @@ export default function App() {
             <Route path="servers" element={<Servers />} />
             <Route path="instances" element={<AdminInstances />} />
           </Route>
+
+          
         
 
       {/* Fallback */}

@@ -510,5 +510,4 @@ const osOptions = [
     </div>
   );
 };
-
 export default VPS_Page;
