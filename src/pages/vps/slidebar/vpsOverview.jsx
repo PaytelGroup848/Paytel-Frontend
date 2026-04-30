@@ -17,6 +17,12 @@ import DocumentationPage from "./docs";
 import VpsSettings from "./setting";
 import GetHelp from "./support/GetHelp";
 import firewall from "./security/firewall";
+import { 
+  useVpsInstance, useVpsStats, useStartVps, 
+  useStopVps, useRebootVps, useVpsStatus, usePoweroffVps   
+} from '../../../hooks/useVps';
+import { useNavigate, useParams } from "react-router-dom";
+
 
 // ========== HELPER FUNCTIONS & COMPONENTS FOR THE NEW DASHBOARD ==========
 const generateRandomData = (length = 12, base = 20, range = 15) =>
@@ -74,20 +80,36 @@ const SecurityCard = ({ title, value, icon: Icon, status, bgColor }) => (
 
 // ========== REDESIGNED DASHBOARD (Overview) ==========
 function Dashboard({ setActive }) {
-  // States for real-time metrics
-  const [osName] = useState("Ubuntu 22.04 LTS");
-  const [vpsStatus, setVpsStatus] = useState("running");
-  const [hostname] = useState("srv1596088.hstgr.cloud");
-  const [uptime, setUptime] = useState("1 hour");
-  const [expiration, setExpiration] = useState("2026-05-17");
-  const [autoRenew, setAutoRenew] = useState(true);
 
-  const [cpu, setCpu] = useState(18);
-  const [ram, setRam] = useState(1.24);
-  const [disk, setDisk] = useState(15.4);
-  const [incoming, setIncoming] = useState(7.6);
-  const [outgoing, setOutgoing] = useState(0.1);
-  const [bandwidth, setBandwidth] = useState(0.001);
+
+  const [uptime, setUptime] = useState("1 hour");
+
+   const { id } = useParams();
+    const navigate = useNavigate();
+    const { data: instance, isLoading: isInstanceLoading } = useVpsInstance(id);
+    const { data: statsData, isLoading: isStatsLoading } = useVpsStats(id);
+    const { data: statusData } = useVpsStatus(id);
+    const poweroffVps = usePoweroffVps();
+    
+    const startVps = useStartVps();
+    const stopVps = useStopVps();
+    const rebootVps = useRebootVps();
+     const vpsStatus = statusData?.status === 'running' ? 'running' : 'stopped';
+
+
+
+        console.log("this is my instance", instance)
+    console.log("this is my statsData", statsData)
+        console.log("this is my startVps", startVps)
+        console.log("this is my stopVps", stopVps)
+    console.log("this is my rebootVps", rebootVps)
+
+ const [cpu, setCpu]   = useState(() => instance?.cpuLoad    || 0);
+const [ram, setRam]   = useState(() => instance?.ramUsed    || 0);
+const [disk, setDisk] = useState(() => instance?.diskUsed   || 0);
+const [incoming]      = useState(() => instance?.incomingTraffic  || 0);
+const [outgoing]      = useState(() => instance?.outgoingTraffic  || 0);
+const [bandwidth]     = useState(() => instance?.bandwidth   || 0);
 
   // Chart data
   const [cpuData, setCpuData] = useState(() => generateRandomData(12, 18, 15));
@@ -96,6 +118,8 @@ function Dashboard({ setActive }) {
   const [incomingData, setIncomingData] = useState(() => generateRandomData(12, 7, 3));
   const [outgoingData, setOutgoingData] = useState(() => generateRandomData(12, 0, 1));
   const [bandwidthData, setBandwidthData] = useState(() => generateRandomData(12, 0, 1));
+
+  
 
   // Real-time simulation (every 3 seconds)
   useEffect(() => {
@@ -128,11 +152,35 @@ function Dashboard({ setActive }) {
     return () => clearInterval(interval);
   }, []);
 
-  const handleReboot = () => alert("Rebooting VPS...");
-  const handleStopVPS = () => setVpsStatus(vpsStatus === "running" ? "stopped" : "running");
+  const handleReboot  = () => rebootVps.mutate(id);
+  const handleStopVPS = () => {
+  if (vpsStatus === "running") {
+    stopVps.mutate(id);
+    setVpsStatus("stopped");
+  } else {
+    startVps.mutate(id);
+    setVpsStatus("running");
+  }
+};
+
+const handlePowerOff = () => {
+  if (window.confirm('Are you sure you want to power off the VPS? This may cause data loss.')) {
+    poweroffVps.mutate(id);
+  }
+};
   const handleRenew = () => alert("Renewal process started");
   const handleUpgrade = () => alert("Upgrade plan dialog");
   const handleChangePassword = () => alert("Change password functionality");
+
+  if (isInstanceLoading) {
+    return <div className="p-8 text-center">Loading instance details...</div>;
+  }
+
+  if (!instance) {
+    return <div className="p-8 text-center text-red-500">Instance not found.</div>;
+  }
+
+  const stats = statsData?.stats || {};
 
   return (
     <div className="p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto w-full space-y-6 bg-gradient-to-br from-slate-50 to-white">
@@ -155,7 +203,7 @@ function Dashboard({ setActive }) {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <Globe size={18} className="text-indigo-500" />
-                <span className="font-bold text-slate-800 text-lg">{osName}</span>
+                <span className="font-bold text-slate-800 text-lg">{instance?.os}</span>
               </div>
               <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
                 vpsStatus === "running" 
@@ -169,7 +217,7 @@ function Dashboard({ setActive }) {
             <div className="flex items-center gap-2">
               <Key size={14} className="text-indigo-500" />
               <span className="text-xs font-medium text-slate-500">Root access</span>
-              <code className="text-sm font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-700">ssh root@195.35.21.221</code>
+  <code>ssh {instance?.sshUsername || 'root'}@{instance?.ip}</code>
             </div>
             <div className="flex items-center gap-2">
               <Lock size={14} className="text-amber-500" />
@@ -179,8 +227,8 @@ function Dashboard({ setActive }) {
               </button>
             </div>
           </div>
-          <button onClick={handleReboot} className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-md transition-all self-start md:self-center">
-            <RotateCw size={16} /> Reboot VPS
+          <button onClick={handleReboot} className="flex cursor-pointer items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-md transition-all self-start md:self-center">
+            <RotateCw size={16} />Restart VPS
           </button>
         </div>
       </div>
@@ -200,6 +248,9 @@ function Dashboard({ setActive }) {
         <div className="flex gap-3 flex-wrap">
           <button onClick={handleStopVPS} className="flex items-center gap-1.5 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 text-sm font-semibold rounded-lg transition-all">
             <Square size={14} /> {vpsStatus === 'running' ? 'Stop VPS' : 'Start VPS'}
+          </button>
+          <button onClick={handlePowerOff} className="flex items-center gap-1.5 px-4 py-2  bg-red-50 hover:bg-red-100 text-red-700 text-sm font-semibold rounded-lg transition-all">
+            <RefreshCw size={14} /> Power Off
           </button>
           <button onClick={handleRenew} className="flex items-center gap-1.5 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-sm font-semibold rounded-lg transition-all">
             <RefreshCw size={14} /> Renew
@@ -233,39 +284,39 @@ function Dashboard({ setActive }) {
             <div className="flex items-center gap-2"><Server size={18} className="text-indigo-500" /><h3 className="font-extrabold text-slate-800">VPS details</h3></div>
           </div>
           <div className="p-5">
-            <DetailItem label="Server location" value="India - Mumbai" icon={<Globe size={12} />} />
-            <DetailItem label="OS" value={osName} />
-            <DetailItem label="Hostname" value={hostname} />
-            <DetailItem label="VPS uptime" value={uptime} icon={<Clock size={12} />} />
-            <DetailItem label="SSH username" value="root" />
-            <DetailItem label="IPv4" value="195.35.21.221" />
+           <DetailItem label="Server location" value={instance?.location}                    icon={<Globe size={12} />} />
+<DetailItem label="OS"              value={instance?.os} />
+<DetailItem label="Hostname"        value={instance?.hostname} />
+<DetailItem label="VPS uptime"      value={instance?.uptime}                      icon={<Clock size={12} />} />
+<DetailItem label="SSH username"    value={instance?.sshUsername || 'root'} />
+<DetailItem label="IPv4"            value={instance?.ip} />
           </div>
         </div>
 
         <div className="bg-white rounded-2xl border border-black/10 shadow-lg overflow-hidden">
           <div className="border-b border-gray-200 px-6 py-4 bg-gray-50/50 flex justify-between items-center">
             <div className="flex items-center gap-2"><Database size={18} className="text-indigo-500" /><h3 className="font-extrabold text-slate-800">Plan details</h3></div>
-            <span className="text-[10px] font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">KVM 1</span>
+            <span className="text-[10px] font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">{instance?.planId?.name}</span>
           </div>
           <div className="p-5 space-y-1">
             <DetailItem 
               label="Current plan" 
-              value="KVM 1" 
+              value={instance?.planId?.name}
               action={<button onClick={handleUpgrade} className="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md hover:bg-indigo-100">Upgrade</button>}
             />
             <DetailItem 
               label="Expiration date" 
-              value={expiration} 
+              value={instance?.expiresAt ? new Date(instance.expiresAt).toLocaleDateString() : 'N/A'}
               action={<button onClick={handleRenew} className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full hover:bg-emerald-100">Renew</button>}
             />
-            <DetailItem 
+            {/* <DetailItem 
               label="Auto-renewal" 
-              value={autoRenew ? "On" : "Off"} 
+              value="On"
               icon={autoRenew ? <span className="w-2 h-2 rounded-full bg-emerald-500"></span> : <span className="w-2 h-2 rounded-full bg-red-500"></span>}
-            />
-            <DetailItem label="CPU core" value="1 vCPU" icon={<Cpu size={12} />} />
-            <DetailItem label="Memory" value="4 GB" icon={<Database size={12} />} />
-            <DetailItem label="Disk space" value="50 GB NVMe" icon={<HardDrive size={12} />} />
+            /> */}
+            <DetailItem label="CPU core" value={`${instance?.planId?.vcpu || 1} vCPU`} icon={<Cpu size={12} />} />
+            <DetailItem label="Memory" value={instance?.planId?.ram} icon={<Database size={12} />} />
+            <DetailItem label="Disk space" value={instance?.planId?.storage} icon={<HardDrive size={12} />} />
           </div>
         </div>
       </div>
@@ -437,22 +488,6 @@ function NavButton({ item, active, setActive, sub }) {
   return null;
 }
 
-// ----- HEADER (unchanged) -----
-function Header({ page }) {
-  return (
-    <header className="h-16 bg-white/80 backdrop-blur-xl border-b border-slate-200/50 flex items-center justify-between px-7 sticky top-0 z-40">
-      <div className="flex items-center gap-2 text-[13px] font-medium text-slate-400">
-        <span>CloudeData</span>
-        <ChevronRight size={13} />
-        <span className="text-indigo-600 font-bold">CLOUDE-MUM-01</span>
-        <ChevronRight size={13} />
-        <span className="text-slate-600">{page}</span>
-      </div>
-
-    </header>
-  );
-}
-
 // ----- PLACEHOLDER COMPONENTS FOR SUBPAGES -----
 const LicensePlaceholder = () => (
   <div className="flex flex-col items-center justify-center min-h-[72vh] text-center">
@@ -493,6 +528,7 @@ const LatestActionPlaceholder = () => (
     <p className="text-slate-400 max-w-sm">Recent activities and task history.</p>
   </div>
 );
+
 
 // ----- MAIN APP (routing with new subpage ids) -----
 export default function App() {
@@ -564,7 +600,6 @@ export default function App() {
       <div className="flex h-screen overflow-hidden" style={{ background: "linear-gradient(135deg,#EEF2FF 0%,#F8FAFF 60%,#F5F0FF 100%)" }}>
         <Sidebar active={active} setActive={setActive} />
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          <Header page={pageLabel} />
           <main className="flex-1 overflow-y-auto no-sb">
             <AnimatePresence mode="wait">
               <motion.div

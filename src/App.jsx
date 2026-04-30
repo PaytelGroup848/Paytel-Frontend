@@ -38,9 +38,8 @@ import Servers from './pages/superadmin/Servers';
 import AdminInstances from './pages/superadmin/Instances';
 import FilesPage from './pages/websites/wordpress/FilesPage';
 import DatabasePage from './pages/websites/wordpress/DatabasePage';
-import VPS_Page from './pages/vps/VpsPage';
-import VPSDashboard from './pages/vps/vps_paid';
-import VpsDashboard from "./pages/vps/slidebar/vpsOverview";
+import VpsPlans from './pages/vps/VpsPlans';
+import VpsOverview from './pages/vps/VpsOverview';
 import VPSDocumentation from './pages/vps/slidebar/docs';
 import BackupManager from './pages/vps/slidebar/BackupManager';
 import  Catalogs from "./pages/vps/slidebar/docker/catalogs";
@@ -51,7 +50,9 @@ import GetHelp from "./pages/vps/slidebar/support/GetHelp";
 import AnalyticsPage from './pages/wordpress/AnalyticsPage';
 import BackupsPage from './pages/wordpress/BackupsPage';
 import { useMe } from "./hooks/useAuth";
-
+import VPS_Page from './pages/vps/VpsPage';
+import VPSDashboard from './pages/vps/vps_paid';
+import VpsDashboard from "./pages/vps/slidebar/vpsOverview";
 
 
 
@@ -167,9 +168,10 @@ export default function App() {
           <Route path="/websites/php" element={<PHP_Page />} />
           <Route path = "/websites/php/paid" element ={<PaidPhpDashboard/>} />
           <Route path="/websites/nodejs" element={<NodeJS_Page />} />
-          <Route path="/vps" element={<VPS_Page/>} />
-          <Route path="/vps/paid" element={<VPSDashboard />} />
-          <Route path="/vps/vps_overview" element={<VpsDashboard />} />
+          <Route path="/vps" element={<VpsPlans/>} />
+          <Route path='/ourvps' element={<VPSDashboard/>}/>
+          <Route path="/vps/paid/:id" element={<VpsDashboard />} />
+          <Route path="/vps/vps_overview/:id" element={<VpsOverview />} />
           <Route path="/vps/support/docs" element={<VPSDocumentation />} />
           <Route path="/vps/backup" element={<BackupManager />} />
           <Route path="/vps/OSPanel" element={<OSPanel />} />

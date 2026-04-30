@@ -89,6 +89,8 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
         )}
       </AnimatePresence>
 
+     
+
       <motion.aside
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
