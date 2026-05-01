@@ -170,7 +170,7 @@ export default function App() {
           <Route path = "/websites/php/paid" element ={<PaidPhpDashboard/>} />
           <Route path="/websites/nodejs" element={<NodeJS_Page />} />
           <Route path="/vps" element={<VpsPlans/>} />
-          <Route path='/ourvps' element={<VPSDashboard/>}/>
+          <Route path='/vps/paid' element={<VPSDashboard/>}/>
           <Route path="/vps/paid/:id" element={<VpsDashboard />} />
           <Route path="/vps/vps_overview/:id" element={<VpsOverview />} />
           <Route path="/vps/support/docs" element={<VPSDocumentation />} />

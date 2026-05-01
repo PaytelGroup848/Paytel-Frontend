@@ -99,7 +99,7 @@ const OsIcon = ({ name, size = 28 }) => {
   );
 };
 
-/* ─── Data ───────────────────────────────────────────────────────────────── */
+
 const OS_OPTIONS = [
   { name: 'Ubuntu 24.04 LTS', template: 'ubuntu-24.04-x86_64', icon: 'ubuntu', tag: 'LTS' },
   { name: 'Ubuntu 22.04', template: 'ubuntu-22.04-x86_64', icon: 'ubuntu' },

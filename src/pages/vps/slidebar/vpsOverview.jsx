@@ -10,7 +10,9 @@ import {
   Upload, Download, ExternalLink, Calendar, RotateCw, Square,
   Fingerprint, BadgeCheck, AlertCircle, FolderArchive,
   Pause,
-  Play
+  Play,
+  Eye,
+  EyeOff
 } from "lucide-react";
 
 import BackupManager from "./BackupManager";
@@ -87,6 +89,7 @@ function Dashboard({ setActive }) {
    const { id } = useParams();
     const navigate = useNavigate();
     const { data: instance, isLoading: isInstanceLoading } = useVpsInstance(id);
+    console.log("THIS IS MY INSTANCE", instance)
     const { data: statsData, isLoading: isStatsLoading } = useVpsStats(id);
      const { data: metricsData, isLoading: isMetricsLoading } = useVpsMetrics(id, 5000);
      const { 
@@ -110,6 +113,8 @@ function Dashboard({ setActive }) {
   const [incomingHistory, setIncomingHistory] = useState([]);
   const [outgoingHistory, setOutgoingHistory] = useState([]);
   const [bandwidthHistory, setBandwidthHistory] = useState([]);
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const [currentMetrics, setCurrentMetrics] = useState({
     cpu: 0,
@@ -174,6 +179,10 @@ function Dashboard({ setActive }) {
     bandwidth: (currentMetrics.bandwidth / 1024).toFixed(3),
   };
 
+
+    const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   
   const handleStopVPS = () => {
@@ -282,16 +291,31 @@ function Dashboard({ setActive }) {
               <Key size={14} className="text-indigo-500" />
               <span className="text-xs font-medium text-slate-500">SSH Access:</span>
               <code className="text-xs bg-slate-100 px-2 py-1 rounded font-mono">
-                ssh root@{instance.ip}
+                ssh root@{instance?.ip}
               </code>
             </div>
-            <div className="flex items-center gap-2">
-              <Lock size={14} className="text-amber-500" />
-              <span className="text-xs font-medium text-slate-500">Root password</span>
-              <button onClick={handleChangePassword} className="text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
-                Change <ExternalLink size={12} />
-              </button>
-            </div>
+              <div className="flex items-center gap-2">
+        <Lock size={14} className="text-amber-500" />
+        <span className="text-xs font-medium text-slate-500">Root password:</span>
+        <div className="flex items-center gap-2 bg-slate-100 px-2 py-1 rounded-lg">
+          <code className="text-xs font-mono">
+            {showPassword ? (instance.rootPassword) : "•".repeat(instance?.rootPassword?.length || 8)}
+          </code>
+          <button
+            onClick={togglePasswordVisibility}
+            className="text-slate-500 hover:text-indigo-600 transition-colors"
+            title={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+          </button>
+        </div>
+        {/* <button 
+          onClick={handleChangePassword} 
+          className="text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
+        >
+          Change <ExternalLink size={12} />
+        </button> */}
+      </div>
           </div>
                 {vpsStatus === 'running' && (
               <button 
