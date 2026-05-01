@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AreaChart, Area, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 import {
@@ -8,7 +8,9 @@ import {
   TerminalSquare, Globe, Wifi, Activity, RefreshCw, Power,
   TrendingUp, Database, BarChart3, Rocket, Construction,
   Upload, Download, ExternalLink, Calendar, RotateCw, Square,
-  Fingerprint, BadgeCheck, AlertCircle, FolderArchive
+  Fingerprint, BadgeCheck, AlertCircle, FolderArchive,
+  Pause,
+  Play
 } from "lucide-react";
 
 import BackupManager from "./BackupManager";
@@ -19,12 +21,12 @@ import VpsSettings from "./setting";
 import firewall from "./security/firewall";
 import { 
   useVpsInstance, useVpsStats, useStartVps, 
-  useStopVps, useRebootVps, useVpsStatus, usePoweroffVps   
+  useStopVps, useRebootVps, useVpsStatus, usePoweroffVps, useVpsMetrics
 } from '../../../hooks/useVps';
 import { useNavigate, useParams } from "react-router-dom";
 
 
-// ========== HELPER FUNCTIONS & COMPONENTS FOR THE NEW DASHBOARD ==========
+
 const generateRandomData = (length = 12, base = 20, range = 15) =>
   Array.from({ length }, (_, i) => ({ time: i, value: Math.floor(Math.random() * range) + base }));
 
@@ -82,77 +84,98 @@ const SecurityCard = ({ title, value, icon: Icon, status, bgColor }) => (
 function Dashboard({ setActive }) {
 
 
-  const [uptime, setUptime] = useState("1 hour");
-
    const { id } = useParams();
     const navigate = useNavigate();
     const { data: instance, isLoading: isInstanceLoading } = useVpsInstance(id);
     const { data: statsData, isLoading: isStatsLoading } = useVpsStats(id);
-    const { data: statusData } = useVpsStatus(id);
+     const { data: metricsData, isLoading: isMetricsLoading } = useVpsMetrics(id, 5000);
+     const { 
+    data: statusData, 
+    isLoading: isStatusLoading, 
+    refetch: refetchStatus 
+  } = useVpsStatus(id);
+
     const poweroffVps = usePoweroffVps();
     
     const startVps = useStartVps();
     const stopVps = useStopVps();
     const rebootVps = useRebootVps();
      const vpsStatus = statusData?.status === 'running' ? 'running' : 'stopped';
+      const isActionLoading = startVps.isPending || stopVps.isPending || rebootVps.isPending || poweroffVps.isPending;
 
 
+       const [cpuHistory, setCpuHistory] = useState([]);
+  const [ramHistory, setRamHistory] = useState([]);
+  const [diskHistory, setDiskHistory] = useState([]);
+  const [incomingHistory, setIncomingHistory] = useState([]);
+  const [outgoingHistory, setOutgoingHistory] = useState([]);
+  const [bandwidthHistory, setBandwidthHistory] = useState([]);
 
-        console.log("this is my instance", instance)
-    console.log("this is my statsData", statsData)
-        console.log("this is my startVps", startVps)
-        console.log("this is my stopVps", stopVps)
-    console.log("this is my rebootVps", rebootVps)
-
- const [cpu, setCpu]   = useState(() => instance?.cpuLoad    || 0);
-const [ram, setRam]   = useState(() => instance?.ramUsed    || 0);
-const [disk, setDisk] = useState(() => instance?.diskUsed   || 0);
-const [incoming]      = useState(() => instance?.incomingTraffic  || 0);
-const [outgoing]      = useState(() => instance?.outgoingTraffic  || 0);
-const [bandwidth]     = useState(() => instance?.bandwidth   || 0);
-
-  // Chart data
-  const [cpuData, setCpuData] = useState(() => generateRandomData(12, 18, 15));
-  const [ramData, setRamData] = useState(() => generateRandomData(12, 1, 1));
-  const [diskData, setDiskData] = useState(() => generateRandomData(12, 15, 5));
-  const [incomingData, setIncomingData] = useState(() => generateRandomData(12, 7, 3));
-  const [outgoingData, setOutgoingData] = useState(() => generateRandomData(12, 0, 1));
-  const [bandwidthData, setBandwidthData] = useState(() => generateRandomData(12, 0, 1));
-
+  const [currentMetrics, setCurrentMetrics] = useState({
+    cpu: 0,
+    ram: 0,
+    disk: 0,
+    incoming: 0,
+    outgoing: 0,
+    bandwidth: 0,
+  });
   
 
-  // Real-time simulation (every 3 seconds)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newCpu = Math.floor(Math.random() * 35) + 5;
-      const newRam = Number((Math.random() * 2.5 + 0.8).toFixed(2));
-      const newDisk = Number((Math.random() * 20 + 5).toFixed(1));
-      const newIncoming = Number((Math.random() * 12 + 1).toFixed(1));
-      const newOutgoing = Number((Math.random() * 0.5 + 0.05).toFixed(1));
-      const newBandwidth = Number((Math.random() * 0.003 + 0.0005).toFixed(3));
+    const timeCounter = useRef()
 
-      setCpu(newCpu);
-      setRam(newRam);
-      setDisk(newDisk);
-      setIncoming(newIncoming);
-      setOutgoing(newOutgoing);
-      setBandwidth(newBandwidth);
-      setUptime(prev => {
-        let hrs = parseInt(prev) || 1;
-        return `${hrs + 1} hours`;
-      });
+      useEffect(() => {
+    if (metricsData) {
+      const newMetrics = {
+        cpu: metricsData.cpu || 0,
+        ram: metricsData.ram || 0,
+        disk: metricsData.disk || 0,
+        incoming: metricsData.incoming || 0,
+        outgoing: metricsData.outgoing || 0,
+        bandwidth: metricsData.bandwidth || 0,
+      };
+      
+      setCurrentMetrics(newMetrics);
+      
+      // Update history arrays (keep last 12 points)
+      const timePoint = { time: timeCounter.current++, value: newMetrics.cpu };
+      setCpuHistory(prev => [...prev.slice(-11), timePoint]);
+      
+      setRamHistory(prev => [...prev.slice(-11), { time: timeCounter.current, value: newMetrics.ram }]);
+      setDiskHistory(prev => [...prev.slice(-11), { time: timeCounter.current, value: newMetrics.disk }]);
+      setIncomingHistory(prev => [...prev.slice(-11), { time: timeCounter.current, value: newMetrics.incoming }]);
+      setOutgoingHistory(prev => [...prev.slice(-11), { time: timeCounter.current, value: newMetrics.outgoing }]);
+      setBandwidthHistory(prev => [...prev.slice(-11), { time: timeCounter.current, value: newMetrics.bandwidth }]);
+    }
+  }, [metricsData]);
 
-      setCpuData(prev => [...prev.slice(1), { time: prev.length, value: newCpu }]);
-      setRamData(prev => [...prev.slice(1), { time: prev.length, value: newRam }]);
-      setDiskData(prev => [...prev.slice(1), { time: prev.length, value: newDisk }]);
-      setIncomingData(prev => [...prev.slice(1), { time: prev.length, value: newIncoming }]);
-      setOutgoingData(prev => [...prev.slice(1), { time: prev.length, value: newOutgoing }]);
-      setBandwidthData(prev => [...prev.slice(1), { time: prev.length, value: newBandwidth }]);
-    }, 3000);
-    return () => clearInterval(interval);
+
+   useEffect(() => {
+    if (metricsData) {
+      const initialHistory = [];
+      for (let i = 0; i < 12; i++) {
+        initialHistory.push({ time: i, value: 0 });
+      }
+      setCpuHistory(initialHistory);
+      setRamHistory(initialHistory);
+      setDiskHistory(initialHistory);
+      setIncomingHistory(initialHistory);
+      setOutgoingHistory(initialHistory);
+      setBandwidthHistory(initialHistory);
+    }
   }, []);
 
-  const handleReboot  = () => rebootVps.mutate(id);
+
+    const formattedMetrics = {
+    cpu: currentMetrics.cpu.toFixed(1),
+    ram: (currentMetrics.ram / 1024).toFixed(2), // Convert MB to GB
+    disk: currentMetrics.disk.toFixed(1),
+    incoming: (currentMetrics.incoming / 1024).toFixed(1), // Convert KB to MB
+    outgoing: (currentMetrics.outgoing / 1024).toFixed(1),
+    bandwidth: (currentMetrics.bandwidth / 1024).toFixed(3),
+  };
+
+
+  
   const handleStopVPS = () => {
   if (vpsStatus === "running") {
     stopVps.mutate(id);
@@ -163,14 +186,55 @@ const [bandwidth]     = useState(() => instance?.bandwidth   || 0);
   }
 };
 
-const handlePowerOff = () => {
-  if (window.confirm('Are you sure you want to power off the VPS? This may cause data loss.')) {
-    poweroffVps.mutate(id);
-  }
-};
+
+ const handlePowerOff = () => {
+    if (window.confirm(' Are you sure you want to power off the VPS? This will forcefully shut down the server and may cause data loss.')) {
+      poweroffVps.mutate(id, {
+        onSuccess: () => {
+          setTimeout(() => {
+            refetchStatus();
+          }, 3000);
+        }
+      });
+    }
+  };
+
   const handleRenew = () => alert("Renewal process started");
   const handleUpgrade = () => alert("Upgrade plan dialog");
   const handleChangePassword = () => alert("Change password functionality");
+
+    const handleToggleVPS = async () => {
+    if (vpsStatus === 'running') {
+      await stopVps.mutateAsync(id);
+    } else {
+      await startVps.mutateAsync(id);
+    }
+    // Refetch status after action
+    setTimeout(() => {
+      refetchStatus();
+    }, 3000);
+  };
+
+    const handleReboot = async () => {
+    await rebootVps.mutateAsync(id);
+    setTimeout(() => {
+      refetchStatus();
+    }, 5000);
+  };
+  
+
+    const getStatusConfig = () => {
+    if (isStatusLoading) {
+      return { color: 'bg-yellow-500', text: 'Checking...', pulse: true };
+    }
+    if (vpsStatus === 'running') {
+      return { color: 'bg-green-500', text: 'Running', pulse: true };
+    }
+    return { color: 'bg-red-500', text: 'Stopped', pulse: false };
+  };
+  
+  const statusConfig = getStatusConfig();
+
 
   if (isInstanceLoading) {
     return <div className="p-8 text-center">Loading instance details...</div>;
@@ -205,19 +269,21 @@ const handlePowerOff = () => {
                 <Globe size={18} className="text-indigo-500" />
                 <span className="font-bold text-slate-800 text-lg">{instance?.os}</span>
               </div>
-              <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
-                vpsStatus === "running" 
-                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200" 
-                  : "bg-red-50 text-red-700 border border-red-200"
+            <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border transition-all ${
+                vpsStatus === 'running' 
+                  ? 'bg-green-50 text-green-700 border-green-200' 
+                  : 'bg-red-50 text-red-700 border-red-200'
               }`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${vpsStatus === "running" ? "bg-emerald-500 animate-pulse" : "bg-red-500"}`} />
-                KVM | {vpsStatus === "running" ? "Running" : "Stopped"}
+                <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.color} ${statusConfig.pulse ? 'animate-pulse' : ''}`} />
+                {statusConfig.text}
               </div>
             </div>
             <div className="flex items-center gap-2">
               <Key size={14} className="text-indigo-500" />
-              <span className="text-xs font-medium text-slate-500">Root access</span>
-  <code>ssh {instance?.sshUsername || 'root'}@{instance?.ip}</code>
+              <span className="text-xs font-medium text-slate-500">SSH Access:</span>
+              <code className="text-xs bg-slate-100 px-2 py-1 rounded font-mono">
+                ssh root@{instance.ip}
+              </code>
             </div>
             <div className="flex items-center gap-2">
               <Lock size={14} className="text-amber-500" />
@@ -227,40 +293,130 @@ const handlePowerOff = () => {
               </button>
             </div>
           </div>
-          <button onClick={handleReboot} className="flex cursor-pointer items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-md transition-all self-start md:self-center">
-            <RotateCw size={16} />Restart VPS
-          </button>
+                {vpsStatus === 'running' && (
+              <button 
+                onClick={handleReboot}
+                disabled={isActionLoading}
+                className={`flex items-center border border-amber-200 cursor-pointer gap-1.5 px-4 py-2 bg-amber-50 hover:bg-amber-100 text-amber-700 text-sm font-semibold rounded-lg transition-all ${
+                  isActionLoading ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+              >
+                {rebootVps.isPending ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    Rebooting...
+                  </>
+                ) : (
+                  <>
+                    <RotateCw size={14} />
+                    Restart VPS
+                  </>
+                )}
+              </button>
+            )}
         </div>
       </div>
 
       {/* 6 Mini Graphs (line only) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        <MetricGraph title="CPU Usage" icon={Cpu} unit="%" currentValue={cpu} data={cpuData} />
-        <MetricGraph title="RAM Used" icon={Database} unit=" GB" currentValue={ram} data={ramData} />
-        <MetricGraph title="Disk Used" icon={HardDrive} unit=" GB" currentValue={disk} data={diskData} />
-        <MetricGraph title="Incoming Traffic" icon={Download} unit=" MB" currentValue={incoming} data={incomingData} />
-        <MetricGraph title="Outgoing Traffic" icon={Upload} unit=" MB" currentValue={outgoing} data={outgoingData} />
-        <MetricGraph title="Bandwidth" icon={Wifi} unit=" TB" currentValue={bandwidth} data={bandwidthData} />
+
+ 
+        <MetricGraph 
+          title="CPU Usage" 
+          icon={Cpu} 
+          unit="%" 
+          currentValue={formattedMetrics.cpu} 
+          data={cpuHistory} 
+        />
+        <MetricGraph 
+          title="RAM Used" 
+          icon={Database} 
+          unit=" GB" 
+          currentValue={formattedMetrics.ram} 
+          data={ramHistory} 
+        />
+        <MetricGraph 
+          title="Disk Used" 
+          icon={HardDrive} 
+          unit=" GB" 
+          currentValue={formattedMetrics.disk} 
+          data={diskHistory} 
+        />
+        <MetricGraph 
+          title="Incoming Traffic" 
+          icon={Download} 
+          unit=" MB" 
+          currentValue={formattedMetrics.incoming} 
+          data={incomingHistory} 
+        />
+        <MetricGraph 
+          title="Outgoing Traffic" 
+          icon={Upload} 
+          unit=" MB" 
+          currentValue={formattedMetrics.outgoing} 
+          data={outgoingHistory} 
+        />
+        <MetricGraph 
+          title="Bandwidth" 
+          icon={Wifi} 
+          unit=" GB" 
+          currentValue={formattedMetrics.bandwidth} 
+          data={bandwidthHistory} 
+        />
+      
       </div>
 
       {/* Quick Actions + Uptime */}
       <div className="flex flex-wrap gap-3 justify-between items-center bg-white/80 rounded-xl p-4 border border-black/10 shadow-sm">
         <div className="flex gap-3 flex-wrap">
-          <button onClick={handleStopVPS} className="flex items-center gap-1.5 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 text-sm font-semibold rounded-lg transition-all">
-            <Square size={14} /> {vpsStatus === 'running' ? 'Stop VPS' : 'Start VPS'}
-          </button>
-          <button onClick={handlePowerOff} className="flex items-center gap-1.5 px-4 py-2  bg-red-50 hover:bg-red-100 text-red-700 text-sm font-semibold rounded-lg transition-all">
-            <RefreshCw size={14} /> Power Off
-          </button>
-          <button onClick={handleRenew} className="flex items-center gap-1.5 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-sm font-semibold rounded-lg transition-all">
-            <RefreshCw size={14} /> Renew
-          </button>
-          <button onClick={handleUpgrade} className="flex items-center gap-1.5 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-semibold rounded-lg transition-all">
+          <button 
+              onClick={handleToggleVPS}
+              disabled={isActionLoading || isStatusLoading}
+              className={`flex items-center cursor-pointer gap-1.5 px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+                vpsStatus === 'running'
+                  ? 'bg-red-50 border border-red-200 hover:bg-red-100 text-red-700'
+                  : 'bg-green-50 border border-green-200 hover:bg-green-100 text-green-700'
+              } ${(isActionLoading || isStatusLoading) ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              {(startVps.isPending || stopVps.isPending) ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  {vpsStatus === 'running' ? 'Stopping...' : 'Starting...'}
+                </>
+              ) : (
+                <>
+                  {vpsStatus === 'running' ? <Pause  size={16} /> : <Play  size={14} />}
+                  {vpsStatus === 'running' ? 'Stop VPS' : 'Start VPS'}
+                </>
+              )}
+            </button>
+         <button 
+          onClick={handlePowerOff}
+          disabled={isActionLoading || isStatusLoading || vpsStatus !== 'running'}
+          className={`flex items-center cursor-pointer gap-1.5 px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+            poweroffVps.isPending
+              ? 'bg-gray-100 text-gray-500 border border-gray-200'
+              : 'bg-red-50 border border-red-200 hover:bg-red-100 text-red-700'
+          } ${(isActionLoading || isStatusLoading || vpsStatus !== 'running') ? 'opacity-50 cursor-not-allowed' : ''}`}
+        >
+          {poweroffVps.isPending ? (
+            <>
+              <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
+              Powering Off...
+            </>
+          ) : (
+            <>
+              <Power size={14} />
+              Power Off
+            </>
+          )}
+        </button>
+          <button onClick={handleUpgrade} className="flex border border-blue-200 items-center gap-1.5 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-semibold rounded-lg transition-all">
             <TrendingUp size={14} /> Upgrade
           </button>
         </div>
         <div className="text-xs text-slate-500 flex items-center gap-1 bg-slate-100 px-3 py-1 rounded-full">
-          <Clock size={12} /> Uptime: {uptime}
+          <Clock size={12} /> Uptime: {instance?.uptime} 
         </div>
       </div>
 
@@ -307,7 +463,7 @@ const handlePowerOff = () => {
             <DetailItem 
               label="Expiration date" 
               value={instance?.expiresAt ? new Date(instance.expiresAt).toLocaleDateString() : 'N/A'}
-              action={<button onClick={handleRenew} className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full hover:bg-emerald-100">Renew</button>}
+              // action={<button onClick={handleRenew} className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full hover:bg-emerald-100">Renew</button>}
             />
             {/* <DetailItem 
               label="Auto-renewal" 
@@ -324,18 +480,6 @@ const handlePowerOff = () => {
   );
 }
 
-// ----- GLOBAL STYLES (unchanged) -----
-const GlobalStyle = () => (
-  <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-    *{font-family:'Plus Jakarta Sans',sans-serif;box-sizing:border-box}
-    .mono{font-family:'JetBrains Mono',monospace, letin words, monosspace, ui-monospace}
-    .no-sb::-webkit-scrollbar{display:none}.no-sb{-ms-overflow-style:none;scrollbar-width:none}
-    .glass{background:rgba(255,255,255,0.75);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
-    @keyframes pulse2{0%,100%{opacity:1}50%{opacity:0.4}}
-    .animate-pulse{animation:pulse2 2s ease-in-out infinite}
-  `}</style>
-);
 
 // ========== SIDEBAR WITH SUBOPTIONS ==========
 const MENU_ITEMS = [
@@ -568,7 +712,7 @@ export default function App() {
 
   return (
     <>
-      <GlobalStyle />
+      
       <div className="flex h-screen overflow-hidden" style={{ background: "linear-gradient(135deg,#EEF2FF 0%,#F8FAFF 60%,#F5F0FF 100%)" }}>
         <Sidebar active={active} setActive={setActive} />
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">

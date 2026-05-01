@@ -119,7 +119,7 @@ export const useDeleteVps = () =>
     queryFn: () => api.get(`/vps/instances/${id}/status`).then((r) => r.data?.data),
     enabled: !!id,
     staleTime: 0,
-    refetchInterval: 10000, // Check status every 10 seconds
+    // refetchInterval: 10000, // Check status every 10 seconds
   });
 
 
@@ -132,4 +132,15 @@ export const useDeleteVps = () =>
       toast.success('VPS powered off...');
     },
     onError: () => toast.error('Failed to power off VPS'),
+  });
+
+
+export const useVpsMetrics = (id, refetchInterval = 5000) =>
+  useQuery({
+    queryKey: ['vps', 'metrics', id],
+    queryFn: () => api.get(`/vps/instances/${id}/metrics`).then((r) => r.data?.data),
+    enabled: !!id,
+    refetchInterval: refetchInterval,
+    staleTime: 0,
+    retry: 2,
   });
