@@ -105,7 +105,7 @@ const OS_OPTIONS = [
   { name: 'Ubuntu 22.04', template: 'ubuntu-22.04-x86_64', icon: 'ubuntu' },
   { name: 'Debian 12 Bookworm', template: 'debian-12-x86_64', icon: 'debian', tag: 'Stable' },
   { name: 'Debian 11 Bullseye', template: 'debian-11-x86_64', icon: 'debian' },
-  { name: 'Rocky Linux 9', template: 'rocky-9-x86_64', icon: 'rocky' },
+  { name: 'Rocky Linux 9', template: 'rocky-9.7-x86_64.qcow2', icon: 'rocky' },
   { name: 'AlmaLinux 9', template: 'alma-9-x86_64', icon: 'alma' },
   { name: 'CentOS Stream 9', template: 'centos-9-x86_64', icon: 'centos' },
   { name: 'Fedora 40', template: 'fedora-40-x86_64', icon: 'fedora' },

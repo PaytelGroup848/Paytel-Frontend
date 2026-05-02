@@ -144,3 +144,16 @@ export const useVpsMetrics = (id, refetchInterval = 5000) =>
     staleTime: 0,
     retry: 2,
   });
+
+
+  export const useChangeRootPassword = () =>
+  useMutation({
+    mutationFn: ({ id, currentPassword, newPassword }) => 
+      api.post(`/vps/instances/${id}/change-password`, { currentPassword, newPassword }).then((r) => r.data?.data),
+    onSuccess: () => {
+      toast.success('Root password changed successfully!');
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || 'Failed to change password');
+    },
+  });

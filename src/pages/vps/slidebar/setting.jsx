@@ -16,8 +16,16 @@ import {
   CheckCircle,
   AlertCircle,
   Save,
-  X
+  X,
+  CreditCard,
+  EyeOff,
+  Eye,
+  ArrowRight
 } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useVpsInstance, useChangeRootPassword } from '../../../hooks/useVps';
+import toast from "react-hot-toast";
+
 
 // ------------------- MOCK DATA & HELPERS -------------------
 const mockIPInfo = {
@@ -59,6 +67,9 @@ const createSSHKey = async (keyName, publicKey) => {
 // ------------------- MAIN COMPONENT -------------------
 export default function VpsSettings() {
   const [activeTab, setActiveTab] = useState("settings"); // "settings", "ip", "ssh"
+ const { id } = useParams();
+  const { data: instance, isLoading: isInstanceLoading } = useVpsInstance(id);
+      console.log("THIS IS MY INSTANCE", instance)
 
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8">
@@ -133,12 +144,29 @@ const TabButton = ({ active, onClick, icon, label }) => (
 
 // ------------------- SETTINGS SECTION -------------------
 const SettingsSection = () => {
-  const [showPasswordForm, setShowPasswordForm] = useState(false);
-  const [showConfigForm, setShowConfigForm] = useState(false);
+
+    const [step, setStep] = useState(1); // 1: Current Password, 2: New Password, 3: Confirm Password
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ type: "", text: "" });
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
+
+//   const [loading, setLoading] = useState(false);
+//   const [message, setMessage] = useState({ type: "", text: "" });
+//  const [showPasswordForm, setShowPasswordForm] = useState(false);
+//   const [currentPassword, setCurrentPassword] = useState("");
+//   const [newPassword, setNewPassword] = useState("");
+//   const [confirmPassword, setConfirmPassword] = useState("");
+//   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+//   const [showNewPassword, setShowNewPassword] = useState(false);
+  const navigate = useNavigate()
+
+  const { id } = useParams();
+  const { data: instance } = useVpsInstance(id);
+  const changePassword = useChangeRootPassword();
 
   // VPS Config state (example)
   const [vpsConfig, setVpsConfig] = useState({
@@ -148,101 +176,304 @@ const SettingsSection = () => {
   });
   const [tempConfig, setTempConfig] = useState(vpsConfig);
 
-  const handlePasswordSubmit = async (e) => {
+
+  const handleCurrentPasswordSubmit = (e) => {
     e.preventDefault();
-    if (newPassword !== confirmPassword) {
-      setMessage({ type: "error", text: "Passwords do not match" });
+    if (!currentPassword) {
+      toast.error("Please enter current password");
       return;
     }
-    setLoading(true);
+    setStep(2);
+  };
+
+
+ const handleNewPasswordSubmit = (e) => {
+    e.preventDefault();
+    
+    if (newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters long");
+      return;
+    }
+    
+    setStep(3);
+  };
+
+  const handleConfirmPasswordSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+    
+    setIsLoading(true);
     try {
-      await changeRootPassword(newPassword);
-      setMessage({ type: "success", text: "Root password changed successfully!" });
-      setShowPasswordForm(false);
+      await changePassword.mutateAsync({
+        id: id,
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+      });
+      
+      // Reset form
+      setStep(1);
+      setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
+      toast.success("Password changed successfully!");
+      
     } catch (err) {
-      setMessage({ type: "error", text: err.message });
+      console.error("Password change error:", err);
+      toast.error(err.response?.data?.message || "Failed to change password");
     } finally {
-      setLoading(false);
-      setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+      setIsLoading(false);
     }
   };
 
-  const handleConfigSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    // Simulate API call to upgrade/downgrade VPS
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setVpsConfig(tempConfig);
-    setMessage({ type: "success", text: "VPS configuration updated! (demo)" });
-    setShowConfigForm(false);
-    setLoading(false);
-    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+
+   const handleReset = () => {
+    setStep(1);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
   };
+
+  const getPasswordStrength = (password) => {
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (password.match(/[a-z]/)) strength++;
+    if (password.match(/[A-Z]/)) strength++;
+    if (password.match(/[0-9]/)) strength++;
+    if (password.match(/[$@#&!]/)) strength++;
+    
+    if (strength <= 2) return { text: "Weak", color: "text-red-500" };
+    if (strength <= 3) return { text: "Fair", color: "text-yellow-500" };
+    if (strength <= 4) return { text: "Good", color: "text-blue-500" };
+    return { text: "Strong", color: "text-green-500" };
+  };
+
+   const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+    
+    if (newPassword.length < 8) {
+      toast.error("Password must be at least 8 characters long");
+      return;
+    }
+    
+    if (!newPassword.match(/[A-Z]/)) {
+      toast.error("Password must contain at least one uppercase letter");
+      return;
+    }
+    
+    if (!newPassword.match(/[0-9]/)) {
+      toast.error("Password must contain at least one number");
+      return;
+    }
+    
+    try {
+      await changePassword.mutateAsync({
+        id: id,
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+      });
+      
+      setShowPasswordForm(false);
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err) {
+      console.error("Password change error:", err);
+    }
+  };
+
+
+
 
   return (
     <div className="space-y-6">
       {/* Change Root Password Card */}
-      <Card>
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-amber-100 rounded-xl">
-              <Lock className="w-6 h-6 text-amber-600" />
-            </div>
-            <div>
-              <h3 className="font-bold text-slate-800">Root Password</h3>
-              <p className="text-sm text-slate-500">Change the administrator password for your VPS</p>
-            </div>
+        <Card>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-amber-100 rounded-xl">
+            <Lock className="w-6 h-6 text-amber-600" />
           </div>
-          {!showPasswordForm ? (
-            <button
-              onClick={() => setShowPasswordForm(true)}
-              className="px-4 py-2 text-sm font-semibold text-indigo-600 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition"
-            >
-              Change Password
-            </button>
-          ) : (
-            <button
-              onClick={() => setShowPasswordForm(false)}
-              className="text-sm text-slate-400 hover:text-slate-600"
-            >
-              Cancel
-            </button>
-          )}
+          <div>
+            <h3 className="font-bold text-slate-800">Root Password</h3>
+            <p className="text-sm text-slate-500">Change the administrator password for your VPS</p>
+          </div>
         </div>
 
-        {showPasswordForm && (
-          <form onSubmit={handlePasswordSubmit} className="mt-4 pt-4 border-t border-slate-100 space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700">New Password</label>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-indigo-500 focus:border-indigo-500"
-                required
-                minLength={8}
-              />
+        {/* Progress Steps */}
+        <div className="flex items-center justify-between mb-8">
+          {[1, 2, 3].map((s) => (
+            <div key={s} className="flex-1 flex items-center">
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 ${
+                step >= s 
+                  ? 'border-indigo-600 bg-indigo-600 text-white' 
+                  : 'border-slate-300 bg-white text-slate-400'
+              }`}>
+                {step > s ? <CheckCircle size={16} /> : s}
+              </div>
+              {s < 3 && (
+                <div className={`flex-1 h-0.5 mx-2 ${
+                  step > s ? 'bg-indigo-600' : 'bg-slate-200'
+                }`} />
+              )}
             </div>
+          ))}
+        </div>
+
+        {/* Step 1: Current Password */}
+        {step === 1 && (
+          <form onSubmit={handleCurrentPasswordSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700">Confirm Password</label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="mt-1 w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-indigo-500 focus:border-indigo-500"
-                required
-              />
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Current Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showCurrentPassword ? "text" : "password"}
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="Enter your current root password"
+                  autoFocus
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500"
+                >
+                  {showCurrentPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
             </div>
+            
             <button
               type="submit"
-              disabled={loading}
-              className="px-5 py-2 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-50 flex items-center gap-2"
+              className="w-full px-5 py-2 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition flex items-center justify-center gap-2"
             >
-              {loading ? "Updating..." : "Update Password"}
-              <Save size={16} />
+              Continue <ArrowRight size={16} />
             </button>
+          </form>
+        )}
+
+        {/* Step 2: New Password */}
+        {step === 2 && (
+          <form onSubmit={handleNewPasswordSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                New Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showNewPassword ? "text" : "password"}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="Enter new root password"
+                  autoFocus
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500"
+                >
+                  {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              {newPassword && (
+                <p className={`text-xs mt-1 ${getPasswordStrength(newPassword).color}`}>
+                  Password strength: {getPasswordStrength(newPassword).text}
+                </p>
+              )}
+              <p className="text-xs text-slate-400 mt-1">
+                Minimum 6 characters
+              </p>
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={handleReset}
+                className="flex-1 px-5 py-2 border border-slate-300 text-slate-700 rounded-xl font-semibold hover:bg-slate-50 transition"
+              >
+                Back
+              </button>
+              <button
+                type="submit"
+                className="flex-1 px-5 py-2 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition flex items-center justify-center gap-2"
+              >
+                Continue <ArrowRight size={16} />
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* Step 3: Confirm Password */}
+        {step === 3 && (
+          <form onSubmit={handleConfirmPasswordSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Confirm New Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="Re-enter new root password"
+                  autoFocus
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500"
+                >
+                  {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              {confirmPassword && newPassword !== confirmPassword && (
+                <p className="text-xs text-red-500 mt-1">
+                  Passwords do not match
+                </p>
+              )}
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setStep(2)}
+                className="flex-1 px-5 py-2 border border-slate-300 text-slate-700 rounded-xl font-semibold hover:bg-slate-50 transition"
+              >
+                Back
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading || newPassword !== confirmPassword}
+                className="flex-1 px-5 py-2 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    <Save size={16} />
+                    Update Password
+                  </>
+                )}
+              </button>
+            </div>
           </form>
         )}
       </Card>
@@ -259,94 +490,26 @@ const SettingsSection = () => {
               <p className="text-sm text-slate-500">Upgrade or downgrade your resources</p>
             </div>
           </div>
-          {!showConfigForm ? (
-            <button
+          <button
               onClick={() => {
-                setTempConfig(vpsConfig);
-                setShowConfigForm(true);
+                navigate("/vps")
               }}
               className="px-4 py-2 text-sm font-semibold text-indigo-600 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition"
             >
               Change Configuration
             </button>
-          ) : (
-            <button onClick={() => setShowConfigForm(false)} className="text-sm text-slate-400">
-              Cancel
-            </button>
-          )}
         </div>
 
-        {!showConfigForm ? (
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
-            <ConfigStat icon={<Cpu size={18} />} label="vCPU Cores" value={vpsConfig.cpuCores} />
-            <ConfigStat icon={<Activity size={18} />} label="RAM" value={`${vpsConfig.ramGB} GB`} />
-            <ConfigStat icon={<HardDrive size={18} />} label="Disk" value={`${vpsConfig.diskGB} GB NVMe`} />
+      
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-100">
+            <ConfigStat icon={<Cpu size={18} />} label="vCPU Cores" value={`${instance?.planId?.vcpu || 1}`} />
+            <ConfigStat icon={<Activity size={18} />} label="RAM" value={`${instance?.planId?.ram}`} />
+            <ConfigStat icon={<HardDrive size={18} />} label="Disk" value={`${instance?.planId?.storage}`} />
+            <ConfigStat icon={<CreditCard  size={18} />} label="Current plan" value={`${instance?.planId?.name}`} />
           </div>
-        ) : (
-          <form onSubmit={handleConfigSubmit} className="mt-4 pt-4 border-t border-slate-100 space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700">vCPU Cores</label>
-                <select
-                  value={tempConfig.cpuCores}
-                  onChange={(e) => setTempConfig({ ...tempConfig, cpuCores: parseInt(e.target.value) })}
-                  className="mt-1 w-full px-3 py-2 border border-slate-300 rounded-xl"
-                >
-                  <option value={2}>2 cores</option>
-                  <option value={4}>4 cores</option>
-                  <option value={8}>8 cores</option>
-                  <option value={16}>16 cores</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700">RAM</label>
-                <select
-                  value={tempConfig.ramGB}
-                  onChange={(e) => setTempConfig({ ...tempConfig, ramGB: parseInt(e.target.value) })}
-                  className="mt-1 w-full px-3 py-2 border border-slate-300 rounded-xl"
-                >
-                  <option value={4}>4 GB</option>
-                  <option value={8}>8 GB</option>
-                  <option value={16}>16 GB</option>
-                  <option value={32}>32 GB</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700">Disk Space</label>
-                <select
-                  value={tempConfig.diskGB}
-                  onChange={(e) => setTempConfig({ ...tempConfig, diskGB: parseInt(e.target.value) })}
-                  className="mt-1 w-full px-3 py-2 border border-slate-300 rounded-xl"
-                >
-                  <option value={50}>50 GB</option>
-                  <option value={100}>100 GB</option>
-                  <option value={200}>200 GB</option>
-                  <option value={500}>500 GB</option>
-                </select>
-              </div>
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-5 py-2 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-50"
-            >
-              {loading ? "Applying..." : "Apply Changes"}
-            </button>
-          </form>
-        )}
+     
+     
       </Card>
-
-      {/* Global message */}
-      {message.text && (
-        <div
-          className={`flex items-center gap-2 p-3 rounded-xl ${
-            message.type === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
-          }`}
-        >
-          {message.type === "success" ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
-          {message.text}
-        </div>
-      )}
     </div>
   );
 };
@@ -357,6 +520,11 @@ const IPSection = () => {
   const [isEditingPtr, setIsEditingPtr] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
+
+    const { id } = useParams();
+  const { data: instance, isLoading: isInstanceLoading } = useVpsInstance(id);
+
+  const lastThree = instance?.ip ? instance.ip.split('.').pop() : '';
 
   const handleSetPTR = async () => {
     if (!ptrValue.trim()) {
@@ -399,16 +567,16 @@ const IPSection = () => {
           <Globe size={20} /> IP Address Information
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <InfoRow label="IPv4" value={mockIPInfo.ipv4} copyable />
-          <InfoRow label="IPv6" value={mockIPInfo.ipv6} copyable />
-          <InfoRow label="Device" value={mockIPInfo.device} />
-          <InfoRow label="Location" value={mockIPInfo.location} />
-          <InfoRow label="ISP" value={mockIPInfo.isp} />
+          <InfoRow label="IPv4" value={`210.56.147.${lastThree}`} copyable />
+          {/* <InfoRow label="IPv6" value={mockIPInfo.ipv6} copyable /> */}
+          <InfoRow label="Device" value={instance?.os} />
+          <InfoRow label="Location" value={instance?.location} />
+          <InfoRow label="ISP" value={"Jio"} />
         </div>
       </Card>
 
       {/* PTR Record Card */}
-      <Card>
+      {/* <Card>
         <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
           <h3 className="font-bold text-slate-800">PTR Record (Reverse DNS)</h3>
           <div className="flex gap-2">
@@ -460,7 +628,7 @@ const IPSection = () => {
             </p>
           </div>
         )}
-      </Card>
+      </Card> */}
 
       {message.text && (
         <div className={`flex items-center gap-2 p-3 rounded-xl ${message.type === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
