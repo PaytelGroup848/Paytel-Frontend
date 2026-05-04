@@ -98,12 +98,12 @@ export default function VpsSettings() {
           icon={<Globe size={18} />}
           label="IP Address"
         />
-        <TabButton
+        {/* <TabButton
           active={activeTab === "ssh"}
           onClick={() => setActiveTab("ssh")}
           icon={<Key size={18} />}
           label="SSH Keys"
-        />
+        /> */}
       </div>
 
       {/* Dynamic Content Area */}

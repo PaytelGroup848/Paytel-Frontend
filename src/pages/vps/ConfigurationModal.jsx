@@ -386,13 +386,13 @@ export default function ConfigurationModal({ plan, isOpen, onClose }) {
       paddingTop: 10, marginTop: 2, borderTop: '1px solid #E2E8F0',
     },
     totalLabel: { fontSize: 13, fontWeight: 700, color: '#0F172A' },
-    totalAmount: { fontSize: 22, fontWeight: 800, color: '#6C63FF', letterSpacing: '-0.5px' },
+    totalAmount: { fontSize: 22, fontWeight: 800, color: '#3e38ad', letterSpacing: '-0.5px' },
     /* CTA */
     ctaBtn: {
       width: '100%', padding: '13px',
       borderRadius: 13, border: 'none', cursor: 'pointer',
       background: isFormValid
-        ? 'linear-gradient(135deg, #6C63FF 0%, #9B8FFF 100%)'
+        ? 'linear-gradient(135deg, #1a11ce 0%, #292079 100%)'
         : '#E2E8F0',
       color: isFormValid ? '#FFF' : '#94A3B8',
       fontSize: 13, fontWeight: 700, letterSpacing: '0.06em',
@@ -548,7 +548,7 @@ export default function ConfigurationModal({ plan, isOpen, onClose }) {
             </div>
 
             {/* Quantity */}
-            <div>
+            {/* <div>
               <div style={S.sectionLabel}>Quantity</div>
               <div style={S.qtyRow}>
                 <span style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Instances</span>
@@ -564,7 +564,7 @@ export default function ConfigurationModal({ plan, isOpen, onClose }) {
                   </button>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Summary */}
             <div style={S.summaryCard}>
