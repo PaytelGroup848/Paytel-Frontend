@@ -12,7 +12,8 @@ import {
   Zap,
   LayoutDashboard,
   LogOut,
-  LifeBuoy               
+  LifeBuoy ,
+   Mails              
 } from 'lucide-react';
 import { useSubscription } from '../../hooks/useBilling';
 import { useLogout, useMe } from '../../hooks/useAuth';
@@ -60,6 +61,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
         { label: 'Invoices', to: '/billing/history' },
       ],
     },
+    { label: 'Emails', to:'/emails',icon:  Mails },
     ...(isSuperAdmin ? [{ label: 'SuperAdmin', to: '/superadmin/servers', icon: Zap }] : []),
     { label: 'Settings', to: '/settings', icon: Settings },
     { label: 'Support', to: '/help', icon: LifeBuoy },   

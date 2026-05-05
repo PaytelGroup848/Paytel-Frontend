@@ -43,7 +43,7 @@ import VpsOverview from './pages/vps/VpsOverview';
 import VPSDocumentation from './pages/vps/slidebar/docs';
 import BackupManager from './pages/vps/slidebar/BackupManager';
 import SnapShot from './pages/vps/slidebar/SnapShot';
-import  Catalogs from "./pages/vps/slidebar/docker/catalogs";
+import Catalogs from "./pages/vps/slidebar/docker/catalogs";
 import OSPanel from './pages/vps/slidebar/Os_panel';
 import VpsSettings from "./pages/vps/slidebar/setting";
 import firewall from "./pages/vps/slidebar/security/firewall";
@@ -54,7 +54,16 @@ import { useMe } from "./hooks/useAuth";
 import VPS_Page from './pages/vps/VpsPage';
 import VPSDashboard from './pages/vps/vps_paid';
 import VpsDashboard from "./pages/vps/slidebar/vpsOverview";
-
+import { EmailPlanProvider } from './pages/Emails/EmailPlanContext';
+import EmailsPage from "./pages/Emails/Emails";
+import EmailMailboxPage from './pages/Emails/EmailMailboxPage';
+import EmailPlansPage from './pages/Emails/EmailPlan';
+import ForwardersPage from './pages/Emails/EmailForward';
+import AliasesPage from './pages/Emails/EmailAlias';
+import  AutoReplyPage from './pages/Emails/EmailAutoReply'; 
+import EmailConnect from './pages/Emails/EmailConnect';
+import EmailLogsPage from './pages/Emails/EmailLogsPage';
+import DkimPage from './pages/Emails/EmailDkim';
 
 
 
@@ -100,7 +109,7 @@ export default function App() {
   const clearAuth = useAuthStore((s) => s.clearAuth);
 
 
-  
+
   useEffect(() => {
     let alive = true;
 
@@ -138,9 +147,9 @@ export default function App() {
       </Route>
 
       {/* Protected routes */}
-     <Route
-        // element={<ProtectedRoute />}
-       >
+      <Route
+      // element={<ProtectedRoute />}
+      >
         <Route element={<AppRoutes />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/hosting" element={<ManageHosting />} />
@@ -164,35 +173,52 @@ export default function App() {
           <Route path="/wordpress/:id/files" element={<FilesPage />} />
           <Route path="/wordpress/:id/analytics" element={<AnalyticsPage />} />
           <Route path="/wordpress/:id/backups" element={<BackupsPage />} />
-          <Route path ="wordpress/:id/database" element={<DatabasePage/>} />
-        
+          <Route path="wordpress/:id/database" element={<DatabasePage />} />
+
           <Route path="/websites/php" element={<PHP_Page />} />
-          <Route path = "/websites/php/paid" element ={<PaidPhpDashboard/>} />
+          <Route path="/websites/php/paid" element={<PaidPhpDashboard />} />
           <Route path="/websites/nodejs" element={<NodeJS_Page />} />
-          <Route path="/vps" element={<VpsPlans/>} />
-          <Route path='/vps/paid' element={<VPSDashboard/>}/>
+          <Route path="/vps" element={<VpsPlans />} />
+          <Route path='/vps/paid' element={<VPSDashboard />} />
           <Route path="/vps/paid/:id" element={<VpsDashboard />} />
           <Route path="/vps/vps_overview/:id" element={<VpsOverview />} />
           <Route path="/vps/support/docs" element={<VPSDocumentation />} />
           <Route path="/vps/backup" element={<BackupManager />} />
-          <Route path = "vps/backup/snapshot" element =  {<SnapShot/>} />
+          <Route path="vps/backup/snapshot" element={<SnapShot />} />
           <Route path="/vps/OSPanel" element={<OSPanel />} />
-          <Route path = "/vps/setting" element ={<VpsSettings/>} />
-          <Route path = "/help" element  = {<GetHelp/>} />
-          <Route path = "/vps/docker/catalogs" element={<Catalogs/>} />
-          <Route path = "/vps/security/firewall" element  = {<firewall/>} /> 
+          <Route path="/vps/setting" element={<VpsSettings />} />
+          <Route path="/help" element={<GetHelp />} />
+          <Route path="/vps/docker/catalogs" element={<Catalogs />} />
+          <Route path="/vps/security/firewall" element={<firewall />} />
+
+
+
+
+          <Route path="/emails" element={<EmailPlanProvider><EmailsPage /></EmailPlanProvider>} />
+          <Route path="/emails/mailbox" element={<EmailPlanProvider><EmailMailboxPage /></EmailPlanProvider>} />
+          <Route path="/email/plan" element={<EmailPlanProvider>< EmailPlansPage /></EmailPlanProvider>} />
+          <Route path="/emails/forwarders" element={<EmailPlanProvider><ForwardersPage /></EmailPlanProvider>} />
+          <Route path="/emails/aliases" element={<EmailPlanProvider><AliasesPage /></EmailPlanProvider>} />
+          <Route path = "/emails/autoreply" element  = { <EmailPlanProvider>     <AutoReplyPage/> </EmailPlanProvider>} /> 
+          <Route path ="/emails/logs" element ={<EmailPlanProvider>  <EmailLogsPage/>  </EmailPlanProvider>} /> 
+           <Route path = "emails/dkim" element ={<EmailPlanProvider> < DkimPage/> </EmailPlanProvider>} />
+          <Route path = "/emails/connect" element = { <EmailPlanProvider> <EmailConnect/> </EmailPlanProvider>} />
+
+
+
+
           <Route path="/home" element={<Home />} />
         </Route>
-        </Route>
+      </Route>
 
-       
-          <Route path="/superadmin" element={<SuperAdminLayout />}>
-            <Route path="servers" element={<Servers />} />
-            <Route path="instances" element={<AdminInstances />} />
-          </Route>
 
-          
-        
+      <Route path="/superadmin" element={<SuperAdminLayout />}>
+        <Route path="servers" element={<Servers />} />
+        <Route path="instances" element={<AdminInstances />} />
+      </Route>
+
+
+
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/home" replace />} />

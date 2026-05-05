@@ -25,7 +25,7 @@
     "recharts": "^3.8.1",
     "tailwind": "^2.3.1",
     "tailwindcss": "^4.2.2",
-    "update": "^0.4.2",
+    "update": "^0.7.4",
     "zustand": "^5.0.12"
   },
   "devDependencies": {
