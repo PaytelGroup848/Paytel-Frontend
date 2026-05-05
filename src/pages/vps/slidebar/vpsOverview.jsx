@@ -89,7 +89,6 @@ function Dashboard({ setActive }) {
    const { id } = useParams();
     const navigate = useNavigate();
     const { data: instance, isLoading: isInstanceLoading } = useVpsInstance(id);
-    console.log("THIS IS MY INSTANCE", instance)
     const { data: statsData, isLoading: isStatsLoading } = useVpsStats(id);
      const { data: metricsData, isLoading: isMetricsLoading } = useVpsMetrics(id, 5000);
      const { 
@@ -255,6 +254,8 @@ function Dashboard({ setActive }) {
 
   const stats = statsData?.stats || {};
 
+  const lastThree = instance?.ip ? instance.ip.split('.').pop() : '';
+
   return (
     <div className="p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto w-full space-y-6 bg-gradient-to-br from-slate-50 to-white">
       {/* Header */}
@@ -291,7 +292,7 @@ function Dashboard({ setActive }) {
               <Key size={14} className="text-indigo-500" />
               <span className="text-xs font-medium text-slate-500">SSH Access:</span>
               <code className="text-xs bg-slate-100 px-2 py-1 rounded font-mono">
-                ssh root@{instance?.ip}
+                ssh root@210.56.147.{lastThree}
               </code>
             </div>
               <div className="flex items-center gap-2">
@@ -309,14 +310,36 @@ function Dashboard({ setActive }) {
             {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
           </button>
         </div>
-        {/* <button 
-          onClick={handleChangePassword} 
-          className="text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
+        <button 
+          onClick={() => setActive("setting")}
+          className="text-sm font-semibold cursor-pointer text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
         >
           Change <ExternalLink size={12} />
-        </button> */}
+        </button>
       </div>
           </div>
+          <div className="flex flex-col gap-2">
+            <button 
+              onClick={handleToggleVPS}
+              disabled={isActionLoading || isStatusLoading}
+              className={`flex items-center cursor-pointer gap-1.5 px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+                vpsStatus === 'running'
+                  ? 'bg-red-50 border border-red-200 hover:bg-red-100 text-red-700'
+                  : 'bg-green-50 border border-green-200 hover:bg-green-100 text-green-700'
+              } ${(isActionLoading || isStatusLoading) ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              {(startVps.isPending || stopVps.isPending) ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  {vpsStatus === 'running' ? 'Stopping...' : 'Starting...'}
+                </>
+              ) : (
+                <>
+                  {vpsStatus === 'running' ? <Pause  size={16} /> : <Play  size={14} />}
+                  {vpsStatus === 'running' ? 'Stop VPS' : 'Start VPS'}
+                </>
+              )}
+            </button>
                 {vpsStatus === 'running' && (
               <button 
                 onClick={handleReboot}
@@ -338,6 +361,29 @@ function Dashboard({ setActive }) {
                 )}
               </button>
             )}
+
+                <button 
+          onClick={handlePowerOff}
+          disabled={isActionLoading || isStatusLoading || vpsStatus !== 'running'}
+          className={`flex items-center cursor-pointer gap-1.5 px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+            poweroffVps.isPending
+              ? 'bg-gray-100 text-gray-500 border border-gray-200'
+              : 'bg-emerald-100 border border-emerald-300 hover:bg-emerald-200 text-black-700'
+          } ${(isActionLoading || isStatusLoading || vpsStatus !== 'running') ? 'opacity-50 cursor-not-allowed' : ''}`}
+        >
+          {poweroffVps.isPending ? (
+            <>
+              <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
+              Powering Off...
+            </>
+          ) : (
+            <>
+              <Power size={14} />
+              Power Off
+            </>
+          )}
+        </button>
+            </div>
         </div>
       </div>
 
@@ -389,69 +435,32 @@ function Dashboard({ setActive }) {
         />
       
       </div>
+     
 
-      {/* Quick Actions + Uptime */}
-      <div className="flex flex-wrap gap-3 justify-between items-center bg-white/80 rounded-xl p-4 border border-black/10 shadow-sm">
+      {/* Security Status Cards - 3 clickable cards (Malware scanner removed) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
+
+         <div className="flex flex-wrap gap-3 justify-between items-center bg-white/80 rounded-xl p-4 border border-black/10 shadow-sm">
         <div className="flex gap-3 flex-wrap">
-          <button 
-              onClick={handleToggleVPS}
-              disabled={isActionLoading || isStatusLoading}
-              className={`flex items-center cursor-pointer gap-1.5 px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
-                vpsStatus === 'running'
-                  ? 'bg-red-50 border border-red-200 hover:bg-red-100 text-red-700'
-                  : 'bg-green-50 border border-green-200 hover:bg-green-100 text-green-700'
-              } ${(isActionLoading || isStatusLoading) ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              {(startVps.isPending || stopVps.isPending) ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                  {vpsStatus === 'running' ? 'Stopping...' : 'Starting...'}
-                </>
-              ) : (
-                <>
-                  {vpsStatus === 'running' ? <Pause  size={16} /> : <Play  size={14} />}
-                  {vpsStatus === 'running' ? 'Stop VPS' : 'Start VPS'}
-                </>
-              )}
-            </button>
-         <button 
-          onClick={handlePowerOff}
-          disabled={isActionLoading || isStatusLoading || vpsStatus !== 'running'}
-          className={`flex items-center cursor-pointer gap-1.5 px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
-            poweroffVps.isPending
-              ? 'bg-gray-100 text-gray-500 border border-gray-200'
-              : 'bg-red-50 border border-red-200 hover:bg-red-100 text-red-700'
-          } ${(isActionLoading || isStatusLoading || vpsStatus !== 'running') ? 'opacity-50 cursor-not-allowed' : ''}`}
-        >
-          {poweroffVps.isPending ? (
-            <>
-              <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
-              Powering Off...
-            </>
-          ) : (
-            <>
-              <Power size={14} />
-              Power Off
-            </>
-          )}
-        </button>
-          <button onClick={handleUpgrade} className="flex border border-blue-200 items-center gap-1.5 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-semibold rounded-lg transition-all">
+         
+
+      <div className="flex items-center justify-between py-3 border-b border-gray-100">
+  <span className="text-slate-500 text-[16px] font-medium">Expiration date: &nbsp;</span>
+  <div className="flex items-center gap-2">
+    <span className="text-[16px] font-semibold text-red-500/90">
+      {instance?.expiresAt ? new Date(instance.expiresAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A'}
+    </span>
+    
+  </div>
+</div>
+
+
+          <button onClick={handleUpgrade} className="flex ml-30 border border-blue-200 items-center  px-2 bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-semibold rounded-lg transition-all">
             <TrendingUp size={14} /> Upgrade
           </button>
         </div>
-        <div className="text-xs text-slate-500 flex items-center gap-1 bg-slate-100 px-3 py-1 rounded-full">
-          <Clock size={12} /> Uptime: {instance?.uptime} 
-        </div>
       </div>
 
-      {/* Security Status Cards - 3 clickable cards (Malware scanner removed) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <button onClick={() => setActive("setting")} className="text-left w-full">
-          <SecurityCard title="SSH key" value="Manage" icon={Key} status="Active" bgColor="bg-indigo-50" />
-        </button>
-        <button onClick={() => setActive("firewall")} className="text-left w-full">
-          <SecurityCard title="Firewall rules" value="1" icon={Shield} status="Active" bgColor="bg-blue-50" />
-        </button>
         <button onClick={() => setActive("backupmgr")} className="text-left w-full">
           <SecurityCard title="Snapshot & backups" value="2" icon={FolderArchive} status="Active" bgColor="bg-purple-50" />
         </button>
@@ -467,7 +476,7 @@ function Dashboard({ setActive }) {
            <DetailItem label="Server location" value={instance?.location}                    icon={<Globe size={12} />} />
 <DetailItem label="OS"              value={instance?.os} />
 <DetailItem label="Hostname"        value={instance?.hostname} />
-<DetailItem label="VPS uptime"      value={instance?.uptime}                      icon={<Clock size={12} />} />
+  {/* <DetailItem label="VPS uptime"      value={instance?.uptime}                      icon={<Clock size={12} />} /> */}
 <DetailItem label="SSH username"    value={instance?.sshUsername || 'root'} />
 <DetailItem label="IPv4"            value={instance?.ip} />
           </div>
@@ -487,13 +496,7 @@ function Dashboard({ setActive }) {
             <DetailItem 
               label="Expiration date" 
               value={instance?.expiresAt ? new Date(instance.expiresAt).toLocaleDateString() : 'N/A'}
-              // action={<button onClick={handleRenew} className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full hover:bg-emerald-100">Renew</button>}
             />
-            {/* <DetailItem 
-              label="Auto-renewal" 
-              value="On"
-              icon={autoRenew ? <span className="w-2 h-2 rounded-full bg-emerald-500"></span> : <span className="w-2 h-2 rounded-full bg-red-500"></span>}
-            /> */}
             <DetailItem label="CPU core" value={`${instance?.planId?.vcpu || 1} vCPU`} icon={<Cpu size={12} />} />
             <DetailItem label="Memory" value={instance?.planId?.ram} icon={<Database size={12} />} />
             <DetailItem label="Disk space" value={instance?.planId?.storage} icon={<HardDrive size={12} />} />
@@ -544,7 +547,7 @@ function Sidebar({ active, setActive }) {
 
   const grouped = {
     infrastructure: ["docker", "backupmgr", "ospanel", "setting"],
-    security: ["firewall"],
+    // security: ["firewall"],
     apps: ["tutorials", "blog"],
   };
 

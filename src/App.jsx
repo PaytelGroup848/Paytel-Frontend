@@ -39,7 +39,6 @@ import AdminInstances from './pages/superadmin/Instances';
 import FilesPage from './pages/websites/wordpress/FilesPage';
 import DatabasePage from './pages/websites/wordpress/DatabasePage';
 import VpsPlans from './pages/vps/VpsPlans';
-import VpsOverview from './pages/vps/VpsOverview';
 import VPSDocumentation from './pages/vps/slidebar/docs';
 import BackupManager from './pages/vps/slidebar/BackupManager';
 import SnapShot from './pages/vps/slidebar/SnapShot';
@@ -181,7 +180,6 @@ export default function App() {
           <Route path="/vps" element={<VpsPlans />} />
           <Route path='/vps/paid' element={<VPSDashboard />} />
           <Route path="/vps/paid/:id" element={<VpsDashboard />} />
-          <Route path="/vps/vps_overview/:id" element={<VpsOverview />} />
           <Route path="/vps/support/docs" element={<VPSDocumentation />} />
           <Route path="/vps/backup" element={<BackupManager />} />
           <Route path="vps/backup/snapshot" element={<SnapShot />} />

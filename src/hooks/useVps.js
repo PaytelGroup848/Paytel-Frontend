@@ -58,7 +58,11 @@ export const useVpsInstances = () =>
 export const useVpsInstance = (id) =>
   useQuery({
     queryKey: ['vps', 'instance', id],
-    queryFn: () => api.get(`/vps/instances/${id}`).then((r) => r.data?.data),
+    queryFn: async () => {
+      const response = await api.get(`/vps/instances/${id}`);
+      console.log('Instance API response:', response.data);
+      return response.data?.data;
+    },
     enabled: !!id,
     staleTime: 0,
   });
@@ -143,4 +147,32 @@ export const useVpsMetrics = (id, refetchInterval = 5000) =>
     refetchInterval: refetchInterval,
     staleTime: 0,
     retry: 2,
+  });
+
+
+  export const useChangeRootPassword = () =>
+  useMutation({
+    mutationFn: ({ id, currentPassword, newPassword }) => 
+      api.post(`/vps/instances/${id}/change-password`, { currentPassword, newPassword }).then((r) => r.data?.data),
+    onSuccess: () => {
+      toast.success('Root password changed successfully!');
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || 'Failed to change password');
+    },
+  });
+
+
+export const useRebuildVps = () =>
+  useMutation({
+    mutationFn: ({ id, osId, newPassword, confirmPassword }) => 
+      api.post(`/vps/instances/${id}/rebuild`, { osId, newPassword, confirmPassword }).then((r) => r.data?.data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ['vps', 'instance', id] });
+      queryClient.invalidateQueries({ queryKey: ['vps', 'status', id] });
+      toast.success('VPS rebuild initiated! The server will be reinstalled with the new OS.');
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || 'Failed to rebuild VPS');
+    },
   });
