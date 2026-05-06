@@ -13,7 +13,7 @@ const OS_OPTIONS = [
   { name: 'Ubuntu 22.04', template: 'ubuntu-22.04-x86_64', icon: '🐧', osid: 1199 },
   { name: 'Debian 12 Bookworm', template: 'debian-12-x86_64', icon: '🌀', tag: 'Stable', osid: 1057 },
   { name: 'Debian 11 Bullseye', template: 'debian-11-x86_64', icon: '🌀', osid: 983 },
-  { name: 'Rocky Linux 9', template: 'rocky-9.7-x86_64.qcow2', icon: '🪨', osid: 1214 },
+  // { name: 'Rocky Linux 9', template: 'rocky-9.7-x86_64.qcow2', icon: '🪨', osid: 1214 },
   { name: 'AlmaLinux 9', template: 'alma-9-x86_64', icon: '🌿', osid: 1202 },
   { name: 'CentOS Stream 9', template: 'centos-9-x86_64', icon: '🟠', osid: 1181 },
   { name: 'Fedora 40', template: 'fedora-40-x86_64', icon: '🎩', osid: 1192 },

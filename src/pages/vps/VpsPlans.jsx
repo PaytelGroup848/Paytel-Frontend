@@ -248,6 +248,7 @@ export default function VpsPlans() {
     <ConfigurationModal
       plan={selectedPlan}
       isOpen={!!selectedPlan}
+      type = {type}
       onClose={() => setSelectedPlan(null)}
     />
   )}
