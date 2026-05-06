@@ -7,6 +7,11 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 
+
+
+export default function ConfigurationModal({ plan, isOpen, onClose, type }) {
+
+
 const formatINR = (paise) => `₹${(Number(paise || 0) / 100).toLocaleString()}`;
 
 /* ─── Inline SVG OS Icons ────────────────────────────────────────────────── */
@@ -88,6 +93,15 @@ const OsIcon = ({ name, size = 28 }) => {
         <circle cx="72" cy="50" r="7" fill="white"/>
       </svg>
     ),
+   window: (
+  <svg viewBox="0 0 100 100" width={size} height={size}>
+    <circle cx="50" cy="50" r="48" fill="#ffff"/>
+    <rect x="20" y="20" width="27" height="27" rx="2" fill="#F25022"/>
+    <rect x="53" y="20" width="27" height="27" rx="2" fill="#7FBA00"/>
+    <rect x="20" y="53" width="27" height="27" rx="2" fill="#00A4EF"/>
+    <rect x="53" y="53" width="27" height="27" rx="2" fill="#FFB900"/>
+  </svg>
+),
   };
   return icons[name] || (
     <svg viewBox="0 0 100 100" width={size} height={size}>
@@ -100,19 +114,26 @@ const OsIcon = ({ name, size = 28 }) => {
 };
 
 
-const OS_OPTIONS = [
-  { name: 'Ubuntu 24.04 LTS', template: 'ubuntu-24.04-x86_64', icon: 'ubuntu', tag: 'LTS' },
-  { name: 'Ubuntu 22.04', template: 'ubuntu-22.04-x86_64', icon: 'ubuntu' },
-  { name: 'Debian 12 Bookworm', template: 'debian-12-x86_64', icon: 'debian', tag: 'Stable' },
-  { name: 'Debian 11 Bullseye', template: 'debian-11-x86_64', icon: 'debian' },
-  { name: 'Rocky Linux 9', template: 'rocky-9.7-x86_64.qcow2', icon: 'rocky' },
+const LINUX_OS = [
+  { name: 'Ubuntu 22.04', template: 'ubuntu-22.04-x86_64', icon: 'ubuntu' },  
   { name: 'AlmaLinux 9', template: 'alma-9-x86_64', icon: 'alma' },
   { name: 'CentOS Stream 9', template: 'centos-9-x86_64', icon: 'centos' },
-  { name: 'Fedora 40', template: 'fedora-40-x86_64', icon: 'fedora' },
-  // { name: 'Arch Linux', template: 'arch-x86_64', icon: 'arch' },
-  // { name: 'Alpine 3.19', template: 'alpine-3.19-x86_64', icon: 'alpine', tag: 'Minimal' },
-  // { name: 'openSUSE Leap 15.5', template: 'opensuse-15.5-x86_64', icon: 'opensuse' },
+   { name: 'Ubuntu 24.04 LTS', template: 'ubuntu-24.04-x86_64', icon: 'ubuntu', tag: 'LTS' },
+  { name: 'AlmaLinux 10', template: 'almalinux-10.1-x86_64', icon: 'alma' },
+  { name: 'CentOS Stream 10', template: 'centos-10.0-x86_64', icon: 'centos' },
+   { name: 'Debian 11 Bullseye', template: 'debian-11-x86_64', icon: 'debian' },
+   { name: 'Debian 12 Bookworm', template: 'debian-12-x86_64', icon: 'debian', tag: 'Stable' },  
+  { name: 'Fedora 42', template: '	fedora-42-x86_64', icon: 'fedora' },
 ];
+
+const WINDOWS_OS = [
+  { name: 'Windows 2019', template: 'windows-2019-scsi-virtio', icon: 'window' },
+  { name: 'Windows 2022', template: 'windows-2022-scsi-virtio', icon: 'window' },
+];
+
+// Component ke andar use karo:
+const OS_OPTIONS = type === 'windows' ? WINDOWS_OS : LINUX_OS;
+
 
 const TENURES = [
   { months: 48, label: '4 Years', discount: 45 },
@@ -122,8 +143,6 @@ const TENURES = [
   { months: 1,  label: 'Monthly', discount: 0  },
 ];
 
-
-export default function ConfigurationModal({ plan, isOpen, onClose }) {
   const navigate = useNavigate();
   const [selectedOs, setSelectedOs]         = useState(OS_OPTIONS[0]);
   const [selectedTenure, setSelectedTenure] = useState(TENURES[1]);

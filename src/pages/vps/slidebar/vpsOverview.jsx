@@ -461,7 +461,7 @@ function Dashboard({ setActive }) {
         </div>
       </div>
 
-        <button onClick={() => setActive("backupmgr")} className="text-left w-full">
+        <button onClick={() => setActive("SnapShot")} className="text-left w-full">
           <SecurityCard title="Snapshot & backups" value="2" icon={FolderArchive} status="Active" bgColor="bg-purple-50" />
         </button>
       </div>
@@ -524,7 +524,7 @@ const MENU_ITEMS = [
 const SUB_ITEMS = {
   backupmgr: [
     { id: "SnapShot", label: "Snapshot", icon: FolderArchive },
-    { id: "serverusage", label: "Server Usage", icon: Activity },
+    // { id: "serverusage", label: "Server Usage", icon: Activity },
     { id: "latestaction", label: "Latest Action", icon: Clock }
   ]
 };
@@ -691,7 +691,7 @@ export default function App() {
       MainComponent = () => <Dashboard setActive={setActive} />;
       break;
     case "backupmgr":
-      MainComponent = BackupManager;
+      MainComponent = SnapShot;
       break;
     case "ospanel":
       MainComponent = OSPanel;
@@ -709,9 +709,9 @@ export default function App() {
     case "SnapShot":
       MainComponent = SnapShot;
       break;
-    case "serverusage":
-      MainComponent = ServerUsagePlaceholder;
-      break;
+    // case "serverusage":
+    //   MainComponent = ServerUsagePlaceholder;
+    //   break;
     case "latestaction":
       MainComponent = LatestActionPlaceholder;
       break;
