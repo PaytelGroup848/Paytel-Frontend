@@ -115,13 +115,15 @@ const OsIcon = ({ name, size = 28 }) => {
 
 
 const LINUX_OS = [
-  { name: 'Ubuntu 24.04 LTS', template: 'ubuntu-24.04-x86_64', icon: 'ubuntu', tag: 'LTS' },
-  { name: 'Ubuntu 22.04', template: 'ubuntu-22.04-x86_64', icon: 'ubuntu' },
-  { name: 'Debian 12 Bookworm', template: 'debian-12-x86_64', icon: 'debian', tag: 'Stable' },
-  { name: 'Debian 11 Bullseye', template: 'debian-11-x86_64', icon: 'debian' },
+  { name: 'Ubuntu 22.04', template: 'ubuntu-22.04-x86_64', icon: 'ubuntu' },  
   { name: 'AlmaLinux 9', template: 'alma-9-x86_64', icon: 'alma' },
   { name: 'CentOS Stream 9', template: 'centos-9-x86_64', icon: 'centos' },
-  { name: 'Fedora 40', template: 'fedora-40-x86_64', icon: 'fedora' },
+   { name: 'Ubuntu 24.04 LTS', template: 'ubuntu-24.04-x86_64', icon: 'ubuntu', tag: 'LTS' },
+  { name: 'AlmaLinux 10', template: 'almalinux-10.1-x86_64', icon: 'alma' },
+  { name: 'CentOS Stream 10', template: 'centos-10.0-x86_64', icon: 'centos' },
+   { name: 'Debian 11 Bullseye', template: 'debian-11-x86_64', icon: 'debian' },
+   { name: 'Debian 12 Bookworm', template: 'debian-12-x86_64', icon: 'debian', tag: 'Stable' },  
+  { name: 'Fedora 42', template: '	fedora-42-x86_64', icon: 'fedora' },
 ];
 
 const WINDOWS_OS = [
@@ -141,16 +143,6 @@ const TENURES = [
   { months: 1,  label: 'Monthly', discount: 0  },
 ];
 
-
-
-
-
-
-
-
-
-
-  console.log("this is my type", type)
   const navigate = useNavigate();
   const [selectedOs, setSelectedOs]         = useState(OS_OPTIONS[0]);
   const [selectedTenure, setSelectedTenure] = useState(TENURES[1]);
