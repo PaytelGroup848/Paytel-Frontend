@@ -23,9 +23,10 @@ import VpsSettings from "./setting";
 import firewall from "./security/firewall";
 import { 
   useVpsInstance, useVpsStats, useStartVps, 
-  useStopVps, useRebootVps, useVpsStatus, usePoweroffVps, useVpsMetrics
+  useStopVps, useRebootVps, useVpsStatus, usePoweroffVps, useVpsMetrics,
+  useVpsInstances
 } from '../../../hooks/useVps';
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 
 
 
@@ -512,6 +513,7 @@ function Dashboard({ setActive }) {
 const MENU_ITEMS = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },   
   { id: "docker", label: "Docker", icon: Container },
+    // { id: "docker", label: "Docker", icon: Container, path: (id) => `/vps/${id}/docker` },
   { id: "backupmgr", label: "Backup Manager", icon: Archive },
   { id: "ospanel", label: "OS & Control Panels", icon: BarChart3 },
   { id: "firewall", label: "firewall", icon: Shield },
@@ -684,6 +686,7 @@ const LatestActionPlaceholder = () => (
 // ----- MAIN APP (routing with new subpage ids) -----
 export default function App() {
   const [active, setActive] = useState("overview");
+  const { data: instances, isLoading } = useVpsInstances();
 
   let MainComponent;
   switch (active) {
@@ -716,15 +719,15 @@ export default function App() {
       MainComponent = LatestActionPlaceholder;
       break;
     default:
-      MainComponent = () => (
-        <div className="flex flex-col items-center justify-center min-h-[72vh] text-center">
-          <div className="w-20 h-20 rounded-3xl bg-indigo-50 flex items-center justify-center mb-6">
-            <Construction size={34} className="text-indigo-400" />
-          </div>
-          <h2 className="text-2xl font-extrabold text-slate-800 mb-2">Coming Soon</h2>
-          <p className="text-slate-400 max-w-sm">This feature is under development.</p>
-        </div>
-      );
+
+    
+  MainComponent = () => <Navigate to={`/vps/${instances?.[0]?.id}/docker`} replace />;
+
+      // MainComponent = () => (
+      // <div onClick={() => navigate(`/vps/${instance.id}/docker`)}>
+      //   Go to VPS
+      // </div>
+      // );
   }
 
   const pageLabel = (() => {

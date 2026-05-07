@@ -207,7 +207,7 @@ const Dashboard = () => {
                     transition={{ delay: 0.3 }}
                     className="text-2xl md:text-3xl font-black"
                   >
-                    {user.name}, welcome to CloudeData.
+                  Hi, {user.name} welcome to CloudeData.
                   </motion.h2>
                   <motion.p 
                     initial={{ x: -20, opacity: 0 }}

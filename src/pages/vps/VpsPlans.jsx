@@ -137,20 +137,18 @@ export default function VpsPlans() {
       </section>
 
 
-<div className="max-w-7xl mx-auto px-6 py-16">
+<div className="max-w-[1600px] mx-auto px-6 py-16">
   {/* Header */}
   <div className="text-center mb-16">
     <div className="inline-flex items-center gap-2 bg-white shadow-sm border border-slate-100 px-6 py-2 rounded-full mb-6">
       <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
       <span className="uppercase text-xs font-bold tracking-[2px] text-slate-500">Premium Cloud Infrastructure</span>
     </div>
-
     <h1 className="text-5xl md:text-6xl font-bold tracking-tighter text-slate-900 mb-4">
       Choose Your <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">VPS Power</span>
     </h1>
     <p className="text-xl text-slate-600 max-w-2xl mx-auto font-light">
-      High-performance NVMe VPS with dedicated resources. 
-      Lightning-fast deployment in under 60 seconds.
+      High-performance NVMe VPS with dedicated resources. Lightning-fast deployment in under 60 seconds.
     </p>
   </div>
 
@@ -160,8 +158,8 @@ export default function VpsPlans() {
       <button
         onClick={() => setType('linux')}
         className={`px-10 py-4 rounded-2xl font-semibold text-sm transition-all duration-300 flex items-center gap-3
-          ${type === 'linux' 
-            ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-xl shadow-indigo-500/30' 
+          ${type === 'linux'
+            ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-xl shadow-indigo-500/30'
             : 'text-slate-500 hover:bg-slate-50'}`}
       >
         <Terminal size={20} />
@@ -170,8 +168,8 @@ export default function VpsPlans() {
       <button
         onClick={() => setType('windows')}
         className={`px-10 py-4 rounded-2xl font-semibold text-sm transition-all duration-300 flex items-center gap-3
-          ${type === 'windows' 
-            ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-xl shadow-indigo-500/30' 
+          ${type === 'windows'
+            ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-xl shadow-indigo-500/30'
             : 'text-slate-500 hover:bg-slate-50'}`}
       >
         <Monitor size={20} />
@@ -180,75 +178,117 @@ export default function VpsPlans() {
     </div>
   </div>
 
-  {/* Plans Grid */}
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-    {plans?.map((plan, index) => (
-      <motion.div
-        key={plan.id}
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: index * 0.1 }}
-        whileHover={{ y: -12 }}
-        className={`relative bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-xl hover:shadow-2xl transition-all duration-500 group
-          ${index === 1 ? 'scale-[1.04] border-indigo-200 shadow-2xl shadow-indigo-100/70 z-10' : ''}`}
-      >
-        {/* Popular Badge */}
-        {index === 1 && (
-          <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold px-8 py-1.5 rounded-full flex items-center gap-2 shadow-lg">
-            <Star className="w-4 h-4" fill="currentColor" />
-            MOST POPULAR
-          </div>
-        )}
+  {/* Plans Grid — dynamic columns based on plan count */}
+  {(() => {
+    const count = plans?.length ?? 3;
+    const popularIdx = Math.floor(count / 2);
 
-        <div className="p-8 pt-10">
-          {/* Plan Name */}
-          <div className="mb-8">
-            <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{plan.name}</h3>
-            <div className="text-emerald-600 text-sm font-medium mt-2 flex items-center gap-2">
-              <Globe size={16} />
-              GLOBAL NODE DEPLOYMENT
-            </div>
-          </div>
+    // Grid col class based on count
+    const gridClass =
+      count <= 3 ? 'grid-cols-1 md:grid-cols-3' :
+      count === 4 ? 'grid-cols-2 lg:grid-cols-4' :
+      count === 5 ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-5' :
+                   'grid-cols-2 md:grid-cols-3 xl:grid-cols-6';
 
-          {/* Pricing */}
-          <div className="flex items-baseline mb-10">
-            <span className="text-6xl font-black text-slate-900 tracking-tighter">
-              {formatINR(plan.priceMonthly)}
-            </span>
-            <span className="text-slate-400 font-medium ml-3 text-lg">/month</span>
-          </div>
+    return (
+      <div className={`grid ${gridClass} gap-4`}>
+        {plans?.map((plan, index) => {
+          const isPopular = index === popularIdx;
+          return (
+            <motion.div
+              key={plan.id}
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.07 }}
+              whileHover={{ y: -8, transition: { duration: 0.2 } }}
+              className={`relative flex flex-col bg-white rounded-2xl overflow-hidden border transition-all duration-300
+                hover:shadow-xl group cursor-pointer
+                ${isPopular
+                  ? 'border-indigo-300 shadow-lg shadow-indigo-100/70 ring-2 ring-indigo-200'
+                  : 'border-slate-100 shadow-md hover:border-indigo-200'}`}
+            >
+              {/* Popular Badge */}
+              {isPopular && (
+                <div className="absolute -top-px left-0 right-0 flex justify-center">
+                  <div className="bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[10px] font-black px-5 py-1 rounded-b-xl flex items-center gap-1.5 shadow-md">
+                    <Star className="w-3 h-3" fill="currentColor" />
+                    MOST POPULAR
+                  </div>
+                </div>
+              )}
 
-          {/* Specs */}
-          <div className="space-y-6 mb-12">
-            <PlanIcon icon={Cpu} label="vCPU CORES" value={`${plan.vcpu} Cores`} />
-            <PlanIcon icon={MemoryStick} label="RAM" value={plan.ram} />
-            <PlanIcon icon={HardDrive} label="NVME SSD" value={plan.storage} />
-            <PlanIcon icon={Wifi} label="PORT SPEED" value={plan.portSpeed} />
-            <PlanIcon icon={RotateCcw} label="BACKUPS" value={plan.backups} />
-          </div>
+              {/* Top accent bar */}
+              <div className={`h-1 w-full ${isPopular
+                ? 'bg-gradient-to-r from-amber-400 via-orange-400 to-amber-400'
+                : 'bg-gradient-to-r from-indigo-400 via-violet-400 to-fuchsia-400'}`}
+              />
 
-          {/* Button */}
-          <Button
-            fullWidth
-            onClick={() => setSelectedPlan(plan)}
-            className="py-4 text-base font-semibold rounded-2xl bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 hover:from-indigo-700 hover:via-violet-700 transition-all duration-300 shadow-lg shadow-indigo-500/30 hover:shadow-xl group-hover:scale-[1.02] flex items-center justify-center gap-2"
-          >
-            SELECT CONFIGURATION
-            <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-          </Button>
-        </div>
+              <div className={`flex flex-col flex-1 p-5 ${isPopular ? 'pt-7' : 'pt-5'}`}>
+                {/* Plan Name */}
+                <div className="mb-3">
+                  <h3 className="text-base font-black text-slate-800 tracking-tight truncate">{plan.name}</h3>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Global Deploy</span>
+                  </div>
+                </div>
 
-        {/* Decorative Bottom Bar */}
-        <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-fuchsia-500" />
-      </motion.div>
-    ))}
-  </div>
+                {/* Price */}
+                <div className="mb-4 pb-4 border-b border-slate-100">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-black text-slate-900 tracking-tight">
+                      {formatINR(plan.priceMonthly)}
+                    </span>
+                    <span className="text-slate-400 text-xs font-medium">/mo</span>
+                  </div>
+                </div>
+
+                {/* Specs — compact rows */}
+                <div className="flex flex-col gap-2.5 flex-1 mb-5">
+                  {[
+                    { icon: Cpu,         label: 'vCPU',    value: `${plan.vcpu} Cores` },
+                    { icon: MemoryStick, label: 'RAM',     value: plan.ram },
+                    { icon: HardDrive,   label: 'NVMe',    value: plan.storage },
+                    { icon: Wifi,        label: 'Speed',   value: plan.portSpeed },
+                    { icon: RotateCcw,   label: 'Backup',  value: plan.backups },
+                  ].map(({ icon: Icon, label, value }) => (
+                    <div key={label} className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <div className={`p-1 rounded-md flex-shrink-0 ${isPopular ? 'bg-amber-50 text-amber-600' : 'bg-indigo-50 text-indigo-500'}`}>
+                          <Icon size={11} />
+                        </div>
+                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wide">{label}</span>
+                      </div>
+                      <span className="text-xs font-bold text-slate-700 text-right truncate">{value}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA Button */}
+                <button
+                  onClick={() => setSelectedPlan(plan)}
+                  className={`w-full py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300
+                    flex items-center justify-center gap-2 group-hover:gap-3
+                    ${isPopular
+                      ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-md shadow-orange-200 hover:shadow-lg hover:shadow-orange-300'
+                      : 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-200 hover:shadow-lg hover:shadow-indigo-300'}`}
+                >
+                  Deploy
+                  <ArrowRight size={13} className="transition-transform group-hover:translate-x-0.5" />
+                </button>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+    );
+  })()}
 
   {selectedPlan && (
     <ConfigurationModal
       plan={selectedPlan}
       isOpen={!!selectedPlan}
-      type = {type}
+      type={type}
       onClose={() => setSelectedPlan(null)}
     />
   )}

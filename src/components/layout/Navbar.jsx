@@ -73,30 +73,29 @@ export default function Navbar({ isSidebarOpen, onMenuClick }) {  // ✅ ADDED o
                 onClick={() => navigate('/')}
               >
                 {/* ADVANCED DOUBLE CLOUD ICON */}
-                <div className="relative flex items-center justify-center w-10 h-10">
-                  <motion.div
-                    animate={{ y: [0, -2, 0] }}
-                    transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-                  >
-                    <Cloud 
-                      size={24} 
-                      className="text-indigo-600 absolute -translate-x-2 -translate-y-2 opacity-40" 
-                      fill="currentColor"
-                    />
-                  </motion.div>
-                  <Cloud 
-                    size={26} 
-                    className="text-violet-500 z-10 drop-shadow-2xl group-hover:scale-110 transition-transform duration-300" 
-                    fill="currentColor"
-                  />
-                </div>
+              <div className="relative flex items-center justify-center w-full h-12">
+  <motion.img
+    src="\FullCloudedatalogosvg.svg"
+    alt="Cloude Data Logo"
+    className="
+      w-full h-12
+      object-contain
+      drop-shadow-xl
+      group-hover:scale-110
+      transition-transform duration-300
+    "
+    animate={{ y: [0, -2, 0] }}
+    transition={{
+      repeat: Infinity,
+      duration: 3,
+      ease: "easeInOut",
+    }}
+  />
+</div>
+
+
                 
-                <div className="flex flex-col leading-tight">
-                  <span className="font-black text-2xl tracking-tighter text-slate-900">
-                    Cloude<span className="text-indigo-600">Data</span>
-                  </span>
-                  <span className="text-[9px] font-bold text-slate-400 tracking-[0.3em] uppercase mt-0.5">Infrastructure</span>
-                </div>
+                
               </motion.div>
             )}
           </AnimatePresence>
@@ -137,12 +136,11 @@ export default function Navbar({ isSidebarOpen, onMenuClick }) {  // ✅ ADDED o
             >
               <div className="relative">
                 <Avatar name={user?.name} size="md" src={user?.avatar} className="rounded-xl border-2 border-white shadow-sm" />
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-[3px] border-white rounded-full shadow-sm" />
+                {/* <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-[3px] border-white rounded-full shadow-sm" /> */}
               </div>
               
               <div className="hidden lg:flex flex-col items-start text-left">
                 <span className="text-[13px] font-black text-slate-900 leading-none">{user?.name}</span>
-                <span className="text-[10px] text-indigo-500 font-bold uppercase mt-1 tracking-wider opacity-80">PRO v2.0</span>
               </div>
               <ChevronDown size={14} className={`text-slate-400 transition-transform duration-500 ${open ? 'rotate-180 text-indigo-600' : ''}`} />
             </button>

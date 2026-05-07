@@ -13,7 +13,8 @@ import {
   LayoutDashboard,
   LogOut,
   LifeBuoy ,
-   Mails              
+   Mails,              
+   Cloud
 } from 'lucide-react';
 import { useSubscription } from '../../hooks/useBilling';
 import { useLogout, useMe } from '../../hooks/useAuth';
@@ -51,7 +52,17 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
         { label: 'NodeJS App', to: '/websites/nodejs' },
       ],
     },
-    { label: 'Cloud VPS', to: '/vps', icon: Zap },
+     {
+      label: 'Cloud VPS',
+      icon: Cloud,
+      children: [
+        { label: 'VPS Plans', to: '/vps' },
+        { label: 'VPS', to: '/vps/paid' },
+        // { label: 'Invoices', to: '/billing/history' },
+      ],
+    },
+    
+    // { label: 'Cloud VPS', to: '/vps', icon: Zap },
     {
       label: 'Billing',
       icon: CreditCard,
@@ -107,9 +118,26 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
         {/* Brand Section with Close Button on Mobile */}
         <div className="h-20 flex items-center px-5 justify-between overflow-hidden border-b border-slate-100/80">
           <div className="flex items-center gap-3 cursor-pointer min-w-max">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shrink-0 shadow-lg shadow-indigo-200 ring-4 ring-indigo-50/60">
-              <Cloudy size={22} className="text-white" />
-            </div>
+           
+          <div className="relative flex items-center justify-center w-12 h-12">
+  <motion.img
+    src="/Cloudedatalogo.svg"
+    alt="Cloude Data Logo"
+    className="
+      w-10 h-10
+      object-contain
+      drop-shadow-xl
+      group-hover:scale-110
+      transition-transform duration-300
+    "
+    animate={{ y: [0, -2, 0] }}
+    transition={{
+      repeat: Infinity,
+      duration: 3,
+      ease: "easeInOut",
+    }}
+  />
+</div>
             <AnimatePresence>
               {isExpanded && (
                 <motion.div
@@ -118,8 +146,8 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
                   exit={{ opacity: 0, x: -10 }}
                   className="flex flex-col"
                 >
-                  <span className="font-black text-slate-800 text-lg tracking-tight">
-                    Cloude<span className="text-indigo-600">Data</span>
+                  <span className="font-black text-[#17a0fe] text-lg tracking-tight">
+                    Cloude<span className="text-[#17a0fe]">Data</span>
                   </span>
                 </motion.div>
               )}

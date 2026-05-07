@@ -63,6 +63,7 @@ import  AutoReplyPage from './pages/Emails/EmailAutoReply';
 import EmailConnect from './pages/Emails/EmailConnect';
 import EmailLogsPage from './pages/Emails/EmailLogsPage';
 import DkimPage from './pages/Emails/EmailDkim';
+import Docker from './pages/vps/Docker';
 
 
 
@@ -147,7 +148,7 @@ export default function App() {
 
       {/* Protected routes */}
       <Route
-      // element={<ProtectedRoute />}
+      element={<ProtectedRoute />}
       >
         <Route element={<AppRoutes />}>
           <Route path="/dashboard" element={<Dashboard />} />
@@ -186,6 +187,7 @@ export default function App() {
           <Route path="/vps/OSPanel" element={<OSPanel />} />
           <Route path="/vps/setting" element={<VpsSettings />} />
           <Route path="/help" element={<GetHelp />} />
+          <Route path="/vps/:id/docker" element={<Docker />} />
           <Route path="/vps/docker/catalogs" element={<Catalogs />} />
           <Route path="/vps/security/firewall" element={<firewall />} />
 

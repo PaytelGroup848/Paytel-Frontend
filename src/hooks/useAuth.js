@@ -30,7 +30,7 @@ export const useRegister = () =>
       const res = await api.post('/auth/register', payload);
       return res.data?.data;
     },
-    onSuccess: () => toast.success('Account created. Please login.'),
+    // onSuccess: () => toast.success('Account created. Please login.'),
     onError: () => toast.error('Registration failed'),
   });
 
