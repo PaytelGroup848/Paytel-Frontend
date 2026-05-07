@@ -8,7 +8,6 @@ import {
   MoreHorizontal,
   Trash2,
   Edit3,
-  Circle,
   X,
   ShieldCheck,
   Mail,
@@ -35,11 +34,11 @@ const useForwarders = (planId) => {
         const json = await res.json();
         setData(json);
       } catch {
-        // Demo data – replace with real API
+        // Demo data
         const allForwarders = [
-          { id: 1, planId: 1, mailbox: 'care@cloudedata.info', forwardsTo: 'arun@cloudewebmail.com', usedCount: 1, maxCount: 50 },
-          { id: 2, planId: 1, mailbox: 'care@cloudedata.info', forwardsTo: 'team@other.com', usedCount: 2, maxCount: 50 },
-          { id: 3, planId: 2, mailbox: 'news@news.cloudedata.info', forwardsTo: 'editor@news.cloudedata.info', usedCount: 1, maxCount: 50 },
+          { id: 1, planId: 1, mailbox: 'care@cloudedata.info', forwardsTo: 'arun@cloudewebmail.com' },
+          { id: 2, planId: 1, mailbox: 'care@cloudedata.info', forwardsTo: 'team@other.com' },
+          { id: 3, planId: 2, mailbox: 'news@news.cloudedata.info', forwardsTo: 'editor@news.cloudedata.info' },
         ];
         const allMailboxes = {
           1: ['care@cloudedata.info', 'info@cloudedata.info'],
@@ -47,15 +46,19 @@ const useForwarders = (planId) => {
           3: ['admin@enterprise.cloudedata.info', 'support@enterprise.cloudedata.info'],
         };
         const domains = { 1: 'cloudedata.info', 2: 'news.cloudedata.info', 3: 'enterprise.cloudedata.info' };
+        const maxForwarders = 50; // plan limit
 
         const planIdNum = planId ? parseInt(planId, 10) : null;
         if (!planIdNum) {
-          setData({ domain: '', availableMailboxes: [], forwarders: [] });
+          setData({ domain: '', availableMailboxes: [], forwarders: [], totalUsed: 0, maxForwarders });
         } else {
+          const filtered = allForwarders.filter((f) => f.planId === planIdNum);
           setData({
             domain: domains[planIdNum] || '',
             availableMailboxes: allMailboxes[planIdNum] || [],
-            forwarders: allForwarders.filter((f) => f.planId === planIdNum),
+            forwarders: filtered,
+            totalUsed: filtered.length,     // total count based on current list
+            maxForwarders,
           });
         }
       } finally {
@@ -173,7 +176,6 @@ const ForwarderModal = ({ mode, initialValues, availableMailboxes, onClose, onSa
           <p className="text-sm text-slate-500 mb-6">{subtitle}</p>
 
           <div className="space-y-4">
-            {/* Source mailbox */}
             {availableMailboxes.length > 1 || isEdit ? (
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
@@ -195,7 +197,6 @@ const ForwarderModal = ({ mode, initialValues, availableMailboxes, onClose, onSa
               </div>
             ) : null}
 
-            {/* Destination */}
             <div>
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
                 Forwards to
@@ -262,10 +263,9 @@ export default function ForwardersPage() {
           id: nextId,
           mailbox: newFwd.mailbox,
           forwardsTo: newFwd.forwardsTo,
-          usedCount: 1,
-          maxCount: 50,
         },
       ],
+      totalUsed: prev.totalUsed + 1,   // increment total count
     }));
   };
 
@@ -284,6 +284,7 @@ export default function ForwardersPage() {
       setData((prev) => ({
         ...prev,
         forwarders: prev.forwarders.filter((f) => f.id !== forwarder.id),
+        totalUsed: prev.totalUsed - 1,   // decrement total count
       }));
       toast.success('Forwarder deleted');
     }
@@ -309,7 +310,7 @@ export default function ForwardersPage() {
   }
 
   const hasPlan = !!selectedPlanId;
-  const { domain, availableMailboxes, forwarders } = data;
+  const { domain, availableMailboxes, forwarders, totalUsed, maxForwarders } = data;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 p-6 md:p-10">
@@ -331,7 +332,6 @@ export default function ForwardersPage() {
         <EmailSidebar />
         <div className="flex-1">
           {!hasPlan ? (
-            /* No plan selected – show guidance */
             <motion.div
               initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -339,9 +339,7 @@ export default function ForwardersPage() {
             >
               <Mail size={48} className="mx-auto text-slate-300 mb-4" />
               <h3 className="text-lg font-bold text-slate-700 mb-2">Select a plan</h3>
-              <p className="text-sm text-slate-500 mb-4">
-                Please choose an email plan to manage its forwarders.
-              </p>
+              <p className="text-sm text-slate-500 mb-4">Please choose an email plan to manage its forwarders.</p>
               <button
                 onClick={() => navigate('/emails')}
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition shadow-md"
@@ -355,19 +353,33 @@ export default function ForwardersPage() {
               animate={{ y: 0, opacity: 1 }}
               className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-sm border-2 border-slate-200/80"
             >
-              <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
+              <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
                 <div>
                   <h1 className="text-2xl font-bold text-slate-800">Forwarders</h1>
                   <p className="text-sm text-slate-500 mt-1">
                     Email forwarders redirect incoming email messages to another mailbox.
                   </p>
                 </div>
-                <button
-                  onClick={openCreateModal}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white font-semibold text-sm rounded-xl hover:bg-indigo-700 transition shadow-md"
-                >
-                  <PlusCircle size={16} /> Create forwarder
-                </button>
+                <div className="flex items-center gap-3">
+                  {/* Total usage badge */}
+                  <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${
+                    totalUsed >= maxForwarders ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                  }`}>
+                    <Mail size={14} />
+                    {totalUsed}/{maxForwarders} used
+                  </span>
+                  <button
+                    onClick={openCreateModal}
+                    disabled={totalUsed >= maxForwarders}
+                    className={`inline-flex items-center gap-2 px-4 py-2 text-white font-semibold text-sm rounded-xl transition shadow-md ${
+                      totalUsed >= maxForwarders
+                        ? 'bg-slate-400 cursor-not-allowed'
+                        : 'bg-indigo-600 hover:bg-indigo-700'
+                    }`}
+                  >
+                    <PlusCircle size={16} /> Create forwarder
+                  </button>
+                </div>
               </div>
 
               {forwarders.length === 0 ? (
@@ -383,7 +395,12 @@ export default function ForwardersPage() {
                   </p>
                   <button
                     onClick={openCreateModal}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition shadow-md"
+                    disabled={totalUsed >= maxForwarders}
+                    className={`inline-flex items-center gap-2 px-5 py-2.5 font-semibold rounded-xl transition shadow-md ${
+                      totalUsed >= maxForwarders
+                        ? 'bg-slate-400 text-white cursor-not-allowed'
+                        : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                    }`}
                   >
                     <PlusCircle size={18} /> Create forwarder
                   </button>
@@ -395,7 +412,6 @@ export default function ForwardersPage() {
                       <tr className="text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
                         <th className="pb-3 pr-4">Email</th>
                         <th className="pb-3 pr-4">Forwards to</th>
-                        <th className="pb-3 pr-4">Usage</th>
                         <th className="pb-3 text-right">Actions</th>
                       </tr>
                     </thead>
@@ -404,7 +420,6 @@ export default function ForwardersPage() {
                         <tr key={fwd.id} className="hover:bg-slate-50/50 transition">
                           <td className="py-4 pr-4 font-medium text-slate-800">{fwd.mailbox}</td>
                           <td className="py-4 pr-4 text-slate-700">{fwd.forwardsTo}</td>
-                          <td className="py-4 pr-4 text-slate-700">{fwd.usedCount}/{fwd.maxCount} used</td>
                           <td className="py-4 text-right">
                             <ForwarderActionMenu
                               onEdit={() => openEditModal(fwd)}
