@@ -41,12 +41,25 @@ const CloudVisual = () => {
       />
 
       {/* Logo */}
-      <div className="relative z-10 flex items-center gap-3">
-        <div className="p-2.5 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-500/30">
-          <Cloud className="h-5 w-5 text-white" />
-        </div>
-        <span className="text-xl font-black tracking-tighter text-white">cloude data</span>
-      </div>
+       <div className="relative flex items-center justify-center w-full h-12">
+  <motion.img
+    src="\FullCloudedatalogosvg.svg"
+    alt="Cloude Data Logo"
+    className="
+      w-full h-12
+      object-contain
+      drop-shadow-xl
+      group-hover:scale-110
+      transition-transform duration-300
+    "
+    animate={{ y: [0, -2, 0] }}
+    transition={{
+      repeat: Infinity,
+      duration: 3,
+      ease: "easeInOut",
+    }}
+  />
+</div>
 
       {/* Headline + stats */}
       <div className="relative z-10 space-y-6">

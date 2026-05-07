@@ -10,6 +10,7 @@ import {
 import { usePoweroffVps, useRebootVps, useStartVps, useStopVps, useVpsInstance, useVpsMetrics, useVpsStats, useVpsStatus, useOsTemplates } from '../../../hooks/useVps';
 import { useNavigate, useParams } from 'react-router-dom';
 import RebuildVpsModal from './RebuildVpsModal';
+import { FaUbuntu } from 'react-icons/fa';
 
 // --- REUSABLE COMPONENTS ---
 
@@ -242,7 +243,7 @@ const OSSelectionModal = ({ isOpen, onClose, onConfirm, currentOSId, loading, os
 // Helper function to get icon for distro
 const getIconForDistro = (distro) => {
   const icons = {
-    ubuntu: '🐧',
+    ubuntu: <FaUbuntu className='text-orange-500 text-4xl'/>, 
     debian: '🌀',
     centos: '🟠',
     rocky: '🪨',
@@ -254,7 +255,7 @@ const getIconForDistro = (distro) => {
     windows: '🪟',
     kali: '💀'
   };
-  return icons[distro?.toLowerCase()] || '🐧';
+  return icons[distro?.toLowerCase()] || <FaUbuntu className='text-orange-500 text-4xl' />;
 };
 
 // --- REINSTALL MODAL ---
@@ -631,20 +632,8 @@ useEffect(() => {
               <HealthProgress label="Bandwidth" value={Math.min(metrics.bandwidth, 100)} color="bg-amber-500" />
             </div>
             <div className="mt-7 pt-5 border-t border-slate-100 flex items-center justify-between">
-              <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Uptime</p>
-                <p className="text-sm font-black text-slate-800 mt-0.5">{instance?.uptime || '0 hours'}</p>
-              </div>
-              <div className="relative w-12 h-12">
-                <svg viewBox="0 0 44 44" className="w-full h-full -rotate-90">
-                  <circle cx="22" cy="22" r="18" fill="none" stroke="#F1F5F9" strokeWidth="4" />
-                  <circle cx="22" cy="22" r="18" fill="none" stroke="#10B981" strokeWidth="4"
-                    strokeDasharray={`${(94 / 100) * 2 * Math.PI * 18} ${2 * Math.PI * 18}`}
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <span className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-emerald-600">94%</span>
-              </div>
+             
+              
             </div>
           </div>
 

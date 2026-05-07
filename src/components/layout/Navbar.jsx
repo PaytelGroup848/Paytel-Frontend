@@ -53,7 +53,7 @@ export default function Navbar({ isSidebarOpen, onMenuClick }) {  // ✅ ADDED o
         
         {/* LEFT: Branding + Mobile Menu Button */}
         <div className="flex items-center gap-3 min-w-[200px]">
-          {/* ✅ Hamburger button - only visible on mobile */}
+          {/*  Hamburger button - only visible on mobile */}
           <button
             onClick={onMenuClick}
             className="md:hidden p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all"

@@ -43,12 +43,25 @@ const RegisterBanner = () => {
       {/* Content */}
       <div className="relative z-10 flex h-full flex-col justify-between p-7 text-white">
         {/* Logo */}
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/15 backdrop-blur-md border border-white/10 shadow-lg">
-            <Cloud className="h-4 w-4 text-blue-200" />
-          </div>
-          <span className="text-base font-bold tracking-tight">CloudData</span>
-        </div>
+        <div className="relative flex items-center justify-center w-full h-12">
+  <motion.img
+    src="\FullCloudedatalogosvg.svg"
+    alt="Cloude Data Logo"
+    className="
+      w-full h-12
+      object-contain
+      drop-shadow-xl
+      group-hover:scale-110
+      transition-transform duration-300
+    "
+    animate={{ y: [0, -2, 0] }}
+    transition={{
+      repeat: Infinity,
+      duration: 3,
+      ease: "easeInOut",
+    }}
+  />
+</div>
 
         {/* Main copy */}
         <div className="space-y-4">

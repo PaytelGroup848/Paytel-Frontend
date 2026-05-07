@@ -42,7 +42,6 @@ import VpsPlans from './pages/vps/VpsPlans';
 import VPSDocumentation from './pages/vps/slidebar/docs';
 import BackupManager from './pages/vps/slidebar/BackupManager';
 import SnapShot from './pages/vps/slidebar/SnapShot';
-import Catalogs from "./pages/vps/slidebar/docker/catalogs";
 import OSPanel from './pages/vps/slidebar/Os_panel';
 import VpsSettings from "./pages/vps/slidebar/setting";
 import firewall from "./pages/vps/slidebar/security/firewall";
@@ -188,7 +187,6 @@ export default function App() {
           <Route path="/vps/setting" element={<VpsSettings />} />
           <Route path="/help" element={<GetHelp />} />
           <Route path="/vps/:id/docker" element={<Docker />} />
-          <Route path="/vps/docker/catalogs" element={<Catalogs />} />
           <Route path="/vps/security/firewall" element={<firewall />} />
 
 
