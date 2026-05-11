@@ -67,9 +67,9 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
       label: 'Billing',
       icon: CreditCard,
       children: [
-        { label: 'Plans', to: '/plans' },
-        { label: 'Payment Methods', to: '/billing' },
-        { label: 'Invoices', to: '/billing/history' },
+       
+        { label: 'Subscriptions', to: '/blling/subscriptions' },
+        { label: 'Payment-history', to: '/payment-history' },
       ],
     },
     { label: 'Emails', to:'/emails',icon:  Mails },
