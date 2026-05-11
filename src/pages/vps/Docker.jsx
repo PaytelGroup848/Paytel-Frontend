@@ -169,7 +169,8 @@ export default function Docker() {
               className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 mx-auto disabled:opacity-50"
             >
               {(installing || installDocker.isPending) ? <FaSpinner className="animate-spin" /> : <FaDocker />}
-              Install Docker
+              {(installing || installDocker.isPending) ? "Docker is installing don't press back" : "Install Docker"}
+             
             </button>
           </div>
         </div>
@@ -226,15 +227,6 @@ export default function Docker() {
             <FaPlus size={14} />
             Create Container
           </button>
-        </div>
-
-        {/* Docker Status */}
-        <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-3 flex items-center gap-3">
-          <FaCheckCircle className="text-green-500" />
-          <div>
-            <span className="font-medium text-green-800">Docker is installed</span>
-            <span className="text-green-600 text-sm ml-2">{dockerStatus?.version}</span>
-          </div>
         </div>
 
         {/* Tabs */}

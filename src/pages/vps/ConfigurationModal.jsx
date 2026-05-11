@@ -1,18 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Minus, Plus, Eye, EyeOff, Server, Shield, ChevronRight } from 'lucide-react';
-import Modal from '../../components/ui/Modal';
-import Button from '../../components/ui/Button';
 import { useCreateVpsOrder, useVerifyVpsPayment } from '../../hooks/useVps';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 
+/* ─── useWindowSize hook ─────────────────────────────────────────────────── */
+function useWindowSize() {
+  const [size, setSize] = useState({ width: window.innerWidth, height: window.innerHeight });
+  useEffect(() => {
+    const handler = () => setSize({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return size;
+}
 
+/* ─── Inject global scrollbar-hide styles once ───────────────────────────── */
+if (typeof document !== 'undefined' && !document.getElementById('cfg-modal-styles')) {
+  const style = document.createElement('style');
+  style.id = 'cfg-modal-styles';
+  style.textContent = `
+    .cfg-scroll::-webkit-scrollbar { display: none; }
+    .cfg-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+    .cfg-os-btn:hover  { transform: translateY(-1px); }
+    .cfg-tenure-btn:hover { transform: translateY(-1px); }
+    .cfg-qty-btn:hover { background: #F1F5F9 !important; }
+    .cfg-close-btn:hover { background: #F1F5F9 !important; color: #0F172A !important; }
+    .cfg-cta-btn:not(:disabled):hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(108,99,255,0.45) !important; }
+    .cfg-cta-btn:disabled { cursor: not-allowed; }
+    @keyframes cfg-fadein {
+      from { opacity: 0; transform: scale(0.96) translateY(8px); }
+      to   { opacity: 1; transform: scale(1)   translateY(0);    }
+    }
+    .cfg-shell { animation: cfg-fadein 0.22s cubic-bezier(0.16,1,0.3,1) forwards; }
 
-export default function ConfigurationModal({ plan, isOpen, onClose, type }) {
-
-
-const formatINR = (paise) => `₹${(Number(paise || 0) / 100).toLocaleString()}`;
+    /* ── Responsive overrides ── */
+    @media (max-width: 639px) {
+      .cfg-body      { flex-direction: column !important; overflow-y: auto !important; }
+      .cfg-left      { border-right: none !important; border-bottom: 1px solid #F1F5F9 !important; overflow-y: visible !important; }
+      .cfg-right     { width: 100% !important; overflow-y: visible !important; }
+      .cfg-os-grid   { grid-template-columns: repeat(2, 1fr) !important; }
+      .cfg-shell     { border-radius: 16px !important; max-height: 92vh !important; }
+      .cfg-header    { padding: 14px 16px 12px !important; }
+      .cfg-total-amt { font-size: 18px !important; }
+    }
+    @media (min-width: 640px) and (max-width: 899px) {
+      .cfg-body      { flex-direction: column !important; overflow-y: auto !important; }
+      .cfg-left      { border-right: none !important; border-bottom: 1px solid #F1F5F9 !important; overflow-y: visible !important; }
+      .cfg-right     { width: 100% !important; overflow-y: visible !important; }
+      .cfg-os-grid   { grid-template-columns: repeat(3, 1fr) !important; }
+      .cfg-tenure-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 6px !important; }
+      .cfg-shell     { max-height: 94vh !important; }
+    }
+  `;
+  document.head.appendChild(style);
+}
 
 /* ─── Inline SVG OS Icons ────────────────────────────────────────────────── */
 const OsIcon = ({ name, size = 28 }) => {
@@ -93,15 +136,15 @@ const OsIcon = ({ name, size = 28 }) => {
         <circle cx="72" cy="50" r="7" fill="white"/>
       </svg>
     ),
-   window: (
-  <svg viewBox="0 0 100 100" width={size} height={size}>
-    <circle cx="50" cy="50" r="48" fill="#ffff"/>
-    <rect x="20" y="20" width="27" height="27" rx="2" fill="#F25022"/>
-    <rect x="53" y="20" width="27" height="27" rx="2" fill="#7FBA00"/>
-    <rect x="20" y="53" width="27" height="27" rx="2" fill="#00A4EF"/>
-    <rect x="53" y="53" width="27" height="27" rx="2" fill="#FFB900"/>
-  </svg>
-),
+    window: (
+      <svg viewBox="0 0 100 100" width={size} height={size}>
+        <circle cx="50" cy="50" r="48" fill="#ffffff"/>
+        <rect x="20" y="20" width="27" height="27" rx="2" fill="#F25022"/>
+        <rect x="53" y="20" width="27" height="27" rx="2" fill="#7FBA00"/>
+        <rect x="20" y="53" width="27" height="27" rx="2" fill="#00A4EF"/>
+        <rect x="53" y="53" width="27" height="27" rx="2" fill="#FFB900"/>
+      </svg>
+    ),
   };
   return icons[name] || (
     <svg viewBox="0 0 100 100" width={size} height={size}>
@@ -113,48 +156,53 @@ const OsIcon = ({ name, size = 28 }) => {
   );
 };
 
-
+/* ─── Data ───────────────────────────────────────────────────────────────── */
 const LINUX_OS = [
-  { name: 'Ubuntu 22.04', template: 'ubuntu-22.04-x86_64', icon: 'ubuntu' },  
-  { name: 'AlmaLinux 9', template: 'alma-9-x86_64', icon: 'alma' },
-  { name: 'CentOS Stream 9', template: 'centos-9-x86_64', icon: 'centos' },
-   { name: 'Ubuntu 24.04 LTS', template: 'ubuntu-24.04-x86_64', icon: 'ubuntu', tag: 'LTS' },
-  { name: 'AlmaLinux 10', template: 'almalinux-10.1-x86_64', icon: 'alma' },
-  { name: 'CentOS Stream 10', template: 'centos-10.0-x86_64', icon: 'centos' },
-   { name: 'Debian 11 Bullseye', template: 'debian-11-x86_64', icon: 'debian' },
-   { name: 'Debian 12 Bookworm', template: 'debian-12-x86_64', icon: 'debian', tag: 'Stable' },  
-  { name: 'Fedora 42', template: '	fedora-42-x86_64', icon: 'fedora' },
+  { name: 'Ubuntu 22.04',        template: 'ubuntu-22.04-x86_64',      icon: 'ubuntu' },
+  { name: 'AlmaLinux 9',         template: 'alma-9-x86_64',            icon: 'alma'   },
+  { name: 'CentOS Stream 9',     template: 'centos-9-x86_64',          icon: 'centos' },
+  { name: 'Ubuntu 24.04 LTS',    template: 'ubuntu-24.04-x86_64',      icon: 'ubuntu', tag: 'LTS'    },
+  { name: 'AlmaLinux 10',        template: 'almalinux-10.1-x86_64',    icon: 'alma'   },
+  { name: 'CentOS Stream 10',    template: 'centos-10.0-x86_64',       icon: 'centos' },
+  { name: 'Debian 11 Bullseye',  template: 'debian-11-x86_64',         icon: 'debian' },
+  { name: 'Debian 12 Bookworm',  template: 'debian-12-x86_64',         icon: 'debian', tag: 'Stable' },
+  { name: 'Fedora 42',           template: 'fedora-42-x86_64',         icon: 'fedora' },
 ];
-
 const WINDOWS_OS = [
   { name: 'Windows 2019', template: 'windows-2019-scsi-virtio', icon: 'window' },
   { name: 'Windows 2022', template: 'windows-2022-scsi-virtio', icon: 'window' },
 ];
-
-// Component ke andar use karo:
-const OS_OPTIONS = type === 'windows' ? WINDOWS_OS : LINUX_OS;
-
-
 const TENURES = [
   { months: 48, label: '4 Years', discount: 45 },
   { months: 36, label: '3 Years', discount: 35 },
   { months: 24, label: '2 Years', discount: 20 },
-  { months: 12, label: '1 Year', discount: 10 },
+  { months: 12, label: '1 Year',  discount: 10 },
   { months: 1,  label: 'Monthly', discount: 0  },
 ];
 
+/* ─── Component ──────────────────────────────────────────────────────────── */
+export default function ConfigurationModal({ plan, isOpen, onClose, type }) {
+  const { width } = useWindowSize();
+  const isMobile  = width < 640;
+  const isTablet  = width >= 640 && width < 900;
+  const isSmall   = isMobile || isTablet;          // stacked layout
+
+  const formatINR = (paise) => `₹${(Number(paise || 0) / 100).toLocaleString()}`;
+
+  const OS_OPTIONS = type === 'windows' ? WINDOWS_OS : LINUX_OS;
+
   const navigate = useNavigate();
-  const [selectedOs, setSelectedOs]         = useState(OS_OPTIONS[0]);
-  const [selectedTenure, setSelectedTenure] = useState(TENURES[1]);
-  const [quantity, setQuantity]             = useState(1);
-  const [hostname, setHostname]             = useState(`${plan.slug}-server`);
-  const [rootPassword, setRootPassword]     = useState('');
-  const [showPassword, setShowPassword]     = useState(false);
+  const [selectedOs,       setSelectedOs]       = useState(OS_OPTIONS[0]);
+  const [selectedTenure,   setSelectedTenure]   = useState(TENURES[1]);
+  const [quantity,         setQuantity]         = useState(1);
+  const [hostname,         setHostname]         = useState(`${plan.slug}-server`);
+  const [rootPassword,     setRootPassword]     = useState('');
+  const [showPassword,     setShowPassword]     = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
 
-  const { user }       = useAuthStore();
-  const createOrder    = useCreateVpsOrder();
-  const verifyPayment  = useVerifyVpsPayment();
+  const { user }      = useAuthStore();
+  const createOrder   = useCreateVpsOrder();
+  const verifyPayment = useVerifyVpsPayment();
 
   const monthlyPrice = plan.priceMonthly;
   const subtotal     = monthlyPrice * selectedTenure.months * (1 - selectedTenure.discount / 100) * quantity;
@@ -163,31 +211,26 @@ const TENURES = [
 
   const checkPasswordStrength = (pw) => {
     let s = 0;
-    if (pw.length >= 8)            s++;
-    if (/[a-z]/.test(pw))          s++;
-    if (/[A-Z]/.test(pw))          s++;
-    if (/[0-9]/.test(pw))          s++;
-    if (/[$@#&!]/.test(pw))        s++;
+    if (pw.length >= 8)      s++;
+    if (/[a-z]/.test(pw))   s++;
+    if (/[A-Z]/.test(pw))   s++;
+    if (/[0-9]/.test(pw))   s++;
+    if (/[$@#&!]/.test(pw)) s++;
     setPasswordStrength(s);
   };
-
-  const handlePasswordChange = (e) => {
-    setRootPassword(e.target.value);
-    checkPasswordStrength(e.target.value);
-  };
+  const handlePasswordChange = (e) => { setRootPassword(e.target.value); checkPasswordStrength(e.target.value); };
 
   const validatePassword = () => {
-    if (rootPassword.length < 8)    { toast.error('Minimum 8 characters required'); return false; }
-    if (!/[A-Z]/.test(rootPassword)){ toast.error('Add at least one uppercase letter'); return false; }
-    if (!/[0-9]/.test(rootPassword)){ toast.error('Add at least one number'); return false; }
+    if (rootPassword.length < 8)     { toast.error('Minimum 8 characters required');       return false; }
+    if (!/[A-Z]/.test(rootPassword)) { toast.error('Add at least one uppercase letter');   return false; }
+    if (!/[0-9]/.test(rootPassword)) { toast.error('Add at least one number');             return false; }
     return true;
   };
 
   const handleCheckout = async () => {
-    if (!hostname.trim())  { toast.error('Please enter a hostname'); return; }
+    if (!hostname.trim())  { toast.error('Please enter a hostname');      return; }
     if (!rootPassword)     { toast.error('Please enter a root password'); return; }
     if (!validatePassword()) return;
-
     try {
       if (!window.Razorpay) { toast.error('Razorpay not loaded — please refresh'); return; }
       const orderData = await createOrder.mutateAsync({
@@ -197,7 +240,6 @@ const TENURES = [
         hostname, rootPassword,
         userEmail: user?.email,
       });
-
       const options = {
         key: orderData.keyId, amount: orderData.amount, currency: 'INR',
         name: 'Cloudedata VPS',
@@ -206,7 +248,7 @@ const TENURES = [
         handler: async (response) => {
           try {
             await verifyPayment.mutateAsync({
-              instanceId: orderData.instanceId,
+              instanceId:         orderData.instanceId,
               razorpayPaymentId:  response.razorpay_payment_id,
               razorpayOrderId:    response.razorpay_order_id,
               razorpaySignature:  response.razorpay_signature,
@@ -218,86 +260,84 @@ const TENURES = [
         prefill: { name: '', email: '' },
         theme: { color: '#6C63FF' },
       };
-
       new window.Razorpay(options).open();
     } catch (err) { console.error('Checkout error:', err); }
   };
 
   const strengthColors = ['', '#EF4444', '#EF4444', '#F59E0B', '#3B82F6', '#10B981'];
-  const strengthLabels = ['', 'Weak', 'Weak', 'Fair', 'Good', 'Strong'];
-  const isFormValid = hostname.trim() && rootPassword && passwordStrength >= 3;
+  const strengthLabels = ['', 'Weak',    'Weak',    'Fair',    'Good',    'Strong'];
+  const isFormValid    = hostname.trim() && rootPassword && passwordStrength >= 3;
+
+  /* ── Responsive style helpers ── */
+  const p  = isMobile ? 16 : 24;       // base padding
+  const hp = isMobile ? 14 : 20;       // header padding
 
   const S = {
     overlay: {
       position: 'fixed', inset: 0, zIndex: 9999,
-      background: 'rgba(15,23,42,0.45)',
+      background: 'rgba(15,23,42,0.50)',
       backdropFilter: 'blur(6px)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: '16px',
+      display: 'flex', alignItems: isMobile ? 'flex-end' : 'center',
+      justifyContent: 'center',
+      padding: isMobile ? 0 : '16px',
     },
     shell: {
       background: '#FFFFFF',
-      borderRadius: '20px',
+      borderRadius: isMobile ? '20px 20px 0 0' : '20px',
       boxShadow: '0 32px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06)',
       width: '100%',
-      maxWidth: '900px',
-      maxHeight: '96vh',
+      maxWidth: isSmall ? '100%' : '920px',
+      maxHeight: isMobile ? '92vh' : '96vh',
       display: 'flex',
       flexDirection: 'column',
-      overflow: 'hidden',          // ← no scroll on shell
+      overflow: 'hidden',
       fontFamily: "'DM Sans', 'Segoe UI', sans-serif",
     },
-    /* Header */
     header: {
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '20px 28px 16px',
+      padding: `${hp}px ${isMobile ? 16 : 28}px ${isMobile ? 12 : 16}px`,
       borderBottom: '1px solid #F1F5F9',
       flexShrink: 0,
     },
-    headerLeft: { display: 'flex', alignItems: 'center', gap: 12 },
+    headerLeft: { display: 'flex', alignItems: 'center', gap: isMobile ? 10 : 12 },
     headerIcon: {
-      width: 40, height: 40, borderRadius: 12,
+      width: isMobile ? 34 : 40, height: isMobile ? 34 : 40, borderRadius: 12,
       background: 'linear-gradient(135deg, #6C63FF 0%, #9B8FFF 100%)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       boxShadow: '0 4px 14px rgba(108,99,255,0.35)',
+      flexShrink: 0,
     },
-    headerTitle: { fontSize: 17, fontWeight: 700, color: '#0F172A', letterSpacing: '-0.3px' },
-    headerSub:   { fontSize: 12, color: '#94A3B8', marginTop: 1 },
+    headerTitle: { fontSize: isMobile ? 14 : 17, fontWeight: 700, color: '#0F172A', letterSpacing: '-0.3px' },
+    headerSub:   { fontSize: isMobile ? 11 : 12, color: '#94A3B8', marginTop: 1 },
     closeBtn: {
       width: 32, height: 32, borderRadius: 8, border: 'none', cursor: 'pointer',
-      background: '#F8FAFC', color: '#64748B', display: 'flex',
-      alignItems: 'center', justifyContent: 'center',
-      transition: 'all .15s',
+      background: '#F8FAFC', color: '#64748B',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      transition: 'all .15s', flexShrink: 0,
     },
-    /* Body — two column, no overflow */
+    /* Body */
     body: {
       display: 'flex',
       flex: 1,
-      overflow: 'hidden',          // ← lock overflow
+      flexDirection: isSmall ? 'column' : 'row',
+      overflow: isSmall ? 'auto' : 'hidden',
       minHeight: 0,
     },
-    /* Left panel */
     left: {
       flex: 1,
-      padding: '20px 24px',
-      borderRight: '1px solid #F1F5F9',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 16,
+      padding: `${isMobile ? 16 : 20}px ${p}px`,
+      borderRight: isSmall ? 'none' : '1px solid #F1F5F9',
+      borderBottom: isSmall ? '1px solid #F1F5F9' : 'none',
+      display: 'flex', flexDirection: 'column', gap: isMobile ? 14 : 16,
       minWidth: 0,
-      overflowY: 'auto',          // only left can scroll if content overflows
-      scrollbarWidth: 'none',
+      overflowY: isSmall ? 'visible' : 'auto',
     },
-    /* Right panel */
     right: {
-      width: 280,
+      width: isSmall ? '100%' : 288,
       flexShrink: 0,
-      padding: '20px 20px',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 14,
-      overflowY: 'auto',
-      scrollbarWidth: 'none',
+      padding: `${isMobile ? 16 : 20}px ${isMobile ? 16 : 20}px`,
+      display: 'flex', flexDirection: 'column', gap: isMobile ? 12 : 14,
+      overflowY: isSmall ? 'visible' : 'auto',
     },
     sectionLabel: {
       fontSize: 10, fontWeight: 700, letterSpacing: '0.1em',
@@ -306,21 +346,21 @@ const TENURES = [
     /* OS Grid */
     osGrid: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(3, 1fr)',
-      gap: 7,
+      gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
+      gap: isMobile ? 6 : 7,
     },
     osCard: (active) => ({
-      padding: '9px 10px',
+      padding: isMobile ? '8px' : '9px 10px',
       borderRadius: 12,
       border: `1.5px solid ${active ? '#6C63FF' : '#E2E8F0'}`,
       background: active ? 'linear-gradient(135deg, #F5F3FF 0%, #EDE9FF 100%)' : '#FAFAFA',
       cursor: 'pointer',
-      display: 'flex', alignItems: 'center', gap: 8,
+      display: 'flex', alignItems: 'center', gap: isMobile ? 6 : 8,
       transition: 'all .15s',
       boxShadow: active ? '0 2px 12px rgba(108,99,255,0.15)' : 'none',
     }),
     osName: (active) => ({
-      fontSize: 11, fontWeight: active ? 700 : 500,
+      fontSize: isMobile ? 10 : 11, fontWeight: active ? 700 : 500,
       color: active ? '#4F46E5' : '#374151',
       lineHeight: 1.25,
     }),
@@ -334,8 +374,8 @@ const TENURES = [
     input: {
       width: '100%', boxSizing: 'border-box',
       background: '#F8FAFC', border: '1.5px solid #E2E8F0',
-      borderRadius: 12, padding: '11px 14px',
-      fontSize: 13, color: '#0F172A',
+      borderRadius: 12, padding: isMobile ? '10px 12px' : '11px 14px',
+      fontSize: isMobile ? 14 : 13, color: '#0F172A',
       outline: 'none', transition: 'border-color .15s',
       fontFamily: 'inherit',
     },
@@ -348,15 +388,20 @@ const TENURES = [
       background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8',
       display: 'flex', alignItems: 'center', padding: 4,
     },
-    /* Strength bar */
     strengthRow: { display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 },
     strengthTrack: {
       flex: 1, height: 4, borderRadius: 999,
       background: '#F1F5F9', overflow: 'hidden',
     },
     /* Tenure */
+    tenureWrap: {
+      display: isTablet ? 'grid' : 'flex',
+      gridTemplateColumns: isTablet ? 'repeat(2, 1fr)' : undefined,
+      flexDirection: isTablet ? undefined : 'column',
+      gap: 6,
+    },
     tenureBtn: (active) => ({
-      width: '100%', padding: '10px 14px',
+      width: '100%', padding: isMobile ? '9px 12px' : '10px 14px',
       borderRadius: 12, border: `1.5px solid ${active ? '#6C63FF' : '#E2E8F0'}`,
       background: active ? 'linear-gradient(135deg, #F5F3FF, #EDE9FF)' : '#FAFAFA',
       cursor: 'pointer', display: 'flex',
@@ -365,32 +410,18 @@ const TENURES = [
       transition: 'all .15s',
     }),
     tenureLabel: (active) => ({
-      fontSize: 13, fontWeight: active ? 700 : 500,
+      fontSize: isMobile ? 12 : 13, fontWeight: active ? 700 : 500,
       color: active ? '#4F46E5' : '#374151',
     }),
     tenureDiscount: {
-      fontSize: 9, fontWeight: 700, padding: '2px 6px',
+      fontSize: 8, fontWeight: 700, padding: '2px 6px',
       borderRadius: 20, background: '#D1FAE5', color: '#065F46',
       letterSpacing: '0.06em', textTransform: 'uppercase',
     },
     tenurePrice: (active) => ({
-      fontSize: 13, fontWeight: 700,
+      fontSize: isMobile ? 12 : 13, fontWeight: 700,
       color: active ? '#4F46E5' : '#374151',
     }),
-    /* Quantity */
-    qtyRow: {
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '10px 14px', borderRadius: 12,
-      border: '1.5px solid #E2E8F0', background: '#FAFAFA',
-    },
-    qtyBtn: {
-      width: 28, height: 28, borderRadius: 8,
-      border: '1.5px solid #E2E8F0', background: '#FFF',
-      cursor: 'pointer', display: 'flex',
-      alignItems: 'center', justifyContent: 'center',
-      color: '#374151', transition: 'all .15s',
-    },
-    /* Summary card */
     summaryCard: {
       borderRadius: 14, background: '#F8FAFC',
       border: '1.5px solid #E2E8F0', padding: '14px 16px',
@@ -398,66 +429,74 @@ const TENURES = [
     },
     summaryRow: {
       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-      fontSize: 12, color: '#64748B',
+      fontSize: isMobile ? 13 : 12, color: '#64748B',
     },
     totalRow: {
       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       paddingTop: 10, marginTop: 2, borderTop: '1px solid #E2E8F0',
     },
-    totalLabel: { fontSize: 13, fontWeight: 700, color: '#0F172A' },
-    totalAmount: { fontSize: 22, fontWeight: 800, color: '#3e38ad', letterSpacing: '-0.5px' },
-    /* CTA */
+    totalLabel:  { fontSize: 13, fontWeight: 700, color: '#0F172A' },
+    totalAmount: { fontSize: isMobile ? 18 : 22, fontWeight: 800, color: '#3e38ad', letterSpacing: '-0.5px' },
     ctaBtn: {
-      width: '100%', padding: '13px',
+      width: '100%', padding: isMobile ? '14px' : '13px',
       borderRadius: 13, border: 'none', cursor: 'pointer',
       background: isFormValid
         ? 'linear-gradient(135deg, #1a11ce 0%, #292079 100%)'
         : '#E2E8F0',
       color: isFormValid ? '#FFF' : '#94A3B8',
-      fontSize: 13, fontWeight: 700, letterSpacing: '0.06em',
+      fontSize: isMobile ? 14 : 13, fontWeight: 700, letterSpacing: '0.06em',
       textTransform: 'uppercase',
       boxShadow: isFormValid ? '0 4px 20px rgba(108,99,255,0.35)' : 'none',
       transition: 'all .2s',
       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
       flexShrink: 0,
     },
+    /* Bottom safe area on mobile */
+    safeArea: { height: isMobile ? 'env(safe-area-inset-bottom, 8px)' : 0 },
   };
 
   if (!isOpen) return null;
 
   return (
     <div style={S.overlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div style={S.shell}>
+      <div style={S.shell} className="cfg-shell">
 
         {/* ── Header ── */}
-        <div style={S.header}>
+        <div style={S.header} className="cfg-header">
           <div style={S.headerLeft}>
             <div style={S.headerIcon}>
-              <Server size={18} color="white" />
+              <Server size={isMobile ? 16 : 18} color="white" />
             </div>
             <div>
               <div style={S.headerTitle}>Configure {plan.name}</div>
-              <div style={S.headerSub}>Customize your server before checkout</div>
+              {!isMobile && <div style={S.headerSub}>Customize your server before checkout</div>}
             </div>
           </div>
-          <button style={S.closeBtn} onClick={onClose}><X size={15}/></button>
+          <button style={S.closeBtn} className="cfg-close-btn" onClick={onClose}>
+            <X size={15}/>
+          </button>
         </div>
 
         {/* ── Body ── */}
-        <div style={S.body}>
+        <div style={S.body} className="cfg-body cfg-scroll">
 
-          {/* ── Left: OS + fields ── */}
-          <div style={S.left}>
+          {/* ── Left: OS + Fields ── */}
+          <div style={S.left} className="cfg-left cfg-scroll">
 
             {/* OS Selection */}
             <div>
               <div style={S.sectionLabel}>Operating System</div>
-              <div style={S.osGrid}>
+              <div style={S.osGrid} className="cfg-os-grid">
                 {OS_OPTIONS.map((os) => {
                   const active = selectedOs.template === os.template;
                   return (
-                    <button key={os.template} style={S.osCard(active)} onClick={() => setSelectedOs(os)}>
-                      <OsIcon name={os.icon} size={26} />
+                    <button
+                      key={os.template}
+                      style={S.osCard(active)}
+                      className="cfg-os-btn"
+                      onClick={() => setSelectedOs(os)}
+                    >
+                      <OsIcon name={os.icon} size={isMobile ? 22 : 26} />
                       <div style={{ minWidth: 0 }}>
                         <div style={S.osName(active)}>{os.name}</div>
                         {os.tag && <div style={S.osTag}>{os.tag}</div>}
@@ -502,7 +541,6 @@ const TENURES = [
                 </button>
               </div>
 
-              {/* Strength */}
               {rootPassword && (
                 <div>
                   <div style={S.strengthRow}>
@@ -520,9 +558,9 @@ const TENURES = [
                   </div>
                   <div style={{ display: 'flex', gap: 14, marginTop: 5 }}>
                     {[
-                      { ok: rootPassword.length >= 8, label: '8+ chars' },
-                      { ok: /[A-Z]/.test(rootPassword), label: 'Uppercase' },
-                      { ok: /[0-9]/.test(rootPassword), label: 'Number' },
+                      { ok: rootPassword.length >= 8,     label: '8+ chars'  },
+                      { ok: /[A-Z]/.test(rootPassword),   label: 'Uppercase' },
+                      { ok: /[0-9]/.test(rootPassword),   label: 'Number'    },
                     ].map(({ ok, label }) => (
                       <span key={label} style={{
                         fontSize: 10, fontWeight: 600,
@@ -539,16 +577,21 @@ const TENURES = [
           </div>
 
           {/* ── Right: Tenure + Summary ── */}
-          <div style={S.right}>
+          <div style={S.right} className="cfg-right cfg-scroll">
 
             {/* Tenure */}
             <div>
               <div style={S.sectionLabel}>Billing Tenure</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div style={S.tenureWrap} className="cfg-tenure-grid">
                 {TENURES.map((tenure) => {
                   const active = selectedTenure.months === tenure.months;
                   return (
-                    <button key={tenure.months} style={S.tenureBtn(active)} onClick={() => setSelectedTenure(tenure)}>
+                    <button
+                      key={tenure.months}
+                      style={S.tenureBtn(active)}
+                      className="cfg-tenure-btn"
+                      onClick={() => setSelectedTenure(tenure)}
+                    >
                       <div style={{ textAlign: 'left' }}>
                         <div style={S.tenureLabel(active)}>{tenure.label}</div>
                         {tenure.discount > 0 && (
@@ -565,25 +608,6 @@ const TENURES = [
                 })}
               </div>
             </div>
-
-            {/* Quantity */}
-            {/* <div>
-              <div style={S.sectionLabel}>Quantity</div>
-              <div style={S.qtyRow}>
-                <span style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Instances</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <button style={S.qtyBtn} onClick={() => setQuantity(Math.max(1, quantity - 1))}>
-                    <Minus size={12}/>
-                  </button>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', minWidth: 18, textAlign: 'center' }}>
-                    {quantity}
-                  </span>
-                  <button style={S.qtyBtn} onClick={() => setQuantity(quantity + 1)}>
-                    <Plus size={12}/>
-                  </button>
-                </div>
-              </div>
-            </div> */}
 
             {/* Summary */}
             <div style={S.summaryCard}>
@@ -607,6 +631,7 @@ const TENURES = [
             {/* CTA */}
             <button
               style={S.ctaBtn}
+              className="cfg-cta-btn"
               onClick={handleCheckout}
               disabled={!isFormValid || createOrder.isPending}
             >
@@ -615,14 +640,16 @@ const TENURES = [
               )}
             </button>
 
-            {/* Trust badges */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 2 }}>
+            {/* Trust badge */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
               <Shield size={12} color="#94A3B8"/>
               <span style={{ fontSize: 10, color: '#94A3B8', fontWeight: 500 }}>
                 Secured by Razorpay · 256-bit SSL
               </span>
             </div>
 
+            {/* Safe-area spacer for mobile home bars */}
+            <div style={S.safeArea}/>
           </div>
         </div>
       </div>

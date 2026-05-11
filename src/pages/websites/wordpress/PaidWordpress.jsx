@@ -41,10 +41,7 @@ export default function PaidWordpress() {
             {/* ── MNC HEADER ── */}
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-indigo-600 font-bold tracking-tight text-[10px] uppercase">
-                  <div className="p-1.5 bg-indigo-50 rounded-lg"><Cpu size={14} /></div>
-                  Cluster: US-EAST-1 • Enterprise Tier
-                </div>
+                
                 <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
                   WordPress <span className="text-indigo-600">Cloud</span>
                 </h1>
@@ -186,19 +183,19 @@ function WebsiteRow({ site }) {
 
       {/* Right: Action Buttons */}
       <div className="flex items-center gap-2 mt-5 lg:mt-0">
-        <button
+        {/* <button
           onClick={() => navigate(`/wordpress/configure/${site.id || site._id}`)}
           className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[11px] font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm"
         >
           <Settings size={13} />
           Configure
-        </button>
+        </button> */}
 
         {/* WordPress Admin Button – fixed */}
         <button
           onClick={openWpAdmin}
           disabled={!isActive}
-          className={`px-4 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all ${
+          className={`px-4 py-1.5 cursor-pointer rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all ${
             isActive
               ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-md shadow-indigo-200'
               : 'bg-slate-100 text-slate-400 cursor-not-allowed'
@@ -211,13 +208,13 @@ function WebsiteRow({ site }) {
         <button
           onClick={() => navigate(`/wordpress/websitedashboard/${site.id || site._id}`)}
           disabled={!isActive}
-          className={`px-5 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+          className={`px-5 py-2 cursor-pointer rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
             isActive
-              ? 'bg-slate-900 text-white hover:bg-indigo-700 shadow-md'
+              ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-md'
               : 'bg-slate-100 text-slate-300 cursor-not-allowed'
           }`}
         >
-          {isActive ? 'Manage' : isProvisioning ? 'Provisioning...' : 'Unavailable'}
+          {isActive ? 'Dashboard ➔' : isProvisioning ? 'Provisioning...' : 'Unavailable'}
         </button>
       </div>
     </div>

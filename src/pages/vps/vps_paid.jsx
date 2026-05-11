@@ -132,6 +132,8 @@ const OSIcon = ({ os }) => {
             const isExpiringSoon = instance.expiresAt && (new Date(instance.expiresAt) - new Date()) < 30 * 24 * 60 * 60 * 1000;
 
             return (
+              <>
+               {instance?.status === "pending" ? "":(
               <div 
                 key={instance.id} 
                 className="bg-bgLighter border mb-5 border-gray-300 rounded-2xl p-5 hover:border-primary/60 transition-all group flex flex-col md:flex-row md:items-center gap-6"
@@ -175,6 +177,8 @@ const OSIcon = ({ os }) => {
                  Dashboard <ChevronRight size={16} />
                </button>
               </div>
+              )}
+              </>
             );
             })
         )}

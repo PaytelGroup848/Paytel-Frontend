@@ -46,7 +46,7 @@ const PlanModal = ({ plan, onClose }) => {
               razorpay_signature: response.razorpay_signature,
             });
             onClose();
-            navigate("/billing");
+            navigate("/websites/wordpress/paid");
           } catch (err) {
             // Error handled by mutation onError
           }

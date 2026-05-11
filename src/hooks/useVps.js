@@ -60,7 +60,6 @@ export const useVpsInstance = (id) =>
     queryKey: ['vps', 'instance', id],
     queryFn: async () => {
       const response = await api.get(`/vps/instances/${id}`);
-      console.log('Instance API response:', response.data);
       return response.data?.data;
     },
     enabled: !!id,

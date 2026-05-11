@@ -266,6 +266,8 @@ export default function WebsiteDashboard() {
     };
   }, [instance]);
 
+  const lastThree = siteData?.ipAddress ? siteData?.ipAddress?.split('.').pop() : '';
+
   if (isLoading || !siteData) {
     return <div className="min-h-screen grid place-items-center text-slate-500">Loading website dashboard...</div>;
   }
@@ -331,7 +333,7 @@ export default function WebsiteDashboard() {
                 <div className="flex flex-wrap gap-3 text-[11px] font-medium text-slate-500">
                   <span className="flex items-center gap-1"><Cpu size={12}/> {siteData.serverLocation}</span>
                   <span className="flex items-center gap-1"><Lock size={12}/> {siteData.sslActive ? 'SSL Active' : 'SSL Pending'}</span>
-                  <span className="text-slate-400">IP: {siteData.ipAddress}</span>
+                  <span className="text-slate-400">IP: {`210.56.147.${lastThree}`}</span>
                 </div>
               </div>
             </div>

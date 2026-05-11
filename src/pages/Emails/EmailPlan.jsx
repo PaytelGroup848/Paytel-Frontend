@@ -3,10 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronRight, Check, ArrowRight, Clock, Shield, Sparkles, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
+import EmailConfigModal from './EmailConfigModal';
 
-/* ============================================================
-   Custom hook – fetch plans (with demo data)
-   ============================================================ */
+
 const useEmailPlansList = () => {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -113,6 +112,7 @@ const computePrice = (plan, periodMonths) => {
    ============================================================ */
 const PlanCard = React.memo(({ plan, billingPeriod, isSelected, onSelect }) => {
   const navigate = useNavigate();
+  
   const isWorkspace = plan.isWorkspace;
   const periodLabel = billingPeriod === 1 ? 'mo' : `${billingPeriod} mo`;
 
@@ -125,6 +125,8 @@ const PlanCard = React.memo(({ plan, billingPeriod, isSelected, onSelect }) => {
       onSelect(plan.id, billingPeriod);
     }
   };
+
+
 
   return (
     <motion.div
@@ -198,14 +200,14 @@ const PlanCard = React.memo(({ plan, billingPeriod, isSelected, onSelect }) => {
    ============================================================ */
 export default function EmailPlanPage() {
   const navigate = useNavigate();
+  const [configPlan, setConfigPlan] = useState(null);
   const { plans, loading } = useEmailPlansList();
   const [billingPeriod, setBillingPeriod] = useState(48);
 
-  const handleSelectPlan = useCallback((planId, period) => {
-    toast.success(`Plan selected! Redirecting...`);
-    // You could open a configuration popup or go to checkout
-    navigate(`/checkout?plan=${planId}&period=${period}`);
-  }, [navigate]);
+  const handleSelectPlan = useCallback((planId) => {
+  const found = plans.find(p => p.id === planId);
+  if (found) setConfigPlan(found);
+}, [plans]);
 
   if (loading) {
     return (
@@ -272,6 +274,17 @@ export default function EmailPlanPage() {
             />
           ))}
         </div>
+        {configPlan && (
+  <EmailConfigModal
+    plan={configPlan}
+    isOpen={!!configPlan}
+    onClose={() => setConfigPlan(null)}
+    onConfirm={({ plan, domain, tenure, total }) => {
+      setConfigPlan(null);
+      navigate(`/checkout?plan=${plan.id}&period=${tenure.months}&domain=${domain}`);
+    }}
+  />
+)}
 
         {/* Footer note */}
         <p className="text-center text-xs text-slate-400 mt-12">
