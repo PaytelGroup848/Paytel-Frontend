@@ -44,7 +44,8 @@ const formatIndianCurrency = (amount) => {
 };
 
 /* ============================================================
-   Complete Tax Invoice HTML (all sections)
+   Complete Tax Invoice HTML (all sections) – used for both
+   modal and combined download
    ============================================================ */
 const buildTaxInvoiceHTML = (inv) => {
   const fmt = formatIndianCurrency;
@@ -63,7 +64,7 @@ const buildTaxInvoiceHTML = (inv) => {
   }).join('');
 
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Tax Invoice ${inv.invoiceNo || ''}</title>
-<style>body{font-family:Arial,sans-serif;margin:20px;font-size:11px;color:#000;background:#fff;}table{width:100%;border-collapse:collapse;}td,th{border:1px solid black;padding:4px;}.text-right{text-align:right;}.text-center{text-align:center;}.font-bold{font-weight:bold;}.mt-2{margin-top:8px;}.mt-4{margin-top:16px;}.header-table td{border:none;}.bg-gray{background-color:#f3f4f6;}</style></head><body>
+<style>body{font-family:Arial,sans-serif;margin:20px;font-size:11px;color:#000;background:#fff;}table{width:100%;border-collapse:collapse;}td,th{border:1px solid black;padding:4px;}.text-right{text-align:right;}.text-center{text-align:center;}.font-bold{font-weight:bold;}.mt-2{margin-top:8px;}.mt-4{margin-top:16px;}.header-table td{border:none;}.bg-gray{background-color:#f3f4f6;}.page-break{page-break-after:always;}</style></head><body>
 <h2 style="text-align:center;margin-bottom:10px;">Tax Invoice</h2>
 <table class="header-table"><tr><td style="width:60%"><strong>${inv.companyName || ''}</strong>${inv.companyName?'<br/>':''}${inv.addressLine1?inv.addressLine1+(inv.addressLine2?', '+inv.addressLine2:''):''}${inv.addressLine1?'<br/>':''}${inv.cityPincode?inv.cityPincode+'<br/>':''}${inv.gstin?'GSTIN: '+inv.gstin+'<br/>':''}${(inv.stateName||inv.stateCode)?`State Name : ${inv.stateName||''}${inv.stateCode?', Code : '+inv.stateCode:''}<br/>`:''}${inv.cin?'CIN: '+inv.cin+'<br/>':''}${inv.email?'E-Mail : '+inv.email+'<br/>':''}${inv.website||''}</td><td style="width:40%" class="text-right">${inv.invoiceNo?`<strong>Invoice No.</strong> ${inv.invoiceNo}<br/>`:''}${inv.date?`<strong>Dated:</strong> ${inv.date}<br/>`:''}${inv.referenceNo?`<strong>Reference No:</strong> ${inv.referenceNo}<br/>`:''}</td></tr></table>
 ${inv.buyerName?`<table class="header-table mt-2"><tr><td style="width:50%"><strong>Buyer (Bill to)</strong><br/><strong>${inv.buyerName}</strong><br/>${inv.buyerAddress?inv.buyerAddress+'<br/>':''}${inv.buyerGstin?'GSTIN/UIN : '+inv.buyerGstin+'<br/>':''}${(inv.buyerStateName||inv.buyerStateCode)?`State Name : ${inv.buyerStateName||''}${inv.buyerStateCode?', Code : '+inv.buyerStateCode:''}<br/>`:''}${inv.buyerContactPerson?'Contact person : '+inv.buyerContactPerson+'<br/>':''}${inv.buyerContact?'Contact : '+inv.buyerContact+'<br/>':''}${inv.buyerEmail?'E-Mail : '+inv.buyerEmail+'<br/>':''}</td></tr></table>`:''}
@@ -76,7 +77,7 @@ ${inv.buyerName?`<table class="header-table mt-2"><tr><td style="width:50%"><str
 <div class="mt-4"><strong>Declaration</strong><br/><strong>Terms & Conditions:</strong><br/>${(inv.declarationTerms||[]).map(t=>`${t}<br/>`).join('')}<p>${inv.governmentLaw||''}</p></div>
 <div class="mt-4"><strong>Company's Bank Details</strong><br/><table class="header-table"><tr><td>Account Holder</td><td>: ${inv.bankAccountHolder||''}</td></tr><tr><td>Bank Name</td><td>: ${inv.bankName||''}</td></tr><tr><td>Account Number</td><td>: ${inv.bankAccountNumber||''}</td></tr><tr><td>Branch & IFSC Code</td><td>: ${inv.bankBranch||''} & ${inv.bankIFSC||''}</td></tr></table></div>
 <div class="mt-4 text-right"><strong>for ${inv.companyName||''}</strong><br/><br/><br/><p><strong>Authorised Signatory</strong></p></div>
-<div class="mt-4" style="text-align:center;"><strong>SUBJECT TO ${inv.jurisdiction||'DELHI'} JURISDICTION</strong><br/><p>This is a Computer Generated Invoice</p></div></body></html>`;
+<div class="mt-4" style="text-align:center;"><strong>SUBJECT TO ${inv.jurisdiction||'DELHI'} JURISDICTION</strong><br/><p>This is a Computer Generated Invoice</p></div>`;
 };
 
 /* ============================================================
@@ -168,19 +169,43 @@ export default function PaymentHistoryPage() {
 
   const handleViewInvoice = (payment) => setInvoiceData(mapPaymentToInvoiceData(payment));
 
+  /* ============================================================
+     BULK DOWNLOAD – combine all selected invoices into one page
+     with page breaks, then open a single print window.
+     ============================================================ */
   const handleDownloadSelected = () => {
     if (selectedIds.length === 0) { toast.error('No invoice selected'); return; }
-    selectedIds.forEach(id => {
-      const payment = payments.find(p => p.paymentId === id);
-      if (payment) {
-        const invData = mapPaymentToInvoiceData(payment);
-        const html = buildTaxInvoiceHTML(invData);
-        const w = window.open('', '_blank');
-        if (w) { w.document.write(html); w.document.close(); w.print(); }
-        else { toast.error('Pop-up blocked! Please allow pop-ups for this site.'); }
-      }
+
+    const selectedPayments = payments.filter(p => selectedIds.includes(p.paymentId));
+    const htmlParts = selectedPayments.map(payment => {
+      const invData = mapPaymentToInvoiceData(payment);
+      return buildTaxInvoiceHTML(invData);
     });
-    toast.success(`Downloaded ${selectedIds.length} invoice(s)`);
+
+    // Wrap each invoice in a page-break div (except the last one)
+    const combinedHTML = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoices</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 0; background: #fff; }
+  .invoice-container { padding: 20px; page-break-after: always; }
+  .invoice-container:last-child { page-break-after: auto; }
+  @media print {
+    .invoice-container { page-break-after: always; }
+    .invoice-container:last-child { page-break-after: auto; }
+  }
+</style></head><body>
+${htmlParts.map(html => `<div class="invoice-container">${html}</div>`).join('')}
+</body></html>`;
+
+    const w = window.open('', '_blank');
+    if (w) {
+      w.document.write(combinedHTML);
+      w.document.close();
+      w.focus();
+      w.print();
+    } else {
+      toast.error('Pop-up blocked! Please allow pop-ups for this site.');
+    }
+    toast.success(`Prepared ${selectedIds.length} invoice(s) for download`);
   };
 
   if (loading) {
@@ -205,19 +230,19 @@ export default function PaymentHistoryPage() {
         <span className="font-bold text-slate-800">Payment History</span>
       </nav>
 
-      {/* Header Card */}
-      <div className="bg-white/80 backdrop-blur-md border border-slate-200/70 rounded-2xl shadow-sm p-6 mb-8">
+      {/* Header Card – enhanced with softer shadow and subtle gradient border */}
+      <div className="relative bg-white/80 backdrop-blur-md border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-200/50 p-6 mb-8 ring-1 ring-white/50">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-black text-slate-800">Payment History</h1>
+            <h1 className="text-3xl font-black text-slate-800 tracking-tight">Payment History</h1>
             <p className="text-slate-500 mt-1 text-sm">View, filter, and download your payment invoices.</p>
           </div>
-          {/* Summary chips */}
+          {/* Summary chips – refined pill styles */}
           <div className="flex items-center gap-3 flex-wrap">
-            <div className="px-3 py-1.5 bg-slate-50 rounded-xl text-xs font-semibold text-slate-600">Total: <span className="text-slate-800">{summary.total}</span></div>
-            <div className="px-3 py-1.5 bg-emerald-50 rounded-xl text-xs font-semibold text-emerald-700">Paid: <span className="text-emerald-800">{summary.paid}</span></div>
-            {summary.unpaid > 0 && <div className="px-3 py-1.5 bg-red-50 rounded-xl text-xs font-semibold text-red-700">Unpaid: <span className="text-red-800">{summary.unpaid}</span></div>}
-            <div className="px-3 py-1.5 bg-indigo-50 rounded-xl text-xs font-semibold text-indigo-700">Total: ₹ {formatIndianCurrency(summary.totalAmount)}</div>
+            <div className="px-3 py-1.5 bg-white/60 backdrop-blur-sm border border-slate-200/50 rounded-xl text-xs font-semibold text-slate-600 shadow-sm">Total: <span className="text-slate-800">{summary.total}</span></div>
+            <div className="px-3 py-1.5 bg-emerald-50 border border-emerald-100 rounded-xl text-xs font-semibold text-emerald-700 shadow-sm">Paid: <span className="text-emerald-800">{summary.paid}</span></div>
+            {summary.unpaid > 0 && <div className="px-3 py-1.5 bg-red-50 border border-red-100 rounded-xl text-xs font-semibold text-red-700 shadow-sm">Unpaid: <span className="text-red-800">{summary.unpaid}</span></div>}
+            <div className="px-3 py-1.5 bg-indigo-50 border border-indigo-100 rounded-xl text-xs font-semibold text-indigo-700 shadow-sm">Total: ₹ {formatIndianCurrency(summary.totalAmount)}</div>
           </div>
         </div>
       </div>
@@ -231,7 +256,7 @@ export default function PaymentHistoryPage() {
         <div className="flex items-center gap-2">
           <Filter size={14} className="text-slate-400" />
           {['All', 'Paid', 'Unpaid', 'Old'].map(filter => (
-            <button key={filter} onClick={() => setStatusFilter(filter)} className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-all ${statusFilter === filter ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm shadow-indigo-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-indigo-50 hover:border-indigo-200'}`}>{filter}</button>
+            <button key={filter} onClick={() => setStatusFilter(filter)} className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-all shadow-sm ${statusFilter === filter ? 'bg-indigo-600 text-white border-indigo-600 shadow-indigo-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-indigo-50 hover:border-indigo-200'}`}>{filter}</button>
           ))}
           {statusFilter !== 'All' && (
             <button onClick={() => setStatusFilter('All')} className="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition" title="Clear filter"><X size={14} /></button>
@@ -243,15 +268,15 @@ export default function PaymentHistoryPage() {
       <div className="flex flex-col sm:flex-row gap-4 mb-6 items-start sm:items-center justify-between">
         <div className="relative flex-1 max-w-md">
           <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input type="text" placeholder="Search by ID, service, or identifier..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2.5 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition placeholder:text-slate-400" />
+          <input type="text" placeholder="Search by ID, service, or identifier..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2.5 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 transition placeholder:text-slate-400 shadow-sm" />
         </div>
         <button onClick={handleDownloadSelected} disabled={selectedIds.length === 0} className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-sm rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center gap-2 whitespace-nowrap">
           <Download size={16} /> Download Selected ({selectedIds.length})
         </button>
       </div>
 
-      {/* Table */}
-      <div className="bg-white/90 backdrop-blur-md border border-slate-200/70 rounded-2xl shadow-sm overflow-hidden">
+      {/* Table – enhanced with softer shadow and hover effects */}
+      <div className="bg-white/90 backdrop-blur-md border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-200/50 overflow-hidden ring-1 ring-white/50">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -291,7 +316,7 @@ export default function PaymentHistoryPage() {
 
       {/* Selected count footer */}
       {selectedIds.length > 0 && (
-        <div className="mt-4 px-4 py-3 bg-indigo-50/80 backdrop-blur-sm border border-indigo-200 rounded-xl flex items-center justify-between text-sm">
+        <div className="mt-4 px-4 py-3 bg-indigo-50/80 backdrop-blur-sm border border-indigo-200 rounded-xl flex items-center justify-between text-sm shadow-sm">
           <span className="font-medium text-indigo-700">{selectedIds.length} invoice(s) selected</span>
           <button onClick={() => setSelectedIds([])} className="text-xs text-indigo-600 hover:underline font-medium">Clear selection</button>
         </div>

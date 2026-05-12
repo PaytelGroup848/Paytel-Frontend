@@ -39,7 +39,7 @@ const useSubscriptions = () => {
 };
 
 /* ============================================================
-   Subscription Row – polished
+   Subscription Row – enhanced with shadow on border
    ============================================================ */
 const SubscriptionRow = ({ subscription, onOpenDetail, index }) => {
   const typeIcons = { hosting: Globe, vps: Server, email: Mail, domain: Globe };
@@ -52,15 +52,19 @@ const SubscriptionRow = ({ subscription, onOpenDetail, index }) => {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06 }}
-      className={`group border-b border-slate-100 transition-all duration-200 ${
-        isExpired ? 'bg-red-50/20 hover:bg-red-50/40' : 'hover:bg-indigo-50/20'
+      className={`group relative border-b border-slate-100 transition-all duration-300 ${
+        isExpired
+          ? 'bg-red-50/30 hover:bg-red-50/60'
+          : 'hover:bg-white hover:shadow-[inset_0_0_0_1px_rgba(99,102,241,0.1)]'
       }`}
     >
       {/* Plan */}
       <td className="py-5 px-5">
         <div className="flex items-center gap-4">
-          <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-105 ${
-            isExpired ? 'bg-red-100 text-red-500' : 'bg-gradient-to-br from-indigo-100 to-purple-100 text-indigo-600'
+          <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md ${
+            isExpired
+              ? 'bg-red-100 text-red-500'
+              : 'bg-gradient-to-br from-indigo-100 to-purple-100 text-indigo-600'
           }`}>
             <Icon size={20} />
           </div>
@@ -73,15 +77,15 @@ const SubscriptionRow = ({ subscription, onOpenDetail, index }) => {
       {/* Status */}
       <td className="py-5 px-3">
         {isActive ? (
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Active
           </span>
         ) : isExpired ? (
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-red-50 text-red-700 border border-red-200">
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-red-50 text-red-700 border border-red-200 shadow-sm">
             <AlertCircle size={12} /> Expired
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 shadow-sm">
             <Clock size={12} /> {subscription.status}
           </span>
         )}
@@ -109,17 +113,17 @@ const SubscriptionRow = ({ subscription, onOpenDetail, index }) => {
         <div className="flex items-center justify-end gap-2">
           <button
             onClick={(e) => { e.stopPropagation(); toast.success(isExpired ? 'Reactivation initiated!' : 'Renewal initiated!'); }}
-            className={`px-4 py-2.5 text-xs font-bold rounded-xl transition-all shadow-sm whitespace-nowrap ${
+            className={`px-4 py-2.5 text-xs font-bold rounded-xl transition-all duration-300 shadow-sm whitespace-nowrap ${
               isExpired
                 ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 shadow-amber-200'
-                : 'bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100'
+                : 'bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 hover:shadow-md'
             }`}
           >
             {isExpired ? 'Reactivate' : 'Renew'}
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onOpenDetail(subscription); }}
-            className="p-2.5 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all group-hover:translate-x-0.5"
+            className="p-2.5 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-300 group-hover:translate-x-0.5"
             aria-label="View details"
           >
             <ArrowRight size={17} />
@@ -131,7 +135,7 @@ const SubscriptionRow = ({ subscription, onOpenDetail, index }) => {
 };
 
 /* ============================================================
-   Subscription Detail Modal – refined
+   Subscription Detail Modal – unchanged
    ============================================================ */
 const SubscriptionDetailModal = ({ subscription, onClose }) => {
   const [autoRenew, setAutoRenew] = useState(subscription?.autoRenewal);
@@ -170,7 +174,6 @@ const SubscriptionDetailModal = ({ subscription, onClose }) => {
 
         {/* Body */}
         <div className="p-6 space-y-5">
-          {/* Key metrics */}
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-slate-50 rounded-2xl p-4">
               <div className="flex items-center gap-2 text-slate-500 text-xs uppercase font-bold mb-1.5"><Clock size={14} /> Expiration</div>
@@ -182,7 +185,6 @@ const SubscriptionDetailModal = ({ subscription, onClose }) => {
             </div>
           </div>
 
-          {/* Pricing */}
           {subscription.price && (
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-slate-50 rounded-2xl p-4">
@@ -196,7 +198,6 @@ const SubscriptionDetailModal = ({ subscription, onClose }) => {
             </div>
           )}
 
-          {/* Subscription ID + Auto-renewal */}
           <div className="grid grid-cols-5 gap-3">
             {subscription.subscriptionId && (
               <div className="col-span-3 bg-slate-50 rounded-2xl p-4">
@@ -215,7 +216,6 @@ const SubscriptionDetailModal = ({ subscription, onClose }) => {
             </div>
           </div>
 
-          {/* Next billing */}
           {subscription.nextBillingPeriod && (
             <div className="bg-slate-50 rounded-2xl p-4">
               <div className="flex items-center gap-2 text-slate-500 text-xs uppercase font-bold mb-1.5"><Calendar size={14} /> Next billing</div>
@@ -223,7 +223,6 @@ const SubscriptionDetailModal = ({ subscription, onClose }) => {
             </div>
           )}
 
-          {/* Resources */}
           {subscription.resources && (
             <div>
               <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Plan Resources</h4>
@@ -241,7 +240,6 @@ const SubscriptionDetailModal = ({ subscription, onClose }) => {
             </div>
           )}
 
-          {/* Email actions */}
           {subscription.type === 'email' && (
             <div className="space-y-2">
               <button className="w-full py-3 text-sm font-semibold text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-xl hover:bg-indigo-100 transition"><TrendingUp size={16} className="inline mr-1" /> Upgrade to a higher plan</button>
@@ -301,32 +299,42 @@ export default function SubscriptionsPage() {
         <span className="font-bold text-slate-800">Subscriptions</span>
       </nav>
 
-      {/* Header + Summary */}
-      <div className="bg-white/80 backdrop-blur-md border border-slate-200/70 rounded-2xl shadow-sm p-6 mb-8">
+      {/* Header + Summary – enhanced card */}
+      <div className="relative bg-white/80 backdrop-blur-md border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-200/50 p-6 mb-8 ring-1 ring-white/60">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <h1 className="text-3xl font-black text-slate-800">Subscriptions</h1>
+            <h1 className="text-3xl font-black text-slate-800 tracking-tight">Subscriptions</h1>
             <p className="text-slate-500 mt-1 text-sm">Manage your active plans, renewals, and plan resources.</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="px-4 py-2.5 bg-slate-50 rounded-2xl text-sm font-semibold text-slate-600 flex items-center gap-2"><Layers size={16} className="text-slate-400" /> Total: <span className="text-slate-800">{summary.total}</span></div>
-            <div className="px-4 py-2.5 bg-emerald-50 rounded-2xl text-sm font-semibold text-emerald-700 flex items-center gap-2"><Shield size={16} /> Active: <span>{summary.active}</span></div>
-            {summary.expired > 0 && <div className="px-4 py-2.5 bg-red-50 rounded-2xl text-sm font-semibold text-red-700 flex items-center gap-2"><AlertCircle size={16} /> Expired: <span>{summary.expired}</span></div>}
-            <div className="px-4 py-2.5 bg-indigo-50 rounded-2xl text-sm font-semibold text-indigo-700 flex items-center gap-2"><Zap size={16} /> ₹ {summary.totalMonthly.toLocaleString('en-IN', { minimumFractionDigits: 2 })}/mo</div>
+            <div className="px-4 py-2.5 bg-white/70 backdrop-blur-sm border border-slate-200/50 rounded-2xl text-sm font-semibold text-slate-600 shadow-sm flex items-center gap-2">
+              <Layers size={16} className="text-slate-400" /> Total: <span className="text-slate-800">{summary.total}</span>
+            </div>
+            <div className="px-4 py-2.5 bg-emerald-50 border border-emerald-100 rounded-2xl text-sm font-semibold text-emerald-700 shadow-sm flex items-center gap-2">
+              <Shield size={16} /> Active: <span>{summary.active}</span>
+            </div>
+            {summary.expired > 0 && (
+              <div className="px-4 py-2.5 bg-red-50 border border-red-100 rounded-2xl text-sm font-semibold text-red-700 shadow-sm flex items-center gap-2">
+                <AlertCircle size={16} /> Expired: <span>{summary.expired}</span>
+              </div>
+            )}
+           
           </div>
         </div>
       </div>
 
-      {/* Table */}
+      {/* Table – refined with shadow and hover */}
       {subscriptions.length === 0 ? (
-        <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center py-20 bg-white/80 backdrop-blur-sm border border-slate-200/70 rounded-2xl shadow-sm">
-          <div className="w-20 h-20 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center"><CreditCard size={36} className="text-indigo-500" /></div>
+        <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center py-20 bg-white/80 backdrop-blur-sm border border-slate-200/70 rounded-2xl shadow-lg shadow-slate-200/50">
+          <div className="w-20 h-20 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+            <CreditCard size={36} className="text-indigo-500" />
+          </div>
           <h3 className="text-xl font-bold text-slate-700 mb-2">No active subscriptions</h3>
           <p className="text-slate-500 mb-6 max-w-sm mx-auto">You don't have any subscriptions yet. Browse our plans to get started.</p>
           <button onClick={() => navigate('/store')} className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition shadow-lg shadow-indigo-200">Browse Plans</button>
         </motion.div>
       ) : (
-        <div className="bg-white/90 backdrop-blur-md border border-slate-200/70 rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-white/90 backdrop-blur-md border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-200/50 overflow-hidden ring-1 ring-white/50">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
