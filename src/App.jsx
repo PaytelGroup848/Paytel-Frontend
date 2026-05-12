@@ -11,7 +11,6 @@ import { pageTransition } from './animations/variants';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
-import Dashboard from './pages/dashboard/Dashboard';
 import ManageHosting from './pages/hosting/ManageHosting';
 import HostingPlans from './pages/hosting/HostingPlans';
 import HostingDetails from './pages/hosting/HostingDetails';
@@ -147,7 +146,6 @@ export default function App() {
       // element={<ProtectedRoute />}
       >
         <Route element={<AppRoutes />}>
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/hosting" element={<ManageHosting />} />
           <Route path="/hosting/plans" element={<HostingPlans />} />
           <Route path="/hosting/:id" element={<HostingDetails />} />

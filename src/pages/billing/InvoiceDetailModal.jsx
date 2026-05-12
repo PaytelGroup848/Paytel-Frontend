@@ -3,9 +3,7 @@ import ReactDOM from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, X } from 'lucide-react';
 
-/* ============================================================
-   Helper – format Indian Rupees
-   ============================================================ */
+/* ---------- Indian Currency Formatter ---------- */
 const formatIndianCurrency = (amount) => {
   const num = parseFloat(amount);
   if (isNaN(num)) return '';
@@ -15,13 +13,12 @@ const formatIndianCurrency = (amount) => {
   });
 };
 
-/* ============================================================
-   Final Tax Invoice Modal – 100% dynamic & matching the layout
-   ============================================================ */
+/* ---------- Main Modal ---------- */
 const InvoiceDetailModal = ({ invoiceData, onClose }) => {
   if (!invoiceData) return null;
 
   const {
+    // Company header (matching your PDF)
     companyName,
     addressLine1,
     addressLine2,
@@ -33,6 +30,13 @@ const InvoiceDetailModal = ({ invoiceData, onClose }) => {
     email,
     website,
     pan,
+    invoiceNo,
+    date,
+    deliveryNote,       // new field from PDF
+    modeOfPayment,      // new field from PDF
+    referenceNo,
+    otherReferences,    // new field from PDF
+    // Buyer
     buyerName,
     buyerAddress,
     buyerGstin,
@@ -41,10 +45,9 @@ const InvoiceDetailModal = ({ invoiceData, onClose }) => {
     buyerContactPerson,
     buyerContact,
     buyerEmail,
-    invoiceNo,
-    date,
-    referenceNo,
+    // Items
     items = [],
+    // Tax
     taxType,            // 'CGST+SGST' or 'IGST'
     taxRate,
     taxableValue,
@@ -52,17 +55,19 @@ const InvoiceDetailModal = ({ invoiceData, onClose }) => {
     totalAmount,
     amountInWords,
     taxAmountInWords,
+    // Bank
     bankAccountHolder,
     bankName,
     bankAccountNumber,
     bankBranch,
     bankIFSC,
+    // Legal
     declarationTerms = [],
     governmentLaw,
     jurisdiction,
   } = invoiceData;
 
-  // Build items rows for the modal view
+  /* ---------- Build Items Rows ---------- */
   const buildItemsRows = () => {
     return items.map((item, idx) => {
       const sl = item.slNo || idx + 1;
@@ -94,171 +99,90 @@ const InvoiceDetailModal = ({ invoiceData, onClose }) => {
     });
   };
 
-  // Build the same invoice HTML for download (identical to the modal content)
-  const buildInvoiceHTML = () => {
-    const fmt = formatIndianCurrency;
-    const itemsHTML = items.map((item, idx) => {
-      const sl = item.slNo || idx + 1;
-      const desc = item.description || '';
-      const sub = (item.subDetails || []).map(line => `<div style="font-size:10px; margin-top:2px;">${line}</div>`).join('');
-      const hsn = item.hsnSac || '';
-      const qty = item.qty || 0;
-      const unit = item.unit || '';
-      const rateEx = item.rateExclusive || item.rate || 0;
-      const rateIn = item.rateInclusive ? fmt(item.rateInclusive) : '';
-      const amt = item.amount || 0;
-      return `<tr>
-        <td class="text-center">${sl}</td>
-        <td><strong>${desc}</strong>${sub}</td>
-        <td class="text-center">${hsn}</td>
-        <td class="text-center">${qty} ${unit}</td>
-        <td class="text-right">${fmt(rateEx)}</td>
-        <td class="text-right">${rateIn}</td>
-        <td class="text-right">${fmt(amt)}</td>
-      </tr>`;
-    }).join('');
-
-    return `<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><title>Tax Invoice ${invoiceNo || ''}</title>
-<style>
-  body { font-family: Arial, sans-serif; margin: 20px; font-size: 11px; color: #000; background: #fff; }
-  table { width: 100%; border-collapse: collapse; }
-  td, th { border: 1px solid black; padding: 4px; }
-  .text-right { text-align: right; } .text-center { text-align: center; } .font-bold { font-weight: bold; }
-  .mt-2 { margin-top: 8px; } .mt-4 { margin-top: 16px; } .header-table td { border: none; }
-</style>
-</head>
-<body>
-  <h2 style="text-align:center; margin-bottom: 10px;">Tax Invoice</h2>
-  <!-- Company & Invoice details -->
-  <table class="header-table">
-    <tr>
-      <td style="width:60%">
-        <strong>${companyName || ''}</strong>${companyName ? '<br/>' : ''}
-        ${addressLine1 ? addressLine1 + (addressLine2 ? ', ' + addressLine2 : '') : ''}${addressLine1 ? '<br/>' : ''}
-        ${cityPincode ? cityPincode + '<br/>' : ''}
-        ${gstin ? 'GSTIN: ' + gstin + '<br/>' : ''}
-        ${(stateName || stateCode) ? `State Name : ${stateName || ''}${stateCode ? ', Code : ' + stateCode : ''}<br/>` : ''}
-        ${cin ? 'CIN: ' + cin + '<br/>' : ''}
-        ${email ? 'E-Mail : ' + email + '<br/>' : ''}
-        ${website || ''}
-      </td>
-      <td style="width:40%" class="text-right">
-        ${invoiceNo ? `<strong>Invoice No.</strong> ${invoiceNo}<br/>` : ''}
-        ${date ? `<strong>Dated:</strong> ${date}<br/>` : ''}
-        ${referenceNo ? `<strong>Reference No:</strong> ${referenceNo}<br/>` : ''}
-      </td>
-    </tr>
-  </table>
-  <!-- Buyer Details -->
-  <table class="header-table mt-2">
-    <tr>
-      <td style="width:50%">
-        <strong>Buyer (Bill to)</strong><br/>
-        ${buyerName ? '<strong>' + buyerName + '</strong><br/>' : ''}
-        ${buyerAddress ? buyerAddress + '<br/>' : ''}
-        ${buyerGstin ? 'GSTIN/UIN : ' + buyerGstin + '<br/>' : ''}
-        ${(buyerStateName || buyerStateCode) ? `State Name : ${buyerStateName || ''}${buyerStateCode ? ', Code : ' + buyerStateCode : ''}<br/>` : ''}
-        ${buyerContactPerson ? 'Contact person : ' + buyerContactPerson + '<br/>' : ''}
-        ${buyerContact ? 'Contact : ' + buyerContact + '<br/>' : ''}
-        ${buyerEmail ? 'E-Mail : ' + buyerEmail + '<br/>' : ''}
-      </td>
-    </tr>
-  </table>
-  <!-- Items Table -->
-  <table class="mt-2">
-    <thead>
-      <tr class="bg-gray">
-        <th class="text-center" style="width:6%">Sl No</th>
-        <th style="width:32%">Description of Services</th>
-        <th class="text-center" style="width:12%">HSN/SAC</th>
-        <th class="text-center" style="width:10%">Quantity</th>
-        <th class="text-right" style="width:16%">Rate (Ind. of Tax)</th>
-        <th class="text-right" style="width:12%">Rate per</th>
-        <th class="text-right" style="width:12%">Amount</th>
-      </tr>
-    </thead>
-    <tbody>${itemsHTML}</tbody>
-  </table>
-  <!-- Tax Type -->
-  <table class="mt-2">
-    <tr>
-      <td><strong>${taxType || ''}${taxRate ? ' Output-'+taxRate+'%' : ''}${stateName ? ' ('+stateName+')' : ''}</strong></td>
-    </tr>
-  </table>
-  <!-- Amount in Words -->
-  <div class="mt-2">
-    <strong>Amount Chargable (in words)</strong><br/>
-    <strong>${amountInWords || ''}</strong>
-  </div>
-  <!-- Tax Summary Table -->
-  <table class="mt-2">
-    <tr>
-      <td class="font-bold">HSN/SAC</td>
-      <td class="font-bold">Taxable Value</td>
-      <td class="font-bold">GST Value</td>
-      <td class="font-bold">Total Amount</td>
-    </tr>
-    <tr>
-      <td>${items.map(i => i.hsnSac).join(', ')}</td>
-      <td class="text-right">${fmt(taxableValue)}</td>
-      <td class="text-right">${fmt(taxAmount)}</td>
-      <td class="text-right">${fmt(totalAmount)}</td>
-    </tr>
-  </table>
-  <!-- Tax Amount in Words -->
-  <div class="mt-2">
-    <strong>Tax Amount (in words) : ${taxAmountInWords || ''}</strong>
-  </div>
-  <!-- PAN -->
-  <div class="mt-2">
-    <strong>Company's PAN</strong> : ${pan || ''}
-  </div>
-  <!-- Declaration & Terms -->
-  <div class="mt-4">
-    <strong>Declaration</strong><br/>
-    <strong>Terms & Conditions:</strong><br/>
-    ${declarationTerms.map(t => `${t}<br/>`).join('')}
-    <p>${governmentLaw || ''}</p>
-  </div>
-  <!-- Bank Details -->
-  <div class="mt-4">
-    <strong>Company's Bank Details</strong><br/>
-    <table class="header-table">
-      <tr><td>Account Holder</td><td>: ${bankAccountHolder || ''}</td></tr>
-      <tr><td>Bank Name</td><td>: ${bankName || ''}</td></tr>
-      <tr><td>Account Number</td><td>: ${bankAccountNumber || ''}</td></tr>
-      <tr><td>Branch & IFSC Code</td><td>: ${bankBranch || ''} & ${bankIFSC || ''}</td></tr>
+  /* ---------- Build Header Table (exactly like your PDF) ---------- */
+  const HeaderTable = () => (
+    <table className="w-full border-collapse text-[11px]" style={{ fontFamily: 'Arial, sans-serif' }}>
+      <tbody>
+        {/* Row 1 */}
+        <tr>
+          <td colSpan={2} className="font-bold" style={{ fontSize: '12px' }}>
+            {companyName}
+          </td>
+          <td colSpan={2} className="font-bold">Invoice No.</td>
+          <td colSpan={2} className="font-bold">Dated</td>
+        </tr>
+        {/* Row 2 */}
+        <tr>
+          <td colSpan={2}>{addressLine1}</td>
+          <td colSpan={2}>{invoiceNo}</td>
+          <td colSpan={2}>{date}</td>
+        </tr>
+        {/* Row 3 */}
+        <tr>
+          <td colSpan={2}>{addressLine2}</td>
+          <td colSpan={2}>Delivery Note</td>
+          <td colSpan={2}>Mode/Terms of Payment</td>
+        </tr>
+        {/* Row 4 */}
+        <tr>
+          <td colSpan={2}>{cityPincode}</td>
+          <td colSpan={2}>Reference No. &amp; Date.</td>
+          <td colSpan={2}>Other References</td>
+        </tr>
+        {/* Row 5 – actual values for delivery note, mode, ref no, other ref */}
+        <tr>
+          <td colSpan={2}></td>
+          <td colSpan={2}>{deliveryNote || ''}</td>
+          <td colSpan={2}>{modeOfPayment || ''}</td>
+        </tr>
+        <tr>
+          <td colSpan={2}></td>
+          <td colSpan={2}>{referenceNo || ''}</td>
+          <td colSpan={2}>{otherReferences || ''}</td>
+        </tr>
+        {/* Row 6+ – GSTIN, State, CIN, Email, Website */}
+        <tr>
+          <td colSpan={2}>GSTIN/UIN: {gstin}</td>
+          <td colSpan={2}></td>
+          <td colSpan={2}></td>
+        </tr>
+        <tr>
+          <td colSpan={2}>State Name: {stateName}{stateCode ? `, Code: ${stateCode}` : ''}</td>
+          <td colSpan={2}></td>
+          <td colSpan={2}></td>
+        </tr>
+        <tr>
+          <td colSpan={2}>CIN: {cin}</td>
+          <td colSpan={2}></td>
+          <td colSpan={2}></td>
+        </tr>
+        <tr>
+          <td colSpan={2}>E-Mail: {email}</td>
+          <td colSpan={2}></td>
+          <td colSpan={2}></td>
+        </tr>
+        <tr>
+          <td colSpan={2}>{website}</td>
+          <td colSpan={2}></td>
+          <td colSpan={2}></td>
+        </tr>
+      </tbody>
     </table>
-  </div>
-  <!-- Signature -->
-  <div class="mt-4 text-right">
-    <strong>for ${companyName || ''}</strong><br/><br/><br/>
-    <p><strong>Authorised Signatory</strong></p>
-  </div>
-  <!-- Footer -->
-  <div class="mt-4" style="text-align:center;">
-    <strong>SUBJECT TO ${jurisdiction || ''} JURISDICTION</strong><br/>
-    <p>This is a Computer Generated Invoice</p>
-  </div>
-</body>
-</html>`;
-  };
+  );
 
+  /* ---------- Download as PDF (print) ---------- */
   const handleDownloadPDF = () => {
-    const html = buildInvoiceHTML();
     const w = window.open('', '_blank');
-    if (w) {
-      w.document.write(html);
-      w.document.close();
-      w.print();   // user can save as PDF from the print dialog
-    } else {
-      // if pop-up blocked, alert the user
-      toast.error('Pop-up blocked! Please allow pop-ups for this site to download the invoice.');
+    if (!w) {
+      alert('Pop-up blocked! Please allow pop-ups for this site.');
+      return;
     }
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Tax Invoice</title></head><body>${document.getElementById('invoice-print-area')?.innerHTML}</body></html>`);
+    w.document.close();
+    w.print();
   };
 
+  /* ---------- Render ---------- */
   return ReactDOM.createPortal(
     <AnimatePresence>
       <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
@@ -291,28 +215,12 @@ const InvoiceDetailModal = ({ invoiceData, onClose }) => {
             </div>
           </div>
 
-          {/* Invoice body – exactly as in the picture */}
-          <div className="px-6 py-4" style={{ fontFamily: 'Arial, sans-serif', fontSize: '11px' }}>
+          {/* Invoice Content – exactly matching the PDF layout */}
+          <div id="invoice-print-area" className="px-6 py-4" style={{ fontFamily: 'Arial, sans-serif', fontSize: '11px' }}>
             <h2 className="text-center font-bold mb-2" style={{ fontSize: '16px' }}>Tax Invoice</h2>
 
-            {/* Company & Invoice details */}
-            <div className="flex justify-between">
-              <div style={{ width: '60%' }}>
-                {companyName && <div className="font-bold" style={{ fontSize: '12px' }}>{companyName}</div>}
-                {(addressLine1 || addressLine2) && <div>{addressLine1}{addressLine2 ? ', ' + addressLine2 : ''}</div>}
-                {cityPincode && <div>{cityPincode}</div>}
-                {gstin && <div>GSTIN: {gstin}</div>}
-                {(stateName || stateCode) && <div>State Name : {stateName}{stateCode ? ', Code : ' + stateCode : ''}</div>}
-                {cin && <div>CIN: {cin}</div>}
-                {email && <div>E-Mail : {email}</div>}
-                {website && <div>{website}</div>}
-              </div>
-              <div style={{ width: '35%', textAlign: 'right' }}>
-                {invoiceNo && <div><span className="font-semibold">Invoice No.</span> {invoiceNo}</div>}
-                {date && <div><span className="font-semibold">Dated:</span> {date}</div>}
-                {referenceNo && <div><span className="font-semibold">Reference No:</span> {referenceNo}</div>}
-              </div>
-            </div>
+            {/* HEADER – the exact PayTel table */}
+            <HeaderTable />
 
             {/* Buyer */}
             <div className="mt-3 border border-black p-2">
@@ -410,9 +318,6 @@ const InvoiceDetailModal = ({ invoiceData, onClose }) => {
                   {bankName && <tr><td>Bank Name</td><td>: {bankName}</td></tr>}
                   {bankAccountNumber && <tr><td>Account Number</td><td>: {bankAccountNumber}</td></tr>}
                   {(bankBranch || bankIFSC) && <tr><td>Branch & IFSC Code</td><td>: {bankBranch} {bankIFSC ? '& ' + bankIFSC : ''}</td></tr>}
-                  {!bankAccountHolder && !bankName && !bankAccountNumber && !bankBranch && !bankIFSC && (
-                    <tr><td colSpan={2}>—</td></tr>
-                  )}
                 </tbody>
               </table>
             </div>
