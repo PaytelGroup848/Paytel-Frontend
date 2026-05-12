@@ -11,19 +11,14 @@ import { pageTransition } from './animations/variants';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
-import Dashboard from './pages/dashboard/Dashboard';
 import ManageHosting from './pages/hosting/ManageHosting';
 import HostingPlans from './pages/hosting/HostingPlans';
 import HostingDetails from './pages/hosting/HostingDetails';
 import Domains from './pages/domains/Domains';
 import DomainSearch from './pages/domains/DomainSearch';
 import ManageDomain from './pages/domains/ManageDomain';
-import Billing from './pages/billing/Billing';
-import Invoices from './pages/billing/Invoices';
-import PaymentMethods from './pages/billing/PaymentMethods';
 import Settings from './pages/settings/Settings';
 import Plans from "./pages/plans/Plan";
-import BillingHistory from './pages/billing/BillingHistory';
 import Wordpress_Page from './pages/websites/wordpress/WordPress_Page';
 import WordpressNew from './pages/websites/wordpress/WordpressNew';
 import PaidWordpress from './pages/websites/wordpress/PaidWordpress';
@@ -65,6 +60,8 @@ import DkimPage from './pages/Emails/EmailDkim';
 import Docker from './pages/vps/Docker';
 import { setNavigator } from './utils/navigation';
 
+import SubscriptionsPage from './pages/billing/Subscription';
+import PaymentHistoryPage from "./pages/billing/paymentHistory";
 
 
 
@@ -151,22 +148,17 @@ export default function App() {
 
       {/* Protected routes */}
       <Route
-      element={<ProtectedRoute />}
+      // element={<ProtectedRoute />}
       >
         <Route element={<AppRoutes />}>
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/hosting" element={<ManageHosting />} />
           <Route path="/hosting/plans" element={<HostingPlans />} />
           <Route path="/hosting/:id" element={<HostingDetails />} />
           <Route path="/domains" element={<Domains />} />
           <Route path="/domains/search" element={<DomainSearch />} />
           <Route path="/domains/:id" element={<ManageDomain />} />
-          <Route path="/billing" element={<Billing />} />
-          <Route path="/billing/invoices" element={<Invoices />} />
-          <Route path="/billing/payment-methods" element={<PaymentMethods />} />
           <Route path="/settings/*" element={<Settings />} />
           <Route path="/plans" element={<Plans />} />
-          <Route path="/billing/history" element={<BillingHistory />} />
           <Route path="/websites/wordpress" element={<Wordpress_Page />} />
           <Route path="/websites/wordpress/new" element={<WordpressNew />} />
           <Route path="/websites/wordpress/paid" element={<PaidWordpress />} />
@@ -206,6 +198,9 @@ export default function App() {
            <Route path = "emails/dkim" element ={<EmailPlanProvider> < DkimPage/> </EmailPlanProvider>} />
           <Route path = "/emails/connect" element = { <EmailPlanProvider> <EmailConnect/> </EmailPlanProvider>} />
 
+
+          <Route path = "/blling/subscriptions" element={<SubscriptionsPage/>} />
+          <Route path  ='/payment-history' element = {<PaymentHistoryPage/>} />
 
 
 

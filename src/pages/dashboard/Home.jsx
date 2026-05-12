@@ -7,9 +7,8 @@ import {
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { useAuthStore } from '../../store/authStore';
 
-
 const Dashboard = () => {
-   const { user : userInfo } = useAuthStore();
+  const { user: userInfo } = useAuthStore();
   const [user, setUser] = useState({
     name: userInfo?.name || "N/A",
     activeServices: [
@@ -27,7 +26,6 @@ const Dashboard = () => {
     { id: 3, action: 'Updated profile settings', timestamp: new Date(Date.now() - 900000).toISOString() },
   ]);
 
-  // Video autoplay on scroll
   const videoRef = useRef(null);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
@@ -46,19 +44,10 @@ const Dashboard = () => {
       },
       { threshold: 0.5 }
     );
-
-    if (videoRef.current) {
-      observer.observe(videoRef.current);
-    }
-
-    return () => {
-      if (videoRef.current) {
-        observer.unobserve(videoRef.current);
-      }
-    };
+    if (videoRef.current) observer.observe(videoRef.current);
+    return () => { if (videoRef.current) observer.unobserve(videoRef.current); };
   }, [isVideoPlaying]);
 
-  // Parallax scroll effect
   const { scrollYProgress } = useScroll();
   const y1 = useTransform(scrollYProgress, [0, 1], [0, -50]);
   const y2 = useTransform(scrollYProgress, [0, 1], [0, 50]);
@@ -121,104 +110,76 @@ const Dashboard = () => {
     return 'Good evening';
   };
 
+  const activeCount = user.activeServices.filter(s => s.status === 'Active').length;
+  const inactiveCount = user.activeServices.filter(s => s.status !== 'Active').length;
+
   const stats = [
     { label: 'Total Services', value: user.activeServices.length, icon: Layers, change: '+2 this month', color: 'text-indigo-600', bg: 'bg-indigo-50' },
-    { label: 'Active', value: user.activeServices.filter(s => s.status === 'Active').length, icon: CheckCircle, change: 'All operational', color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    { label: 'Monthly Spend', value: '$24.99', icon: TrendingUp, change: '+12% vs last month', color: 'text-amber-600', bg: 'bg-amber-50' },
+    { label: 'Active', value: activeCount, icon: CheckCircle, change: 'All operational', color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { label: 'Inactive / Pending', value: inactiveCount, icon: Clock, change: 'Requires attention', color: 'text-amber-600', bg: 'bg-amber-50' },
   ];
 
   const popularServices = [
-    {
-      name: 'WordPress Hosting',
-      description: 'Optimized for speed & security. One-click install, automatic updates.',
-      price: '$9.99/mo',
-      image: 'https://elements-resized.envatousercontent.com/elements-cover-images/c004c39b-93ae-4ad6-8b96-04b19ef52481?w=433&cf_fit=scale-down&q=85&format=auto&s=b9caa37119964e85158a9cb4a2c83f1963e37c234978c705563bec9f196fce76',
-      icon: Server,
-      color: 'from-blue-500 to-blue-600',
-      tag: 'Most Popular'
-    },
-    {
-      name: 'Domain Registration',
-      description: '.com, .io, .app & more. Free WHOIS privacy & SSL certificate.',
-      price: '$12.99/yr',
-      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGsfNQwZkun8MHM5dBNsidKAvt1VDWypaEvA&s',
-      icon: Globe,
-      color: 'from-purple-500 to-purple-600',
-      tag: 'Limited Time'
-    },
-    {
-      name: 'VPS Cloud Servers',
-      description: 'KVM virtualization, SSD storage, full root access, 24/7 support.',
-      price: '$19.99/mo',
-      image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=350&fit=crop',
-      icon: Cpu,
-      color: 'from-emerald-500 to-emerald-600',
-      tag: 'Best Value'
-    },
+    { name: 'WordPress Hosting', description: 'Optimized for speed & security. One-click install, automatic updates.', price: '$9.99/mo', image: 'https://elements-resized.envatousercontent.com/elements-cover-images/c004c39b-93ae-4ad6-8b96-04b19ef52481?w=433&cf_fit=scale-down&q=85&format=auto&s=b9caa37119964e85158a9cb4a2c83f1963e37c234978c705563bec9f196fce76', icon: Server, color: 'from-blue-500 to-blue-600', tag: 'Most Popular' },
+    { name: 'Domain Registration', description: '.com, .io, .app & more. Free WHOIS privacy & SSL certificate.', price: '$12.99/yr', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGsfNQwZkun8MHM5dBNsidKAvt1VDWypaEvA&s', icon: Globe, color: 'from-purple-500 to-purple-600', tag: 'Limited Time' },
+    { name: 'VPS Cloud Servers', description: 'KVM virtualization, SSD storage, full root access, 24/7 support.', price: '$19.99/mo', image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=350&fit=crop', icon: Cpu, color: 'from-emerald-500 to-emerald-600', tag: 'Best Value' },
   ];
 
-  // Free video URL (Pexels - data center stock video)
   const videoUrl = "https://assets.mixkit.co/videos/preview/mixkit-futuristic-data-center-with-servers-3909-large.mp4";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/40 overflow-x-hidden">
-      {/* Animated background blobs with parallax */}
-      
+      {/* Background blobs (subtle parallax) */}
       <motion.div style={{ y: y1 }} className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[30%] -left-[20%] w-[60%] h-[60%] bg-indigo-100/30 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute top-[20%] -right-[10%] w-[40%] h-[40%] bg-purple-100/20 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }} />
-        <div className="absolute bottom-[10%] left-[10%] w-[30%] h-[30%] bg-cyan-100/20 rounded-full blur-[90px] animate-pulse" style={{ animationDelay: '4s' }} />
+        <div className="absolute -top-[30%] -left-[20%] w-[60%] h-[60%] bg-indigo-100/20 rounded-full blur-[120px]" />
+        <div className="absolute top-[20%] -right-[10%] w-[40%] h-[40%] bg-purple-100/20 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[10%] left-[10%] w-[30%] h-[30%] bg-cyan-100/20 rounded-full blur-[90px]" />
       </motion.div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
-        
-        {/* Header - completely empty for minimalism */}
+        {/* Header */}
         <header className="mb-8 h-0" />
 
         <main className="space-y-10">
-          
-          {/* Hero Banner - with enhanced animation */}
-          <motion.section 
+          {/* Hero Banner */}
+          <motion.section
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
-            className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-700 via-indigo-600 to-purple-700 shadow-2xl"
+            className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 shadow-2xl"
           >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(255,255,255,0.1)_0%,transparent_50%)]" />
-            <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/20 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-purple-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-            
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(255,255,255,0.05)_0%,transparent_50%)]" />
             <div className="relative p-6 md:p-8 text-white">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div className="space-y-3 max-w-2xl">
-                  <motion.div 
+                  <motion.div
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.2 }}
                     className="flex items-center gap-2"
                   >
-                    <span className="text-xs font-bold uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
+                    <span className="text-xs font-bold uppercase tracking-wider bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
                       {getGreeting()}
                     </span>
                   </motion.div>
-                  <motion.h2 
+                  <motion.h2
                     initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ delay: 0.3 }}
                     className="text-2xl md:text-3xl font-black"
                   >
-                  Hi, {user.name} welcome to CloudeData.
+                    Hi, {user.name} welcome to CloudeData.
                   </motion.h2>
-                  <motion.p 
+                  <motion.p
                     initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ delay: 0.4 }}
-                    className="text-indigo-100 leading-relaxed"
+                    className="text-slate-300 leading-relaxed"
                   >
                     Your cloud infrastructure, reimagined. Deploy, scale, and manage with enterprise-grade reliability.
                   </motion.p>
                 </div>
-                <motion.div 
+                <motion.div
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.5 }}
@@ -230,40 +191,40 @@ const Dashboard = () => {
                   </div>
                 </motion.div>
               </div>
-              
+
               {/* Agenda highlights */}
-              <motion.div 
+              <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.6 }}
-                className="mt-6 pt-5 border-t border-white/20 grid grid-cols-1 sm:grid-cols-3 gap-4"
+                className="mt-6 pt-5 border-t border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-4"
               >
-                <div className="flex items-center gap-3 group cursor-pointer">
-                  <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center group-hover:bg-white/20 transition-all">
-                    <Zap size={14} className="text-yellow-200" />
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+                    <Zap size={14} className="text-yellow-300" />
                   </div>
-                  <span className="text-sm font-medium">Lightning-fast NVMe storage</span>
+                  <span className="text-sm font-medium text-slate-300">NVMe SSD storage</span>
                 </div>
-                <div className="flex items-center gap-3 group cursor-pointer">
-                  <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center group-hover:bg-white/20 transition-all">
-                    <Globe size={14} className="text-indigo-200" />
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+                    <Globe size={14} className="text-indigo-300" />
                   </div>
-                  <span className="text-sm font-medium">Global edge network</span>
+                  <span className="text-sm font-medium text-slate-300">Global CDN</span>
                 </div>
-                <div className="flex items-center gap-3 group cursor-pointer">
-                  <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center group-hover:bg-white/20 transition-all">
-                    <ShieldCheck size={14} className="text-emerald-200" />
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+                    <ShieldCheck size={14} className="text-emerald-300" />
                   </div>
-                  <span className="text-sm font-medium">Enterprise-grade security</span>
+                  <span className="text-sm font-medium text-slate-300">DDoS protection</span>
                 </div>
               </motion.div>
 
               {user.activeServices.length > 0 && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.7 }}
-                  className="mt-5 flex items-center gap-2 text-xs text-indigo-100 bg-white/10 rounded-lg px-3 py-2 w-fit backdrop-blur-sm"
+                  className="mt-5 flex items-center gap-2 text-xs text-slate-300 bg-white/10 rounded-lg px-3 py-2 w-fit backdrop-blur-sm"
                 >
                   <Server size={14} />
                   <span className="font-medium">{user.activeServices.length} active resource{user.activeServices.length !== 1 ? 's' : ''} ready to scale.</span>
@@ -272,21 +233,21 @@ const Dashboard = () => {
             </div>
           </motion.section>
 
-          {/* Stats Cards - with stagger animation */}
-          <motion.div 
+          {/* Stats Row - updated with Inactive count */}
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ staggerChildren: 0.1 }}
             className="grid grid-cols-1 sm:grid-cols-3 gap-5"
           >
             {stats.map((stat, idx) => (
-              <motion.div 
+              <motion.div
                 key={idx}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: idx * 0.1 }}
                 whileHover={{ y: -4, scale: 1.02 }}
-                className="bg-white/70 backdrop-blur-sm rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300"
+                className="bg-white/80 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300"
               >
                 <div className="flex items-center justify-between">
                   <div>
@@ -294,7 +255,7 @@ const Dashboard = () => {
                     <p className="text-2xl font-black text-slate-800 mt-1">{stat.value}</p>
                     <p className="text-xs text-slate-500 mt-1">{stat.change}</p>
                   </div>
-                  <div className={`w-10 h-10 ${stat.bg} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                  <div className={`w-10 h-10 ${stat.bg} rounded-xl flex items-center justify-center`}>
                     <stat.icon size={20} className={stat.color} />
                   </div>
                 </div>
@@ -302,12 +263,12 @@ const Dashboard = () => {
             ))}
           </motion.div>
 
-          {/* Active Services Section - enhanced cards */}
+          {/* Active Services Section - Changed to ROW/Table layout */}
           <section className="space-y-5">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div>
                 <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
-                  <Server size={22} className="text-indigo-600" /> 
+                  <Server size={22} className="text-indigo-600" />
                   Active Infrastructure
                 </h2>
                 <p className="text-sm text-slate-400 mt-0.5">Manage your deployed services</p>
@@ -334,78 +295,88 @@ const Dashboard = () => {
                 </button>
               </motion.div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <AnimatePresence>
-                  {user.activeServices.map((service, idx) => (
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ delay: idx * 0.05, type: "spring", stiffness: 200 }}
-                      key={service.id}
-                      whileHover={{ y: -8 }}
-                      className="group bg-white rounded-xl border-2 border-slate-100 hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-100/50 transition-all duration-300 overflow-hidden"
-                    >
-                      <div className={`h-1.5 w-full bg-gradient-to-r ${service.color}`} />
-                      <div className="p-5">
-                        <div className="flex justify-between items-start mb-4">
-                          <motion.div 
-                            whileHover={{ rotate: 5, scale: 1.05 }}
-                            className={`w-11 h-11 bg-gradient-to-br ${service.color} rounded-xl flex items-center justify-center text-white shadow-md`}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white rounded-2xl border border-slate-200/70 shadow-sm overflow-hidden"
+              >
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-slate-50/80 border-b border-slate-200">
+                      <tr>
+                        <th className="px-5 py-3 font-bold text-slate-500 text-xs uppercase tracking-wider">Service Name</th>
+                        <th className="px-5 py-3 font-bold text-slate-500 text-xs uppercase tracking-wider">Type</th>
+                        <th className="px-5 py-3 font-bold text-slate-500 text-xs uppercase tracking-wider">Status</th>
+                        <th className="px-5 py-3 font-bold text-slate-500 text-xs uppercase tracking-wider">IP Address</th>
+                        <th className="px-5 py-3 font-bold text-slate-500 text-xs uppercase tracking-wider">Renewal</th>
+                        <th className="px-5 py-3 font-bold text-slate-500 text-xs uppercase tracking-wider text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <AnimatePresence>
+                        {user.activeServices.map((service) => (
+                          <motion.tr
+                            key={service.id}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, x: 30 }}
+                            transition={{ duration: 0.2 }}
+                            className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors group"
                           >
-                            {service.type === 'Domain' ? <Globe size={18} /> : <Server size={18} />}
-                          </motion.div>
-                          <div className="flex items-center gap-2">
-                            <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${
-                              service.status === 'Active' 
-                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' 
-                                : 'bg-amber-50 text-amber-600 border border-amber-100'
-                            }`}>
-                              {service.status === 'Active' && <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 align-middle animate-pulse" />}
-                              {service.status}
-                            </span>
-                            <button 
-                              onClick={() => handleDeleteService(service.id, service.name)}
-                              className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-red-50 rounded-lg text-slate-400 hover:text-red-500"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-                        </div>
-                        
-                        <h4 className="text-lg font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">
-                          {service.name}
-                        </h4>
-                        <p className="text-xs text-slate-400 font-medium mb-4">{service.type}</p>
-                        
-                        <div className="grid grid-cols-2 gap-3 py-3 border-t border-slate-100">
-                          <div>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase">IP Address</p>
-                            <p className="text-xs font-mono font-medium text-slate-700">{service.ip}</p>
-                          </div>
-                          <div>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase">Renewal</p>
-                            <p className="text-xs font-medium text-slate-700">{service.expiry}</p>
-                          </div>
-                        </div>
-
-                        <motion.button 
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => console.log(`Navigate to service: ${service.name}`)}
-                          className="w-full mt-3 py-2 bg-slate-50 text-slate-600 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-800 hover:text-white transition-all flex items-center justify-center gap-2 group/btn"
-                        >
-                          Open Dashboard <ChevronRight size={14} className="group-hover/btn:translate-x-0.5 transition-transform" />
-                        </motion.button>
-                      </div>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
+                            <td className="px-5 py-4 font-medium text-slate-800">
+                              <div className="flex items-center gap-3">
+                                <div className={`w-8 h-8 bg-gradient-to-br ${service.color} rounded-lg flex items-center justify-center text-white shadow-sm`}>
+                                  {service.type === 'Domain' ? <Globe size={14} /> : <Server size={14} />}
+                                </div>
+                                {service.name}
+                              </div>
+                            </td>
+                            <td className="px-5 py-4 text-slate-600">{service.type}</td>
+                            <td className="px-5 py-4">
+                              <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${
+                                service.status === 'Active'
+                                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                  : 'bg-amber-50 text-amber-700 border border-amber-200'
+                              }`}>
+                                {service.status === 'Active' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />}
+                                {service.status}
+                              </span>
+                            </td>
+                            <td className="px-5 py-4 text-slate-500 font-mono text-xs">{service.ip}</td>
+                            <td className="px-5 py-4 text-slate-500">{service.expiry}</td>
+                            <td className="px-5 py-4 text-right">
+                              <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <motion.button
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
+                                  onClick={() => console.log(`Navigate to ${service.name}`)}
+                                  className="p-1.5 hover:bg-indigo-50 text-indigo-600 rounded-lg transition-colors"
+                                  title="Open dashboard"
+                                >
+                                  <ChevronRight size={16} />
+                                </motion.button>
+                                <motion.button
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
+                                  onClick={() => handleDeleteService(service.id, service.name)}
+                                  className="p-1.5 hover:bg-red-50 text-red-500 rounded-lg transition-colors"
+                                  title="Delete"
+                                >
+                                  <Trash2 size={16} />
+                                </motion.button>
+                              </div>
+                            </td>
+                          </motion.tr>
+                        ))}
+                      </AnimatePresence>
+                    </tbody>
+                  </table>
+                </div>
+              </motion.div>
             )}
           </section>
 
-          {/* Popular Services Section - with hover video effect? not, just images */}
+          {/* Popular Services (unchanged) */}
           <section className="space-y-5">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div>
@@ -419,7 +390,6 @@ const Dashboard = () => {
                 View all →
               </button>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {popularServices.map((service, idx) => (
                 <motion.div
@@ -428,7 +398,7 @@ const Dashboard = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.1, type: "spring", stiffness: 100 }}
                   whileHover={{ y: -6 }}
-                  className="group bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-300"
+                  className="group bg-white rounded-2xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-xl transition-all duration-300"
                 >
                   <div className="relative h-44 overflow-hidden">
                     <img 
@@ -468,7 +438,7 @@ const Dashboard = () => {
             </div>
           </section>
 
-          {/* Video Section - Autoplay on scroll */}
+          {/* Video & Testimonial (unchanged) */}
           <motion.section 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -476,7 +446,7 @@ const Dashboard = () => {
             transition={{ duration: 0.6 }}
             className="grid grid-cols-1 lg:grid-cols-3 gap-6"
           >
-            <div className="lg:col-span-2 bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm overflow-hidden group">
+            <div className="lg:col-span-2 bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden group">
               <div className="relative h-64 overflow-hidden bg-black/5">
                 <video
                   ref={videoRef}
@@ -501,8 +471,6 @@ const Dashboard = () => {
                 <p className="text-sm text-slate-500 mt-1">See how we power thousands of businesses worldwide with our next-gen cloud platform.</p>
               </div>
             </div>
-
-            {/* Testimonial Card with animation */}
             <motion.div 
               initial={{ scale: 0.95, opacity: 0 }}
               whileInView={{ scale: 1, opacity: 1 }}
@@ -529,37 +497,6 @@ const Dashboard = () => {
               </div>
             </motion.div>
           </motion.section>
-
-          {/* Activity Feed - with scroll animation */}
-          {/* <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-100 shadow-sm"
-          >
-            <div className="flex items-center gap-3 mb-5">
-              <div className="p-2 bg-amber-50 rounded-xl text-amber-600"><Activity size={20}/></div>
-              <h3 className="text-lg font-bold text-slate-800">Recent Activity</h3>
-            </div>
-            <div className="space-y-3 max-h-[200px] overflow-y-auto pr-1 custom-scroll">
-              {activities.map((activity, idx) => (
-                <motion.div 
-                  key={activity.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.05 }}
-                  className="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-50 transition-colors"
-                >
-                  <div className="w-2 h-2 mt-2 rounded-full bg-indigo-400"></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-slate-700">{activity.action}</p>
-                    <p className="text-xs text-slate-400">{formatRelativeTime(activity.timestamp)}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div> */}
-
         </main>
 
         {/* Footer */}
@@ -575,7 +512,7 @@ const Dashboard = () => {
         </motion.footer>
       </div>
 
-      {/* Deploy Service Modal - with animation */}
+      {/* Deploy Modal (unchanged) */}
       <AnimatePresence>
         {isNewOrderOpen && (
           <motion.div
