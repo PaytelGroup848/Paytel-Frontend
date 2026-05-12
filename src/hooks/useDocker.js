@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 // ==================== DOCKER INSTALLATION ====================
 
 export const useInstallDocker = (instanceId) => {
-  const queryClient = useQueryClient(); // ✅ Move here
+  const queryClient = useQueryClient(); 
   
   return useMutation({
     mutationFn: () => api.post(`/vps/instances/${instanceId}/docker/install`).then(r => r.data?.data),
@@ -18,7 +18,7 @@ export const useInstallDocker = (instanceId) => {
       queryClient.invalidateQueries({ queryKey: ['docker', 'status', instanceId] });
     },
     onError: (error) => {
-      toast.error(error.response?.data?.message || 'Failed to install Docker');
+      // toast.error(error.response?.data?.message || 'Failed to install Docker');
     },
   });
 };
@@ -34,7 +34,7 @@ export const useDockerStatus = (instanceId) =>
 // ==================== DOCKER IMAGES ====================
 
 export const usePullImage = (instanceId) => {
-  const queryClient = useQueryClient(); // ✅ Move here
+  const queryClient = useQueryClient(); 
   
   return useMutation({
     mutationFn: ({ imageName, imageTag = 'latest' }) => 
@@ -67,7 +67,7 @@ export const useContainers = (instanceId) =>
   });
 
 export const useCreateContainer = (instanceId) => {
-  const queryClient = useQueryClient(); // ✅ Move here
+  const queryClient = useQueryClient(); 
   
   return useMutation({
     mutationFn: (containerData) => 
@@ -91,7 +91,7 @@ export const useContainerDetails = (containerId) =>
   });
 
 export const useStartContainer = (instanceId) => {
-  const queryClient = useQueryClient(); // ✅ Move here
+  const queryClient = useQueryClient();
   
   return useMutation({
     mutationFn: (containerId) => 

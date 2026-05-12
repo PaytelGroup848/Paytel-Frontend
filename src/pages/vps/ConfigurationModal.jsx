@@ -166,7 +166,7 @@ const LINUX_OS = [
   { name: 'CentOS Stream 10',    template: 'centos-10.0-x86_64',       icon: 'centos' },
   { name: 'Debian 11 Bullseye',  template: 'debian-11-x86_64',         icon: 'debian' },
   { name: 'Debian 12 Bookworm',  template: 'debian-12-x86_64',         icon: 'debian', tag: 'Stable' },
-  { name: 'Fedora 42',           template: 'fedora-42-x86_64',         icon: 'fedora' },
+  // { name: 'Fedora 42',           template: 'fedora-42-x86_64',         icon: 'fedora' },
 ];
 const WINDOWS_OS = [
   { name: 'Windows 2019', template: 'windows-2019-scsi-virtio', icon: 'window' },

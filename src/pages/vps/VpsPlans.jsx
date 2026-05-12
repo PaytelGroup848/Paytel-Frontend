@@ -14,6 +14,7 @@ import SkeletonCard from '../../components/ui/skeletons/SkeletonCard';
 import { useVpsPlans } from '../../hooks/useVps';
 import ConfigurationModal from './ConfigurationModal';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
+import RebuildVpsModal from './slidebar/RebuildVpsModal';
 
 const formatINR = (paise) => `₹${(Number(paise || 0) / 100).toLocaleString()}`;
 
@@ -292,6 +293,10 @@ export default function VpsPlans() {
       onClose={() => setSelectedPlan(null)}
     />
   )}
+
+   <RebuildVpsModal
+      type={type}
+    />
 </div>
 
      </div>

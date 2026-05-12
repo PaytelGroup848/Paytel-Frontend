@@ -4,19 +4,23 @@ import {
   X, AlertTriangle, Check, ArrowRight, ArrowLeft, 
   Eye, EyeOff, Shield, Server, RefreshCcw, CheckCircle2 
 } from 'lucide-react';
-import { useRebuildVps } from '../../../hooks/useVps';
-import toast from 'react-hot-toast';
 
-// OS Options (same as ConfigurationModal)
+import toast from 'react-hot-toast';
+import { FaUbuntu } from "react-icons/fa";
+import { SiAlmalinux } from "react-icons/si";
+import { FcDebian } from "react-icons/fc";
+import { FaCentos } from "react-icons/fa";
+
+
 const OS_OPTIONS = [
-  { name: 'Ubuntu 24.04 LTS', template: 'ubuntu-24.04-x86_64', icon: '🐧', tag: 'LTS', osid: 1196 },
-  { name: 'Ubuntu 22.04', template: 'ubuntu-22.04-x86_64', icon: '🐧', osid: 1199 },
-  { name: 'Debian 12 Bookworm', template: 'debian-12-x86_64', icon: '🌀', tag: 'Stable', osid: 1057 },
-  { name: 'Debian 11 Bullseye', template: 'debian-11-x86_64', icon: '🌀', osid: 983 },
-  // { name: 'Rocky Linux 9', template: 'rocky-9.7-x86_64.qcow2', icon: '🪨', osid: 1214 },
-  { name: 'AlmaLinux 9', template: 'alma-9-x86_64', icon: '🌿', osid: 1202 },
-  { name: 'CentOS Stream 9', template: 'centos-9-x86_64', icon: '🟠', osid: 1181 },
-  { name: 'Fedora 40', template: 'fedora-40-x86_64', icon: '🎩', osid: 1192 },
+  { name: 'Ubuntu 22.04', template: 'ubuntu-22.04-x86_64', icon: <FaUbuntu className='text-orange-600'/>, osid: 1199 },
+  { name: 'Ubuntu 24.04 LTS', template: 'ubuntu-24.04-x86_64', icon: <FaUbuntu className='text-orange-600'/>, tag: 'LTS', osid: 1196 },
+    { name: 'AlmaLinux 9', template: 'almalinux-9.7-x86_64', icon: <SiAlmalinux className='text-blue-600' />, osid: 1202 },
+      { name: 'AlmaLinux 10', template: 'almalinux-10.1-x86_64	', icon: <SiAlmalinux className='text-blue-600' />, osid: 1205 },
+        { name: 'Debian 11 Bullseye', template: 'debian-11-x86_64', icon: <FcDebian/>, osid: 983 },
+  { name: 'Debian 12 Bookworm', template: 'debian-12-x86_64', icon: <FcDebian/>, tag: 'Stable', osid: 1057 },
+  { name: 'CentOS Stream 8', template: 'centos-8.10-x86_64', icon: <FaCentos className='text-purple-600'/> , osid: 1166 },
+    { name: 'CentOS Stream 10', template: 'centos-10.0-x86_64', icon: <FaCentos className='text-purple-600'/> , osid: 1181 },
 ];
 
 const StepIndicator = ({ currentStep, steps }) => (
@@ -348,14 +352,16 @@ const Step6Success = ({ selectedOS, hostname, onClose }) => (
   </div>
 );
 
-export default function RebuildVpsModal({ isOpen, onClose, instance, onRebuildComplete }) {
+export default function RebuildVpsModal({ isOpen, onClose, instance, onRebuildComplete, type }) {
   const [step, setStep] = useState(1);
   const [selectedOS, setSelectedOS] = useState(null);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [progress, setProgress] = useState(0);
   const [isRebuilding, setIsRebuilding] = useState(false);
-  const rebuildVps = useRebuildVps();
+
+  const osType = instance?.planId?.type
+ {console.log("this is my type", osType)}
 
   const handleNext = () => setStep(step + 1);
   const handleBack = () => setStep(step - 1);

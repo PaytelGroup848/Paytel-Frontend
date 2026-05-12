@@ -139,7 +139,7 @@ export default function CorePerformance({ siteUrl }) {
 
           <button
             onClick={() => refetch()}
-            className="mt-3 w-full text-[11px] font-bold text-indigo-500 hover:text-indigo-700 transition-colors"
+            className="mt-3 w-full cursor-pointer text-[11px] font-bold text-indigo-500 hover:text-indigo-700 transition-colors"
           >
             Run speed test →
           </button>

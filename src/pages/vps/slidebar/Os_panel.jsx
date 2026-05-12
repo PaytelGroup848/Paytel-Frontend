@@ -10,7 +10,9 @@ import {
 import { usePoweroffVps, useRebootVps, useStartVps, useStopVps, useVpsInstance, useVpsMetrics, useVpsStats, useVpsStatus, useOsTemplates } from '../../../hooks/useVps';
 import { useNavigate, useParams } from 'react-router-dom';
 import RebuildVpsModal from './RebuildVpsModal';
-import { FaUbuntu } from 'react-icons/fa';
+import { FaCentos, FaUbuntu, FaWindows } from 'react-icons/fa';
+import { SiAlmalinux } from 'react-icons/si';
+import { FcDebian } from 'react-icons/fc';
 
 // --- REUSABLE COMPONENTS ---
 
@@ -244,15 +246,15 @@ const OSSelectionModal = ({ isOpen, onClose, onConfirm, currentOSId, loading, os
 const getIconForDistro = (distro) => {
   const icons = {
     ubuntu: <FaUbuntu className='text-orange-500 text-4xl'/>, 
-    debian: '🌀',
-    centos: '🟠',
+    debian: <FcDebian/>,
+    centos:<FaCentos className='text-purple-600'/>,
     rocky: '🪨',
-    almalinux: '🌿',
+    almalinux: <SiAlmalinux className='text-blue-600' />,
     fedora: '🎩',
     arch: '🎲',
     alpine: '🏔️',
     opensuse: '🦎',
-    windows: '🪟',
+    windows: <FaWindows className='text-blue-600'/>,
     kali: '💀'
   };
   return icons[distro?.toLowerCase()] || <FaUbuntu className='text-orange-500 text-4xl' />;
@@ -720,7 +722,7 @@ useEffect(() => {
   instance={instance}
   onRebuildComplete={() => {
     refetchStatus();
-    // Refresh instance details
+
   }}
 />
     </div>

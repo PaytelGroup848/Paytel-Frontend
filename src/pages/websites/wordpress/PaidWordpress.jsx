@@ -87,8 +87,7 @@ export default function PaidWordpress() {
                 {[
                   { label: 'All', value: '' },
                   { label: 'Active', value: 'active' },
-                  { label: 'Pending', value: 'pending_dns' },
-                  { label: 'Provisioning', value: 'provisioning' },
+                  { label: 'Pending', value: 'pending_dns' || 'provisioning' },
                   { label: 'Failed', value: 'failed' },
                 ].map((tab) => (
                   <button

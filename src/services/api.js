@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
+import { navigateTo } from '../utils/navigation';
 
 let isRefreshing = false;
 let refreshQueue = [];
@@ -19,10 +20,12 @@ export const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const { accessToken } = useAuthStore.getState();
+
   if (accessToken) {
     config.headers = config.headers || {};
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
+
   return config;
 });
 
@@ -31,13 +34,13 @@ api.interceptors.response.use(
   async (error) => {
     const original = error.config;
 
-  if (
-  error.response?.status !== 401 ||
-  original?._retry ||
-  original?.url?.includes("/auth/refresh-token")
-) {
-  return Promise.reject(error);
-}
+    if (
+      error.response?.status !== 401 ||
+      original?._retry ||
+      original?.url?.includes("/auth/refresh-token")
+    ) {
+      return Promise.reject(error);
+    }
 
     original._retry = true;
 
@@ -58,27 +61,38 @@ api.interceptors.response.use(
 
     try {
       const refreshRes = await api.post('/auth/refresh-token');
+
       const newToken = refreshRes.data?.data?.accessToken;
       const user = refreshRes.data?.data?.user;
 
-      if (!newToken) throw new Error('Missing accessToken from refresh');
+      if (!newToken) {
+        throw new Error('Missing accessToken from refresh');
+      }
 
-      useAuthStore.getState().setAuth({ user, accessToken: newToken });
+      useAuthStore.getState().setAuth({
+        user,
+        accessToken: newToken,
+      });
+
       processQueue(null, newToken);
 
       original.headers = original.headers || {};
       original.headers.Authorization = `Bearer ${newToken}`;
-      return api(original);
-    }catch (refreshErr) {
-  processQueue(refreshErr, null);
-  const { clearAuth } = useAuthStore.getState();
-  clearAuth();
-  window.location.href = "/login";
 
-  return Promise.reject(refreshErr);
-} finally {
+      return api(original);
+
+    } catch (refreshErr) {
+      processQueue(refreshErr, null);
+
+      const { clearAuth } = useAuthStore.getState();
+      clearAuth();
+
+      navigateTo("/login");
+
+      return Promise.reject(refreshErr);
+
+    } finally {
       isRefreshing = false;
     }
   }
 );
-

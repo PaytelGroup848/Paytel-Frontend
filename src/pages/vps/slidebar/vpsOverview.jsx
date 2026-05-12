@@ -27,6 +27,7 @@ import {
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import Docker from "../Docker";
 import { api } from "../../../services/api";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const fetchBackups = (id) => api.get(`/vps/instances/${id}/backups`).then(r => r.data?.data?.backups || []);
 
@@ -99,6 +100,13 @@ function Dashboard({ setActive }) {
   const { data: statsData }   = useVpsStats(id);
   const { data: metricsData } = useVpsMetrics(id, 5000);
   const { data: statusData, isLoading: isStatusLoading, refetch: refetchStatus } = useVpsStatus(id);
+  const queryClient = useQueryClient();
+  // Query for backups
+  const { data: backups = [], isLoading, refetch } = useQuery({
+    queryKey: ['vps', 'backups', id],
+    queryFn: () => fetchBackups(id),
+    enabled: !!id,
+  });
 
   const poweroffVps = usePoweroffVps();
   const startVps    = useStartVps();
@@ -326,7 +334,7 @@ function Dashboard({ setActive }) {
         </div>
 
         <button onClick={() => setActive("SnapShot")} className="text-left w-full">
-          <SecurityCard title="Snapshot & backups" value={fetchBackups?.length} icon={FolderArchive} status="Active" bgColor="bg-purple-50"/>
+          <SecurityCard title="Snapshot & backups" value={backups?.length} icon={FolderArchive} status="Active" bgColor="bg-purple-50"/>
         </button>
       </div>
 
