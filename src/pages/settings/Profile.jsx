@@ -62,8 +62,7 @@ export default function Profile() {
   };
 
   const fullName = `${form.firstName} ${form.lastName}`.trim() || 'User';
-  const userEmail = profile.data?.email || '';
-  const userRole = profile.data?.role || 'Account Owner';
+  const userEmail = profile?.data?.email || '';
 
   const updateField = (field, value) => {
     setForm((s) => ({ ...s, [field]: value }));
@@ -128,16 +127,6 @@ export default function Profile() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        {/* Page Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">Profile Settings</h1>
-          <p className="text-slate-600">Manage your personal information and account details</p>
-        </motion.div>
-
         {/* Profile Overview Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -151,16 +140,7 @@ export default function Profile() {
               {/* Avatar with Status */}
               <div className="relative group">
                 <div className="absolute -inset-2 bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 rounded-full opacity-0 group-hover:opacity-20 blur-2xl transition-opacity duration-500" />
-                <div className="relative">
-                  <Avatar
-                    name={fullName}
-                    size="xl"
-                    className="ring-[6px] ring-white shadow-xl"
-                  />
-                  <div className="absolute -bottom-1 -right-1 flex items-center justify-center w-8 h-8 bg-gradient-to-br from-emerald-400 to-green-500 border-4 border-white rounded-full shadow-lg">
-                    <Check size={14} className="text-white" />
-                  </div>
-                </div>
+                
               </div>
 
               {/* User Info */}
@@ -169,13 +149,7 @@ export default function Profile() {
                   <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-1">
                     {fullName}
                   </h2>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-purple-100 to-violet-100 text-purple-700 border border-purple-200/50">
-                      {userRole}
-                    </span>
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/50">
-                      Verified Account
-                    </span>
+                  <div className="flex flex-wrap items-center gap-3">                    
                   </div>
                 </div>
                 
@@ -265,7 +239,6 @@ export default function Profile() {
                     placeholder="+91 98765 43210"
                     className="w-full"
                   />
-                  <p className="text-xs text-slate-500 mt-1.5">Include country code</p>
                 </div>
               </div>
             </div>

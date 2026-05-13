@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Plus,
@@ -16,13 +16,28 @@ import {
 } from 'lucide-react';
 import SkeletonTable from '../../../components/ui/skeletons/SkeletonTable';
 import { useInstances } from '../../../hooks/useWordPress';
+import { useSubscription } from '../../../hooks/useBilling';
 
 export default function PaidWordpress() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('');
-  const { data, isLoading } = useInstances({ status: filter || undefined });
+  const { data, isLoading: loadingInstances } = useInstances({ status: filter || undefined });
+  const { data: subscriptions, isLoading: loadingSubs } = useSubscription();
   const websites = data?.items || [];
+
+  // Protect route: Redirect if no active WordPress subscription
+  useEffect(() => {
+    if (!loadingSubs && subscriptions) {
+      const subs = Array.isArray(subscriptions) ? subscriptions : [];
+      const hasWordPress = subs.some(s => s.type === 'wordpress' && s.status === 'Active');
+      if (!hasWordPress) {
+        navigate('/websites/wordpress', { replace: true });
+      }
+    }
+  }, [subscriptions, loadingSubs, navigate]);
+
+  const isLoading = loadingInstances || loadingSubs;
 
   const siteLimit = 10;
 

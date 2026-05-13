@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Server, Zap, Copy, Activity, Search, 
@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import {   Monitor, MapPin,  ArrowRight } from 'lucide-react';
 import { useVpsInstances } from '../../hooks/useVps';
+import { useSubscription } from '../../hooks/useBilling';
 import SkeletonList from '../../components/ui/skeletons/SkeletonList';
 import {  SiDebian, SiCentos, SiUbuntu, SiRockylinux, SiAlmalinux, SiFedora, SiArchlinux, SiAlpinelinux, SiOpensuse } from 'react-icons/si';
 import { FaWindows } from "react-icons/fa";
@@ -16,9 +17,23 @@ import { useNavigate } from 'react-router-dom';
 
 const VPSDashboard = () => {
 
-  const { data: instances, isLoading } = useVpsInstances();
+  const { data: instances, isLoading: loadingInstances } = useVpsInstances();
+  const { data: subscriptions, isLoading: loadingSubs } = useSubscription();
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
+
+  // Protect route: Redirect if no active VPS subscription
+  useEffect(() => {
+    if (!loadingSubs && subscriptions) {
+      const subs = Array.isArray(subscriptions) ? subscriptions : [];
+      const hasVps = subs.some(s => s.type === 'vps' && s.status === 'Active');
+      if (!hasVps) {
+        navigate('/vps', { replace: true });
+      }
+    }
+  }, [subscriptions, loadingSubs, navigate]);
+
+  const isLoading = loadingInstances || loadingSubs;
 
 const OSIcon = ({ os }) => {
   const name = os?.toLowerCase() || '';
