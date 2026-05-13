@@ -69,10 +69,6 @@ export default function Wordpress_Page() {
                 </svg>
               </span>
             </h1>
-            <p className="text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed font-medium">
-              Experience the power of the world’s most popular CMS on ultra‑fast NVMe infrastructure.
-              Instant installs, automatic scaling, and 99.9% uptime.
-            </p>
           </motion.section>
 
           {/* PROMO CARD */}
@@ -117,7 +113,7 @@ export default function Wordpress_Page() {
               <div className="flex-1 w-full max-w-lg relative">
                 <div className="relative rounded-3xl overflow-hidden shadow-[0_35px_60px_-15px_rgba(0,0,0,0.4)] transform rotate-1 hover:rotate-0 transition-all duration-700">
                   <img
-                    src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&h=600&fit=crop&crop=edges"
+                    src="/wordpress.jpg"
                     alt="WordPress dashboard"
                     className="w-full aspect-[4/3] object-cover"
                   />
@@ -126,11 +122,10 @@ export default function Wordpress_Page() {
                 <motion.div
                   animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 4, repeat: Infinity }}
-                  className="absolute -top-4 -right-4 bg-emerald-500 text-white p-3 rounded-xl shadow-lg flex items-center gap-2"
+                  className="absolute -top-4 -right-4 bg-fuchsia-500 text-black p-3 rounded-xl shadow-lg flex items-center gap-2"
                 >
-                  <Check size={18} strokeWidth={3} />
-                  <span className="text-lg font-black">99.9%</span>
-                  <span className="text-[10px] font-bold uppercase">Uptime SLA</span>
+                  <span className="text-lg font-black"></span>
+                  <span className="text-[10px] font-bold uppercase">Wordpress</span>
                 </motion.div>
               </div>
             </div>
