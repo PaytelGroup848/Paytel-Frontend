@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
+import { motion } from "framer-motion";
+import { X, Check, Sparkles, Shield, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCreateOrder, useVerifyPayment, useBillingPlans } from "../../hooks/useBilling";
 import { loadRazorpay } from "../../utils/razorpay";
@@ -9,6 +9,7 @@ import Spinner from "../../components/ui/Spinner";
 
 const TAX_RATE = 0.18;
 
+// ---------- PlanModal ----------
 const PlanModal = ({ plan, onClose }) => {
   const [duration, setDuration] = useState(12);
   const navigate = useNavigate();
@@ -80,14 +81,13 @@ const handleCheckout = async () => {
 
   if (!plan) return null;
 
-const getMonthlyBase = (m) => {
-  const basePrice = (plan.monthly || plan.price) / 100;
-
-  if (m === 48) return basePrice;
-  if (m === 24) return Math.round(basePrice * 1.25);
-  if (m === 12) return Math.round(basePrice * 1.5);
-  return Math.round(basePrice * 2.5);
-};
+  const getMonthlyBase = (m) => {
+    const basePrice = (plan.monthly || plan.price) / 100;
+    if (m === 48) return basePrice;
+    if (m === 24) return Math.round(basePrice * 1.25);
+    if (m === 12) return Math.round(basePrice * 1.5);
+    return Math.round(basePrice * 2.5);
+  };
 
   const currentMonthlyBase = getMonthlyBase(duration);
   const subtotal = currentMonthlyBase * duration;
@@ -95,96 +95,133 @@ const getMonthlyBase = (m) => {
   const grandTotal = subtotal + taxes;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/20 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-[0_30px_100px_rgba(0,0,0,0.15)] border border-slate-100 overflow-hidden flex flex-col">
-        
-        {/* Modal Header with Subtle Gradient */}
-        <div className="px-8 py-6 border-b border-slate-50 flex justify-between items-center bg-gradient-to-r from-white to-slate-50">
+    <div className="fixed inset-0 z-[999] flex items-start justify-center pt-24 sm:pt-28 p-4 bg-slate-900/30 backdrop-blur-md">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{ type: "spring", stiffness: 200, damping: 20 }}
+        className="bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl shadow-indigo-500/10 border border-white/50 overflow-hidden flex flex-col"
+      >
+        {/* Header */}
+        <div className="px-8 py-5 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-white via-indigo-50/30 to-white">
           <div>
-            <h2 className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-1">Billing Configuration</h2>
-            <h3 className="text-base font-bold text-slate-900 tracking-tight">
-              {plan.name} <span className="text-slate-400 font-medium">Subscription</span>
-            </h3>
+            <p className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-1">
+              Billing Configuration
+            </p>
+            <p className="text-base font-bold text-slate-900">
+              {plan.name}{" "}
+              <span className="text-slate-400 font-medium">Subscription</span>
+            </p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-white hover:shadow-md rounded-full transition-all text-slate-400 hover:text-slate-900">
-             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-full hover:bg-white hover:shadow-md transition-all text-slate-400 hover:text-slate-900"
+          >
+            <X size={20} strokeWidth={2.5} />
           </button>
         </div>
 
-        <div className="overflow-y-auto max-h-[60vh]">
-          {/* Duration Selection */}
-          <div className="space-y-3">
+        {/* Body – two columns, no internal scroll */}
+        <div className="p-2 grid grid-cols-1 md:grid-cols-5 ">
+          {/* Duration selection (3/5) */}
+          <div className="md:col-span-3 space-y-3">
             {durations.map((item) => {
               const price = getMonthlyBase(item.months);
               const isSelected = duration === item.months;
               return (
-                <div 
+                <motion.div
                   key={item.months}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
                   onClick={() => setDuration(item.months)}
-                  className={`group p-4 rounded-2xl border transition-all duration-300 cursor-pointer flex items-center justify-between ${
-                    isSelected 
-                      ? "border-indigo-500 bg-white shadow-[0_10px_25px_-5px_rgba(79,70,229,0.1)]" 
-                      : "border-slate-100 hover:border-slate-300 bg-white"
+                  className={`group p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 flex items-center justify-between ${
+                    isSelected
+                      ? "border-indigo-500 bg-indigo-50/50 shadow-[0_10px_25px_-5px_rgba(79,70,229,0.15)]"
+                      : "border-slate-100 hover:border-indigo-200 hover:bg-slate-50"
                   }`}
                 >
                   <div className="flex items-center gap-4">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? "border-indigo-600" : "border-slate-200"}`}>
-                      {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-indigo-600 animate-in zoom-in duration-200" />}
+                    <div
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                        isSelected
+                          ? "border-indigo-600 bg-indigo-600"
+                          : "border-slate-200 group-hover:border-indigo-300"
+                      }`}
+                    >
+                      {isSelected && (
+                        <Check size={12} className="text-white" strokeWidth={4} />
+                      )}
                     </div>
                     <div>
-                      <p className={`text-xs font-bold ${isSelected ? "text-slate-900" : "text-slate-700"}`}>
+                      <p className={`text-sm font-bold ${isSelected ? "text-slate-900" : "text-slate-700"}`}>
                         {item.months} Months
                       </p>
-                      {item.save && <p className="text-[10px] font-black text-indigo-600 tracking-tight">{item.save}</p>}
+                      {item.save && (
+                        <p className="text-[11px] font-black text-indigo-600 tracking-tight">
+                          {item.save}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="text-right">
-                     <p className={`text-sm font-black tracking-tight ${isSelected ? "text-indigo-600" : "text-slate-900"}`}>
-                        ₹{price.toLocaleString()}
-                        <span className="text-[10px] font-medium ml-0.5 opacity-40">/mo</span>
-                     </p>
+                    <p className={`text-lg font-black tracking-tight ${isSelected ? "text-indigo-600" : "text-slate-900"}`}>
+                      ₹{price.toLocaleString()}
+                      <span className="text-[11px] font-medium ml-0.5 opacity-40">/mo</span>
+                    </p>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>
 
-          {/* Pricing Summary Breakdown */}
-          <div className="bg-slate-50 rounded-3xl p-6 border border-slate-100 shadow-inner">
-             <div className="space-y-3">
-                <div className="flex justify-between text-xs font-medium text-slate-500">
-                   <span>Base subtotal</span>
-                   <span className="text-slate-900 font-bold">₹{subtotal.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-xs font-medium text-slate-500">
-                   <span>Govt. GST (18%)</span>
-                   <span className="text-green-600 font-bold">₹{taxes.toLocaleString()}</span>
-                </div>
-                <div className="pt-4 mt-1 border-t border-slate-200 flex justify-between items-center">
-                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Amount</span>
-                   <span className="text-3xl font-black text-slate-900 tracking-tighter">
-                      ₹{grandTotal.toLocaleString()}
-                   </span>
-                </div>
-             </div>
+          {/* Pricing summary (2/5) */}
+          <div className="md:col-span-2 bg-slate-50 rounded-3xl p-6 border border-slate-100 shadow-inner flex flex-col justify-center">
+            <div className="space-y-4">
+              <div className="flex justify-between text-xs font-medium text-slate-500">
+                <span>Base subtotal</span>
+                <span className="text-slate-900 font-bold">₹{subtotal.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-xs font-medium text-slate-500">
+                <span>Govt. GST (18%)</span>
+                <span className="text-emerald-600 font-bold">₹{taxes.toLocaleString()}</span>
+              </div>
+              <div className="pt-4 mt-2 border-t border-slate-200 flex justify-between items-center">
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  Total Amount
+                </span>
+                <span className="text-3xl font-black text-slate-900 tracking-tighter">
+                  ₹{grandTotal.toLocaleString()}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Action Button with Gradient */}
-        <div className="p-8 bg-white border-t border-slate-50">
-          <button
+        {/* Action button */}
+        <div className="px-8 pb-8">
+          <motion.button
             onClick={handleCheckout}
             disabled={isProcessing}
-            className="w-full py-5 bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-600 bg-[length:200%_auto] hover:bg-right text-white rounded-2xl text-xs font-black uppercase tracking-[0.2em] shadow-xl shadow-indigo-100 transition-all duration-500 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full py-5 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 bg-[length:200%_auto] hover:bg-right text-white rounded-2xl text-xs font-black uppercase tracking-[0.2em] shadow-xl shadow-indigo-200 transition-all duration-500 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            {isProcessing ? "Processing..." : "Complete Checkout"}
-          </button>
+            {isProcessing ? (
+              "Processing..."
+            ) : (
+              <>
+                Complete Checkout
+              </>
+            )}
+          </motion.button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
 
+// ---------- Main Plans component ----------
 export default function Plans() {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const { data: backendPlans, isLoading } = useBillingPlans();
@@ -204,14 +241,26 @@ export default function Plans() {
         id: "661d4a8e2f3a1c001f8e4a02",
         name: "Pro",
         monthly: 399,
-        features: ["10 Domain Instances", "High-Speed Network", "Daily Snapshots", "Priority Support", "Auto-Scaling"],
+        features: [
+          "10 Domain Instances",
+          "High-Speed Network",
+          "Daily Snapshots",
+          "Priority Support",
+          "Auto-Scaling",
+        ],
         popular: true,
       },
       {
         id: "661d4a8e2f3a1c001f8e4a03",
         name: "Business",
         monthly: 699,
-        features: ["Unlimited Instances", "Dedicated Infrastructure", "Hourly Backups", "VIP Support", "Custom Security"],
+        features: [
+          "Unlimited Instances",
+          "Dedicated Infrastructure",
+          "Hourly Backups",
+          "VIP Support",
+          "Custom Security",
+        ],
       },
     ];
   }, [backendPlans]);
@@ -225,29 +274,36 @@ export default function Plans() {
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans antialiased">
+    <div className="min-h-screen bg-white font-sans antialiased selection:bg-indigo-100 selection:text-indigo-900">
       <div className="max-w-6xl mx-auto px-6 py-20">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.125em] mb-4">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-16"
+        >
+          <span className="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.15em] mb-4">
+            
             Pricing
-          </div>
+          </span>
 
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 mb-4">
-            Simple pricing.<br />
+          <h3 className="text-3x1 md:text-4xl font-black tracking-tighter text-slate-900 mb-4">
+            Simple pricing.
+            <br />
             <span className="bg-gradient-to-r from-slate-700 via-slate-800 to-slate-700 bg-clip-text text-transparent">
               Serious performance.
             </span>
-          </h1>
+          </h3>
 
-          <p className="text-lg text-slate-500 max-w-md mx-auto">
+          <p className="text-md text-slate-500 max-w-md mx-auto">
             Choose the plan that fits your needs.
           </p>
-        </div>
+        </motion.div>
 
+        {/* Plan cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {console.log("this is my plans",plans)}
           {plans.map((plan, index) => (
-            
             <motion.div
               key={plan.name}
               initial={{ opacity: 0, y: 40 }}
@@ -257,31 +313,39 @@ export default function Plans() {
               className={`relative bg-white rounded-3xl p-10 border transition-all duration-500 group ${
                 plan.popular
                   ? "border-indigo-200 shadow-2xl shadow-indigo-100/70 scale-[1.02]"
-                  : "border-slate-100 hover:border-slate-200"
+                  : "border-slate-100 hover:border-slate-200 hover:shadow-xl"
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-xs font-black px-8 py-2 rounded-full shadow-xl shadow-indigo-500/30 tracking-widest">
+                <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-xs font-black px-8 py-2 rounded-full shadow-xl shadow-indigo-500/30 tracking-widest flex items-center gap-2">
                   MOST POPULAR
                 </div>
               )}
 
-              <div className="mb-12">
-                <h3 className="text-sm font-bold tracking-widest text-slate-400 mb-3">{plan.name}</h3>
-              
+              <div className="mb-10">
+                <h3 className="text-sm font-bold tracking-widest text-slate-400 mb-3 uppercase">
+                  {plan.name}
+                </h3>
+
                 <div className="flex items-baseline">
                   <span className="text-6xl font-black tracking-tighter text-slate-900">
-  ₹{(plan.price / 100).toLocaleString()}
-</span>
-                  {console.log("this is my plan",plan)}
+                    ₹{(plan.monthly || plan.price / 100).toLocaleString()}
+                  </span>
                   <span className="text-slate-400 ml-2 font-medium">/month</span>
                 </div>
               </div>
 
               <ul className="space-y-4 mb-12">
                 {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-start gap-3 text-slate-600">
-                    <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
+                  <li
+                    key={i}
+                    className="flex items-start gap-3 text-slate-600"
+                  >
+                    <Check
+                      size={18}
+                      className="mt-0.5 text-emerald-500 flex-shrink-0"
+                      strokeWidth={3}
+                    />
                     <span className="text-sm">{feature}</span>
                   </li>
                 ))}
@@ -293,7 +357,7 @@ export default function Plans() {
                 whileTap={{ scale: 0.97 }}
                 className={`w-full py-4 rounded-2xl font-bold text-sm tracking-widest transition-all ${
                   plan.popular
-                    ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/40 hover:brightness-105"
+                    ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/40 hover:brightness-110"
                     : "bg-slate-900 text-white hover:bg-black"
                 }`}
               >
@@ -304,16 +368,15 @@ export default function Plans() {
         </div>
 
         <div className="text-center mt-16">
-          <p className="text-xs text-slate-400 font-medium tracking-widest">
+          <p className="text-xs text-slate-400 font-medium tracking-widest flex items-center justify-center gap-2">
+            <Shield size={14} />
             ✓ All plans include secure payments • Cancel anytime • No hidden fees
           </p>
         </div>
       </div>
 
-      <PlanModal
-        plan={selectedPlan}
-        onClose={() => setSelectedPlan(null)}
-      />
+      {/* PlanModal rendered only when a plan is selected */}
+      <PlanModal plan={selectedPlan} onClose={() => setSelectedPlan(null)} />
     </div>
   );
 }
