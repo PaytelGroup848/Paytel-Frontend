@@ -156,16 +156,17 @@ const OsIcon = ({ name, size = 28 }) => {
   );
 };
 
-/* ─── Data ───────────────────────────────────────────────────────────────── */
+
 const LINUX_OS = [
   { name: 'Ubuntu 22.04',        template: 'ubuntu-22.04-x86_64',      icon: 'ubuntu' },
   { name: 'AlmaLinux 9',         template: 'alma-9-x86_64',            icon: 'alma'   },
-  { name: 'CentOS Stream 9',     template: 'centos-9-x86_64',          icon: 'centos' },
+  { name: 'Debian 11 Bullseye',  template: 'debian-11-x86_64',         icon: 'debian' },
   { name: 'Ubuntu 24.04 LTS',    template: 'ubuntu-24.04-x86_64',      icon: 'ubuntu', tag: 'LTS'    },
   { name: 'AlmaLinux 10',        template: 'almalinux-10.1-x86_64',    icon: 'alma'   },
-  { name: 'CentOS Stream 10',    template: 'centos-10.0-x86_64',       icon: 'centos' },
-  { name: 'Debian 11 Bullseye',  template: 'debian-11-x86_64',         icon: 'debian' },
   { name: 'Debian 12 Bookworm',  template: 'debian-12-x86_64',         icon: 'debian', tag: 'Stable' },
+  { name: 'CentOS Stream 10',    template: 'centos-10.0-x86_64',       icon: 'centos' },
+  { name: 'Rocky 10',     template: 'rocky-10.1-x86_64',          icon: 'rocky' },
+  
   // { name: 'Fedora 42',           template: 'fedora-42-x86_64',         icon: 'fedora' },
 ];
 const WINDOWS_OS = [
@@ -233,20 +234,16 @@ const handleCheckout = async () => {
   if (!rootPassword)     { toast.error('Please enter a root password'); return; }
   if (!validatePassword()) return;
   
-  // ✅ Get planId correctly
+  //  Get planId correctly
   const planId = plan.id || plan._id;
   
   if (!planId) {
-    console.error('❌ No plan ID found in plan object:', plan);
+    console.error(' No plan ID found in plan object:', plan);
     toast.error('Plan information missing');
     return;
   }
   
-  console.log(' planId to send:', planId);
-  console.log(' selectedOs:', selectedOs);
-  console.log(' selectedTenure.months:', selectedTenure.months);
-  console.log(' hostname:', hostname);
-  console.log(' userEmail:', user?.email);
+ 
   
   try {
     if (!window.Razorpay) { 
