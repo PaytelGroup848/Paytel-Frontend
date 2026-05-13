@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,35 +8,9 @@ import {
   DollarSign, Hash, Zap, Layers, AlertCircle, Banknote
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import {useSubscription} from "../../hooks/useBilling"
 
-/* ============================================================
-   Hook – fetch subscriptions (demo fallback)
-   ============================================================ */
-const useSubscriptions = () => {
-  const [subscriptions, setSubscriptions] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchSubscriptions = async () => {
-      try {
-        const res = await fetch('/api/billing/subscriptions');
-        if (!res.ok) throw new Error();
-        const json = await res.json();
-        setSubscriptions(Array.isArray(json) ? json : [json]);
-      } catch {
-        setSubscriptions([
-          { id: 1, type: 'hosting', planName: 'Premium Web Hosting', identifier: 'kootospices.in', expirationDate: '2026-05-15', price: '599.00', currency: '₹', status: 'Active', renewalPrice: '599.00', autoRenewal: true, subscriptionId: '16BgPOVGrABGxIAot', taxes: '0', nextBillingPeriod: '1 month', resources: { storage: '100 GB', bandwidth: 'Unlimited', websites: 100, emailAccounts: 50 }, paymentMethod: 'Visa **** 4242' },
-          { id: 2, type: 'vps', planName: 'KVM 1', identifier: 'srv1596088.hstgr.cloud', expirationDate: '2025-05-17', price: '1,649.00', currency: '₹', status: 'Expired', renewalPrice: '1,649.00', autoRenewal: false, subscriptionId: 'X12Y34Z56', taxes: '0', nextBillingPeriod: '1 month', resources: { cpu: '2 vCPU', ram: '4 GB', storage: '80 GB SSD', bandwidth: '2 TB' }, paymentMethod: 'Netbanking' },
-          { id: 3, type: 'email', planName: 'Premium Business Email', identifier: 'cloudedata.info', expirationDate: '2026-06-19', price: null, currency: '', status: 'Active', renewalPrice: '', autoRenewal: true, upgradeAvailable: true, downgradeAvailable: true, resources: { mailboxes: '1 / 1', storage: '10 GB', aliases: '0 / 50' }, paymentMethod: 'PayPal' },
-          { id: 4, type: 'domain', planName: '.INFO Domain', identifier: 'rakasautorides.in', expirationDate: '2026-07-17', price: '2,529.00', currency: '₹', status: 'Active', renewalPrice: '2,529.00', autoRenewal: false, subscriptionId: '', taxes: '0', nextBillingPeriod: '1 year', resources: { dnsManagement: 'Free', emailForwarding: 'Included', idProtection: 'Enabled' }, paymentMethod: 'UPI' },
-        ]);
-      } finally { setLoading(false); }
-    };
-    fetchSubscriptions();
-  }, []);
-
-  return { subscriptions, loading };
-};
 
 /* ============================================================
    Subscription Row – enhanced with shadow on border
@@ -97,10 +71,11 @@ const SubscriptionRow = ({ subscription, onOpenDetail, index }) => {
       </td>
       {/* Price */}
       <td className="py-5 px-3 text-right whitespace-nowrap">
+        {console.log("this is subs", subscription.currency)}
         {subscription.price ? (
           <div>
             <div className="text-sm font-bold text-slate-800">
-              {subscription.currency} {subscription.price}
+              {subscription?.currency} {subscription?.price}
             </div>
             <div className="text-[10px] text-slate-400">/{subscription.nextBillingPeriod || 'mo'}</div>
           </div>
@@ -269,17 +244,17 @@ const SubscriptionDetailModal = ({ subscription, onClose }) => {
    ============================================================ */
 export default function SubscriptionsPage() {
   const navigate = useNavigate();
-  const { subscriptions, loading } = useSubscriptions();
+  const { data: subscriptions, isLoading } = useSubscription();
   const [selectedSubscription, setSelectedSubscription] = useState(null);
 
   const summary = {
-    total: subscriptions.length,
-    active: subscriptions.filter(s => s.status === 'Active').length,
-    expired: subscriptions.filter(s => s.status === 'Expired').length,
-    totalMonthly: subscriptions.reduce((sum, s) => sum + (parseFloat(s.price) || 0), 0),
+    total: subscriptions?.length || 0,
+    active: subscriptions?.filter(s => s.status === 'Active')?.length || 0,
+    expired: subscriptions?.filter(s => s.status === 'Expired')?.length || 0,
+    totalMonthly: subscriptions?.reduce((sum, s) => sum + (parseFloat(s.price) || 0), 0) || 0,
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -324,7 +299,7 @@ export default function SubscriptionsPage() {
       </div>
 
       {/* Table – refined with shadow and hover */}
-      {subscriptions.length === 0 ? (
+      {subscriptions?.length === 0 ? (
         <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center py-20 bg-white/80 backdrop-blur-sm border border-slate-200/70 rounded-2xl shadow-lg shadow-slate-200/50">
           <div className="w-20 h-20 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
             <CreditCard size={36} className="text-indigo-500" />
@@ -347,7 +322,7 @@ export default function SubscriptionsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {subscriptions.map((sub, idx) => (
+                {subscriptions?.map((sub, idx) => (
                   <SubscriptionRow key={sub.id} subscription={sub} onOpenDetail={setSelectedSubscription} index={idx} />
                 ))}
               </tbody>

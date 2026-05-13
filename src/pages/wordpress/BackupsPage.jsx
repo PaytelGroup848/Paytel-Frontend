@@ -41,7 +41,7 @@ export default function BackupsPage() {
       <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate(`/wordpress/websitedashboard/${id}`)}
-            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500">
+            className="w-8 h-8 cursor-pointer flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500">
             <ArrowLeft size={18} />
           </button>
           <div>
@@ -96,10 +96,6 @@ export default function BackupsPage() {
             <div className="bg-white rounded-xl border border-slate-200 px-5 py-4">
               <p className="text-xs text-slate-500 mb-1">Backups (Last 7 Days)</p>
               <p className="text-2xl font-bold text-slate-800">{data.totalBackups}</p>
-            </div>
-            <div className="bg-white rounded-xl border border-slate-200 px-5 py-4">
-              <p className="text-xs text-slate-500 mb-1">Backup Server</p>
-              <p className="text-sm font-medium text-slate-800 font-mono">{data.backupServerIp}</p>
             </div>
           </div>
         )}

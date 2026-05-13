@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Minus, Plus, Eye, EyeOff, Server, Shield, ChevronRight } from 'lucide-react';
-import { useCreateVpsOrder, useVerifyVpsPayment } from '../../hooks/useVps';
+import { useCreateOrder, useVerifyPayment } from '../../hooks/useBilling';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
@@ -166,7 +166,7 @@ const LINUX_OS = [
   { name: 'CentOS Stream 10',    template: 'centos-10.0-x86_64',       icon: 'centos' },
   { name: 'Debian 11 Bullseye',  template: 'debian-11-x86_64',         icon: 'debian' },
   { name: 'Debian 12 Bookworm',  template: 'debian-12-x86_64',         icon: 'debian', tag: 'Stable' },
-  { name: 'Fedora 42',           template: 'fedora-42-x86_64',         icon: 'fedora' },
+  // { name: 'Fedora 42',           template: 'fedora-42-x86_64',         icon: 'fedora' },
 ];
 const WINDOWS_OS = [
   { name: 'Windows 2019', template: 'windows-2019-scsi-virtio', icon: 'window' },
@@ -182,6 +182,7 @@ const TENURES = [
 
 /* ─── Component ──────────────────────────────────────────────────────────── */
 export default function ConfigurationModal({ plan, isOpen, onClose, type }) {
+  console.log('ConfigurationModal received plan:', plan);
   const { width } = useWindowSize();
   const isMobile  = width < 640;
   const isTablet  = width >= 640 && width < 900;
@@ -201,8 +202,8 @@ export default function ConfigurationModal({ plan, isOpen, onClose, type }) {
   const [passwordStrength, setPasswordStrength] = useState(0);
 
   const { user }      = useAuthStore();
-  const createOrder   = useCreateVpsOrder();
-  const verifyPayment = useVerifyVpsPayment();
+  const createOrder   = useCreateOrder();
+  const verifyPayment = useVerifyPayment();
 
   const monthlyPrice = plan.priceMonthly;
   const subtotal     = monthlyPrice * selectedTenure.months * (1 - selectedTenure.discount / 100) * quantity;
@@ -227,42 +228,86 @@ export default function ConfigurationModal({ plan, isOpen, onClose, type }) {
     return true;
   };
 
-  const handleCheckout = async () => {
-    if (!hostname.trim())  { toast.error('Please enter a hostname');      return; }
-    if (!rootPassword)     { toast.error('Please enter a root password'); return; }
-    if (!validatePassword()) return;
-    try {
-      if (!window.Razorpay) { toast.error('Razorpay not loaded — please refresh'); return; }
-      const orderData = await createOrder.mutateAsync({
-        planId: plan.id,
-        os: { name: selectedOs.name, template: selectedOs.template },
-        tenureMonths: selectedTenure.months,
-        hostname, rootPassword,
-        userEmail: user?.email,
-      });
-      const options = {
-        key: orderData.keyId, amount: orderData.amount, currency: 'INR',
-        name: 'Cloudedata VPS',
-        description: `${plan.name} — ${selectedOs.name}`,
-        order_id: orderData.orderId,
-        handler: async (response) => {
-          try {
-            await verifyPayment.mutateAsync({
-              instanceId:         orderData.instanceId,
-              razorpayPaymentId:  response.razorpay_payment_id,
-              razorpayOrderId:    response.razorpay_order_id,
-              razorpaySignature:  response.razorpay_signature,
-            });
-            navigate('/vps/paid');
-            onClose();
-          } catch (err) { console.error('Verification error:', err); }
-        },
-        prefill: { name: '', email: '' },
-        theme: { color: '#6C63FF' },
-      };
-      new window.Razorpay(options).open();
-    } catch (err) { console.error('Checkout error:', err); }
-  };
+const handleCheckout = async () => {
+  if (!hostname.trim())  { toast.error('Please enter a hostname'); return; }
+  if (!rootPassword)     { toast.error('Please enter a root password'); return; }
+  if (!validatePassword()) return;
+  
+  // ✅ Get planId correctly
+  const planId = plan.id || plan._id;
+  
+  if (!planId) {
+    console.error('❌ No plan ID found in plan object:', plan);
+    toast.error('Plan information missing');
+    return;
+  }
+  
+  console.log(' planId to send:', planId);
+  console.log(' selectedOs:', selectedOs);
+  console.log(' selectedTenure.months:', selectedTenure.months);
+  console.log(' hostname:', hostname);
+  console.log(' userEmail:', user?.email);
+  
+  try {
+    if (!window.Razorpay) { 
+      toast.error('Razorpay not loaded — please refresh'); 
+      return; 
+    }
+    
+    const orderData = await createOrder.mutateAsync({
+      planId: planId,
+      planType: 'vps',
+      os: { 
+        name: selectedOs.name, 
+        template: selectedOs.template 
+      },
+      tenureMonths: selectedTenure.months,
+      hostname: hostname,
+      rootPassword: rootPassword,
+      userEmail: user?.email,
+    });
+    
+    console.log(' Order created:', orderData);
+    
+    const options = {
+      key: orderData.keyId,
+      amount: orderData.amount,
+      currency: orderData.currency,
+      name: 'Cloudedata VPS',
+      description: `${plan.name} — ${selectedOs.name}`,
+      order_id: orderData.orderId,
+      handler: async (response) => {
+        try {
+           console.log(' Razorpay response:', response);
+           await verifyPayment.mutateAsync({
+      instanceId: orderData.instanceId,
+      razorpay_payment_id: response.razorpay_payment_id,    
+      razorpay_order_id: response.razorpay_order_id,       
+      razorpay_signature: response.razorpay_signature,     
+      planType: 'vps'
+    });
+          navigate('/vps/paid');
+          onClose();
+        } catch (err) { 
+          console.error('Verification error:', err); 
+        }
+      },
+      prefill: { 
+        name: user?.name || '', 
+        email: user?.email || '' 
+      },
+      theme: { color: '#6C63FF' },
+      modal: {
+        ondismiss: () => {
+          toast.error('Payment cancelled');
+        }
+      },
+    };
+    new window.Razorpay(options).open();
+  } catch (err) { 
+    console.error('Checkout error:', err); 
+  }
+};
 
   const strengthColors = ['', '#EF4444', '#EF4444', '#F59E0B', '#3B82F6', '#10B981'];
   const strengthLabels = ['', 'Weak',    'Weak',    'Fair',    'Good',    'Strong'];

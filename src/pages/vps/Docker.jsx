@@ -59,13 +59,14 @@ export default function Docker() {
   const restartContainer = useRestartContainer(id);
   const removeContainer = useRemoveContainer(id);
 
+
   // Auto-refresh containers
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     refetchContainers();
-  //   }, 15000);
-  //   return () => clearInterval(interval);
-  // }, [id, refetchContainers]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetchContainers();
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [id, refetchContainers]);
 
   // Auto-refresh logs
   useEffect(() => {
@@ -78,12 +79,23 @@ export default function Docker() {
     return () => clearInterval(interval);
   }, [showLogsModal, autoRefresh, selectedContainer, refetchLogs]);
 
-  const handleInstallDocker = async () => {
-    setInstalling(true);
-    await installDocker.mutateAsync();
-    await refetchDockerStatus();
-    setInstalling(false);
-  };
+const handleInstallDocker = async () => {
+  setInstalling(true);
+  await installDocker.mutateAsync();
+
+  let attempts = 0;
+  const maxAttempts = 40; 
+
+  const pollInterval = setInterval(async () => {
+    attempts++;
+    const result = await refetchDockerStatus();
+    
+    if (result.data?.installed || attempts >= maxAttempts) {
+      clearInterval(pollInterval);
+      setInstalling(false);
+    }
+  }, 3000);
+};
 
   const handleCreateContainer = async (e) => {
     e.preventDefault();
@@ -169,7 +181,7 @@ export default function Docker() {
               className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 mx-auto disabled:opacity-50"
             >
               {(installing || installDocker.isPending) ? <FaSpinner className="animate-spin" /> : <FaDocker />}
-              {(installing || installDocker.isPending) ? "Docker is installing don't press back" : "Install Docker"}
+              {(installing || installDocker.isPending) ? "Installing Docker" : "Install Docker"}
              
             </button>
           </div>
@@ -193,24 +205,6 @@ export default function Docker() {
   return (
     <div className="min-h-screen bg-slate-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
-        <Link
-  to={`/vps/paid/${instances?.[0]?.id}`}
-  className="
-    inline-flex items-center gap-2 mb-5
-    px-4 py-2.5
-    rounded-xl
-    bg-white/80 backdrop-blur-md
-    border border-gray-200
-    text-gray-700 font-medium text-sm
-    shadow-sm
-    transition-all duration-200
-    hover:bg-white hover:shadow-md hover:-translate-y-0.5
-    active:scale-95
-  "
->
-  <ArrowLeft size={18} />
-  <span>Back</span>
-</Link>
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>

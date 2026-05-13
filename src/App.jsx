@@ -1,6 +1,6 @@
 
 import { useEffect } from 'react';
-import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuthStore } from './store/authStore';
 import { api } from './services/api';
@@ -58,6 +58,8 @@ import EmailConnect from './pages/Emails/EmailConnect';
 import EmailLogsPage from './pages/Emails/EmailLogsPage';
 import DkimPage from './pages/Emails/EmailDkim';
 import Docker from './pages/vps/Docker';
+import { setNavigator } from './utils/navigation';
+
 import SubscriptionsPage from './pages/billing/Subscription';
 import PaymentHistoryPage from "./pages/billing/paymentHistory";
 
@@ -102,8 +104,11 @@ export default function App() {
   const setAuth = useAuthStore((s) => s.setAuth);
   const setAuthBootstrapped = useAuthStore((s) => s.setAuthBootstrapped);
   const clearAuth = useAuthStore((s) => s.clearAuth);
+   const navigate = useNavigate();
 
-
+ useEffect(() => {
+    setNavigator(navigate);
+  }, [navigate]);
 
   useEffect(() => {
     let alive = true;
@@ -143,7 +148,7 @@ export default function App() {
 
       {/* Protected routes */}
       <Route
-      // element={<ProtectedRoute />}
+      element={<ProtectedRoute />}
       >
         <Route element={<AppRoutes />}>
           <Route path="/hosting" element={<ManageHosting />} />

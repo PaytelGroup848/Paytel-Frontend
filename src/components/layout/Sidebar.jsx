@@ -33,51 +33,50 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const isSubscriptionActive = subscription?.data?.status === "active";
+  const subscriptions = Array.isArray(subscription?.data) ? subscription.data : [];
+  const hasWordPress = subscriptions.some(s => s.type === 'wordpress' && s.status === 'Active');
+  const hasVps = subscriptions.some(s => s.type === 'vps' && s.status === 'Active');
+
   const isExpanded = isDesktop ? (hovered || mobileOpen) : mobileOpen;
 
   const userRoles = useMe();
   const Roles = userRoles?.data?.role;
   const isSuperAdmin = Roles === "superadmin";
 
-  const navItems = [
-    { label: 'Home', to: '/home', icon: LayoutDashboard },
-    {
-      label: 'Websites',
-      icon: Globe,
-      children: [
-        ...(isSubscriptionActive ? [] : [{ label: 'WordPress', to: '/websites/wordpress' }]),
-        ...(isSubscriptionActive ? [{ label: ' WordPress', to: '/websites/wordpress/paid' }] : []),
-        { label: 'PHP/HTML', to: '/websites/php' },
-        { label: 'NodeJS App', to: '/websites/nodejs' },
-      ],
-    },
-     {
-      label: 'Cloud VPS',
-      icon: Cloud,
-      children: [
-        { label: 'VPS Plans', to: '/vps' },
-        { label: 'VPS', to: '/vps/paid' },
-        // { label: 'Invoices', to: '/billing/history' },
-      ],
-    },
-    
-    // { label: 'Cloud VPS', to: '/vps', icon: Zap },
-    {
-      label: 'Billing',
-      icon: CreditCard,
-      children: [
-       
-        { label: 'Subscriptions', to: '/blling/subscriptions' },
-        { label: 'Payment-history', to: '/payment-history' },
-      ],
-    },
-    { label: 'Emails', to:'/emails',icon:  Mails },
-    ...(isSuperAdmin ? [{ label: 'SuperAdmin', to: '/superadmin/servers', icon: Zap }] : []),
-    { label: 'Settings', to: '/settings', icon: Settings },
-    { label: 'Support', to: '/help', icon: LifeBuoy },   
-  ];
 
+const navItems = [
+  { label: 'Home', to: '/home', icon: LayoutDashboard },
+  {
+    label: 'Websites',
+    icon: Globe,
+    children: [
+      { label: 'WordPress', to: '/websites/wordpress' },
+      ...(hasWordPress ? [{ label: 'WordPress Dashboard', to: '/websites/wordpress/paid' }] : []),
+      { label: 'PHP/HTML', to: '/websites/php' },
+      { label: 'NodeJS App', to: '/websites/nodejs' },
+    ].filter(Boolean), // filter out any falsy values
+  },
+  {
+    label: 'Cloud VPS',
+    icon: Cloud,
+    children: [
+      { label: 'VPS Plans', to: '/vps' },
+      ...(hasVps ? [{ label: 'VPS Dashboard', to: '/vps/paid' }] : []),
+    ].filter(Boolean),
+  },
+  {
+    label: 'Billing',
+    icon: CreditCard,
+    children: [
+      { label: 'Subscriptions', to: '/billing/subscriptions' }, // fixed typo "blling"
+      { label: 'Payment-history', to: '/payment-history' },
+    ],
+  },
+  { label: 'Emails', to: '/emails', icon: Mails },
+  ...(isSuperAdmin ? [{ label: 'SuperAdmin', to: '/superadmin/servers', icon: Zap }] : []),
+  { label: 'Settings', to: '/settings', icon: Settings },
+  { label: 'Support', to: '/help', icon: LifeBuoy },
+];
   const handleMouseEnter = () => {
     if (isDesktop) setHovered(true);
   };
