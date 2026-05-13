@@ -1,369 +1,358 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import {
-  Server, Globe, Activity, TrendingUp, Trash2, Layers, CheckCircle,
-  Zap, ShieldCheck, ChevronRight, X, Database, Cpu, ShoppingCart, Play, Star,
-  Award, Clock, Cloud, Code, Terminal
+  Server, Globe, Trash2, Layers, CheckCircle,
+  ExternalLink, LifeBuoy,
+  Mail, HardDrive, Plus, Activity,
+  ShoppingCart, ArrowUpRight, ChevronRight, ChevronLeft,
+  Zap, IndianRupee, HelpCircle, CreditCard, Bell, User,
 } from 'lucide-react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { useAuthStore } from '../../store/authStore';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useAuthStore } from '../../store/authStore'; // adjust path as needed
 
+/* ─── helpers ─────────────────────────────────────────────── */
+const cn = (...c) => c.filter(Boolean).join(' ');
+
+const STATUS_CFG = {
+  Active:     { dot: 'bg-emerald-400', pill: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  Processing: { dot: 'bg-amber-400',   pill: 'bg-amber-50  text-amber-700  border-amber-200' },
+  Expiring:   { dot: 'bg-red-400',     pill: 'bg-red-50    text-red-700    border-red-200'   },
+  Suspended:  { dot: 'bg-slate-400',   pill: 'bg-slate-100 text-slate-600  border-slate-200' },
+};
+
+const StatusBadge = React.memo(({ status }) => {
+  const cfg = STATUS_CFG[status] || STATUS_CFG.Processing;
+  return (
+    <span className={cn('inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full border', cfg.pill)}>
+      <span className={cn('w-1.5 h-1.5 rounded-full', cfg.dot, status === 'Active' && 'animate-pulse')} />
+      {status}
+    </span>
+  );
+});
+
+const TYPE_GRADIENTS = {
+  WordPress:   'from-blue-500 to-blue-600',
+  'VPS Cloud': 'from-emerald-500 to-emerald-600',
+  Email:       'from-sky-500 to-sky-600',
+};
+
+const ServiceIcon = React.memo(({ type, size = 15 }) => {
+  const icons = {
+    WordPress: <Server size={size} />,
+    Domain:    <Globe size={size} />,
+    'VPS Cloud':<LifeBuoy size={size} />,
+    Email:     <Mail size={size} />,
+  };
+  return icons[type] || <HardDrive size={size} />;
+});
+
+/* animated counter (already optimized) */
+const Counter = ({ to }) => {
+  const [val, setVal] = React.useState(0);
+  React.useEffect(() => {
+    let cur = 0;
+    const step = to / 72;
+    const id = setInterval(() => {
+      cur += step;
+      if (cur >= to) { setVal(to); clearInterval(id); }
+      else setVal(Math.floor(cur));
+    }, 1000 / 60);
+    return () => clearInterval(id);
+  }, [to]);
+  return <>{val}</>;
+};
+
+/* ─── stat card ──────────────────────────────────────────── */
+const StatCard = React.memo(({ label, value, sub, icon: Icon, accent, delay, isCurrency }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 18 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay, duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+    className="bg-white/70 backdrop-blur-xl rounded-2xl border border-white/60 shadow-sm p-5 flex items-start gap-4 hover:shadow-md hover:bg-white/80 transition-all"
+  >
+    <div className={cn('w-11 h-11 rounded-2xl flex items-center justify-center text-white shrink-0', accent)}>
+      <Icon size={20} />
+    </div>
+    <div>
+      <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">{label}</p>
+      <p className="text-2xl font-black text-slate-800 mt-0.5 tabular-nums leading-none flex items-baseline gap-0.5">
+        {isCurrency && <IndianRupee size={16} className="text-slate-500" />}
+        {typeof value === 'number' ? <Counter to={value} /> : value}
+      </p>
+      {sub && <p className="text-[11px] text-slate-400 mt-1">{sub}</p>}
+    </div>
+  </motion.div>
+));
+
+/* ─── skeleton loader ───────────────────────────────────── */
+const Skeleton = ({ className }) => (
+  <div className={`animate-pulse bg-slate-200/80 rounded-xl ${className}`} />
+);
+
+const TableSkeleton = () => (
+  <div className="space-y-4 p-6">
+    {[...Array(4)].map((_, i) => (
+      <div key={i} className="flex gap-4">
+        <Skeleton className="w-9 h-9 rounded-xl" />
+        <div className="flex-1 space-y-2">
+          <Skeleton className="h-3 w-1/3" />
+          <Skeleton className="h-2 w-1/4" />
+        </div>
+        <Skeleton className="h-4 w-16 rounded-full" />
+      </div>
+    ))}
+  </div>
+);
+
+/* ════════════════════════════════════════════════════════════
+   DASHBOARD
+════════════════════════════════════════════════════════════ */
 const Dashboard = () => {
   const { user: userInfo } = useAuthStore();
+  const [loading, setLoading] = useState(true);
+
+  /* ── data state (would be replaced by API calls) ── */
   const [user, setUser] = useState({
-    name: userInfo?.name || "N/A",
-    activeServices: [
-      { id: 1, type: 'WordPress', name: 'Portfolio Site', status: 'Active', ip: '192.168.1.1', expiry: 'Oct 2026', color: 'from-blue-500 to-blue-600' },
-      { id: 2, type: 'Domain', name: 'cloudedata.io', status: 'Active', ip: '-', expiry: 'Jan 2027', color: 'from-purple-500 to-purple-600' },
-      { id: 3, type: 'Cloud Hosting', name: 'Backend API', status: 'Processing', ip: 'Pending', expiry: 'Nov 2026', color: 'from-emerald-500 to-emerald-600' },
-    ]
+    name: userInfo?.name || 'Amit Sharma',
+    activeServices: [],
   });
+  const [emails, setEmails] = useState([]);
+  const [activities, setActivities] = useState([]);
 
-  const [isNewOrderOpen, setIsNewOrderOpen] = useState(false);
-  const [newService, setNewService] = useState({ type: 'WordPress', name: '' });
-  const [activities, setActivities] = useState([
-    { id: 1, action: 'Logged in to dashboard', timestamp: new Date(Date.now() - 3600000).toISOString() },
-    { id: 2, action: 'Viewed service overview', timestamp: new Date(Date.now() - 1800000).toISOString() },
-    { id: 3, action: 'Updated profile settings', timestamp: new Date(Date.now() - 900000).toISOString() },
-  ]);
-
-  const videoRef = useRef(null);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
-
+  /* simulate API fetch */
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && videoRef.current && !isVideoPlaying) {
-            videoRef.current.play();
-            setIsVideoPlaying(true);
-          } else if (!entry.isIntersecting && videoRef.current && isVideoPlaying) {
-            videoRef.current.pause();
-            setIsVideoPlaying(false);
-          }
-        });
-      },
-      { threshold: 0.5 }
-    );
-    if (videoRef.current) observer.observe(videoRef.current);
-    return () => { if (videoRef.current) observer.unobserve(videoRef.current); };
-  }, [isVideoPlaying]);
+    const timer = setTimeout(() => {
+      setUser({
+        name: userInfo?.name || 'Amit Sharma',
+        activeServices: [
+          { id: 1, type: 'WordPress',  name: 'Portfolio Site',     status: 'Active',     ip: '103.21.45.12', expiry: 'Oct 2026', region: 'Asia Pacific', price: 799 },
+          { id: 2, type: 'WordPress',  name: 'Marketing Blog',     status: 'Active',     ip: '103.21.45.13', expiry: 'Dec 2026', region: 'Asia Pacific', price: 799 },
+          { id: 3, type: 'VPS Cloud',  name: 'Backend API Server',  status: 'Processing', ip: 'Pending',      expiry: 'Nov 2026', region: 'US East', price: 1599 },
+          { id: 4, type: 'Email',      name: 'Company Emails',     status: 'Active',     ip: '192.168.1.1',  expiry: 'Jan 2027', region: 'Global', price: 399 },
+          // ... you can push many more items to test pagination
+        ],
+      });
+      setEmails([
+        { id: 1, address: 'admin@cloudedata.io',   label: 'Admin',   quota: 25, used: 4.2 },
+        { id: 2, address: 'support@cloudedata.io', label: 'Support', quota: 25, used: 11.7 },
+        { id: 3, address: 'billing@cloudedata.io', label: 'Billing', quota: 10, used: 2.1 },
+        { id: 4, address: 'dev@cloudedata.io',     label: 'Dev',     quota: 25, used: 0.3 },
+      ]);
+      setActivities([
+        { id: 1, action: 'SSL certificate auto‑renewed',  service: 'Portfolio Site',     time: '5m ago',  type: 'success' },
+        { id: 2, action: 'VPS deployment initiated',       service: 'Backend API Server', time: '22m ago', type: 'info' },
+        { id: 3, action: 'Bandwidth alert triggered',      service: 'Marketing Blog',     time: '1h ago',  type: 'warning' },
+        { id: 4, action: 'Backup completed',               service: 'Portfolio Site',     time: '3h ago',  type: 'success' },
+        { id: 5, action: 'New email account created',      service: 'Business Mail',      time: '5h ago',  type: 'info' },
+      ]);
+      setLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [userInfo]);
 
-  const { scrollYProgress } = useScroll();
-  const y1 = useTransform(scrollYProgress, [0, 1], [0, -50]);
-  const y2 = useTransform(scrollYProgress, [0, 1], [0, 50]);
+  /* ── filter & pagination state ── */
+  const [filterType, setFilterType] = useState('All');
+  const [showAllActivities, setShowAllActivities] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8; // limit rows per page for huge datasets
 
-  const addActivity = (action) => {
-    setActivities(prev => [{ id: Date.now(), action, timestamp: new Date().toISOString() }, ...prev].slice(0, 10));
-  };
+  /* ── derived data ── */
+  const activeServices = useMemo(() => user.activeServices || [], [user.activeServices]);
+  const activeCount = useMemo(() => activeServices.filter(s => s.status === 'Active').length, [activeServices]);
+  const inactiveCount = activeServices.length - activeCount;
 
-  const getServiceColor = (type) => {
-    const colors = {
-      'WordPress': 'from-blue-500 to-blue-600',
-      'Domain': 'from-purple-500 to-purple-600',
-      'Cloud Hosting': 'from-emerald-500 to-emerald-600'
-    };
-    return colors[type] || 'from-slate-500 to-slate-600';
-  };
+  const totalMonthlyCost = useMemo(
+    () => activeServices.reduce((sum, s) => sum + (s.price || 0), 0),
+    [activeServices]
+  );
 
-  const generateRandomIP = () => `${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
-  const futureDate = () => new Date(Date.now() + 31536000000).toLocaleString('default', { month: 'short', year: 'numeric' });
+  const allTypes = useMemo(() => ['All', ...Array.from(new Set(activeServices.map(s => s.type)))], [activeServices]);
+  const filtered = filterType === 'All' ? activeServices : activeServices.filter(s => s.type === filterType);
 
-  const handleAddService = () => {
-    if (!newService.name.trim()) return;
-    const newId = Math.max(...user.activeServices.map(s => s.id), 0) + 1;
-    const serviceData = {
-      id: newId,
-      type: newService.type,
-      name: newService.name,
-      status: 'Active',
-      ip: newService.type === 'Domain' ? '-' : generateRandomIP(),
-      expiry: futureDate(),
-      color: getServiceColor(newService.type)
-    };
-    setUser(prev => ({ ...prev, activeServices: [...prev.activeServices, serviceData] }));
-    addActivity(`Deployed ${newService.type}: ${newService.name}`);
-    setNewService({ type: 'WordPress', name: '' });
-    setIsNewOrderOpen(false);
-  };
+  /* pagination logic */
+  const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
+  const displayedServices = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filtered.slice(start, start + itemsPerPage);
+  }, [filtered, currentPage, itemsPerPage]);
 
-  const handleDeleteService = (id, name) => {
+  /* reset page when filter changes */
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterType]);
+
+  const displayedActivities = showAllActivities ? activities : activities.slice(0, 3);
+
+  /* ── actions ── */
+  const addActivity = useCallback((action, service) => {
+    setActivities(prev => [{ id: Date.now(), action, service, time: 'Just now', type: 'info' }, ...prev].slice(0, 20));
+  }, []);
+
+  const handleDeleteService = useCallback((id, name) => {
     if (window.confirm(`Delete "${name}"?`)) {
       setUser(prev => ({ ...prev, activeServices: prev.activeServices.filter(s => s.id !== id) }));
-      addActivity(`Removed service: ${name}`);
+      addActivity(`Removed service: ${name}`, name);
     }
-  };
+  }, [addActivity]);
 
-  const formatRelativeTime = (ts) => {
-    const diff = Date.now() - new Date(ts).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 1) return 'Just now';
-    if (mins < 60) return `${mins} min ago`;
-    const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-    return `${Math.floor(hours / 24)} day(s) ago`;
-  };
+  const handleDeleteEmail = useCallback((id, address) => {
+    if (window.confirm(`Delete mailbox "${address}"?`)) {
+      setEmails(prev => prev.filter(e => e.id !== id));
+      addActivity(`Removed mailbox: ${address}`, 'Business Mail');
+    }
+  }, [addActivity]);
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 18) return 'Good afternoon';
+  const getGreeting = useCallback(() => {
+    const h = new Date().getHours();
+    if (h < 12) return 'Good morning';
+    if (h < 18) return 'Good afternoon';
     return 'Good evening';
-  };
+  }, []);
 
-  const activeCount = user.activeServices.filter(s => s.status === 'Active').length;
-  const inactiveCount = user.activeServices.filter(s => s.status !== 'Active').length;
+  /* popular services — prices in INR */
+  const popularServices = useMemo(() => [
+    { name: 'WordPress Hosting', desc: 'Managed WordPress with auto‑updates, daily backups & CDN.', price: '₹799/mo', icon: Server, color: 'from-blue-500 to-blue-600', tag: 'Most Popular', path: '/plans/wordpress' },
+    { name: 'Business Email',   desc: 'Professional mailboxes @yourdomain, spam protection & webmail.', price: '₹399/mo', icon: Mail, color: 'from-sky-500 to-sky-600', tag: 'Essential',   path: '/plans/email' },
+    { name: 'VPS Cloud Servers',desc: 'NVMe SSD, dedicated IP, root access, DDoS protection.', price: '₹1,599/mo', icon: LifeBuoy, color: 'from-emerald-500 to-emerald-600', tag: 'Best Value',  path: '/plans/vps' },
+  ], []);
 
-  const stats = [
-    { label: 'Total Services', value: user.activeServices.length, icon: Layers, change: '+2 this month', color: 'text-indigo-600', bg: 'bg-indigo-50' },
-    { label: 'Active', value: activeCount, icon: CheckCircle, change: 'All operational', color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    { label: 'Inactive / Pending', value: inactiveCount, icon: Clock, change: 'Requires attention', color: 'text-amber-600', bg: 'bg-amber-50' },
-  ];
+  const goTo = useCallback((path) => {
+    window.location.href = path; // replace with your router
+  }, []);
 
-  const popularServices = [
-    { name: 'WordPress Hosting', description: 'Optimized for speed & security. One-click install, automatic updates.', price: '$9.99/mo', image: 'https://elements-resized.envatousercontent.com/elements-cover-images/c004c39b-93ae-4ad6-8b96-04b19ef52481?w=433&cf_fit=scale-down&q=85&format=auto&s=b9caa37119964e85158a9cb4a2c83f1963e37c234978c705563bec9f196fce76', icon: Server, color: 'from-blue-500 to-blue-600', tag: 'Most Popular' },
-    { name: 'Domain Registration', description: '.com, .io, .app & more. Free WHOIS privacy & SSL certificate.', price: '$12.99/yr', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGsfNQwZkun8MHM5dBNsidKAvt1VDWypaEvA&s', icon: Globe, color: 'from-purple-500 to-purple-600', tag: 'Limited Time' },
-    { name: 'VPS Cloud Servers', description: 'KVM virtualization, SSD storage, full root access, 24/7 support.', price: '$19.99/mo', image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=350&fit=crop', icon: Cpu, color: 'from-emerald-500 to-emerald-600', tag: 'Best Value' },
-  ];
-
-  const videoUrl = "https://assets.mixkit.co/videos/preview/mixkit-futuristic-data-center-with-servers-3909-large.mp4";
+  /* activity dot colors */
+  const actDot = { success: 'bg-emerald-400', warning: 'bg-amber-400', info: 'bg-blue-400' };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/40 overflow-x-hidden">
-      {/* Background blobs (subtle parallax) */}
-      <motion.div style={{ y: y1 }} className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[30%] -left-[20%] w-[60%] h-[60%] bg-indigo-100/20 rounded-full blur-[120px]" />
-        <div className="absolute top-[20%] -right-[10%] w-[40%] h-[40%] bg-purple-100/20 rounded-full blur-[100px]" />
-        <div className="absolute bottom-[10%] left-[10%] w-[30%] h-[30%] bg-cyan-100/20 rounded-full blur-[90px]" />
-      </motion.div>
+    <div className="min-h-screen bg-[#F4F5F9] font-sans relative overflow-hidden">
+      {/* Ambient futuristic blobs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-32 -left-20 w-[36rem] h-[36rem] bg-indigo-200/15 rounded-full blur-3xl animate-float" />
+        <div className="absolute top-1/4 right-0 w-[28rem] h-[28rem] bg-cyan-200/15 rounded-full blur-3xl animate-float-delayed" />
+        <div className="absolute bottom-0 left-1/3 w-[24rem] h-[24rem] bg-violet-200/15 rounded-full blur-3xl animate-float-slow" />
+        {/* subtle grid */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDE4YzAtMi4yMS0xLjc5LTQtNC00cy00IDEuNzktNCA0IDEuNzkgNCA0IDR6TTM2IDI2YzAtMi4yMS0xLjc5LTQtNC00cy00IDEuNzktNCA0IDEuNzkgNCA0IDR6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-40" />
+      </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
-        {/* Header */}
-        <header className="mb-8 h-0" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-8 relative z-10 space-y-6 sm:space-y-8">
+        {/* ─── Header ─── */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+        >
+          <div>
+            <h1 className="text-[22px] sm:text-[26px] font-black text-slate-900">
+              {getGreeting()}, {user.name}
+            </h1>
+            <p className="text-sm text-slate-500 mt-0.5">
+              Your cloud command center — everything at a glance.
+            </p>
+          </div>
+         
+        </motion.div>
 
-        <main className="space-y-10">
-          {/* Hero Banner */}
+        {/* ─── Stats (with INR cost) ─── */}
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          <StatCard label="Total Services" value={activeServices.length} icon={Layers}      accent="bg-indigo-500"  sub="Across all regions" delay={0} />
+          <StatCard label="Active"         value={activeCount}          icon={CheckCircle} accent="bg-emerald-500" sub="Fully operational"  delay={0.07} />
+          <StatCard label="Inactive"       value={inactiveCount}        icon={LifeBuoy}    accent="bg-amber-500"   sub="Needs attention"    delay={0.14} />
+          <StatCard label="Email Accounts" value={emails.length}        icon={Mail}        accent="bg-sky-500"     sub="Business mailboxes" delay={0.28} />
+        </div>
+
+        {/* ─── Main Content ─── */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          {/* ── Services Table ── */}
           <motion.section
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
-            className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 shadow-2xl"
+            transition={{ delay: 0.3, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            className="lg:col-span-2 bg-white/70 backdrop-blur-xl rounded-2xl border border-white/60 shadow-sm overflow-hidden"
           >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(255,255,255,0.05)_0%,transparent_50%)]" />
-            <div className="relative p-6 md:p-8 text-white">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div className="space-y-3 max-w-2xl">
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="flex items-center gap-2"
-                  >
-                    <span className="text-xs font-bold uppercase tracking-wider bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
-                      {getGreeting()}
-                    </span>
-                  </motion.div>
-                  <motion.h2
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="text-2xl md:text-3xl font-black"
-                  >
-                    Hi, {user.name} welcome to CloudeData.
-                  </motion.h2>
-                  <motion.p
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                    className="text-slate-300 leading-relaxed"
-                  >
-                    Your cloud infrastructure, reimagined. Deploy, scale, and manage with enterprise-grade reliability.
-                  </motion.p>
-                </div>
-                <motion.div
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                  className="flex flex-wrap gap-3"
-                >
-                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md rounded-full px-4 py-2">
-                    <ShieldCheck size={16} />
-                    <span className="text-sm font-medium">99.99% Uptime</span>
-                  </div>
-                </motion.div>
+            <div className="px-6 py-4 border-b border-slate-100/60 flex flex-wrap gap-3 items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Server size={15} className="text-indigo-600" />
+                <h2 className="font-black text-[15px] text-slate-900">Active Infrastructure</h2>
+                {activeServices.length > 0 && (
+                  <span className="text-[10px] font-black bg-indigo-100 text-indigo-600 w-5 h-5 rounded-full flex items-center justify-center">
+                    {activeServices.length}
+                  </span>
+                )}
               </div>
-
-              {/* Agenda highlights */}
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.6 }}
-                className="mt-6 pt-5 border-t border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-4"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
-                    <Zap size={14} className="text-yellow-300" />
-                  </div>
-                  <span className="text-sm font-medium text-slate-300">NVMe SSD storage</span>
+              {activeServices.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {allTypes.map(t => (
+                    <button key={t} onClick={() => setFilterType(t)}
+                      className={cn('text-[11px] font-bold px-3 py-1 rounded-lg border transition',
+                        filterType === t ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white/60 backdrop-blur-sm text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600')}>
+                      {t}
+                    </button>
+                  ))}
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
-                    <Globe size={14} className="text-indigo-300" />
-                  </div>
-                  <span className="text-sm font-medium text-slate-300">Global CDN</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
-                    <ShieldCheck size={14} className="text-emerald-300" />
-                  </div>
-                  <span className="text-sm font-medium text-slate-300">DDoS protection</span>
-                </div>
-              </motion.div>
-
-              {user.activeServices.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.7 }}
-                  className="mt-5 flex items-center gap-2 text-xs text-slate-300 bg-white/10 rounded-lg px-3 py-2 w-fit backdrop-blur-sm"
-                >
-                  <Server size={14} />
-                  <span className="font-medium">{user.activeServices.length} active resource{user.activeServices.length !== 1 ? 's' : ''} ready to scale.</span>
-                </motion.div>
               )}
             </div>
-          </motion.section>
 
-          {/* Stats Row - updated with Inactive count */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ staggerChildren: 0.1 }}
-            className="grid grid-cols-1 sm:grid-cols-3 gap-5"
-          >
-            {stats.map((stat, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: idx * 0.1 }}
-                whileHover={{ y: -4, scale: 1.02 }}
-                className="bg-white/80 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{stat.label}</p>
-                    <p className="text-2xl font-black text-slate-800 mt-1">{stat.value}</p>
-                    <p className="text-xs text-slate-500 mt-1">{stat.change}</p>
-                  </div>
-                  <div className={`w-10 h-10 ${stat.bg} rounded-xl flex items-center justify-center`}>
-                    <stat.icon size={20} className={stat.color} />
-                  </div>
+            {loading ? (
+              <TableSkeleton />
+            ) : activeServices.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+                <div className="w-20 h-20 rounded-full bg-indigo-50 flex items-center justify-center mb-4">
+                  <Server size={32} className="text-indigo-300" />
                 </div>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* Active Services Section - Changed to ROW/Table layout */}
-          <section className="space-y-5">
-            <div className="flex items-center justify-between flex-wrap gap-3">
-              <div>
-                <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
-                  <Server size={22} className="text-indigo-600" />
-                  Active Infrastructure
-                </h2>
-                <p className="text-sm text-slate-400 mt-0.5">Manage your deployed services</p>
+                <h3 className="text-lg font-black text-slate-800 mb-2">No services yet</h3>
+                <p className="text-sm text-slate-500 max-w-xs">Start building your cloud infrastructure in seconds.</p>
               </div>
-              <button
-                onClick={() => setIsNewOrderOpen(true)}
-                className="flex items-center gap-1.5 text-sm font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-2 rounded-xl transition-all duration-300"
-              >
-                <ShoppingCart size={15} /> Deploy new
-              </button>
-            </div>
-
-            {user.activeServices.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-white rounded-2xl border-2 border-dashed border-slate-200 p-12 text-center"
-              >
-                <Database size={48} className="text-slate-200 mx-auto mb-4" />
-                <h3 className="text-lg font-black text-slate-700">No services deployed</h3>
-                <p className="text-sm text-slate-400 mt-2 max-w-sm mx-auto">Get started by deploying your first server, domain, or WordPress instance.</p>
-                <button onClick={() => setIsNewOrderOpen(true)} className="mt-5 px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 transition-all">
-                  Deploy Now
-                </button>
-              </motion.div>
             ) : (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-2xl border border-slate-200/70 shadow-sm overflow-hidden"
-              >
+              <>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
-                    <thead className="bg-slate-50/80 border-b border-slate-200">
-                      <tr>
-                        <th className="px-5 py-3 font-bold text-slate-500 text-xs uppercase tracking-wider">Service Name</th>
-                        <th className="px-5 py-3 font-bold text-slate-500 text-xs uppercase tracking-wider">Type</th>
-                        <th className="px-5 py-3 font-bold text-slate-500 text-xs uppercase tracking-wider">Status</th>
-                        <th className="px-5 py-3 font-bold text-slate-500 text-xs uppercase tracking-wider">IP Address</th>
-                        <th className="px-5 py-3 font-bold text-slate-500 text-xs uppercase tracking-wider">Renewal</th>
-                        <th className="px-5 py-3 font-bold text-slate-500 text-xs uppercase tracking-wider text-right">Actions</th>
+                  <table className="w-full text-sm min-w-[580px]">
+                    <thead>
+                      <tr className="text-[10px] uppercase tracking-[0.1em] text-slate-400 bg-slate-50/50">
+                        <th className="px-6 py-3 text-left font-bold">Service</th>
+                        <th className="px-5 py-3 text-left font-bold">Status</th>
+                        <th className="px-5 py-3 text-left font-bold hidden md:table-cell">IP / Endpoint</th>
+                        <th className="px-5 py-3 text-left font-bold hidden lg:table-cell">Region</th>
+                        <th className="px-5 py-3 text-left font-bold">Price</th>
+                        <th className="px-5 py-3 text-right font-bold">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       <AnimatePresence>
-                        {user.activeServices.map((service) => (
-                          <motion.tr
-                            key={service.id}
-                            initial={{ opacity: 0, y: 10 }}
+                        {displayedServices.map((svc, idx) => (
+                          <motion.tr key={svc.id}
+                            initial={{ opacity: 0, y: 6 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, x: 30 }}
-                            transition={{ duration: 0.2 }}
-                            className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors group"
+                            transition={{ delay: idx * 0.04 }}
+                            className="border-t border-slate-100/60 hover:bg-white/50 transition group"
                           >
-                            <td className="px-5 py-4 font-medium text-slate-800">
+                            <td className="px-6 py-4">
                               <div className="flex items-center gap-3">
-                                <div className={`w-8 h-8 bg-gradient-to-br ${service.color} rounded-lg flex items-center justify-center text-white shadow-sm`}>
-                                  {service.type === 'Domain' ? <Globe size={14} /> : <Server size={14} />}
+                                <div className={cn('w-9 h-9 rounded-xl bg-gradient-to-br flex items-center justify-center text-white shadow-sm shrink-0', TYPE_GRADIENTS[svc.type] || 'from-slate-400 to-slate-500')}>
+                                  <ServiceIcon type={svc.type} />
                                 </div>
-                                {service.name}
+                                <div>
+                                  <p className="font-bold text-slate-800 text-[13px]">{svc.name}</p>
+                                  <p className="text-[11px] text-slate-400">{svc.type}</p>
+                                </div>
                               </div>
                             </td>
-                            <td className="px-5 py-4 text-slate-600">{service.type}</td>
-                            <td className="px-5 py-4">
-                              <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${
-                                service.status === 'Active'
-                                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                  : 'bg-amber-50 text-amber-700 border border-amber-200'
-                              }`}>
-                                {service.status === 'Active' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />}
-                                {service.status}
-                              </span>
+                            <td className="px-5 py-4"><StatusBadge status={svc.status} /></td>
+                            <td className="px-5 py-4 hidden md:table-cell">
+                              <code className="text-[11px] text-slate-500 bg-slate-100/80 px-2 py-0.5 rounded font-mono">{svc.ip}</code>
                             </td>
-                            <td className="px-5 py-4 text-slate-500 font-mono text-xs">{service.ip}</td>
-                            <td className="px-5 py-4 text-slate-500">{service.expiry}</td>
+                            <td className="px-5 py-4 hidden lg:table-cell text-[12px] text-slate-500">{svc.region}</td>
+                            <td className="px-5 py-4 text-[12px] font-semibold text-slate-700">₹{svc.price}</td>
                             <td className="px-5 py-4 text-right">
-                              <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <motion.button
-                                  whileHover={{ scale: 1.05 }}
-                                  whileTap={{ scale: 0.95 }}
-                                  onClick={() => console.log(`Navigate to ${service.name}`)}
-                                  className="p-1.5 hover:bg-indigo-50 text-indigo-600 rounded-lg transition-colors"
-                                  title="Open dashboard"
-                                >
-                                  <ChevronRight size={16} />
-                                </motion.button>
-                                <motion.button
-                                  whileHover={{ scale: 1.05 }}
-                                  whileTap={{ scale: 0.95 }}
-                                  onClick={() => handleDeleteService(service.id, service.name)}
-                                  className="p-1.5 hover:bg-red-50 text-red-500 rounded-lg transition-colors"
-                                  title="Delete"
-                                >
-                                  <Trash2 size={16} />
-                                </motion.button>
+                              <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition">
+                                <button onClick={() => goTo(`/service/${svc.id}`)}
+                                  className="p-1.5 rounded-lg hover:bg-indigo-50 text-indigo-500 transition flex items-center gap-1 text-[11px] font-bold">
+                                  <ExternalLink size={14} />
+                                  <span className="hidden xl:inline">Dashboard</span>
+                                </button>
+                                <button onClick={() => handleDeleteService(svc.id, svc.name)} className="p-1.5 rounded-lg hover:bg-red-50 text-red-400 transition">
+                                  <Trash2 size={14} />
+                                </button>
                               </div>
                             </td>
                           </motion.tr>
@@ -372,223 +361,190 @@ const Dashboard = () => {
                     </tbody>
                   </table>
                 </div>
-              </motion.div>
+
+                {/* Pagination controls (scalable) */}
+                {totalPages > 1 && (
+                  <div className="px-6 py-3 border-t border-slate-100/60 flex items-center justify-between text-xs">
+                    <span className="text-slate-400">
+                      Page {currentPage} of {totalPages} ({filtered.length} services)
+                    </span>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className="p-1.5 rounded-lg border border-slate-200 hover:bg-indigo-50 disabled:opacity-30"
+                      >
+                        <ChevronLeft size={14} />
+                      </button>
+                      <button
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                        className="p-1.5 rounded-lg border border-slate-200 hover:bg-indigo-50 disabled:opacity-30"
+                      >
+                        <ChevronRight size={14} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
-          </section>
+          </motion.section>
 
-          {/* Popular Services (unchanged) */}
-          <section className="space-y-5">
-            <div className="flex items-center justify-between flex-wrap gap-3">
-              <div>
-                <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
-                  <ShoppingCart size={22} className="text-indigo-600" /> 
-                  Popular Services
-                </h2>
-                <p className="text-sm text-slate-400 mt-0.5">Deploy in minutes with our optimized solutions</p>
-              </div>
-              <button className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">
-                View all →
-              </button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {popularServices.map((service, idx) => (
-                <motion.div
-                  key={service.name}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.1, type: "spring", stiffness: 100 }}
-                  whileHover={{ y: -6 }}
-                  className="group bg-white rounded-2xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-xl transition-all duration-300"
-                >
-                  <div className="relative h-44 overflow-hidden">
-                    <img 
-                      src={service.image} 
-                      alt={service.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute top-3 left-3">
-                      <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-white/90 backdrop-blur-sm text-slate-700 shadow-sm">
-                        {service.tag}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-5">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className={`w-10 h-10 bg-gradient-to-br ${service.color} rounded-xl flex items-center justify-center text-white shadow-md group-hover:scale-110 transition-transform duration-300`}>
-                        <service.icon size={18} />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-slate-800">{service.name}</h3>
-                        <p className="text-xs text-slate-400">{service.price}</p>
-                      </div>
-                    </div>
-                    <p className="text-sm text-slate-500 mb-4 leading-relaxed">{service.description}</p>
-                    <button
-                      onClick={() => {
-                        setNewService({ type: service.name.split(' ')[0], name: `My ${service.name.split(' ')[0]}` });
-                        setIsNewOrderOpen(true);
-                      }}
-                      className="w-full py-2 border-2 border-indigo-200 text-indigo-600 rounded-xl text-xs font-bold hover:bg-indigo-600 hover:text-white transition-all"
-                    >
-                      Deploy Now
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </section>
-
-          {/* Video & Testimonial (unchanged) */}
-          <motion.section 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-          >
-            <div className="lg:col-span-2 bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden group">
-              <div className="relative h-64 overflow-hidden bg-black/5">
-                <video
-                  ref={videoRef}
-                  src={videoUrl}
-                  poster="https://images.pexels.com/photos/2881230/pexels-photo-2881230.jpeg?auto=compress&cs=tinysrgb&w=800"
-                  className="w-full h-full object-cover"
-                  loop
-                  muted
-                  playsInline
-                />
-                <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center cursor-pointer hover:bg-white/30 transition-all">
-                    <Play size={24} className="text-white ml-1" />
-                  </div>
-                </div>
-              </div>
-              <div className="p-5">
-                <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                  Watch: CloudeData Infrastructure Tour
-                </h3>
-                <p className="text-sm text-slate-500 mt-1">See how we power thousands of businesses worldwide with our next-gen cloud platform.</p>
-              </div>
-            </div>
-            <motion.div 
-              initial={{ scale: 0.95, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-100 shadow-sm hover:shadow-md transition-all"
+          {/* ── Right Sidebar ── */}
+          <aside className="space-y-5">
+            {/* Quick Actions */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.34 }}
+              className="bg-white/70 backdrop-blur-xl rounded-2xl border border-white/60 shadow-sm p-5"
             >
-              <div className="flex items-center gap-1 mb-3">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={16} className="fill-amber-400 text-amber-400" />
+              <div className="flex items-center gap-2 mb-4">
+             
+                <h3 className="font-black text-[14px] text-slate-900">Quick Actions</h3>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { label: 'Deploy WP',   path: '/' },
+                  { label: 'Add Email',   path: '/emails' },
+                  { label: 'Billing-History',     path: '/payment-history' },
+                  { label: 'Support',     path: '/help' },
+                ].map(item => (
+                  <motion.button key={item.label} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+                    onClick={() => goTo(item.path)}
+                    className="flex items-center justify-center gap-2 p-3 rounded-xl bg-slate-50/70 hover:bg-white hover:shadow transition text-slate-700 text-[12px] font-bold">
+                    <ArrowUpRight size={14} className="text-indigo-500" />
+                    {item.label}
+                  </motion.button>
                 ))}
               </div>
-              <p className="text-slate-700 text-sm italic">
-                "The most reliable hosting provider I've ever used. Uptime is incredible and support responds within minutes."
-              </p>
-              <div className="mt-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center text-white font-bold">
-                  MK
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-slate-800">Michael K.</p>
-                  <p className="text-xs text-slate-400">CTO, TechStart</p>
-                </div>
-              </div>
             </motion.div>
-          </motion.section>
-        </main>
 
-        {/* Footer */}
-        <motion.footer 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="border-t border-slate-200/60 mt-12 pt-6 text-center"
-        >
-          <p className="text-xs text-slate-400 font-medium tracking-wide">
-            &copy; 2026 CloudeData Infrastructure • All Systems Operational • 99.99% Uptime SLA
-          </p>
-        </motion.footer>
-      </div>
-
-      {/* Deploy Modal (unchanged) */}
-      <AnimatePresence>
-        {isNewOrderOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-md z-50 flex items-center justify-center p-4"
-            onClick={() => setIsNewOrderOpen(false)}
-          >
+            {/* Recent Activity */}
             <motion.div
-              initial={{ scale: 0.9, y: 30, opacity: 0 }}
-              animate={{ scale: 1, y: 0, opacity: 1 }}
-              exit={{ scale: 0.9, y: 30, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              onClick={e => e.stopPropagation()}
-              className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.38 }}
+              className="bg-white/70 backdrop-blur-xl rounded-2xl border border-white/60 shadow-md p-5"
             >
-              <div className="flex justify-between items-center mb-5">
-                <div>
-                  <h3 className="text-xl font-bold text-slate-800">Deploy New Service</h3>
-                  <p className="text-sm text-slate-400 mt-0.5">Choose your infrastructure</p>
+              <div className="flex items-center gap-2 mb-4">
+  
+                <h3 className="font-black text-[14px] text-slate-900">Recent Activity</h3>
+              </div>
+              <div className="space-y-3">
+                {displayedActivities.map((a, i) => (
+                  <div key={a.id} className="flex items-start gap-3">
+                    <div className={cn('w-2 h-2 rounded-full mt-1 shrink-0', actDot[a.type] || 'bg-slate-300')} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[11px] font-semibold text-slate-700 leading-snug">{a.action}</p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="text-[10px] text-slate-400">{a.service}</span>
+                        <span className="text-[10px] text-slate-300">·</span>
+                        <span className="text-[10px] text-slate-400">{a.time}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {activities.length > 3 && (
+                <button
+                  onClick={() => setShowAllActivities(!showAllActivities)}
+                  className="mt-3 text-xs font-bold text-indigo-600 hover:text-indigo-700 transition w-full text-left"
+                >
+                  {showAllActivities ? 'Show less' : `View all (${activities.length})`}
+                </button>
+              )}
+            </motion.div>
+
+            {/* Email Summary with INR pricing if needed */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.42 }}
+              className="bg-white/70 backdrop-blur-xl rounded-2xl border border-white/60 shadow-sm p-5"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Mail size={15} className="text-sky-500" />
+                  <h3 className="font-black text-[14px] text-slate-900">Email Summary</h3>
                 </div>
-                <button onClick={() => setIsNewOrderOpen(false)} className="p-1 hover:bg-slate-100 rounded-lg transition-colors">
-                  <X size={20} className="text-slate-400" />
+                <button onClick={() => goTo('/email/new')} className="text-[11px] font-bold text-sky-600 hover:text-sky-700 flex items-center gap-1">
+                  <Plus size={12} /> Add
                 </button>
               </div>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-xs font-bold text-slate-600 uppercase tracking-wider">Service Type</label>
-                  <div className="grid grid-cols-3 gap-2 mt-1">
-                    {['WordPress', 'Domain', 'Cloud Hosting'].map(type => (
-                      <button
-                        key={type}
-                        onClick={() => setNewService({ ...newService, type })}
-                        className={`py-2 rounded-xl text-sm font-semibold transition-all ${
-                          newService.type === type 
-                            ? 'bg-indigo-600 text-white shadow-md' 
-                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                        }`}
-                      >
-                        {type}
-                      </button>
-                    ))}
+              <p className="text-[12px] text-slate-500 mb-2">
+                {emails.length} mailbox{emails.length !== 1 ? 'es' : ''}
+              </p>
+              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${Math.min(100, (emails.reduce((acc, e) => acc + e.used, 0) / (emails.reduce((acc, e) => acc + e.quota, 0) || 1)) * 100)}%` }}
+                  transition={{ duration: 0.7, ease: 'easeOut' }}
+                  className="h-full bg-gradient-to-r from-sky-400 to-sky-600 rounded-full"
+                />
+              </div>
+              <p className="text-[10px] text-slate-400 mt-1">
+                {emails.reduce((acc, e) => acc + e.used, 0).toFixed(1)} GB used of {emails.reduce((acc, e) => acc + e.quota, 0)} GB
+              </p>
+            </motion.div>
+          </aside>
+        </div>
+
+        {/* ─── New Services (prices in INR) ─── */}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+          <h2 className="font-black text-[15px] text-slate-900">Add New Services</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {popularServices.map((s, i) => (
+              <motion.div key={s.name}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.46 + i * 0.07, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{ y: -5 }}
+                className="bg-white/70 backdrop-blur-xl rounded-2xl border border-white/60 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col"
+              >
+                <div className={cn('h-1.5 w-full bg-gradient-to-r', s.color)} />
+                <div className="p-5 flex flex-col flex-1">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={cn('w-11 h-11 rounded-2xl bg-gradient-to-br flex items-center justify-center text-white shadow-sm', s.color)}>
+                      <s.icon size={20} />
+                    </div>
+                    <span className="text-[10px] font-bold bg-slate-100/80 text-slate-500 px-2 py-0.5 rounded-full">{s.tag}</span>
+                  </div>
+                  <h3 className="font-black text-slate-900 text-[15px]">{s.name}</h3>
+                  <p className="text-[12px] text-slate-500 mt-1.5 leading-relaxed flex-1">{s.desc}</p>
+                  <div className="mt-5 flex items-end justify-between">
+                    <div>
+                      <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Starting from</p>
+                      <p className="text-[20px] font-black text-slate-900 leading-none mt-0.5">{s.price}</p>
+                    </div>
+                    <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                      onClick={() => goTo(s.path)}
+                      className={cn('flex items-center gap-1.5 px-4 py-2 rounded-xl text-[13px] font-black text-white shadow-sm bg-gradient-to-r', s.color)}>
+                      Deploy <ArrowUpRight size={14} />
+                    </motion.button>
                   </div>
                 </div>
-                <div>
-                  <label className="text-xs font-bold text-slate-600 uppercase tracking-wider">Service Name</label>
-                  <input
-                    type="text"
-                    placeholder={newService.type === 'Domain' ? 'e.g., mysite.com' : 'e.g., Production API'}
-                    value={newService.name}
-                    onChange={(e) => setNewService({ ...newService, name: e.target.value })}
-                    onKeyDown={(e) => e.key === 'Enter' && handleAddService()}
-                    className="w-full mt-1 px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                  />
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleAddService}
-                  disabled={!newService.name.trim()}
-                  className="w-full py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-xl font-bold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Deploy Service
-                </motion.button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      </div>
 
-      <style>{`
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-      `}</style>
+      {/* ─── Footer ─── */}
+      <footer className="border-t border-slate-200 bg-white/60 backdrop-blur-md mt-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+          <span>&copy; 2026 CloudeData Infrastructure · All rights reserved.</span>
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />All Systems Operational</span>
+            <span>·</span>
+            <a href="#" className="hover:text-slate-600 transition">Privacy</a>
+            <a href="#" className="hover:text-slate-600 transition">Terms</a>
+            <a href="#" className="hover:text-slate-600 transition">Status</a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
