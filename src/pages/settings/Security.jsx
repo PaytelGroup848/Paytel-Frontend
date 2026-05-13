@@ -74,47 +74,6 @@ export default function Security() {
           </div>
         </form>
       </Card>
-
-      <Card>
-        <div className="text-lg font-semibold">Active sessions</div>
-        <div className="text-sm text-textMuted mt-1">Revoke sessions you don’t recognize.</div>
-
-        <div className="mt-4">
-          {sessions.isLoading ? (
-            <SkeletonList rows={4} />
-          ) : rows.length ? (
-            <div className="space-y-3">
-              {rows.map((s) => (
-                <div key={s.id} className="flex items-center justify-between gap-4 bg-white/5 border border-white/10 rounded-xl p-4">
-                  <div className="min-w-0">
-                    <div className="text-sm font-semibold">{s.ip || 'Unknown IP'}</div>
-                    <div className="text-xs text-textMuted mt-1 truncate">{s.userAgent || 'Unknown device'}</div>
-                    <div className="text-xs text-textMuted mt-1">
-                      {s.createdAt ? new Date(s.createdAt).toLocaleString() : ''}
-                    </div>
-                  </div>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    loading={deleteSession.isPending}
-                    onClick={async () => {
-                      try {
-                        await deleteSession.mutateAsync(s.id);
-                      } catch (_) {
-                        // toast in hook
-                      }
-                    }}
-                  >
-                    Revoke
-                  </Button>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-sm text-textMuted">No sessions found.</div>
-          )}
-        </div>
-      </Card>
     </div>
   );
 }
