@@ -10,14 +10,14 @@ import Spinner from "../../components/ui/Spinner";
 const TAX_RATE = 0.18;
 
 const PlanModal = ({ plan, onClose }) => {
-  const [duration, setDuration] = useState(48);
+  const [duration, setDuration] = useState(12);
   const navigate = useNavigate();
   const createOrder = useCreateOrder();
   const verifyPayment = useVerifyPayment();
 
   const isProcessing = createOrder.isPending || verifyPayment.isPending;
 
-  const handleCheckout = async () => {
+const handleCheckout = async () => {
     try {
       const isLoaded = await loadRazorpay();
       if (!isLoaded) {
@@ -25,17 +25,17 @@ const PlanModal = ({ plan, onClose }) => {
         return;
       }
 
+      //  Send WordPress-specific data
       const orderData = await createOrder.mutateAsync({
         planId: plan.id,
-        duration,
-        amount: Math.round(grandTotal * 100), // Convert to paisa
+        duration: duration,
       });
 
       const options = {
         key: orderData.keyId,
         amount: orderData.amount,
         currency: orderData.currency,
-        name: "Paytel SaaS",
+        name: "CloudData",
         description: `${plan.name} Plan - ${duration} Months`,
         order_id: orderData.orderId,
         handler: async (response) => {
@@ -44,20 +44,19 @@ const PlanModal = ({ plan, onClose }) => {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
+              planType: 'wordpress'
             });
             onClose();
             navigate("/websites/wordpress/paid");
           } catch (err) {
-            // Error handled by mutation onError
+            console.error('Verification error:', err);
           }
         },
         prefill: {
           name: "User",
           email: "user@example.com",
         },
-        theme: {
-          color: "#6366F1",
-        },
+        theme: { color: "#6366F1" },
         modal: {
           ondismiss: () => {
             toast.error("Payment cancelled");
@@ -68,7 +67,7 @@ const PlanModal = ({ plan, onClose }) => {
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err) {
-      // Error handled by mutation onError
+      console.error('Checkout error:', err);
     }
   };
 

@@ -148,7 +148,7 @@ export default function App() {
 
       {/* Protected routes */}
       <Route
-      // element={<ProtectedRoute />}
+      element={<ProtectedRoute />}
       >
         <Route element={<AppRoutes />}>
           <Route path="/hosting" element={<ManageHosting />} />

@@ -2,8 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, X } from 'lucide-react';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import InvoicePDF from './InvoicePDF';
+import { currencyToWords } from '../../utils/currencyToWords';
+import { useMe } from '../../hooks/useAuth';
+import { useProfile } from '../../hooks/useProfile';
 
-/* ---------- Indian Currency Formatter ---------- */
 const formatIndianCurrency = (amount) => {
   const num = parseFloat(amount);
   if (isNaN(num)) return '';
@@ -13,8 +17,14 @@ const formatIndianCurrency = (amount) => {
   });
 };
 
-/* ---------- Main Modal ---------- */
+
 const InvoiceDetailModal = ({ invoiceData, onClose }) => {
+    const LOGO_URL = '/FullCloudedatalogosvg.svg';
+    const userEmail = useMe()?.data?.email
+        const profile = useProfile()?.data;
+    const userName = profile?.firstName;
+    const userPhone = profile?.phone;
+
   if (!invoiceData) return null;
 
   const {
@@ -85,9 +95,9 @@ const InvoiceDetailModal = ({ invoiceData, onClose }) => {
           <td className="border border-black p-1 text-center">{sl}</td>
           <td className="border border-black p-1">
             <div className="font-semibold">{desc}</div>
-            {sub.length > 0 && sub.map((line, i) => (
+            {/* {sub.length > 0 && sub.map((line, i) => (
               <div key={i} style={{ fontSize: '10px', marginTop: '2px' }}>{line}</div>
-            ))}
+            ))} */}
           </td>
           <td className="border border-black p-1 text-center">{hsn}</td>
           <td className="border border-black p-1 text-center">{qty} {unit}</td>
@@ -170,17 +180,6 @@ const InvoiceDetailModal = ({ invoiceData, onClose }) => {
     </table>
   );
 
-  /* ---------- Download as PDF (print) ---------- */
-  const handleDownloadPDF = () => {
-    const w = window.open('', '_blank');
-    if (!w) {
-      alert('Pop-up blocked! Please allow pop-ups for this site.');
-      return;
-    }
-    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Tax Invoice</title></head><body>${document.getElementById('invoice-print-area')?.innerHTML}</body></html>`);
-    w.document.close();
-    w.print();
-  };
 
   /* ---------- Render ---------- */
   return ReactDOM.createPortal(
@@ -201,15 +200,28 @@ const InvoiceDetailModal = ({ invoiceData, onClose }) => {
         >
           {/* Toolbar */}
           <div className="flex items-center justify-between px-8 pt-6 pb-4 print:hidden">
-            <h2 className="text-2xl font-bold text-slate-800">Tax Invoice</h2>
+
+            <img src={LOGO_URL} className='h-20 w-40'/>
+            
             <div className="flex items-center gap-2">
-              <button
-                onClick={handleDownloadPDF}
-                className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-xl flex items-center gap-2 hover:bg-indigo-700 transition text-sm"
-              >
-                <Download size={16} /> Download PDF
-              </button>
-              <button onClick={onClose} className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
+             <PDFDownloadLink
+  document={<InvoicePDF 
+    invoiceData={invoiceData} 
+    userEmail={userEmail}
+    userName={userName}
+    userPhone={userPhone}
+  />}
+  fileName={`${invoiceNo}.pdf`}
+  className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-xl flex items-center gap-2 hover:bg-indigo-700 transition text-sm"
+>
+  {({ loading }) => (
+    <>
+      <Download size={16} />
+      {loading ? 'Generating PDF...' : 'Download PDF'}
+    </>
+  )}
+</PDFDownloadLink>
+              <button onClick={onClose} className="p-2 cursor-pointer rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
                 <X size={20} />
               </button>
             </div>
@@ -225,14 +237,16 @@ const InvoiceDetailModal = ({ invoiceData, onClose }) => {
             {/* Buyer */}
             <div className="mt-3 border border-black p-2">
               <div className="font-bold">Buyer (Bill to)</div>
-              {buyerName && <div className="font-bold">{buyerName}</div>}
-              {buyerAddress && <div>{buyerAddress}</div>}
+              {userName && <div className="font-bold">{userName}</div>}
+              {/* {buyerAddress && <div>{buyerAddress}</div>}
               {buyerGstin && <div>GSTIN/UIN : {buyerGstin}</div>}
               {(buyerStateName || buyerStateCode) && <div>State Name : {buyerStateName}{buyerStateCode ? ', Code : ' + buyerStateCode : ''}</div>}
-              {buyerContactPerson && <div>Contact person : {buyerContactPerson}</div>}
-              {buyerContact && <div>Contact : {buyerContact}</div>}
-              {buyerEmail && <div>E-Mail : {buyerEmail}</div>}
+              {buyerContactPerson && <div>Contact person : {buyerContactPerson}</div>} */}
+              {userPhone && <div>Contact : {userPhone}</div>}
+              {userEmail && <div>E-Mail : {userEmail}</div>}
             </div>
+
+            
 
             {/* Items Table */}
             <table className="w-full border border-black border-collapse mt-3" style={{ fontSize: '11px' }}>
@@ -242,8 +256,8 @@ const InvoiceDetailModal = ({ invoiceData, onClose }) => {
                   <th className="border border-black p-1" style={{ width: '32%' }}>Description of Services</th>
                   <th className="border border-black p-1 text-center" style={{ width: '12%' }}>HSN/SAC</th>
                   <th className="border border-black p-1 text-center" style={{ width: '10%' }}>Quantity</th>
-                  <th className="border border-black p-1 text-right" style={{ width: '16%' }}>Rate (Ind. of Tax)</th>
                   <th className="border border-black p-1 text-right" style={{ width: '12%' }}>Rate per</th>
+                  <th className="border border-black p-1 text-right" style={{ width: '16%' }}>Rate (Ind. of Tax)</th>
                   <th className="border border-black p-1 text-right" style={{ width: '12%' }}>Amount</th>
                 </tr>
               </thead>
@@ -262,7 +276,7 @@ const InvoiceDetailModal = ({ invoiceData, onClose }) => {
             {/* Amount in words */}
             <div className="mt-3">
               <div className="font-bold">Amount Chargable (in words)</div>
-              <div className="font-bold">{amountInWords}</div>
+              <div className="font-bold">{currencyToWords(amountInWords)}</div>
             </div>
 
             {/* Tax summary table */}
@@ -287,7 +301,7 @@ const InvoiceDetailModal = ({ invoiceData, onClose }) => {
 
             {/* Tax amount in words */}
             <div className="mt-2">
-              <strong>Tax Amount (in words) : {taxAmountInWords}</strong>
+              <strong>Tax Amount (in words) : {currencyToWords(taxAmountInWords)}</strong>
             </div>
 
             {/* PAN */}

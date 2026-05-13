@@ -22,14 +22,30 @@ export const useCalculatePrice = () =>
     mutationFn: (data) => api.post('/vps/calculate-price', data).then((r) => r.data?.data),
   });
 
+
+
 export const useCreateVpsOrder = () =>
   useMutation({
     mutationFn: async (data) => {
-      const response = await api.post('/vps/order', data);
+      console.log('🔍 useCreateVpsOrder received data:', data);
+      
+      //  Ensure payload has all required fields
+      const payload = {
+        planId: data.planId,
+        os: data.os,
+        tenureMonths: data.tenureMonths,
+        hostname: data.hostname,
+        rootPassword: data.rootPassword,
+        userEmail: data.userEmail
+      };
+      
+      console.log('📦 Sending VPS order payload:', payload);
+      
+      const response = await api.post('/vps/order', payload);
       return response.data?.data;
     },
     onError: (error) => {
-      console.error('Order error:', error); // Add this
+      console.error('Order error:', error);
       toast.error(error.response?.data?.message || 'Failed to create order');
     }
   });
