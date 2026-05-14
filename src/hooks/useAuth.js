@@ -31,7 +31,10 @@ export const useRegister = () =>
       return res.data?.data;
     },
     // onSuccess: () => toast.success('Account created. Please login.'),
-    onError: () => toast.error('Registration failed'),
+    onError: (error) => {
+      const message = error?.response?.data?.message || 'Registration failed';
+      toast.error(message);
+    },
   });
 
 export const useLogout = () => {
