@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 5,
+    marginBottom: 25,
   },
 
   /* ── Header: NO borders at all ── */
@@ -395,7 +395,7 @@ const InvoicePDF = ({ invoiceData, userEmail, userName, userPhone }) => {
         </View>
 
         {/* PAN */}
-        <View style={styles.mt30}>
+        <View style={styles.mt20}>
           <Text>
             <Text style={styles.bold}>Company's PAN : </Text>
             {pan}

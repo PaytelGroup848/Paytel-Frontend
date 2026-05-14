@@ -5,9 +5,7 @@ import InvoiceDetailModal from './InvoiceDetailModal';
 import { usePaymentsHistory, useInvoice } from "../../hooks/useBilling";
 
 
-/* ============================================================
-   Helper – format Indian Rupees
-   ============================================================ */
+
 const formatIndianCurrency = (amount) => {
   const num = parseFloat(amount);
   if (isNaN(num)) return '';
