@@ -252,7 +252,7 @@ const handleCheckout = async () => {
     }
     
     const orderData = await createOrder.mutateAsync({
-      planId: planId,
+      planId: plan.id || plan._id,
       planType: 'vps',
       os: { 
         name: selectedOs.name, 

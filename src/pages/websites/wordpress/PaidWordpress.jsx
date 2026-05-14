@@ -28,7 +28,6 @@ export default function PaidWordpress() {
   const { data: subscriptions, isLoading: loadingSubs } = useSubscription();
   const websites = data?.items || [];
 
-  // Protect route: Redirect if no active WordPress subscription
   useEffect(() => {
     if (!loadingSubs && subscriptions) {
       const subs = Array.isArray(subscriptions) ? subscriptions : [];
@@ -41,7 +40,6 @@ export default function PaidWordpress() {
 
   const isLoading = loadingInstances || loadingSubs;
 
-  // Calculate site limit from WordPress subscription
   const subs = Array.isArray(subscriptions) ? subscriptions : [];
   const wpSubscription = subs.find(s => s.type === 'wordpress' && s.status === 'Active');
   const siteLimit = wpSubscription?.maxInstances || wpSubscription?.planDetails?.maxInstances || 10;
@@ -61,7 +59,6 @@ export default function PaidWordpress() {
       <div className="flex pt-24">
         <main className="flex-1 p-6 sm:p-10 lg:p-16">
           <div className="max-w-6xl mx-auto">
-            {/* ── MNC HEADER ── */}
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
               <div className="space-y-2">
                 
@@ -84,26 +81,28 @@ export default function PaidWordpress() {
                     </div>
                   </div>
                 </div>
-                {hasReachedLimit ? (
-                  <button
-                    onClick={() => navigate("/websites/wordpress")}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl transition-all active:scale-95 text-xs font-bold flex items-center gap-2 ml-1"
-                  >
-                    Buy WordPress
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => navigate("/wordpress/domainEnter")}
-                    className="bg-slate-900 hover:bg-indigo-600 text-white px-5 py-2.5 rounded-xl transition-all active:scale-95 text-xs font-bold flex items-center gap-2 ml-1"
-                  >
-                    <Plus size={16} strokeWidth={2} />
-                    New Instance
-                  </button>
-                )}
+                 {filter === '' && (
+    hasReachedLimit ? (
+      <button
+        onClick={() => navigate("/websites/wordpress")}
+        className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl transition-all active:scale-95 text-xs font-bold flex items-center gap-2 ml-1"
+      >
+        Buy WordPress
+      </button>
+    ) : (
+      <button
+        onClick={() => navigate("/wordpress/domainEnter")}
+        className="bg-slate-900 hover:bg-indigo-600 text-white px-5 py-2.5 rounded-xl transition-all active:scale-95 text-xs font-bold flex items-center gap-2 ml-1"
+      >
+        <Plus size={16} strokeWidth={2} />
+        New Instance
+      </button>
+    )
+  )}
               </div>
             </header>
 
-            {/* ── SEARCH & FILTERS ── */}
+            
             <div className="flex flex-col sm:flex-row items-center gap-4 mb-8">
               <div className="flex-1 flex items-center gap-3 bg-white border border-slate-200 px-5 py-3 rounded-2xl focus-within:ring-2 focus-within:ring-indigo-200 transition-all w-full">
                 <Search size={18} className="text-slate-400" />
@@ -158,9 +157,7 @@ export default function PaidWordpress() {
   );
 }
 
-// ──────────────────────────────────────────────
-// Individual Website Row Component
-// ──────────────────────────────────────────────
+
 function WebsiteRow({ site }) {
   const navigate = useNavigate();
   const deleteMutation = useDeleteInstance();
@@ -223,17 +220,9 @@ function WebsiteRow({ site }) {
         </div>
       </div>
 
-      {/* Right: Action Buttons */}
+   
       <div className="flex items-center gap-2 mt-5 lg:mt-0">
-        {/* <button
-          onClick={() => navigate(`/wordpress/configure/${site.id || site._id}`)}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[11px] font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm"
-        >
-          <Settings size={13} />
-          Configure
-        </button> */}
 
-        {/* WordPress Admin Button – fixed */}
 
    <button
           onClick={handleDelete}
@@ -272,9 +261,7 @@ function WebsiteRow({ site }) {
   );
 }
 
-// ──────────────────────────────────────────────
-// Empty State Component
-// ──────────────────────────────────────────────
+
 function EmptyState() {
   const navigate = useNavigate();
   return (

@@ -41,6 +41,42 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 
+  /* ── Header: NO borders at all ── */
+  headerWrapper: {
+    flexDirection: 'row',
+    marginBottom: 8,
+  },
+  headerLeft: {
+    width: '40%',
+    paddingRight: 8,
+  },
+  headerRight: {
+    width: '60%',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    marginBottom: 3,
+  },
+  headerLabel: {
+    width: '50%',
+    fontWeight: 'bold',
+    fontSize: 10,
+  },
+  headerValue: {
+    width: '50%',
+    fontSize: 10,
+  },
+  companyName: {
+    fontWeight: 'bold',
+    fontSize: 11,
+    marginBottom: 3,
+  },
+  headerText: {
+    fontSize: 9,
+    marginBottom: 2,
+  },
+
+  /* ── Shared table styles (items / summary only) ── */
   table: {
     width: '100%',
     borderWidth: 1,
@@ -74,10 +110,15 @@ const styles = StyleSheet.create({
   mt10: {
     marginTop: 10,
   },
-
+mt20:{
+marginTop: 20,
+},
+mt30:{
+marginTop: 30,
+},
   buyerBox: {
-    borderWidth: 1,
-    borderColor: BORDER_COLOR,
+    // borderWidth: 1,
+    // borderColor: BORDER_COLOR,
     padding: 6,
     marginTop: 10,
   },
@@ -91,7 +132,7 @@ const styles = StyleSheet.create({
   },
 
   signatureBox: {
-    marginTop: 20,
+    marginTop: 25,
     alignItems: 'flex-end',
   },
 
@@ -109,11 +150,6 @@ const styles = StyleSheet.create({
 });
 
 const InvoicePDF = ({ invoiceData, userEmail, userName, userPhone }) => {
-
-    //  const userEmail = useMe()?.data?.email
-    //         const profile = useProfile()?.data;
-    //     const userName = profile?.firstName;
-    //     const userPhone = profile?.phone;
   if (!invoiceData) return null;
 
   const LOGO_URL = '/FullCloudedatalogosvg.svg';
@@ -165,275 +201,141 @@ const InvoicePDF = ({ invoiceData, userEmail, userName, userPhone }) => {
     declarationTerms = [],
     governmentLaw,
     jurisdiction,
-    
+
   } = invoiceData;
 
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        
+
         {/* Logo */}
         <Image src={LOGO_URL} style={styles.logo} />
 
         {/* Title */}
         <Text style={styles.title}>Tax Invoice</Text>
 
-        {/* HEADER TABLE */}
-        <View style={styles.table}>
-          
-          {/* Row 1 */}
-          <View style={styles.row}>
-            <View style={[styles.cell, { width: '34%' }]}>
-              <Text style={styles.bold}>{companyName}</Text>
-            </View>
+        {/* ──────────── HEADER – CLEAN, NO BORDERS ──────────── */}
+        <View style={styles.headerWrapper}>
 
-            <View style={[styles.cell, { width: '33%' }]}>
-              <Text style={styles.bold}>Invoice No.</Text>
-            </View>
-
-            <View style={[styles.cell, { width: '33%', borderRightWidth: 0 }]}>
-              <Text style={styles.bold}>Dated</Text>
-            </View>
-          </View>
-
-          {/* Row 2 */}
-          <View style={styles.row}>
-            <View style={[styles.cell, { width: '34%' }]}>
-              <Text>{addressLine1}</Text>
-            </View>
-
-            <View style={[styles.cell, { width: '33%' }]}>
-              <Text>{invoiceNo}</Text>
-            </View>
-
-            <View style={[styles.cell, { width: '33%', borderRightWidth: 0 }]}>
-              <Text>{date}</Text>
-            </View>
-          </View>
-
-          {/* Row 3 */}
-          <View style={styles.row}>
-            <View style={[styles.cell, { width: '34%' }]}>
-              <Text>{addressLine2}</Text>
-            </View>
-
-            <View style={[styles.cell, { width: '33%' }]}>
-              <Text>Delivery Note</Text>
-            </View>
-
-            <View style={[styles.cell, { width: '33%', borderRightWidth: 0 }]}>
-              <Text>Mode/Terms of Payment</Text>
-            </View>
-          </View>
-
-          {/* Row 4 */}
-          <View style={styles.row}>
-            <View style={[styles.cell, { width: '34%' }]}>
-              <Text>{cityPincode}</Text>
-            </View>
-
-            <View style={[styles.cell, { width: '33%' }]}>
-              <Text>{deliveryNote}</Text>
-            </View>
-
-            <View style={[styles.cell, { width: '33%', borderRightWidth: 0 }]}>
-              <Text>{modeOfPayment}</Text>
-            </View>
-          </View>
-
-          {/* Row 5 */}
-          <View style={styles.row}>
-            <View style={[styles.cell, { width: '34%' }]}>
-              <Text>GSTIN/UIN: {gstin}</Text>
-            </View>
-
-            <View style={[styles.cell, { width: '33%' }]}>
-              <Text>{referenceNo}</Text>
-            </View>
-
-            <View style={[styles.cell, { width: '33%', borderRightWidth: 0 }]}>
-              <Text>{otherReferences}</Text>
-            </View>
-          </View>
-
-          {/* Row 6 */}
-          <View style={styles.row}>
-            <View style={[styles.cell, { width: '34%' }]}>
-              <Text>
-                State Name: {stateName}, Code: {stateCode}
+          {/* LEFT: Company details – plain text */}
+          <View style={styles.headerLeft}>
+            <Text style={styles.companyName}>{companyName}</Text>
+            {addressLine1 && <Text style={styles.headerText}>{addressLine1}</Text>}
+            {addressLine2 && <Text style={styles.headerText}>{addressLine2}</Text>}
+            {cityPincode  && <Text style={styles.headerText}>{cityPincode}</Text>}
+            {gstin        && <Text style={styles.headerText}>GSTIN/UIN: {gstin}</Text>}
+            {(stateName || stateCode) && (
+              <Text style={styles.headerText}>
+                State Name: {stateName}{stateCode ? `, Code: ${stateCode}` : ''}
               </Text>
-            </View>
-
-            <View style={[styles.cell, { width: '33%' }]} />
-
-            <View style={[styles.cell, { width: '33%', borderRightWidth: 0 }]} />
+            )}
+            {cin     && <Text style={styles.headerText}>CIN: {cin}</Text>}
+            {email   && <Text style={styles.headerText}>E-Mail: {email}</Text>}
+            {website && <Text style={styles.headerText}>{website}</Text>}
           </View>
 
-          {/* Row 7 */}
-          <View style={styles.row}>
-            <View style={[styles.cell, { width: '34%' }]}>
-              <Text>CIN: {cin}</Text>
+          {/* RIGHT: Invoice meta – label / value pairs, no border */}
+          <View style={styles.headerRight}>
+
+            <View style={styles.headerRow}>
+              <Text style={styles.headerLabel}>Invoice No.</Text>
+              <Text style={styles.headerLabel}>Dated</Text>
+            </View>
+            <View style={[styles.headerRow, { marginBottom: 6 }]}>
+              <Text style={styles.headerValue}>{invoiceNo}</Text>
+              <Text style={styles.headerValue}>{date}</Text>
             </View>
 
-            <View style={[styles.cell, { width: '33%' }]} />
-
-            <View style={[styles.cell, { width: '33%', borderRightWidth: 0 }]} />
-          </View>
-
-          {/* Row 8 */}
-          <View style={styles.row}>
-            <View style={[styles.cell, { width: '34%' }]}>
-              <Text>E-Mail: {email}</Text>
+            {/* <View style={styles.headerRow}>
+              <Text style={styles.headerLabel}>Delivery Note</Text>
+              <Text style={styles.headerLabel}>Mode/Terms of Payment</Text>
+            </View> */}
+            <View style={[styles.headerRow, { marginBottom: 6 }]}>
+              <Text style={styles.headerValue}>{deliveryNote || ''}</Text>
+              <Text style={styles.headerValue}>{modeOfPayment || ''}</Text>
             </View>
 
-            <View style={[styles.cell, { width: '33%' }]} />
-
-            <View style={[styles.cell, { width: '33%', borderRightWidth: 0 }]} />
-          </View>
-
-          {/* Row 9 */}
-          <View style={styles.row}>
-            <View style={[styles.cell, { width: '34%', borderBottomWidth: 0 }]}>
-              <Text>{website}</Text>
+            {/* <View style={styles.headerRow}>
+              <Text style={styles.headerLabel}>Reference No. & Date.</Text>
+              <Text style={styles.headerLabel}>Other References</Text>
+            </View> */}
+            <View style={styles.headerRow}>
+              <Text style={styles.headerValue}>{referenceNo || ''}</Text>
+              <Text style={styles.headerValue}>{otherReferences || ''}</Text>
             </View>
 
-            <View style={[styles.cell, { width: '33%', borderBottomWidth: 0 }]} />
-
-            <View style={[styles.cell, { width: '33%', borderRightWidth: 0, borderBottomWidth: 0 }]} />
           </View>
         </View>
+        {/* ────────────────────────────────────────────────────── */}
 
         {/* BUYER */}
         <View style={styles.buyerBox}>
           <Text style={styles.bold}>Buyer (Bill to)</Text>
-
-          {userName && (
-            <Text style={styles.bold}>{userName}</Text>
-          )}
-
-          {/* {buyerAddress && <Text>{buyerAddress}</Text>}
-
-          {buyerGstin && (
-            <Text>GSTIN/UIN : {buyerGstin}</Text>
-          )}
-
-          {(buyerStateName || buyerStateCode) && (
-            <Text>
-              State Name : {buyerStateName}, Code : {buyerStateCode}
-            </Text>
-          )}
-
-          {buyerContactPerson && (
-            <Text>
-              Contact person : {buyerContactPerson}
-            </Text>
-          )} */}
-
-          {userPhone && (
-            <Text>Contact : {userPhone}</Text>
-          )}
-
-          {userEmail && (
-            <Text>E-Mail : {userEmail}</Text>
-          )}
+          {userName  && <Text style={styles.bold}>{userName}</Text>}
+          {userPhone && <Text>Contact : {userPhone}</Text>}
+          {userEmail && <Text>E-Mail : {userEmail}</Text>}
         </View>
 
         {/* ITEMS TABLE */}
-        <View style={[styles.table, styles.mt10]}>
-          
-          {/* Header */}
+        <View style={[styles.table, styles.mt20]}>
+
+          {/* Header row */}
           <View style={[styles.row, { backgroundColor: '#f3f4f6' }]}>
             {[
-              ['6%', 'Sl No'],
+              ['6%',  'Sl No'],
               ['32%', 'Description of Services'],
               ['12%', 'HSN/SAC'],
               ['10%', 'Quantity'],
-              ['16%', 'Rate (Ind. of Tax)'],
               ['12%', 'Rate per'],
+              ['16%', 'Rate (Ind. of Tax)'],
               ['12%', 'Amount'],
             ].map(([width, label], i) => (
               <View
                 key={i}
-                style={[
-                  styles.cell,
-                  {
-                    width,
-                    borderRightWidth: i === 6 ? 0 : 1,
-                  },
-                ]}
+                style={[styles.cell, { width, borderRightWidth: i === 6 ? 0 : 1 }]}
               >
-                <Text style={i !== 1 ? styles.center : styles.bold}>
-                  {label}
-                </Text>
+                <Text style={i !== 1 ? styles.center : styles.bold}>{label}</Text>
               </View>
             ))}
           </View>
 
-          {/* Rows */}
-          {items.map((item, idx) => (
-            <View style={styles.row} key={idx}>
-              
-              <View style={[styles.cell, { width: '6%' }]}>
-                <Text style={styles.center}>
-                  {item.slNo || idx + 1}
-                </Text>
-              </View>
+          {/* Data rows */}
+          {items.map((item, idx) => {
+            const sl     = item.slNo || idx + 1;
+            const desc   = item.description || '';
+            const hsn    = item.hsnSac || '';
+            const qty    = item.qty || 0;
+            const unit   = item.unit || '';
+            const rateEx = item.rateExclusive || item.rate || 0;
+            const rateIn = item.rateInclusive || 0;
+            const amt    = item.amount || 0;
 
-              <View style={[styles.cell, { width: '32%' }]}>
-                <Text style={styles.bold}>
-                  {item.description}
-                </Text>
-
-                {/* {item.subDetails?.map((sub, i) => (
-                  <Text
-                    key={i}
-                    style={{ fontSize: 8, marginTop: 2 }}
-                  >
-                    {sub}
-                  </Text>
-                ))} */}
+            return (
+              <View style={styles.row} key={idx}>
+                <View style={[styles.cell, { width: '6%' }]}>
+                  <Text style={styles.center}>{sl}</Text>
+                </View>
+                <View style={[styles.cell, { width: '32%' }]}>
+                  <Text style={styles.bold}>{desc}</Text>
+                </View>
+                <View style={[styles.cell, { width: '12%' }]}>
+                  <Text style={styles.center}>{hsn}</Text>
+                </View>
+                <View style={[styles.cell, { width: '10%' }]}>
+                  <Text style={styles.center}>{qty} {unit}</Text>
+                </View>
+                <View style={[styles.cell, { width: '12%' }]}>
+                  <Text style={styles.right}>{formatIndianCurrency(rateEx)}</Text>
+                </View>
+                <View style={[styles.cell, { width: '16%' }]}>
+                  <Text style={styles.right}>{rateIn ? formatIndianCurrency(rateIn) : ''}</Text>
+                </View>
+                <View style={[styles.cell, { width: '12%', borderRightWidth: 0 }]}>
+                  <Text style={styles.right}>{formatIndianCurrency(amt)}</Text>
+                </View>
               </View>
-
-              <View style={[styles.cell, { width: '12%' }]}>
-                <Text style={styles.center}>
-                  {item.hsnSac}
-                </Text>
-              </View>
-
-              <View style={[styles.cell, { width: '10%' }]}>
-                <Text style={styles.center}>
-                  {item.qty} {item.unit}
-                </Text>
-              </View>
-
-              <View style={[styles.cell, { width: '16%' }]}>
-                <Text style={styles.right}>
-                  {formatIndianCurrency(
-                    item.rateInclusive || item.rateInclusive
-                  )}
-                </Text>
-              </View>
-
-              <View style={[styles.cell, { width: '12%' }]}>
-                <Text style={styles.right}>
-                  {item.rateExclusive
-                    ? formatIndianCurrency(item.rate)
-                    : ''}
-                </Text>
-              </View>
-
-              <View
-                style={[
-                  styles.cell,
-                  { width: '12%', borderRightWidth: 0 },
-                ]}
-              >
-                <Text style={styles.right}>
-                  {formatIndianCurrency(item.amount)}
-                </Text>
-              </View>
-            </View>
-          ))}
+            );
+          })}
         </View>
 
         {/* TAX TYPE */}
@@ -445,21 +347,14 @@ const InvoicePDF = ({ invoiceData, userEmail, userName, userPhone }) => {
           </Text>
         </View>
 
-        {/* AMOUNT WORDS */}
+        {/* AMOUNT IN WORDS */}
         <View style={styles.mt10}>
-          <Text style={styles.bold}>
-            Amount Chargable (in words)
-          </Text>
-
-          <Text style={styles.bold}>
-            {/* currencyToWords(totalAmount) */}
-            {currencyToWords(amountInWords)}
-          </Text>
+          <Text style={styles.bold}>Amount Chargable (in words)</Text>
+          <Text style={styles.bold}>{currencyToWords(amountInWords)}</Text>
         </View>
 
         {/* SUMMARY TABLE */}
-        <View style={[styles.table, styles.mt10]}>
-          
+        <View style={[styles.table, styles.mt20]}>
           <View style={[styles.row, { backgroundColor: '#f3f4f6' }]}>
             {[
               ['25%', 'HSN/SAC'],
@@ -469,13 +364,7 @@ const InvoicePDF = ({ invoiceData, userEmail, userName, userPhone }) => {
             ].map(([width, label], i) => (
               <View
                 key={i}
-                style={[
-                  styles.cell,
-                  {
-                    width,
-                    borderRightWidth: i === 3 ? 0 : 1,
-                  },
-                ]}
+                style={[styles.cell, { width, borderRightWidth: i === 3 ? 0 : 1 }]}
               >
                 <Text style={styles.center}>{label}</Text>
               </View>
@@ -486,29 +375,14 @@ const InvoicePDF = ({ invoiceData, userEmail, userName, userPhone }) => {
             <View style={[styles.cell, { width: '25%' }]}>
               <Text>{items.map(i => i.hsnSac).join(', ')}</Text>
             </View>
-
             <View style={[styles.cell, { width: '25%' }]}>
-              <Text style={styles.right}>
-                {formatIndianCurrency(taxableValue)}
-              </Text>
+              <Text style={styles.right}>{formatIndianCurrency(taxableValue)}</Text>
             </View>
-
             <View style={[styles.cell, { width: '25%' }]}>
-              <Text style={styles.right}>
-                {formatIndianCurrency(taxAmount)}
-              </Text>
+              <Text style={styles.right}>{formatIndianCurrency(taxAmount)}</Text>
             </View>
-
-            <View
-              style={[
-                styles.cell,
-                { width: '25%', borderRightWidth: 0 },
-              ]}
-            >
-              <Text style={styles.right}>
-                
-                {formatIndianCurrency(totalAmount)}
-              </Text>
+            <View style={[styles.cell, { width: '25%', borderRightWidth: 0 }]}>
+              <Text style={styles.right}>{formatIndianCurrency(totalAmount)}</Text>
             </View>
           </View>
         </View>
@@ -521,7 +395,7 @@ const InvoicePDF = ({ invoiceData, userEmail, userName, userPhone }) => {
         </View>
 
         {/* PAN */}
-        <View style={styles.mt10}>
+        <View style={styles.mt30}>
           <Text>
             <Text style={styles.bold}>Company's PAN : </Text>
             {pan}
@@ -531,81 +405,41 @@ const InvoicePDF = ({ invoiceData, userEmail, userName, userPhone }) => {
         {/* DECLARATION */}
         <View style={styles.mt10}>
           <Text style={styles.bold}>Declaration</Text>
-
-          <Text style={[styles.bold, { marginTop: 4 }]}>
-            Terms & Conditions:
-          </Text>
-
+          <Text style={[styles.bold, { marginTop: 4 }]}>Terms & Conditions:</Text>
           <View style={styles.termsList}>
             {declarationTerms.map((term, idx) => (
-              <Text key={idx}>
-                • {term}
-              </Text>
+              <Text key={idx}>• {term}</Text>
             ))}
           </View>
-
           {governmentLaw && (
-            <Text style={{ marginTop: 6 }}>
-              {governmentLaw}
-            </Text>
+            <Text style={{ marginTop: 6 }}>{governmentLaw}</Text>
           )}
         </View>
 
         {/* BANK DETAILS */}
-        <View style={styles.mt10}>
-          <Text style={styles.bold}>
-            Company's Bank Details
-          </Text>
-
-          {bankAccountHolder && (
-            <Text>
-              Account Holder's Name : {bankAccountHolder}
-            </Text>
-          )}
-
-          {bankName && (
-            <Text>
-              Bank Name : {bankName}
-            </Text>
-          )}
-
-          {bankAccountNumber && (
-            <Text>
-              Account Number : {bankAccountNumber}
-            </Text>
-          )}
-
+        <View style={styles.mt20}>
+          <Text style={styles.bold}>Company's Bank Details</Text>
+          {bankAccountHolder && <Text>Account Holder's Name : {bankAccountHolder}</Text>}
+          {bankName          && <Text>Bank Name : {bankName}</Text>}
+          {bankAccountNumber && <Text>Account Number : {bankAccountNumber}</Text>}
           {(bankBranch || bankIFSC) && (
-            <Text>
-              Branch & IFSC Code : {bankBranch} {bankIFSC}
-            </Text>
+            <Text>Branch & IFSC Code : {bankBranch} {bankIFSC}</Text>
           )}
         </View>
 
         {/* SIGNATURE */}
         <View style={styles.signatureBox}>
-          <Text style={styles.bold}>
-            {companyName}
-          </Text>
-
+          <Text style={styles.bold}>{companyName}</Text>
           <View style={{ height: 35 }} />
-
-          <Text style={styles.bold}>
-            Authorised Signatory
-          </Text>
+          <Text style={styles.bold}>Authorised Signatory</Text>
         </View>
 
         {/* FOOTER */}
         <View style={styles.footer}>
           {jurisdiction && (
-            <Text style={styles.bold}>
-              SUBJECT TO {jurisdiction} JURISDICTION
-            </Text>
+            <Text style={styles.bold}>SUBJECT TO {jurisdiction} JURISDICTION</Text>
           )}
-
-          <Text>
-            This is a Computer Generated Invoice
-          </Text>
+          <Text>This is a Computer Generated Invoice</Text>
         </View>
 
       </Page>
