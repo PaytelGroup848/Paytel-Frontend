@@ -72,70 +72,9 @@ export default function VpsPlans() {
         <div className="absolute bottom-[10%] left-[10%] w-[30%] h-[30%] bg-cyan-100/20 rounded-full blur-[90px] animate-pulse" style={{ animationDelay: '4s' }} />
       </div>
 
-        <section className="px-4 py-6 md:px-10 md:py-10 relative z-10">
-              <div className="max-w-7xl mx-auto rounded-[2.5rem] overflow-hidden relative shadow-2xl">
-                <video
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="absolute inset-0 w-full h-full object-cover"
-                  poster="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1600&auto=format"
-                >
-                  <source src="https://assets.mixkit.co/videos/preview/mixkit-futuristic-data-center-with-servers-3909-large.mp4" type="video/mp4" />
-                </video>
-                <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/70 to-transparent" />
-                
-                <div className="relative grid md:grid-cols-2 items-center">
-                  <div className="p-10 md:p-20 z-10">
-                    <div className="flex items-center gap-3 mb-6">
-                      <span className="bg-indigo-600 w-2 h-2 rounded-full animate-pulse"></span>
-                      <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em]">CloudeData Infrastructure</span>
-                    </div>
-                    <h1 className="text-4xl md:text-6xl font-black text-white leading-[1.1] mb-6">
-                      Scalable VPS <br /> <span className="text-indigo-500">Infrastructure</span>
-                    </h1>
-                    <p className="text-slate-400 text-sm md:text-base mb-10 max-w-sm leading-relaxed font-medium">
-                      Experience high-performance NVMe storage with 99.9% uptime. Optimized for high-traffic applications and scale.
-                    </p>
-                    <div className="flex flex-wrap gap-4">
-                      <button onClick={() => pricingRef.current.scrollIntoView({ behavior: 'smooth' })} className="bg-indigo-600 text-white px-10 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-white hover:text-slate-950 transition-all shadow-xl shadow-indigo-500/10">
-                        Deploy Server
-                      </button>
-                      <div className="flex items-center gap-3 text-white/50 text-xs font-bold px-4">
-                        <ShieldCheck size={18} className="text-emerald-500"/> Enterprise Grade Security
-                      </div>
-                    </div>
-                  </div>
-                  <div className="hidden md:block"></div>
-                </div>
-              </div>
-            </section>
+        
 
-<section className="max-w-7xl mx-auto px-6 py-12 relative z-10">
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
-          {[
-            { icon: Zap, title: "Instant Setup", desc: "Servers are provisioned in less than 60 seconds.", color: "from-yellow-500 to-orange-500" },
-            { icon: Activity, title: "99.9% Uptime", desc: "Enterprise SLA guaranteed for all business nodes.", color: "from-emerald-500 to-teal-500" },
-            { icon: Globe, title: "Global Network", desc: "Choose from 15+ locations worldwide for low latency.", color: "from-blue-500 to-cyan-500" },
-            { icon: Lock, title: "DDoS Protection", desc: "Included as standard on all our cloud instances.", color: "from-purple-500 to-pink-500" }
-          ].map((feature, i) => (
-            <motion.div key={i} variants={itemVariants} whileHover={{ y: -5 }} className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-lg transition-all">
-              <div className={`w-12 h-12 bg-gradient-to-br ${feature.color} rounded-xl flex items-center justify-center mb-4 text-white shadow-md`}>
-                <feature.icon size={22} />
-              </div>
-              <h4 className="font-black text-slate-800 mb-2">{feature.title}</h4>
-              <p className="text-sm text-slate-500 font-medium leading-relaxed">{feature.desc}</p>
-            </motion.div>
-          ))}
-        </motion.div>
-      </section>
+
 
 
 <div className="max-w-[1600px] mx-auto px-6 py-16">

@@ -174,7 +174,8 @@ export default function App() {
           <Route path="/websites/php" element={<PHP_Page />} />
           <Route path="/websites/php/paid" element={<PaidPhpDashboard />} />
           <Route path="/websites/nodejs" element={<NodeJS_Page />} />
-          <Route path="/vps" element={<VpsPlans />} />
+          <Route path="/vps" element={<VPS_Page/>} />
+          <Route path = "/vps/plans" element={<VpsPlans />} />
           <Route path='/vps/paid' element={<VPSDashboard />} />
           <Route path="/vps/paid/:id" element={<VpsDashboard />} />
           <Route path="/vps/support/docs" element={<VPSDocumentation />} />
@@ -182,7 +183,7 @@ export default function App() {
           <Route path="vps/backup/snapshot" element={<SnapShot />} />
           <Route path="/vps/OSPanel" element={<OSPanel />} />
           <Route path="/vps/setting" element={<VpsSettings />} />
-          <Route path="/help" element={<GetHelp />} />
+          <Route path="/Support" element={<GetHelp />} />
           <Route path="/vps/:id/docker" element={<Docker />} />
           <Route path="/vps/security/firewall" element={<firewall />} />
 
