@@ -44,7 +44,6 @@ import GetHelp from "./pages/vps/slidebar/support/GetHelp";
 import AnalyticsPage from './pages/wordpress/AnalyticsPage';
 import BackupsPage from './pages/wordpress/BackupsPage';
 import { useMe } from "./hooks/useAuth";
-import VPS_Page from './pages/vps/VpsPage';
 import VPSDashboard from './pages/vps/vps_paid';
 import VpsDashboard from "./pages/vps/slidebar/vpsOverview";
 import { EmailPlanProvider } from './pages/Emails/EmailPlanContext';
@@ -149,7 +148,7 @@ export default function App() {
 
       {/* Protected routes */}
       <Route
-      element={<ProtectedRoute />}
+      // element={<ProtectedRoute />}
       >
         <Route element={<AppRoutes />}>
           <Route path="/hosting" element={<ManageHosting />} />
@@ -174,7 +173,7 @@ export default function App() {
           <Route path="/websites/php" element={<PHP_Page />} />
           <Route path="/websites/php/paid" element={<PaidPhpDashboard />} />
           <Route path="/websites/nodejs" element={<NodeJS_Page />} />
-          <Route path="/vps" element={<VPS_Page/>} />
+          <Route path="/vps" element={<VpsPlans/>} />
           <Route path = "/vps/plans" element={<VpsPlans />} />
           <Route path='/vps/paid' element={<VPSDashboard />} />
           <Route path="/vps/paid/:id" element={<VpsDashboard />} />
