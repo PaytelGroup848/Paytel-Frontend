@@ -15,7 +15,7 @@ import {
   ArrowRight,
   Server,
 } from "lucide-react";
-import Plans from "../../plans/Plan"; // adjust path as needed
+import Plans from "../../plans/Plan"; 
 
 export default function Wordpress_Page() {
   const containerVariants = {
@@ -160,7 +160,6 @@ export default function Wordpress_Page() {
                 icon: Zap,
                 title: "LiteSpeed Caching",
                 desc: "4× faster page loads with server‑side caching and automatic optimization.",
-                // Local image – ensure /public/images/features/caching.jpg exists
                 image: "/LiteSpeed Caching.png"
               },
               {
