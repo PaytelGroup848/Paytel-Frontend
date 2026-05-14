@@ -246,13 +246,13 @@ const Dashboard = () => {
               {getGreeting()}, {user.name}
             </h1>
             <p className="text-sm text-slate-500 mt-0.5">
-              Your cloud command center — everything at a glance.
+              Your cloud command center - everything at a glance.
             </p>
           </div>
          
         </motion.div>
 
-        {/* ─── Stats (with INR cost) ─── */}
+      
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           <StatCard label="Total Services" value={activeServices.length} icon={Layers}      accent="bg-indigo-500"  sub="Across all regions" delay={0} />
           <StatCard label="Active"         value={activeCount}          icon={CheckCircle} accent="bg-emerald-500" sub="Fully operational"  delay={0.07} />
@@ -405,7 +405,7 @@ const Dashboard = () => {
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { label: 'Deploy WP',   path: '/' },
+                  { label: 'Deploy WP',   path: '/websites/wordpress' },
                   { label: 'Add Email',   path: '/emails' },
                   { label: 'Billing-History',     path: '/payment-history' },
                   { label: 'Support',     path: '/help' },

@@ -141,10 +141,7 @@ export default function VpsPlans() {
 <div className="max-w-[1600px] mx-auto px-6 py-16">
   {/* Header */}
   <div className="text-center mb-16">
-    <div className="inline-flex items-center gap-2 bg-white shadow-sm border border-slate-100 px-6 py-2 rounded-full mb-6">
-      <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-      <span className="uppercase text-xs font-bold tracking-[2px] text-slate-500">Premium Cloud Infrastructure</span>
-    </div>
+    
     <h1 className="text-5xl md:text-6xl font-bold tracking-tighter text-slate-900 mb-4">
       Choose Your <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">VPS Power</span>
     </h1>
@@ -228,10 +225,6 @@ export default function VpsPlans() {
                 {/* Plan Name */}
                 <div className="mb-3">
                   <h3 className="text-base font-black text-slate-800 tracking-tight truncate">{plan.name}</h3>
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Global Deploy</span>
-                  </div>
                 </div>
 
                 {/* Price */}

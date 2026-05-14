@@ -59,7 +59,7 @@ import EmailLogsPage from './pages/Emails/EmailLogsPage';
 import DkimPage from './pages/Emails/EmailDkim';
 import Docker from './pages/vps/Docker';
 import { setNavigator } from './utils/navigation';
-import LoadingScreen from './pages/loading';
+// import LoadingScreen from './pages/loading';
 
 import SubscriptionsPage from './pages/billing/Subscription';
 import PaymentHistoryPage from "./pages/billing/paymentHistory";
@@ -202,7 +202,7 @@ export default function App() {
 
           <Route path = "/billing/subscriptions" element={<SubscriptionsPage/>} />
           <Route path  ='/payment-history' element = {<PaymentHistoryPage/>} />
-          <Route path ='/loading' element={<LoadingScreen/>}/>
+          {/* <Route path ='/loading' element={<LoadingScreen/>}/> */}
 
 
 
