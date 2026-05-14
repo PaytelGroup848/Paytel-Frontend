@@ -7,10 +7,10 @@ import {
 
 import toast from 'react-hot-toast';
 import { FaUbuntu } from "react-icons/fa";
-import { SiAlmalinux } from "react-icons/si";
+import { SiAlmalinux, SiRockylinux } from "react-icons/si";
 import { FcDebian } from "react-icons/fc";
 import { FaCentos } from "react-icons/fa";
-
+import { useRebuildVps } from '../../../hooks/useVps';
 
 const OS_OPTIONS = [
   { name: 'Ubuntu 22.04', template: 'ubuntu-22.04-x86_64', icon: <FaUbuntu className='text-orange-600'/>, osid: 1199 },
@@ -19,8 +19,8 @@ const OS_OPTIONS = [
       { name: 'AlmaLinux 10', template: 'almalinux-10.1-x86_64	', icon: <SiAlmalinux className='text-blue-600' />, osid: 1205 },
         { name: 'Debian 11 Bullseye', template: 'debian-11-x86_64', icon: <FcDebian/>, osid: 983 },
   { name: 'Debian 12 Bookworm', template: 'debian-12-x86_64', icon: <FcDebian/>, tag: 'Stable', osid: 1057 },
-  { name: 'CentOS Stream 8', template: 'centos-8.10-x86_64', icon: <FaCentos className='text-purple-600'/> , osid: 1166 },
-    { name: 'CentOS Stream 10', template: 'centos-10.0-x86_64', icon: <FaCentos className='text-purple-600'/> , osid: 1181 },
+    { name: 'CentOS Stream 10', template: 'centos-10.0-x86_64', icon: <FaCentos className='text-purple-500'/> , osid: 1181 },
+    { name: 'Rocky 9', template: 'rocky-10.1-x86_64', icon: <SiRockylinux className='text-[#10b981]'/> , osid: 1208 },
 ];
 
 const StepIndicator = ({ currentStep, steps }) => (
@@ -359,6 +359,7 @@ export default function RebuildVpsModal({ isOpen, onClose, instance, onRebuildCo
   const [confirmPassword, setConfirmPassword] = useState('');
   const [progress, setProgress] = useState(0);
   const [isRebuilding, setIsRebuilding] = useState(false);
+  const rebuildVps = useRebuildVps();
 
   const osType = instance?.planId?.type
  {console.log("this is my type", osType)}
@@ -409,7 +410,7 @@ export default function RebuildVpsModal({ isOpen, onClose, instance, onRebuildCo
     
     console.log('Rebuilding VPS with data:', rebuildData);
     
-    await rebuildVps.mutateAsync(rebuildData);
+    await rebuildVps?.mutateAsync(rebuildData);
     
     clearInterval(interval);
     setProgress(100);
