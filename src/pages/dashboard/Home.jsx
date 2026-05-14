@@ -207,8 +207,8 @@ const Dashboard = () => {
 
   /* popular services — prices in INR */
   const popularServices = useMemo(() => [
-    { name: 'WordPress Hosting', desc: 'Managed WordPress with auto‑updates, daily backups & CDN.', price: '₹61/mo', icon: Server, color: 'from-blue-500 to-blue-600', tag: 'Most Popular', path: '/plans/wordpress' },
-    { name: 'Business Email',   desc: 'Professional mailboxes @yourdomain, spam protection & webmail.', price: '₹399/mo', icon: Mail, color: 'from-sky-500 to-sky-600', tag: 'Essential',   path: '/plans/email' },
+    { name: 'WordPress Hosting', desc: 'Managed WordPress with auto‑updates, daily backups & CDN.', price: '₹61/mo', icon: Server, color: 'from-blue-500 to-blue-600', tag: 'Most Popular', path: '/websites/wordpress' },
+    { name: 'Business Email',   desc: 'Professional mailboxes @yourdomain, spam protection & webmail.', price: 'Coming Soon', icon: Mail, color: 'from-sky-500 to-sky-600', tag: 'Coming Soon', path: null },
     { name: 'VPS Cloud Servers',desc: 'NVMe SSD, dedicated IP, root access, DDoS protection.', price: '₹899/mo', icon: LifeBuoy, color: 'from-emerald-500 to-emerald-600', tag: 'Best Value',  path: '/plans/vps' },
   ], []);
 
@@ -403,10 +403,9 @@ const Dashboard = () => {
               <div className="grid grid-cols-2 gap-2">
                 {[
                   { label: 'Deploy WP',   path: '/websites/wordpress' },
-                  { label: 'Buy VPS',   path: '/vps' },
-                  { label: 'Subscriptions',     path: '/billing/subscriptions' },
+                  { label: 'Add Email',   path: '/emails' },
                   { label: 'Billing-History',     path: '/payment-history' },
-                  
+                  { label: 'Support',     path: '/Support' },
                 ].map(item => (
                   <motion.button key={item.label} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
                     onClick={() => goTo(item.path)}
