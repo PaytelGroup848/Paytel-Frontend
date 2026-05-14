@@ -84,8 +84,9 @@ export const useCreateOrder = () =>
   });
 
 // VERIFY PAYMENT - Supports both VPS and WordPress
-export const useVerifyPayment = () =>
-  useMutation({
+export const useVerifyPayment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: ({ razorpay_order_id, razorpay_payment_id, razorpay_signature, instanceId, planType }) =>
       api.post('/billing/verify-payment', {
         razorpay_order_id,
@@ -94,10 +95,17 @@ export const useVerifyPayment = () =>
         instanceId,
         planType
       }).then(r => r.data?.data),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       toast.success('Payment verified successfully! Service activated.');
+      // Invalidate and refetch immediately to ensure dashboard doesn't redirect
+      await queryClient.invalidateQueries({ queryKey: ['billing', 'subscriptions'] });
+      await queryClient.refetchQueries({ queryKey: ['billing', 'subscriptions'] });
+      queryClient.invalidateQueries({ queryKey: ['billing', 'payments'] });
+      queryClient.invalidateQueries({ queryKey: ['billing', 'invoices'] });
     },
     onError: (error) => {
+      console.error('Verification error:', error);
       toast.error(error.response?.data?.message || 'Payment verification failed');
-    },
+    }
   });
+};
