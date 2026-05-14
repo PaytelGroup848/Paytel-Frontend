@@ -83,7 +83,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
     { label: 'Emails', to: '/emails', icon: Mails },
     ...(isSuperAdmin ? [{ label: 'SuperAdmin', to: '/superadmin/servers', icon: Zap }] : []),
     { label: 'Settings', to: '/settings', icon: Settings },
-    { label: 'Support', to: '/help', icon: LifeBuoy },
+    { label: 'Support', to: '/Support', icon: LifeBuoy },
   ];
   const handleMouseEnter = () => {
     if (isDesktop) setHovered(true);

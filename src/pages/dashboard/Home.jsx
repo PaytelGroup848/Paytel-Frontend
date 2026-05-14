@@ -408,7 +408,7 @@ const Dashboard = () => {
                   { label: 'Deploy WP',   path: '/' },
                   { label: 'Add Email',   path: '/emails' },
                   { label: 'Billing-History',     path: '/payment-history' },
-                  { label: 'Support',     path: '/help' },
+                  { label: 'Support',     path: '/Support' },
                 ].map(item => (
                   <motion.button key={item.label} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
                     onClick={() => goTo(item.path)}

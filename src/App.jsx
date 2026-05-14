@@ -59,7 +59,7 @@ import EmailLogsPage from './pages/Emails/EmailLogsPage';
 import DkimPage from './pages/Emails/EmailDkim';
 import Docker from './pages/vps/Docker';
 import { setNavigator } from './utils/navigation';
-import LoadingScreen from './pages/loading';
+// import LoadingScreen from './pages/loading';
 
 import SubscriptionsPage from './pages/billing/Subscription';
 import PaymentHistoryPage from "./pages/billing/paymentHistory";
@@ -174,7 +174,8 @@ export default function App() {
           <Route path="/websites/php" element={<PHP_Page />} />
           <Route path="/websites/php/paid" element={<PaidPhpDashboard />} />
           <Route path="/websites/nodejs" element={<NodeJS_Page />} />
-          <Route path="/vps" element={<VpsPlans />} />
+          <Route path="/vps" element={<VPS_Page/>} />
+          <Route path = "/vps/plans" element={<VpsPlans />} />
           <Route path='/vps/paid' element={<VPSDashboard />} />
           <Route path="/vps/paid/:id" element={<VpsDashboard />} />
           <Route path="/vps/support/docs" element={<VPSDocumentation />} />
@@ -182,7 +183,7 @@ export default function App() {
           <Route path="vps/backup/snapshot" element={<SnapShot />} />
           <Route path="/vps/OSPanel" element={<OSPanel />} />
           <Route path="/vps/setting" element={<VpsSettings />} />
-          <Route path="/help" element={<GetHelp />} />
+          <Route path="/Support" element={<GetHelp />} />
           <Route path="/vps/:id/docker" element={<Docker />} />
           <Route path="/vps/security/firewall" element={<firewall />} />
 
@@ -202,7 +203,7 @@ export default function App() {
 
           <Route path = "/billing/subscriptions" element={<SubscriptionsPage/>} />
           <Route path  ='/payment-history' element = {<PaymentHistoryPage/>} />
-          <Route path ='/loading' element={<LoadingScreen/>}/>
+          {/* <Route path ='/loading' element={<LoadingScreen/>}/> */}
 
 
 

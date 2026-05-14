@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   HelpCircle, BookOpen, Video, FileText, MessageCircle,
   ChevronDown, Send, CheckCircle, AlertCircle, Clock, ExternalLink,
   LifeBuoy, Headphones, MessageSquare, Plus, X, Paperclip,
-  Ticket, Archive, Reply, Check, Upload, Sparkles, Trash2
+  Ticket, Reply, Upload, Sparkles
 } from 'lucide-react';
 
 const GetHelp = () => {
@@ -17,33 +17,37 @@ const GetHelp = () => {
   const [formStatus, setFormStatus] = useState({ type: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Tickets are stored in localStorage so they persist for this user (demo)
+  const [tickets, setTickets] = useState(() => {
+    const saved = localStorage.getItem('userSupportTickets');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('userSupportTickets', JSON.stringify(tickets));
+  }, [tickets]);
+
   // Pagination
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Sample tickets (initial data)
-  const [tickets, setTickets] = useState([
-    { id: '#YCB-973938', subject: 'rapidssl certificate issue', department: 'Technical', status: 'Closed', lastUpdated: '18/02/2026 (04:56)', customerReplied: false },
-    { id: '#LYV-811895', subject: 'delhilutyens.com not working', department: 'Technical', status: 'Closed', lastUpdated: '04/02/2026 (10:06)', customerReplied: false },
-    { id: '#MOF-687994', subject: 'technical support number', department: 'Technical', status: 'Closed', lastUpdated: '16/12/2025 (06:29)', customerReplied: false },
-    { id: '#NWZ-931923', subject: 'transfer domain', department: 'Technical', status: 'Closed', lastUpdated: '13/12/2025 (04:18)', customerReplied: false },
-    { id: '#IFL-578932', subject: 'new service and domain transfer', department: 'Technical', status: 'Closed', lastUpdated: '09/12/2025 (11:30)', customerReplied: false },
-    { id: '#LLN-413828', subject: 'connect domain', department: 'General Enquiries', status: 'Closed', lastUpdated: '15/08/2025 (19:33)', customerReplied: false },
-    { id: '#OPN-001', subject: 'Cannot access VPS console', department: 'Technical', status: 'Open', lastUpdated: '20/04/2026 (14:22)', customerReplied: false },
-    { id: '#ANS-002', subject: 'Invoice overdue but paid', department: 'Billing', status: 'Answered', lastUpdated: '19/04/2026 (09:15)', customerReplied: false },
-  ]);
-
-  // Stats
+  // Stats – user's own tickets only
   const openTickets = tickets.filter(t => t.status === 'Open').length;
   const answeredTickets = tickets.filter(t => t.status === 'Answered').length;
   const customerReplyTickets = tickets.filter(t => t.customerReplied === true).length;
   const closedTickets = tickets.filter(t => t.status === 'Closed').length;
 
-  // Pagination logic
   const totalEntries = tickets.length;
   const totalPages = Math.ceil(totalEntries / entriesPerPage);
   const startIndex = (currentPage - 1) * entriesPerPage;
   const currentTickets = tickets.slice(startIndex, startIndex + entriesPerPage);
+
+  // Ensure current page stays valid after deletions
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [tickets, totalPages, currentPage]);
 
   const generateTicketId = () => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -68,6 +72,7 @@ const GetHelp = () => {
   const handleSubmitTicket = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 800));
     const newTicketId = generateTicketId();
     const newTicket = {
@@ -99,17 +104,6 @@ const GetHelp = () => {
           }
         : ticket
     ));
-  };
-
-  const deleteTicket = (ticketId) => {
-    if (window.confirm('Are you sure you want to delete this ticket? This action cannot be undone.')) {
-      setTickets(prev => prev.filter(ticket => ticket.id !== ticketId));
-      // Adjust pagination if current page becomes empty
-      const newTotalPages = Math.ceil((tickets.length - 1) / entriesPerPage);
-      if (currentPage > newTotalPages && newTotalPages > 0) {
-        setCurrentPage(newTotalPages);
-      }
-    }
   };
 
   const faqs = [
@@ -155,7 +149,7 @@ const GetHelp = () => {
           <p className="mt-4 text-slate-600 text-lg max-w-2xl mx-auto">Track your tickets, get instant answers, or raise a new request. Our support team is here for you.</p>
         </div>
 
-        {/* Stats Cards */}
+        {/* Stats Cards – User's own tickets */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-10">
           {[
             { label: 'Open', value: openTickets, icon: Clock, gradient: 'from-amber-400 to-amber-600' },
@@ -184,11 +178,11 @@ const GetHelp = () => {
           ))}
         </div>
 
-        {/* Raise Ticket Button + Table Header */}
+        {/* My Tickets Header & Raise Button */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
             <Ticket size={24} className="text-indigo-600" />
-            Support Tickets
+            My Tickets
           </h2>
           <motion.button
             whileHover={{ scale: 1.02 }}
@@ -200,7 +194,7 @@ const GetHelp = () => {
           </motion.button>
         </div>
 
-        {/* Tickets Table */}
+        {/* Tickets Table – only user's tickets */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden mb-12">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -215,70 +209,78 @@ const GetHelp = () => {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 <AnimatePresence>
-                  {currentTickets.map((ticket, idx) => (
-                    <motion.tr
-                      key={ticket.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: idx * 0.03 }}
-                      className="hover:bg-slate-50/80 transition group"
-                    >
-                      <td className="px-6 py-4 font-medium text-slate-700">{ticket.department}</td>
-                      <td className="px-6 py-4">
-                        <span className="font-mono text-xs text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">{ticket.id}</span>
-                        <span className="ml-2 text-slate-700">{ticket.subject}</span>
-                      </td>
-                      <td className="px-6 py-4">{getStatusBadge(ticket.status)}</td>
-                      <td className="px-6 py-4 text-slate-500 text-xs">{ticket.lastUpdated}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          {ticket.status !== 'Closed' && (
-                            <button
-                              onClick={() => addCustomerReply(ticket.id)}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition"
-                              title="Add Customer Reply"
-                            >
-                              <MessageSquare size={14} /> Reply
-                            </button>
-                          )}
-                          <button
-                            onClick={() => deleteTicket(ticket.id)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition"
-                            title="Delete Ticket"
-                          >
-                            <Trash2 size={14} /> Delete
-                          </button>
+                  {currentTickets.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
+                        <div className="flex flex-col items-center gap-2">
+                          <Ticket size={32} className="text-slate-300" />
+                          <p className="font-medium">No tickets yet</p>
+                          <p className="text-xs">Click "Raise a Ticket" to get started.</p>
                         </div>
                       </td>
-                    </motion.tr>
-                  ))}
+                    </tr>
+                  ) : (
+                    currentTickets.map((ticket, idx) => (
+                      <motion.tr
+                        key={ticket.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.03 }}
+                        className="hover:bg-slate-50/80 transition group"
+                      >
+                        <td className="px-6 py-4 font-medium text-slate-700">{ticket.department}</td>
+                        <td className="px-6 py-4">
+                          <span className="font-mono text-xs text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">{ticket.id}</span>
+                          <span className="ml-2 text-slate-700">{ticket.subject}</span>
+                        </td>
+                        <td className="px-6 py-4">{getStatusBadge(ticket.status)}</td>
+                        <td className="px-6 py-4 text-slate-500 text-xs">{ticket.lastUpdated}</td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            {ticket.status !== 'Closed' && (
+                              <button
+                                onClick={() => addCustomerReply(ticket.id)}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition"
+                                title="Add Reply (mark as customer replied)"
+                              >
+                                <MessageSquare size={14} /> Reply
+                              </button>
+                            )}
+                            {/* No delete button for normal users */}
+                          </div>
+                        </td>
+                      </motion.tr>
+                    ))
+                  )}
                 </AnimatePresence>
               </tbody>
             </table>
           </div>
 
           {/* Pagination */}
-          <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <span className="text-slate-600">Show</span>
-              <select
-                value={entriesPerPage}
-                onChange={(e) => { setEntriesPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                className="border border-slate-300 rounded-lg px-3 py-1 text-sm focus:ring-indigo-500 bg-white"
-              >
-                <option>10</option><option>25</option><option>50</option>
-              </select>
-              <span className="text-slate-600">entries</span>
+          {tickets.length > 0 && (
+            <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-slate-600">Show</span>
+                <select
+                  value={entriesPerPage}
+                  onChange={(e) => { setEntriesPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                  className="border border-slate-300 rounded-lg px-3 py-1 text-sm focus:ring-indigo-500 bg-white"
+                >
+                  <option>10</option><option>25</option><option>50</option>
+                </select>
+                <span className="text-slate-600">entries</span>
+              </div>
+              <div className="text-slate-600">
+                Showing {startIndex+1} to {Math.min(startIndex+entriesPerPage, totalEntries)} of {totalEntries} entries
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => setCurrentPage(p => Math.max(1, p-1))} disabled={currentPage === 1} className="px-3 py-1 rounded-lg border bg-white disabled:opacity-50">Previous</button>
+                <span className="px-3 py-1 bg-indigo-600 text-white rounded-lg">{currentPage}</span>
+                <button onClick={() => setCurrentPage(p => Math.min(totalPages, p+1))} disabled={currentPage === totalPages} className="px-3 py-1 rounded-lg border bg-white disabled:opacity-50">Next</button>
+              </div>
             </div>
-            <div className="text-slate-600">
-              Showing {startIndex+1} to {Math.min(startIndex+entriesPerPage, totalEntries)} of {totalEntries} entries
-            </div>
-            <div className="flex gap-2">
-              <button onClick={() => setCurrentPage(p => Math.max(1, p-1))} disabled={currentPage === 1} className="px-3 py-1 rounded-lg border bg-white disabled:opacity-50">Previous</button>
-              <span className="px-3 py-1 bg-indigo-600 text-white rounded-lg">{currentPage}</span>
-              <button onClick={() => setCurrentPage(p => Math.min(totalPages, p+1))} disabled={currentPage === totalPages} className="px-3 py-1 rounded-lg border bg-white disabled:opacity-50">Next</button>
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Combined FAQ + Knowledge Base */}
@@ -338,7 +340,7 @@ const GetHelp = () => {
         </div>
       </div>
 
-      {/* Raise Ticket Modal - Enhanced & Larger */}
+      {/* Raise Ticket Modal – unchanged, user-focused */}
       <AnimatePresence>
         {isModalOpen && (
           <motion.div
@@ -355,7 +357,6 @@ const GetHelp = () => {
               className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
               onClick={e => e.stopPropagation()}
             >
-              {/* Modal Header */}
               <div className="sticky top-0 bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-center">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl shadow-md">
@@ -374,60 +375,39 @@ const GetHelp = () => {
                 </button>
               </div>
 
-              {/* Modal Body */}
               <form onSubmit={handleSubmitTicket} className="p-8 space-y-6">
-                {/* Name & Email */}
                 <div className="grid grid-cols-2 gap-5">
                   <div className="space-y-1.5">
                     <label className="block text-sm font-semibold text-slate-700">Full Name <span className="text-red-500">*</span></label>
                     <input
-                      type="text"
-                      name="name"
-                      required
-                      value={ticketForm.name}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-base"
+                      type="text" name="name" required value={ticketForm.name} onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 transition text-base"
                       placeholder="John Doe"
                     />
                   </div>
                   <div className="space-y-1.5">
                     <label className="block text-sm font-semibold text-slate-700">Email Address <span className="text-red-500">*</span></label>
                     <input
-                      type="email"
-                      name="email"
-                      required
-                      value={ticketForm.email}
-                      onChange={handleInputChange}
+                      type="email" name="email" required value={ticketForm.email} onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 transition text-base"
                       placeholder="john@example.com"
                     />
                   </div>
                 </div>
 
-                {/* Subject */}
                 <div className="space-y-1.5">
                   <label className="block text-sm font-semibold text-slate-700">Subject <span className="text-red-500">*</span></label>
                   <input
-                    type="text"
-                    name="subject"
-                    required
-                    value={ticketForm.subject}
-                    onChange={handleInputChange}
+                    type="text" name="subject" required value={ticketForm.subject} onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 transition text-base"
                     placeholder="Brief description of the issue"
                   />
                 </div>
 
-                {/* Department & Priority */}
                 <div className="grid grid-cols-2 gap-5">
                   <div className="space-y-1.5">
                     <label className="block text-sm font-semibold text-slate-700">Department</label>
-                    <select
-                      name="department"
-                      value={ticketForm.department}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 text-base bg-white"
-                    >
+                    <select name="department" value={ticketForm.department} onChange={handleInputChange} className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 text-base bg-white">
                       <option>Technical Support</option>
                       <option>Billing & Accounts</option>
                       <option>General Enquiries</option>
@@ -435,12 +415,7 @@ const GetHelp = () => {
                   </div>
                   <div className="space-y-1.5">
                     <label className="block text-sm font-semibold text-slate-700">Priority</label>
-                    <select
-                      name="priority"
-                      value={ticketForm.priority}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 text-base bg-white"
-                    >
+                    <select name="priority" value={ticketForm.priority} onChange={handleInputChange} className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 text-base bg-white">
                       <option>Low</option>
                       <option>Medium</option>
                       <option>High</option>
@@ -448,21 +423,15 @@ const GetHelp = () => {
                   </div>
                 </div>
 
-                {/* Message */}
                 <div className="space-y-1.5">
                   <label className="block text-sm font-semibold text-slate-700">Message <span className="text-red-500">*</span></label>
                   <textarea
-                    name="message"
-                    rows={5}
-                    required
-                    value={ticketForm.message}
-                    onChange={handleInputChange}
+                    name="message" rows={5} required value={ticketForm.message} onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 transition text-base resize-none"
                     placeholder="Please provide detailed information about your issue..."
                   />
                 </div>
 
-                {/* Attachments - Premium */}
                 <div className="space-y-1.5">
                   <label className="block text-sm font-semibold text-slate-700">Attachments (Optional)</label>
                   <div className="border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center hover:border-indigo-400 transition-colors cursor-pointer bg-slate-50/50">
@@ -492,7 +461,6 @@ const GetHelp = () => {
                   )}
                 </div>
 
-                {/* Status Message */}
                 {formStatus.message && (
                   <div className={`flex items-center gap-2 p-4 rounded-xl text-sm ${formStatus.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
                     {formStatus.type === 'success' ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
@@ -500,7 +468,6 @@ const GetHelp = () => {
                   </div>
                 )}
 
-                {/* Actions */}
                 <div className="flex gap-4 pt-4">
                   <button
                     type="button"
