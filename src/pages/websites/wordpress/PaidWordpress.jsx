@@ -12,10 +12,12 @@ import {
   ExternalLink,
   Shield,
   Zap,
-  Globe
+  Globe,
+  Delete,
+  Trash
 } from 'lucide-react';
 import SkeletonTable from '../../../components/ui/skeletons/SkeletonTable';
-import { useInstances } from '../../../hooks/useWordPress';
+import { useInstances, useDeleteInstance } from '../../../hooks/useWordPress';
 import { useSubscription } from '../../../hooks/useBilling';
 
 export default function PaidWordpress() {
@@ -39,7 +41,13 @@ export default function PaidWordpress() {
 
   const isLoading = loadingInstances || loadingSubs;
 
-  const siteLimit = 10;
+  // Calculate site limit from WordPress subscription
+  const subs = Array.isArray(subscriptions) ? subscriptions : [];
+  const wpSubscription = subs.find(s => s.type === 'wordpress' && s.status === 'Active');
+  const siteLimit = wpSubscription?.maxInstances || wpSubscription?.planDetails?.maxInstances || 10;
+  const hasReachedLimit = websites.length >= siteLimit;
+
+  const siteLimitOrReached = hasReachedLimit;
 
   const filteredWebsites = useMemo(() => {
     return websites.filter((site) => {
@@ -72,17 +80,26 @@ export default function PaidWordpress() {
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-black text-slate-800">{websites.length} <span className="text-slate-300">/</span> {siteLimit}</span>
                     <div className="w-10 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-indigo-600 rounded-full" style={{ width: `${(websites.length / siteLimit) * 100}%` }}></div>
+                      <div className="h-full bg-indigo-600 rounded-full" style={{ width: `${Math.min((websites.length / siteLimit) * 100, 100)}%` }}></div>
                     </div>
                   </div>
                 </div>
-                <button
-                  onClick={() => navigate("/wordpress/domainEnter")}
-                  className="bg-slate-900 hover:bg-indigo-600 text-white px-5 py-2.5 rounded-xl transition-all active:scale-95 text-xs font-bold flex items-center gap-2 ml-1"
-                >
-                  <Plus size={16} strokeWidth={2} />
-                  New Instance
-                </button>
+                {hasReachedLimit ? (
+                  <button
+                    onClick={() => navigate("/websites/wordpress")}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl transition-all active:scale-95 text-xs font-bold flex items-center gap-2 ml-1"
+                  >
+                    Buy WordPress
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => navigate("/wordpress/domainEnter")}
+                    className="bg-slate-900 hover:bg-indigo-600 text-white px-5 py-2.5 rounded-xl transition-all active:scale-95 text-xs font-bold flex items-center gap-2 ml-1"
+                  >
+                    <Plus size={16} strokeWidth={2} />
+                    New Instance
+                  </button>
+                )}
               </div>
             </header>
 
@@ -146,6 +163,7 @@ export default function PaidWordpress() {
 // ──────────────────────────────────────────────
 function WebsiteRow({ site }) {
   const navigate = useNavigate();
+  const deleteMutation = useDeleteInstance();
   const isActive = site.status === 'active';
   const isProvisioning = site.status === 'provisioning';
   const isPending = site.status === 'pending_dns';
@@ -165,6 +183,16 @@ function WebsiteRow({ site }) {
     if (!site.domain) return;
     const adminUrl = `https://${site.domain}/wp-admin`;
     window.open(adminUrl, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm(`Are you sure you want to delete ${site.domain || 'this instance'}? This action cannot be undone.`)) {
+      try {
+        await deleteMutation.mutateAsync(site.id || site._id);
+      } catch (err) {
+        console.error('Delete error:', err);
+      }
+    }
   };
 
   return (
@@ -206,6 +234,15 @@ function WebsiteRow({ site }) {
         </button> */}
 
         {/* WordPress Admin Button – fixed */}
+
+   <button
+          onClick={handleDelete}
+          disabled={deleteMutation.isPending}
+          className="px-4 py-1.5 border border-red-500 text-red-500 cursor-pointer rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed">
+          {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+          <Trash size={11} />
+        </button>
+
         <button
           onClick={openWpAdmin}
           disabled={!isActive}

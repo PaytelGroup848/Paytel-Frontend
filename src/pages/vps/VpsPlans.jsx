@@ -164,10 +164,6 @@ export default function VpsPlans() {
                 {/* Plan Name */}
                 <div className="mb-3">
                   <h3 className="text-base font-black text-slate-800 tracking-tight truncate">{plan.name}</h3>
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Global Deploy</span>
-                  </div>
                 </div>
 
                 {/* Price */}

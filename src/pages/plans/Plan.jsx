@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { X, Check, Sparkles, Shield, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCreateOrder, useVerifyPayment, useBillingPlans } from "../../hooks/useBilling";
+import { useMe } from "../../hooks/useAuth";
+import { useProfile } from "../../hooks/useProfile";
 import { loadRazorpay } from "../../utils/razorpay";
 import toast from "react-hot-toast";
 import Spinner from "../../components/ui/Spinner";
@@ -15,6 +17,8 @@ const PlanModal = ({ plan, onClose }) => {
   const navigate = useNavigate();
   const createOrder = useCreateOrder();
   const verifyPayment = useVerifyPayment();
+  const { data: user } = useMe();
+  const { data: profile } = useProfile();
 
   const isProcessing = createOrder.isPending || verifyPayment.isPending;
 
@@ -28,15 +32,16 @@ const handleCheckout = async () => {
 
       //  Send WordPress-specific data
       const orderData = await createOrder.mutateAsync({
-        planId: plan.id,
+        planId: plan.id || plan._id,
         duration: duration,
+        userEmail: user?.email,
       });
 
       const options = {
         key: orderData.keyId,
         amount: orderData.amount,
         currency: orderData.currency,
-        name: "CloudData",
+        name: "CloudeData",
         description: `${plan.name} Plan - ${duration} Months`,
         order_id: orderData.orderId,
         handler: async (response) => {
@@ -54,8 +59,9 @@ const handleCheckout = async () => {
           }
         },
         prefill: {
-          name: "User",
-          email: "user@example.com",
+          name: profile ? `${profile.firstName} ${profile.lastName}` : (user?.name || "User"),
+          email: user?.email || "",
+          contact: profile?.phone || "",
         },
         theme: { color: "#6366F1" },
         modal: {
