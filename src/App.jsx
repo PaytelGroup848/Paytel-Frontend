@@ -206,7 +206,7 @@ export default function App() {
           {/* <Route path ='/loading' element={<LoadingScreen/>}/> */}
 
 
-          <Route path = "/Soon" element ={<ComingSoon/>} />
+          <Route path = "/comingsoon" element ={<ComingSoon/>} />
           <Route path="/home" element={<Home />} />
         </Route>
       </Route>

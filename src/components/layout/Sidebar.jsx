@@ -47,6 +47,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
 
   const navItems = [
     { label: 'Home', to: '/home', icon: LayoutDashboard },
+    { label: 'working', to: '/comingsoon', icon: LayoutDashboard },
     {
       label: 'Websites',
       icon: Globe,
