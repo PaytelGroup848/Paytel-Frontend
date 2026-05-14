@@ -127,8 +127,7 @@ const Dashboard = () => {
           { id: 1, type: 'WordPress',  name: 'Portfolio Site',     status: 'Active',     ip: '103.21.45.12', expiry: 'Oct 2026', region: 'Asia Pacific', price: 799 },
           { id: 2, type: 'WordPress',  name: 'Marketing Blog',     status: 'Active',     ip: '103.21.45.13', expiry: 'Dec 2026', region: 'Asia Pacific', price: 799 },
           { id: 3, type: 'VPS Cloud',  name: 'Backend API Server',  status: 'Processing', ip: 'Pending',      expiry: 'Nov 2026', region: 'US East', price: 1599 },
-          { id: 4, type: 'Email',      name: 'Company Emails',     status: 'Active',     ip: '192.168.1.1',  expiry: 'Jan 2027', region: 'Global', price: 399 },
-          // ... you can push many more items to test pagination
+          // Email service removed from Active Infrastructure
         ],
       });
       setEmails([
@@ -153,7 +152,7 @@ const Dashboard = () => {
   const [filterType, setFilterType] = useState('All');
   const [showAllActivities, setShowAllActivities] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8; // limit rows per page for huge datasets
+  const itemsPerPage = 8;
 
   /* ── derived data ── */
   const activeServices = useMemo(() => user.activeServices || [], [user.activeServices]);
@@ -168,14 +167,12 @@ const Dashboard = () => {
   const allTypes = useMemo(() => ['All', ...Array.from(new Set(activeServices.map(s => s.type)))], [activeServices]);
   const filtered = filterType === 'All' ? activeServices : activeServices.filter(s => s.type === filterType);
 
-  /* pagination logic */
   const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
   const displayedServices = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     return filtered.slice(start, start + itemsPerPage);
   }, [filtered, currentPage, itemsPerPage]);
 
-  /* reset page when filter changes */
   useEffect(() => {
     setCurrentPage(1);
   }, [filterType]);
@@ -210,13 +207,13 @@ const Dashboard = () => {
 
   /* popular services — prices in INR */
   const popularServices = useMemo(() => [
-    { name: 'WordPress Hosting', desc: 'Managed WordPress with auto‑updates, daily backups & CDN.', price: '₹799/mo', icon: Server, color: 'from-blue-500 to-blue-600', tag: 'Most Popular', path: '/plans/wordpress' },
-    { name: 'Business Email',   desc: 'Professional mailboxes @yourdomain, spam protection & webmail.', price: '₹399/mo', icon: Mail, color: 'from-sky-500 to-sky-600', tag: 'Essential',   path: '/plans/email' },
-    { name: 'VPS Cloud Servers',desc: 'NVMe SSD, dedicated IP, root access, DDoS protection.', price: '₹1,599/mo', icon: LifeBuoy, color: 'from-emerald-500 to-emerald-600', tag: 'Best Value',  path: '/plans/vps' },
+    { name: 'WordPress Hosting', desc: 'Managed WordPress with auto‑updates, daily backups & CDN.', price: '₹799/mo', icon: Server, color: 'from-blue-500 to-blue-600', tag: 'Most Popular', path: '/websites/wordpress' },
+    { name: 'Business Email',   desc: 'Professional mailboxes @yourdomain, spam protection & webmail.', price: 'Coming Soon', icon: Mail, color: 'from-sky-500 to-sky-600', tag: 'Coming Soon', path: null },
+    { name: 'VPS Cloud Servers',desc: 'NVMe SSD, dedicated IP, root access, DDoS protection.', price: '₹1,599/mo', icon: LifeBuoy, color: 'from-emerald-500 to-emerald-600', tag: 'Best Value',  path: '/vps' },
   ], []);
 
   const goTo = useCallback((path) => {
-    window.location.href = path; // replace with your router
+    if (path) window.location.href = path; // replace with your router
   }, []);
 
   /* activity dot colors */
@@ -249,15 +246,16 @@ const Dashboard = () => {
               Your cloud command center - everything at a glance.
             </p>
           </div>
-         
+          {/* No billing/monthly cost display as before */}
         </motion.div>
 
-      
+        {/* Stats Row */}
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           <StatCard label="Total Services" value={activeServices.length} icon={Layers}      accent="bg-indigo-500"  sub="Across all regions" delay={0} />
           <StatCard label="Active"         value={activeCount}          icon={CheckCircle} accent="bg-emerald-500" sub="Fully operational"  delay={0.07} />
           <StatCard label="Inactive"       value={inactiveCount}        icon={LifeBuoy}    accent="bg-amber-500"   sub="Needs attention"    delay={0.14} />
-          <StatCard label="Email Accounts" value={emails.length}        icon={Mail}        accent="bg-sky-500"     sub="Business mailboxes" delay={0.28} />
+          {/* ─── Email stat card COMMENTED OUT ─── */}
+          {/* <StatCard label="Email Accounts" value={emails.length} icon={Mail} accent="bg-sky-500" sub="Business mailboxes" delay={0.28} /> */}
         </div>
 
         {/* ─── Main Content ─── */}
@@ -362,7 +360,7 @@ const Dashboard = () => {
                   </table>
                 </div>
 
-                {/* Pagination controls (scalable) */}
+                {/* Pagination controls */}
                 {totalPages > 1 && (
                   <div className="px-6 py-3 border-t border-slate-100/60 flex items-center justify-between text-xs">
                     <span className="text-slate-400">
@@ -400,7 +398,6 @@ const Dashboard = () => {
               className="bg-white/70 backdrop-blur-xl rounded-2xl border border-white/60 shadow-sm p-5"
             >
               <div className="flex items-center gap-2 mb-4">
-             
                 <h3 className="font-black text-[14px] text-slate-900">Quick Actions</h3>
               </div>
               <div className="grid grid-cols-2 gap-2">
@@ -428,7 +425,6 @@ const Dashboard = () => {
               className="bg-white/70 backdrop-blur-xl rounded-2xl border border-white/60 shadow-md p-5"
             >
               <div className="flex items-center gap-2 mb-4">
-  
                 <h3 className="font-black text-[14px] text-slate-900">Recent Activity</h3>
               </div>
               <div className="space-y-3">
@@ -456,7 +452,7 @@ const Dashboard = () => {
               )}
             </motion.div>
 
-            {/* Email Summary with INR pricing if needed */}
+            {/* Email Summary – bar replaced by Coming Soon */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -472,20 +468,11 @@ const Dashboard = () => {
                   <Plus size={12} /> Add
                 </button>
               </div>
-              <p className="text-[12px] text-slate-500 mb-2">
-                {emails.length} mailbox{emails.length !== 1 ? 'es' : ''}
-              </p>
-              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${Math.min(100, (emails.reduce((acc, e) => acc + e.used, 0) / (emails.reduce((acc, e) => acc + e.quota, 0) || 1)) * 100)}%` }}
-                  transition={{ duration: 0.7, ease: 'easeOut' }}
-                  className="h-full bg-gradient-to-r from-sky-400 to-sky-600 rounded-full"
-                />
+              {/* Bar & usage text replaced by Coming Soon */}
+              <div className="flex flex-col items-center justify-center py-6 text-slate-400 bg-slate-50/80 rounded-xl">
+                <Mail size={28} className="text-sky-300 mb-2" />
+                <span className="text-sm font-bold text-slate-500">Coming Soon</span>
               </div>
-              <p className="text-[10px] text-slate-400 mt-1">
-                {emails.reduce((acc, e) => acc + e.used, 0).toFixed(1)} GB used of {emails.reduce((acc, e) => acc + e.quota, 0)} GB
-              </p>
             </motion.div>
           </aside>
         </div>
@@ -493,7 +480,7 @@ const Dashboard = () => {
         {/* ─── New Services (prices in INR) ─── */}
         <section>
           <div className="flex items-center gap-2 mb-4">
-          <h2 className="font-black text-[15px] text-slate-900">Add New Services</h2>
+            <h2 className="font-black text-[15px] text-slate-900">Add New Services</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {popularServices.map((s, i) => (
@@ -514,17 +501,24 @@ const Dashboard = () => {
                   </div>
                   <h3 className="font-black text-slate-900 text-[15px]">{s.name}</h3>
                   <p className="text-[12px] text-slate-500 mt-1.5 leading-relaxed flex-1">{s.desc}</p>
-                  <div className="mt-5 flex items-end justify-between">
-                    <div>
-                      <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Starting from</p>
-                      <p className="text-[20px] font-black text-slate-900 leading-none mt-0.5">{s.price}</p>
+                  {s.path ? (
+                    <div className="mt-5 flex items-end justify-between">
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Starting from</p>
+                        <p className="text-[20px] font-black text-slate-900 leading-none mt-0.5">{s.price}</p>
+                      </div>
+                      <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                        onClick={() => goTo(s.path)}
+                        className={cn('flex items-center gap-1.5 px-4 py-2 rounded-xl text-[13px] font-black text-white shadow-sm bg-gradient-to-r', s.color)}>
+                        Deploy <ArrowUpRight size={14} />
+                      </motion.button>
                     </div>
-                    <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                      onClick={() => goTo(s.path)}
-                      className={cn('flex items-center gap-1.5 px-4 py-2 rounded-xl text-[13px] font-black text-white shadow-sm bg-gradient-to-r', s.color)}>
-                      Deploy <ArrowUpRight size={14} />
-                    </motion.button>
-                  </div>
+                  ) : (
+                    /* Email card: Coming Soon instead of price & button */
+                    <div className="mt-5 flex items-center justify-center bg-slate-100/80 rounded-xl py-4">
+                      <span className="text-sm font-bold text-slate-500">Coming Soon</span>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             ))}
