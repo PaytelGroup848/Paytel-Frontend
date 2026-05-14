@@ -12,14 +12,15 @@ import {
   Zap,
   LayoutDashboard,
   LogOut,
-  LifeBuoy ,
-   Mails,              
-   Cloud
+  LifeBuoy,
+  Mails,
+  SeparatorVertical,
+  Cloud
 } from 'lucide-react';
 import { useSubscription } from '../../hooks/useBilling';
 import { useLogout, useMe } from '../../hooks/useAuth';
 
-export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }) {
+export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } }) {
   const [hovered, setHovered] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
@@ -44,39 +45,46 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => {} }
   const isSuperAdmin = Roles === "superadmin";
 
 
-const navItems = [
-  { label: 'Home', to: '/home', icon: LayoutDashboard },
-  {
-    label: 'Websites',
-    icon: Globe,
-    children: [
-      { label: 'WordPress Plans', to: '/websites/wordpress' },
-      ...(hasWordPress ? [{ label: 'WordPress Dashboard', to: '/websites/wordpress/paid' }] : []),
-      { label: 'PHP/HTML', to: '/websites/php' },
-      { label: 'NodeJS App', to: '/websites/nodejs' },
-    ].filter(Boolean), // filter out any falsy values
-  },
-  {
-    label: 'Cloud VPS',
-    icon: Cloud,
-    children: [
-      { label: 'VPS Plans', to: '/vps' },
-      ...(hasVps ? [{ label: 'VPS Dashboard', to: '/vps/paid' }] : []),
-    ].filter(Boolean),
-  },
-  {
-    label: 'Billing',
-    icon: CreditCard,
-    children: [
-      { label: 'Subscriptions', to: '/billing/subscriptions' }, // fixed typo "blling"
-      { label: 'Payment-history', to: '/payment-history' },
-    ],
-  },
-  { label: 'Emails', to: '/emails', icon: Mails },
-  ...(isSuperAdmin ? [{ label: 'SuperAdmin', to: '/superadmin/servers', icon: Zap }] : []),
-  { label: 'Settings', to: '/settings', icon: Settings },
-  { label: 'Support', to: '/help', icon: LifeBuoy },
-];
+  const navItems = [
+    { label: 'Home', to: '/home', icon: LayoutDashboard },
+    {
+      label: 'Websites',
+      icon: Globe,
+      children: [
+        { label: 'WordPress', to: '/websites/wordpress' },
+        ...(hasWordPress ? [{ label: 'WordPress Dashboard', to: '/websites/wordpress/paid' }] : []),
+        { label: 'PHP/HTML', to: '/websites/php' },
+        { label: 'NodeJS App', to: '/websites/nodejs' },
+      ].filter(Boolean), // filter out any falsy values
+    },
+    {
+      label: 'Cloud VPS',
+      icon: Cloud,
+      children: [
+        { label: 'VPS Plans', to: '/vps' },
+        ...(hasVps ? [{ label: 'VPS Dashboard', to: '/vps/paid' }] : []),
+      ].filter(Boolean),
+    },
+    {
+      label: 'Software', icon: SeparatorVertical, children: [
+        { label: 'Education ERP', to: 'software/education' },
+        { label: 'Resturants Management', to: 'software/restaurants' },
+      ]
+    },
+
+    {
+      label: 'Billing',
+      icon: CreditCard,
+      children: [
+        { label: 'Subscriptions', to: '/billing/subscriptions' },
+        { label: 'Payment-history', to: '/payment-history' },
+      ],
+    },
+    { label: 'Emails', to: '/emails', icon: Mails },
+    ...(isSuperAdmin ? [{ label: 'SuperAdmin', to: '/superadmin/servers', icon: Zap }] : []),
+    { label: 'Settings', to: '/settings', icon: Settings },
+    { label: 'Support', to: '/help', icon: LifeBuoy },
+  ];
   const handleMouseEnter = () => {
     if (isDesktop) setHovered(true);
   };
@@ -102,7 +110,7 @@ const navItems = [
         )}
       </AnimatePresence>
 
-     
+
 
       <motion.aside
         onMouseEnter={handleMouseEnter}
@@ -117,26 +125,26 @@ const navItems = [
         {/* Brand Section with Close Button on Mobile */}
         <div className="h-20 flex items-center px-5 justify-between overflow-hidden border-b border-slate-100/80">
           <div className="flex items-center gap-3 cursor-pointer min-w-max">
-           
-          <div className="relative flex items-center justify-center w-12 h-12">
-  <motion.img
-    src="/Cloudedatalogo.svg"
-    alt="Cloude Data Logo"
-    className="
+
+            <div className="relative flex items-center justify-center w-12 h-12">
+              <motion.img
+                src="/Cloudedatalogo.svg"
+                alt="Cloude Data Logo"
+                className="
       w-10 h-10
       object-contain
       drop-shadow-xl
       group-hover:scale-110
       transition-transform duration-300
     "
-    animate={{ y: [0, -2, 0] }}
-    transition={{
-      repeat: Infinity,
-      duration: 3,
-      ease: "easeInOut",
-    }}
-  />
-</div>
+                animate={{ y: [0, -2, 0] }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 3,
+                  ease: "easeInOut",
+                }}
+              />
+            </div>
             <AnimatePresence>
               {isExpanded && (
                 <motion.div
@@ -178,11 +186,10 @@ const navItems = [
                 {hasChildren ? (
                   <button
                     onClick={() => setOpenMenu(isMenuOpen ? null : item.label)}
-                    className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200 ${
-                      isMenuOpen
+                    className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200 ${isMenuOpen
                         ? 'bg-indigo-50 text-indigo-700'
                         : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
-                    }`}
+                      }`}
                   >
                     <Icon size={20} className="shrink-0" />
                     {isExpanded && (
