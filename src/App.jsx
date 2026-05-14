@@ -62,6 +62,7 @@ import { setNavigator } from './utils/navigation';
 
 import SubscriptionsPage from './pages/billing/Subscription';
 import PaymentHistoryPage from "./pages/billing/paymentHistory";
+import ComingSoon from './utils/ComingSoon';
 
 
 
@@ -205,7 +206,7 @@ export default function App() {
           {/* <Route path ='/loading' element={<LoadingScreen/>}/> */}
 
 
-
+          <Route path = "/Soon" element ={<ComingSoon/>} />
           <Route path="/home" element={<Home />} />
         </Route>
       </Route>
