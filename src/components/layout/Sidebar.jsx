@@ -50,7 +50,7 @@ const navItems = [
     label: 'Websites',
     icon: Globe,
     children: [
-      { label: 'WordPress', to: '/websites/wordpress' },
+      { label: 'WordPress Plans', to: '/websites/wordpress' },
       ...(hasWordPress ? [{ label: 'WordPress Dashboard', to: '/websites/wordpress/paid' }] : []),
       { label: 'PHP/HTML', to: '/websites/php' },
       { label: 'NodeJS App', to: '/websites/nodejs' },

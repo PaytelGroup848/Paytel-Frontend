@@ -71,13 +71,12 @@ const SubscriptionRow = ({ subscription, onOpenDetail, index }) => {
       </td>
       {/* Price */}
       <td className="py-5 px-3 text-right whitespace-nowrap">
-        {console.log("this is subs", subscription.currency)}
         {subscription.price ? (
           <div>
             <div className="text-sm font-bold text-slate-800">
               {subscription?.currency} {subscription?.price}
             </div>
-            <div className="text-[10px] text-slate-400">/{subscription.nextBillingPeriod || 'mo'}</div>
+            {/* <div className="text-[10px] text-slate-400">/{subscription.nextBillingPeriod || 'mo'}</div> */}
           </div>
         ) : (
           <span className="text-sm text-slate-400">—</span>
@@ -164,23 +163,27 @@ const SubscriptionDetailModal = ({ subscription, onClose }) => {
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-slate-50 rounded-2xl p-4">
                 <div className="flex items-center gap-2 text-slate-500 text-xs uppercase font-bold mb-1.5"><Tag size={14} /> Renewal price</div>
-                <p className="text-base font-bold text-slate-800">{subscription.currency} {subscription.renewalPrice || subscription.price}</p>
+                <p className="text-base font-bold text-slate-800">{subscription?.currency} {subscription?.price}</p>
               </div>
               <div className="bg-slate-50 rounded-2xl p-4">
+                <div className="flex items-center gap-2 text-slate-500 text-xs uppercase font-bold mb-1.5"><Banknote size={14} /> Subscription ID</div>
+                <p className="text-sm font-mono text-slate-700 truncate">{subscription.subscriptionId}</p>
+              </div>
+              {/* <div className="bg-slate-50 rounded-2xl p-4">
                 <div className="flex items-center gap-2 text-slate-500 text-xs uppercase font-bold mb-1.5"><Banknote size={14} /> Taxes & fees</div>
                 <p className="text-base font-semibold text-slate-800">{subscription.currency} {subscription.taxes || '0'}</p>
-              </div>
+              </div> */}
             </div>
           )}
 
-          <div className="grid grid-cols-5 gap-3">
-            {subscription.subscriptionId && (
+          <div className="grid grid-cols-2 gap-3">
+            {/* {subscription.subscriptionId && (
               <div className="col-span-3 bg-slate-50 rounded-2xl p-4">
                 <div className="flex items-center gap-2 text-slate-500 text-xs uppercase font-bold mb-1.5"><Hash size={14} /> Subscription ID</div>
                 <p className="text-sm font-mono text-slate-700 truncate">{subscription.subscriptionId}</p>
               </div>
-            )}
-            <div className={`${subscription.subscriptionId ? 'col-span-2' : 'col-span-5'} bg-slate-50 rounded-2xl p-4 flex items-center justify-between`}>
+            )} */}
+            {/* <div className={`${subscription.subscriptionId ? 'col-span-2' : 'col-span-5'} bg-slate-50 rounded-2xl p-4 flex items-center justify-between`}>
               <div>
                 <div className="flex items-center gap-2 text-slate-500 text-xs uppercase font-bold mb-1.5"><RefreshCw size={14} /> Auto‑renewal</div>
                 <p className="text-sm font-semibold text-slate-800">{autoRenew ? 'Enabled' : 'Disabled'}</p>
@@ -188,7 +191,7 @@ const SubscriptionDetailModal = ({ subscription, onClose }) => {
               <button onClick={handleToggleAutoRenew} className={`relative w-12 h-6 rounded-full transition-colors ${autoRenew ? 'bg-indigo-600' : 'bg-slate-300'}`}>
                 <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${autoRenew ? 'translate-x-6' : ''}`} />
               </button>
-            </div>
+            </div> */}
           </div>
 
           {subscription.nextBillingPeriod && (
@@ -200,7 +203,7 @@ const SubscriptionDetailModal = ({ subscription, onClose }) => {
 
           {subscription.resources && (
             <div>
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Plan Resources</h4>
+              {/* <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Plan Resources</h4> */}
               <div className="grid grid-cols-2 gap-3">
                 {Object.entries(subscription.resources).map(([key, value]) => (
                   <div key={key} className="bg-slate-50 rounded-2xl p-3 flex items-center gap-3">
@@ -245,6 +248,7 @@ const SubscriptionDetailModal = ({ subscription, onClose }) => {
 export default function SubscriptionsPage() {
   const navigate = useNavigate();
   const { data: subscriptions, isLoading } = useSubscription();
+  console.log("this is subs", subscriptions)
   const [selectedSubscription, setSelectedSubscription] = useState(null);
 
   const summary = {
