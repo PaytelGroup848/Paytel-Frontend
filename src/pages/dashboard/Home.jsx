@@ -1,13 +1,18 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import {
-  Server, Globe, Trash2, Layers, CheckCircle,
+  Monitor, Globe, Trash2, Layers, CheckCircle,
   ExternalLink, LifeBuoy,
   Mail, HardDrive, Plus, Activity,
-  ShoppingCart, ArrowUpRight, ChevronRight, ChevronLeft,
-  Zap, IndianRupee, HelpCircle, CreditCard, Bell, User,
+  ArrowUpRight, ChevronRight, ChevronLeft,
+  Cpu, Database, Shield, Cloud, Zap,
+  BarChart3, Headphones, CreditCard, Clock
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuthStore } from '../../store/authStore'; // adjust path as needed
+import { useAuthStore } from '../../store/authStore';
+
+// ✅ Import your own Navbar and Sidebar components
+import Navbar from '../../components/layout/Navbar';      // adjust the path if needed
+import Sidebar from '../../components/layout/Sidebar';    // adjust the path if needed
 
 /* ─── helpers ─────────────────────────────────────────────── */
 const cn = (...c) => c.filter(Boolean).join(' ');
@@ -37,15 +42,15 @@ const TYPE_GRADIENTS = {
 
 const ServiceIcon = React.memo(({ type, size = 15 }) => {
   const icons = {
-    WordPress: <Server size={size} />,
+    WordPress: <Monitor size={size} />,
     Domain:    <Globe size={size} />,
-    'VPS Cloud':<LifeBuoy size={size} />,
+    'VPS Cloud':<Cloud size={size} />,
     Email:     <Mail size={size} />,
   };
   return icons[type] || <HardDrive size={size} />;
 });
 
-/* animated counter (already optimized) */
+/* animated counter */
 const Counter = ({ to }) => {
   const [val, setVal] = React.useState(0);
   React.useEffect(() => {
@@ -75,7 +80,7 @@ const StatCard = React.memo(({ label, value, sub, icon: Icon, accent, delay, isC
     <div>
       <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">{label}</p>
       <p className="text-2xl font-black text-slate-800 mt-0.5 tabular-nums leading-none flex items-baseline gap-0.5">
-        {isCurrency && <IndianRupee size={16} className="text-slate-500" />}
+        {isCurrency && <span className="text-slate-500 text-lg">₹</span>}
         {typeof value === 'number' ? <Counter to={value} /> : value}
       </p>
       {sub && <p className="text-[11px] text-slate-400 mt-1">{sub}</p>}
@@ -104,13 +109,12 @@ const TableSkeleton = () => (
 );
 
 /* ════════════════════════════════════════════════════════════
-   DASHBOARD
+   MAIN DASHBOARD CONTENT (unchanged)
 ════════════════════════════════════════════════════════════ */
-const Dashboard = () => {
+const DashboardContent = () => {
   const { user: userInfo } = useAuthStore();
   const [loading, setLoading] = useState(true);
 
-  /* ── data state (would be replaced by API calls) ── */
   const [user, setUser] = useState({
     name: userInfo?.name || 'Amit Sharma',
     activeServices: [],
@@ -118,7 +122,6 @@ const Dashboard = () => {
   const [emails, setEmails] = useState([]);
   const [activities, setActivities] = useState([]);
 
-  /* simulate API fetch */
   useEffect(() => {
     const timer = setTimeout(() => {
       setUser({
@@ -127,7 +130,6 @@ const Dashboard = () => {
           { id: 1, type: 'WordPress',  name: 'Portfolio Site',     status: 'Active',     ip: '103.21.45.12', expiry: 'Oct 2026', region: 'Asia Pacific', price: 799 },
           { id: 2, type: 'WordPress',  name: 'Marketing Blog',     status: 'Active',     ip: '103.21.45.13', expiry: 'Dec 2026', region: 'Asia Pacific', price: 799 },
           { id: 3, type: 'VPS Cloud',  name: 'Backend API Server',  status: 'Processing', ip: 'Pending',      expiry: 'Nov 2026', region: 'US East', price: 1599 },
-          // Email service removed from Active Infrastructure
         ],
       });
       setEmails([
@@ -148,21 +150,14 @@ const Dashboard = () => {
     return () => clearTimeout(timer);
   }, [userInfo]);
 
-  /* ── filter & pagination state ── */
   const [filterType, setFilterType] = useState('All');
   const [showAllActivities, setShowAllActivities] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  /* ── derived data ── */
   const activeServices = useMemo(() => user.activeServices || [], [user.activeServices]);
   const activeCount = useMemo(() => activeServices.filter(s => s.status === 'Active').length, [activeServices]);
   const inactiveCount = activeServices.length - activeCount;
-
-  const totalMonthlyCost = useMemo(
-    () => activeServices.reduce((sum, s) => sum + (s.price || 0), 0),
-    [activeServices]
-  );
 
   const allTypes = useMemo(() => ['All', ...Array.from(new Set(activeServices.map(s => s.type)))], [activeServices]);
   const filtered = filterType === 'All' ? activeServices : activeServices.filter(s => s.type === filterType);
@@ -179,7 +174,6 @@ const Dashboard = () => {
 
   const displayedActivities = showAllActivities ? activities : activities.slice(0, 3);
 
-  /* ── actions ── */
   const addActivity = useCallback((action, service) => {
     setActivities(prev => [{ id: Date.now(), action, service, time: 'Just now', type: 'info' }, ...prev].slice(0, 20));
   }, []);
@@ -205,18 +199,16 @@ const Dashboard = () => {
     return 'Good evening';
   }, []);
 
-  /* popular services — prices in INR */
   const popularServices = useMemo(() => [
-    { name: 'WordPress Hosting', desc: 'Managed WordPress with auto‑updates, daily backups & CDN.', price: '₹61/mo', icon: Server, color: 'from-blue-500 to-blue-600', tag: 'Most Popular', path: '/websites/wordpress' },
+    { name: 'WordPress Hosting', desc: 'Managed WordPress with auto‑updates, daily backups & CDN.', price: '₹61/mo', icon: Monitor, color: 'from-blue-500 to-blue-600', tag: 'Most Popular', path: '/websites/wordpress' },
     { name: 'Business Email',   desc: 'Professional mailboxes @yourdomain, spam protection & webmail.', price: 'Coming Soon', icon: Mail, color: 'from-sky-500 to-sky-600', tag: 'Coming Soon', path: null },
-    { name: 'VPS Cloud Servers',desc: 'NVMe SSD, dedicated IP, root access, DDoS protection.', price: '₹899/mo', icon: LifeBuoy, color: 'from-emerald-500 to-emerald-600', tag: 'Best Value',  path: '/plans/vps' },
+    { name: 'VPS Cloud Servers',desc: 'NVMe SSD, dedicated IP, root access, DDoS protection.', price: '₹899/mo', icon: Cloud, color: 'from-emerald-500 to-emerald-600', tag: 'Best Value',  path: '/plans/vps' },
   ], []);
 
   const goTo = useCallback((path) => {
-    if (path) window.location.href = path; // replace with your router
+    if (path) window.location.href = path;
   }, []);
 
-  /* activity dot colors */
   const actDot = { success: 'bg-emerald-400', warning: 'bg-amber-400', info: 'bg-blue-400' };
 
   return (
@@ -226,12 +218,11 @@ const Dashboard = () => {
         <div className="absolute -top-32 -left-20 w-[36rem] h-[36rem] bg-indigo-200/15 rounded-full blur-3xl animate-float" />
         <div className="absolute top-1/4 right-0 w-[28rem] h-[28rem] bg-cyan-200/15 rounded-full blur-3xl animate-float-delayed" />
         <div className="absolute bottom-0 left-1/3 w-[24rem] h-[24rem] bg-violet-200/15 rounded-full blur-3xl animate-float-slow" />
-        {/* subtle grid */}
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDE4YzAtMi4yMS0xLjc5LTQtNC00cy00IDEuNzktNCA0IDEuNzkgNCA0IDR6TTM2IDI2YzAtMi4yMS0xLjc5LTQtNC00cy00IDEuNzktNCA0IDEuNzkgNCA0IDR6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-40" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-8 relative z-10 space-y-6 sm:space-y-8">
-        {/* ─── Header ─── */}
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-8 relative z-10 space-y-6 sm:space-y-8">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -243,24 +234,21 @@ const Dashboard = () => {
               {getGreeting()}, {user.name}
             </h1>
             <p className="text-sm text-slate-500 mt-0.5">
-              Your cloud command center - everything at a glance.
+              Your cloud command center — everything at a glance.
             </p>
           </div>
-          {/* No billing/monthly cost display as before */}
         </motion.div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <StatCard label="Total Services" value={activeServices.length} icon={Layers}      accent="bg-indigo-500"  sub="Across all regions" delay={0} />
           <StatCard label="Active"         value={activeCount}          icon={CheckCircle} accent="bg-emerald-500" sub="Fully operational"  delay={0.07} />
-          <StatCard label="Inactive"       value={inactiveCount}        icon={LifeBuoy}    accent="bg-amber-500"   sub="Needs attention"    delay={0.14} />
-          {/* ─── Email stat card COMMENTED OUT ─── */}
-          {/* <StatCard label="Email Accounts" value={emails.length} icon={Mail} accent="bg-sky-500" sub="Business mailboxes" delay={0.28} /> */}
+          <StatCard label="Inactive"       value={inactiveCount}        icon={Shield}      accent="bg-amber-500"   sub="Needs attention"    delay={0.14} />
         </div>
 
-        {/* ─── Main Content ─── */}
+        {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          {/* ── Services Table ── */}
+          {/* Services Table */}
           <motion.section
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -269,7 +257,7 @@ const Dashboard = () => {
           >
             <div className="px-6 py-4 border-b border-slate-100/60 flex flex-wrap gap-3 items-center justify-between">
               <div className="flex items-center gap-2">
-                <Server size={15} className="text-indigo-600" />
+                <Monitor size={15} className="text-indigo-600" />
                 <h2 className="font-black text-[15px] text-slate-900">Active Infrastructure</h2>
                 {activeServices.length > 0 && (
                   <span className="text-[10px] font-black bg-indigo-100 text-indigo-600 w-5 h-5 rounded-full flex items-center justify-center">
@@ -295,7 +283,7 @@ const Dashboard = () => {
             ) : activeServices.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
                 <div className="w-20 h-20 rounded-full bg-indigo-50 flex items-center justify-center mb-4">
-                  <Server size={32} className="text-indigo-300" />
+                  <Monitor size={32} className="text-indigo-300" />
                 </div>
                 <h3 className="text-lg font-black text-slate-800 mb-2">No services yet</h3>
                 <p className="text-sm text-slate-500 max-w-xs">Start building your cloud infrastructure in seconds.</p>
@@ -360,7 +348,6 @@ const Dashboard = () => {
                   </table>
                 </div>
 
-                {/* Pagination controls */}
                 {totalPages > 1 && (
                   <div className="px-6 py-3 border-t border-slate-100/60 flex items-center justify-between text-xs">
                     <span className="text-slate-400">
@@ -388,7 +375,7 @@ const Dashboard = () => {
             )}
           </motion.section>
 
-          {/* ── Right Sidebar ── */}
+          {/* Right Sidebar */}
           <aside className="space-y-5">
             {/* Quick Actions */}
             <motion.div
@@ -397,20 +384,18 @@ const Dashboard = () => {
               transition={{ delay: 0.34 }}
               className="bg-white/70 backdrop-blur-xl rounded-2xl border border-white/60 shadow-sm p-5"
             >
-              <div className="flex items-center gap-2 mb-4">
-                <h3 className="font-black text-[14px] text-slate-900">Quick Actions</h3>
-              </div>
+              <h3 className="font-black text-[14px] text-slate-900 mb-4">Quick Actions</h3>
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { label: 'Deploy WP',   path: '/websites/wordpress' },
-                  { label: 'Add Email',   path: '/emails' },
-                  { label: 'Billing-History',     path: '/payment-history' },
-                  { label: 'Support',     path: '/Support' },
+                  { label: 'Deploy WP',   path: '/websites/wordpress', icon: Monitor },
+                  { label: 'Add Email',   path: '/emails', icon: Mail },
+                  { label: 'Billing',     path: '/payment-history', icon: CreditCard },
+                  { label: 'Support',     path: '/Support', icon: Headphones },
                 ].map(item => (
                   <motion.button key={item.label} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
                     onClick={() => goTo(item.path)}
                     className="flex items-center justify-center gap-2 p-3 rounded-xl bg-slate-50/70 hover:bg-white hover:shadow transition text-slate-700 text-[12px] font-bold">
-                    <ArrowUpRight size={14} className="text-indigo-500" />
+                    <item.icon size={14} className="text-indigo-500" />
                     {item.label}
                   </motion.button>
                 ))}
@@ -424,9 +409,10 @@ const Dashboard = () => {
               transition={{ delay: 0.38 }}
               className="bg-white/70 backdrop-blur-xl rounded-2xl border border-white/60 shadow-md p-5"
             >
-              <div className="flex items-center gap-2 mb-4">
-                <h3 className="font-black text-[14px] text-slate-900">Recent Activity</h3>
-              </div>
+              <h3 className="font-black text-[14px] text-slate-900 mb-4 flex items-center gap-2">
+                <Activity size={16} className="text-indigo-500" />
+                Recent Activity
+              </h3>
               <div className="space-y-3">
                 {displayedActivities.map((a, i) => (
                   <div key={a.id} className="flex items-start gap-3">
@@ -452,7 +438,7 @@ const Dashboard = () => {
               )}
             </motion.div>
 
-            {/* Email Summary – bar replaced by Coming Soon */}
+            {/* Email Summary */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -468,7 +454,6 @@ const Dashboard = () => {
                   <Plus size={12} /> Add
                 </button>
               </div>
-              {/* Bar & usage text replaced by Coming Soon */}
               <div className="flex flex-col items-center justify-center py-6 text-slate-400 bg-slate-50/80 rounded-xl">
                 <Mail size={28} className="text-sky-300 mb-2" />
                 <span className="text-sm font-bold text-slate-500">Coming Soon</span>
@@ -477,12 +462,12 @@ const Dashboard = () => {
           </aside>
         </div>
 
-        {/* ─── New Services (prices in INR) ─── */}
+        {/* New Services */}
         <section>
-          <div className="flex items-center gap-2 mb-4">
-            <h2 className="font-black text-[15px] text-slate-900">Add New Services</h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <h2 className="font-black text-[15px] text-slate-900 mb-4 flex items-center gap-2">
+            Add New Services
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {popularServices.map((s, i) => (
               <motion.div key={s.name}
                 initial={{ opacity: 0, y: 16 }}
@@ -514,7 +499,6 @@ const Dashboard = () => {
                       </motion.button>
                     </div>
                   ) : (
-                    /* Email card: Coming Soon instead of price & button */
                     <div className="mt-5 flex items-center justify-center bg-slate-100/80 rounded-xl py-4">
                       <span className="text-sm font-bold text-slate-500">Coming Soon</span>
                     </div>
@@ -526,9 +510,9 @@ const Dashboard = () => {
         </section>
       </div>
 
-      {/* ─── Footer ─── */}
+      {/* Footer */}
       <footer className="border-t border-slate-200 bg-white/60 backdrop-blur-md mt-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
           <span>&copy; 2026 CloudeData Infrastructure · All rights reserved.</span>
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />All Systems Operational</span>
@@ -539,6 +523,29 @@ const Dashboard = () => {
           </div>
         </div>
       </footer>
+    </div>
+  );
+};
+
+/* ════════════════════════════════════════════════════════════
+   FINAL DASHBOARD WITH NAVBAR & SIDEBAR (imported properly)
+════════════════════════════════════════════════════════════ */
+const Dashboard = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  return (
+    <div className="flex h-screen overflow-hidden bg-[#F4F5F9]">
+      {/* ✅ Your existing Sidebar component – ensure it accepts `open` and `setOpen` props */}
+      <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
+
+      {/* Main area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-auto">
+        {/* ✅ Your existing Navbar component – ensure it has an `onMenuClick` prop */}
+        <Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
+        <main className="flex-1">
+          <DashboardContent />
+        </main>
+      </div>
     </div>
   );
 };
