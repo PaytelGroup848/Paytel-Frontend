@@ -4,6 +4,7 @@ import { Navigate, Outlet, Route, Routes, useLocation, useNavigate } from 'react
 import { motion } from 'framer-motion';
 import { useAuthStore } from './store/authStore';
 import { api } from './services/api';
+import Dashboard from './pages/dashboard/Home';
 import Spinner from './components/ui/Spinner';
 import AuthLayout from './components/layout/AuthLayout';
 import DashboardLayout from './components/layout/DashboardLayout';
@@ -11,6 +12,7 @@ import { pageTransition } from './animations/variants';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
+import HomePage from './LandingPage/Home/HomePage';
 import ManageHosting from './pages/hosting/ManageHosting';
 import HostingPlans from './pages/hosting/HostingPlans';
 import HostingDetails from './pages/hosting/HostingDetails';
@@ -138,7 +140,14 @@ export default function App() {
   return (
     <Routes>
       {/* Public redirect */}
-      <Route path="/" element={<Navigate to="/home" replace />} />
+      <Route path ='/' element={<HomePage/>} />
+
+
+
+
+
+
+      <Route path="/home" element={<Dashboard/>} />
 
       {/* Auth routes (no layout needed) */}
       <Route element={<AuthRoutes />}>
