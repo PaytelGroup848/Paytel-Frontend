@@ -5,6 +5,11 @@ import { motion } from 'framer-motion';
 import { useAuthStore } from './store/authStore';
 import { api } from './services/api';
 import Dashboard from './pages/dashboard/Home';
+
+import PricingPage from './LandingPage/pricing/PricingPage';
+
+
+
 import Spinner from './components/ui/Spinner';
 import AuthLayout from './components/layout/AuthLayout';
 import DashboardLayout from './components/layout/DashboardLayout';
@@ -148,6 +153,7 @@ export default function App() {
 
 
       <Route path="/home" element={<Dashboard/>} />
+      <Route path="/pricing" element={<PricingPage />} />
 
       {/* Auth routes (no layout needed) */}
       <Route element={<AuthRoutes />}>

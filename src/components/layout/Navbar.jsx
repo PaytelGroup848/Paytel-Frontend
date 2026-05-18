@@ -85,7 +85,7 @@ export default function Navbar({ isSidebarOpen, onMenuClick }) {
                   />
                 </div>
                 {/* Brand name */}
-               
+                
               </motion.div>
             )}
           </AnimatePresence>

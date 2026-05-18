@@ -51,12 +51,12 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
       label: 'Websites',
       icon: Globe,
       children: [
-        { label: 'WordPress', to: '/websites/wordpress' },
+        { label: 'Buy WordPress', to: '/websites/wordpress' },
         ...(hasWordPress ? [{ label: 'WordPress Dashboard', to: '/websites/wordpress/paid' }] : []),
-        // { label: 'PHP/HTML', to: '/websites/php' },
-        // { label: 'NodeJS App', to: '/websites/nodejs' },
-        { label: 'PHP/HTML', to: '/comingsoon' },
-        { label: 'NodeJS App', to: '/comingsoon' },
+        { label: 'PHP/HTML', to: '/websites/php' },
+        { label: 'NodeJS App', to: '/websites/nodejs' },
+        // { label: 'PHP/HTML', to: '/comingsoon' },
+        // { label: 'NodeJS App', to: '/comingsoon' },
       ].filter(Boolean), // filter out any falsy values
     },
     {
@@ -69,10 +69,10 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
     },
     {
       label: 'Software', icon: SeparatorVertical, children: [
-         { label: 'Education ERP', to: '/comingsoon' },
-        // { label: 'Education ERP', to: 'software/education' },
-        // { label: 'Resturants Management', to: 'software/restaurants' },
-         { label: 'Resturants Management', to: '/comingsoon' },
+        //  { label: 'Education ERP', to: '/comingsoon' },
+        { label: 'Education ERP', to: 'software/education' },
+        { label: 'Resturants Management', to: 'software/restaurants' },
+        //  { label: 'Resturants Management', to: '/comingsoon' },
       ]
     },
 
@@ -84,13 +84,21 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
         { label: 'Payment-history', to: '/payment-history' },
       ],
     },
+    {
+      label: 'Emails',
+      icon: Mails,
+      children: [
+        { label: 'Buy Emails', to: '/email/plan' },
+        { label: 'Email Dashboard', to: '/emails' },
+      ],
+    },
     // { label: 'Emails', to: '/emails', icon: Mails },
-    { label: 'Emails', to: '/comingsoon', icon: Mails },
+    // { label: 'Emails', to: '/comingsoon', icon: Mails },
 
     ...(isSuperAdmin ? [{ label: 'SuperAdmin', to: '/superadmin/servers', icon: Zap }] : []),
     { label: 'Settings', to: '/settings', icon: Settings },
-    // { label: 'Support', to: '/Support', icon: LifeBuoy },
-    { label: 'Support', to: '/comingsoon', icon: LifeBuoy },
+    { label: 'Support', to: '/Support', icon: LifeBuoy },
+    // { label: 'Support', to: '/comingsoon', icon: LifeBuoy },
   ];
   const handleMouseEnter = () => {
     if (isDesktop) setHovered(true);

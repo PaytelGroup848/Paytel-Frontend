@@ -60,7 +60,7 @@ const StarRating = ({ rating }) => (
         key={i}
         size={14}
         fill={i < rating ? "#f59e0b" : "none"}
-        stroke={i < rating ? "#f59e0b" : "#cbd5e1"}
+        stroke={i < rating ? "#f59e0b" : "#94a3b8"}
         strokeWidth={2}
       />
     ))}
@@ -73,20 +73,19 @@ const ReviewCard = ({ review, index }) => (
     whileInView={{ opacity: 1, y: 0 }}
     transition={{ delay: index * 0.1, duration: 0.4 }}
     viewport={{ once: true }}
-    className="flex-shrink-0 w-[320px] sm:w-[360px] bg-white rounded-2xl border border-slate-200 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all p-6 flex flex-col gap-4"
+    className="flex-shrink-0 w-[320px] sm:w-[360px] bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700/50 shadow-lg hover:shadow-2xl hover:shadow-indigo-900/20 hover:-translate-y-1 transition-all p-6 flex flex-col gap-4"
   >
     <div className="flex items-center gap-3">
       <img
         src={review.avatar}
         alt={review.name}
-        className="w-11 h-11 rounded-full object-cover ring-2 ring-indigo-100"
+        className="w-11 h-11 rounded-full object-cover ring-2 ring-indigo-400/50"
         loading="lazy"
       />
       <div className="flex-1 min-w-0">
-        <h4 className="text-sm font-bold text-slate-800">{review.name}</h4>
+        <h4 className="text-sm font-bold text-white">{review.name}</h4>
         <div className="flex items-center gap-2 mt-0.5">
-          {/* Google badge */}
-          <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-500 bg-slate-100 rounded-full px-2 py-0.5">
+          <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-300 bg-slate-700/60 rounded-full px-2 py-0.5">
             <svg viewBox="0 0 24 24" className="w-3 h-3" fill="currentColor">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -102,7 +101,7 @@ const ReviewCard = ({ review, index }) => (
         <StarRating rating={review.rating} />
       </div>
     </div>
-    <p className="text-sm text-slate-600 leading-relaxed flex-1">{review.text}</p>
+    <p className="text-sm text-slate-200 leading-relaxed flex-1">{review.text}</p>
   </motion.div>
 );
 
@@ -173,7 +172,7 @@ export default function Reviews() {
   return (
     <section
       ref={sectionRef}
-      className="w-full mt-2 p-0 mb-0 overflow-hidden bg-gradient-to-br from-blue-50 via-white to-indigo-50"
+      className="w-full mt-2 p-0 mb-0 overflow-hidden bg-gradient-to-br from-blue-100 via-blue-50 to-indigo-100"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <motion.div
@@ -190,22 +189,26 @@ export default function Reviews() {
           </p>
         </motion.div>
 
-        {/* Scrollable track with fade‑edge mask */}
-        <div
-          ref={scrollRef}
-          className="flex gap-6 overflow-x-hidden py-2 no-scrollbar"
-          style={{
-            scrollBehavior: "smooth",
-            maskImage: "linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%)",
-          }}
-        >
-          {reviews.map((review, idx) => (
-            <ReviewCard key={review.id} review={review} index={idx} />
-          ))}
-          {reviews.map((review, idx) => (
-            <ReviewCard key={`dup-${review.id}`} review={review} index={idx + reviews.length} />
-          ))}
+        {/* Container for scroll area + blur overlays */}
+        <div className="relative">
+          {/* Left blur overlay */}
+          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-blue-100 via-blue-50/70 to-transparent backdrop-blur-[2px] pointer-events-none z-10" />
+          {/* Right blur overlay */}
+          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-r from-transparent via-blue-50/70 to-blue-100 backdrop-blur-[2px] pointer-events-none z-10" />
+
+          {/* Scrollable cards */}
+          <div
+            ref={scrollRef}
+            className="flex gap-6 overflow-x-auto py-2 no-scrollbar"
+            style={{ scrollBehavior: "smooth" }}
+          >
+            {reviews.map((review, idx) => (
+              <ReviewCard key={review.id} review={review} index={idx} />
+            ))}
+            {reviews.map((review, idx) => (
+              <ReviewCard key={`dup-${review.id}`} review={review} index={idx + reviews.length} />
+            ))}
+          </div>
         </div>
       </div>
 

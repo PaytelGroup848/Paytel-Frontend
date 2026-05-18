@@ -439,7 +439,7 @@ const InvoicePDF = ({ invoiceData, userEmail, userName, userPhone }) => {
           {jurisdiction && (
             <Text style={styles.bold}>SUBJECT TO {jurisdiction} JURISDICTION</Text>
           )}
-          <Text>This is a Computer Generated Invoice</Text>
+          <Text>This is a System Generated Invoice</Text>
         </View>
 
       </Page>
