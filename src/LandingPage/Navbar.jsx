@@ -39,7 +39,7 @@ const megaMenuSections = [
 
 /* ── Dropdown items ───────────────────────────── */
 const softwareCRMItems = [
-  { label: "Education ERP", href: "/software/education-erp" },
+  { label: "Education ERP", href: "/education-management-system" },
   { label: "Restaurant Management ERP", href: "/software/restaurant-erp" },
 ];
 

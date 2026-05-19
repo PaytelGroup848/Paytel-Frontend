@@ -109,7 +109,6 @@ export default function PricingService() {
               href="#cloude-plans"
               className="group inline-flex items-center gap-2 bg-white text-slate-900 font-semibold px-7 py-3.5 rounded-full shadow-2xl hover:shadow-white/20 hover:scale-105 transition-all duration-300"
             >
-              <Sparkles size={18} className="text-blue-600 group-hover:animate-pulse" />
               View Plans
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </a>
