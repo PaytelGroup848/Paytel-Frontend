@@ -12,11 +12,10 @@ import { useAuthStore } from '../../store/authStore';
 import { useDashboardData } from '../../hooks/useBilling';
 import { useMe } from '../../hooks/useAuth';
 
-// --- import your Navbar and Sidebar components (adjust paths as needed) ---
 import Navbar from "../../components/layout/Navbar";
 import Sidebar from '../../components/layout/Sidebar';
 
-/* ─── helpers ─────────────────────────────────────────────── */
+/* ─── helpers (unchanged) ──────────────────────────────────── */
 const cn = (...c) => c.filter(Boolean).join(' ');
 
 const STATUS_CFG = {
@@ -52,7 +51,6 @@ const ServiceIcon = React.memo(({ type, size = 15 }) => {
   return icons[type] || <HardDrive size={size} />;
 });
 
-/* animated counter */
 const Counter = ({ to }) => {
   const [val, setVal] = React.useState(0);
   React.useEffect(() => {
@@ -68,7 +66,6 @@ const Counter = ({ to }) => {
   return <>{val}</>;
 };
 
-/* ─── stat card ──────────────────────────────────────────── */
 const StatCard = React.memo(({ label, value, sub, icon: Icon, accent, delay, isCurrency }) => (
   <motion.div
     initial={{ opacity: 0, y: 18 }}
@@ -90,7 +87,6 @@ const StatCard = React.memo(({ label, value, sub, icon: Icon, accent, delay, isC
   </motion.div>
 ));
 
-/* ─── skeleton loader ───────────────────────────────────── */
 const Skeleton = ({ className }) => (
   <div className={`animate-pulse bg-slate-200/80 rounded-xl ${className}`} />
 );
@@ -111,14 +107,14 @@ const TableSkeleton = () => (
 );
 
 /* ════════════════════════════════════════════════════════════
-   DASHBOARD (with Navbar + Sidebar)
+   DASHBOARD (with fixed Navbar + Sidebar)
 ════════════════════════════════════════════════════════════ */
 const Dashboard = () => {
   const navigate = useNavigate();
   const { data: dashboardData, isLoading: isDashboardLoading } = useDashboardData();
   const { data: userData } = useMe();
   const { user: userInfo } = useAuthStore();
-  const [sidebarOpen, setSidebarOpen] = useState(false);   // mobile sidebar state
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const user = useMemo(() => ({
     name: userData?.name || userInfo?.name || 'Amit Sharma',
@@ -128,7 +124,6 @@ const Dashboard = () => {
   const emails = useMemo(() => dashboardData?.emailSummary || [], [dashboardData]);
   const loading = isDashboardLoading;
 
-  /* ── filters & pagination (unchanged) ── */
   const [filterType, setFilterType] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
@@ -156,8 +151,6 @@ const Dashboard = () => {
 
   const handleDeleteService = useCallback((id, name) => {
     if (window.confirm(`Delete "${name}"?`)) {
-      // In a real app, this should call a delete API
-      // For now, we just inform the user
       alert("Delete functionality is managed in individual service dashboards.");
     }
   }, []);
@@ -176,21 +169,22 @@ const Dashboard = () => {
   ], []);
 
   return (
-    <div className="flex min-h-screen bg-[#F4F5F9] font-sans relative overflow-hidden">
-      {/* Sidebar (left on desktop, slides from right on mobile) */}
+    /* ⬇️ CHANGED: h-screen + overflow-hidden to lock the viewport */
+    <div className="flex h-screen bg-[#F4F5F9] font-sans overflow-hidden">
+      {/* Sidebar – now part of the fixed-height flex row, will not scroll */}
       <Sidebar mobileOpen={sidebarOpen} onMobileClose={() => setSidebarOpen(false)} />
 
-      {/* Main content area */}
-      <div className="flex-1 flex flex-col">
-        {/* Navbar */}
+      {/* Right column – holds Navbar (fixed) and scrollable main */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Navbar stays at the top of this non-scrolling column */}
         <Navbar
           isSidebarOpen={sidebarOpen}
           onMenuClick={() => setSidebarOpen(prev => !prev)}
         />
 
-        {/* Dashboard content – original background blobs & structure */}
-        <main className="flex-1 relative">
-          {/* Ambient futuristic blobs */}
+        {/* ⬇️ CHANGED: main is now scrollable, everything else stays fixed */}
+        <main className="flex-1 relative overflow-y-auto">
+          {/* Ambient blobs (inside scrollable area) */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <div className="absolute -top-32 -left-20 w-[36rem] h-[36rem] bg-indigo-200/15 rounded-full blur-3xl animate-float" />
             <div className="absolute top-1/4 right-0 w-[28rem] h-[28rem] bg-cyan-200/15 rounded-full blur-3xl animate-float-delayed" />
@@ -222,7 +216,6 @@ const Dashboard = () => {
               <StatCard label="Active"         value={activeCount}          icon={CheckCircle} accent="bg-emerald-500" sub="Fully operational"  delay={0.07} />
               <StatCard label="Needs Attention" value={inactiveCount}        icon={Activity}    accent="bg-amber-500"   sub="Check status"       delay={0.14} />
               <StatCard label="Email Orders"   value={emailCount}           icon={Mail}        accent="bg-sky-500"     sub="Business mail"      delay={0.21} />
-              {/* <StatCard label="Monthly Burn"   value={totalMonthlyCost}     icon={IndianRupee} accent="bg-slate-800"   sub="Est. monthly cost"  delay={0.28} isCurrency /> */}
             </div>
 
             {/* ─── Main Content ─── */}
@@ -488,7 +481,7 @@ const Dashboard = () => {
           </div>
         </main>
 
-        {/* Footer */}
+        {/* Footer – stays at bottom of the scrollable area */}
         <footer className="border-t border-slate-200 bg-white/60 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
             <span>&copy; 2026 CloudeData Infrastructure · All rights reserved.</span>
