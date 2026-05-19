@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import EmailSidebar from './EmailSidebar';
-import { useEmailPlan } from './EmailPlanContext';
+
 
 /* ============================================================
    Hook – fetch email logs (minimal demo data, rich fields)

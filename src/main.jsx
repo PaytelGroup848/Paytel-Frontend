@@ -25,8 +25,12 @@ createRoot(document.getElementById('root')).render(
               color: '#0f172a',
               border: '1px solid rgba(15,23,42,0.10)',
               boxShadow: '0 10px 30px rgba(15,23,42,0.10)',
+              zIndex: 99999,
             },
           }}
+          containerStyle={{
+    zIndex: 99999,
+  }}
         />
       </BrowserRouter>
     </QueryClientProvider>

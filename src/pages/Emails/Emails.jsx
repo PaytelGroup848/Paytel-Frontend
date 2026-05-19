@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReactDOM from 'react-dom';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import {
   Mail,
   Home,
@@ -10,46 +10,20 @@ import {
   ShoppingCart,
   ChevronRight,
   MoreHorizontal,
+  Shield,
+  AlertCircle,
+  CheckCircle,
+  Search
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useEmailPlan} from './EmailPlanContext'; // <-- import the context hook
+import { useEmailOrders, useDnsStatus } from '../../hooks/useEmailHosting';
+import DkimVerificationModal from './DkimVerificationModal'; // ✅ Import the modal
+import SkeletonList from '../../components/ui/skeletons/SkeletonList';
 
 /* ============================================================
-   Hook – dynamic plans with demo fallback
+   Action Menu Component
    ============================================================ */
-const useEmailPlans = () => {
-  const [plans, setPlans] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchPlans = async () => {
-      try {
-        const res = await fetch('/api/user/email-plans');
-        const ct = res.headers.get('content-type') || '';
-        if (!res.ok || ct.includes('text/html')) throw new Error();
-        const json = await res.json();
-        setPlans(Array.isArray(json) ? json : [json]);
-      } catch {
-        // Demo data – remove when API is live
-        setPlans([
-          { id: 1, planName: 'Premium Business Email', domain: '@cloudedata.info', expirationDate: '2026-06-19', autoRenewal: true, mailboxesUsed: 1, mailboxesTotal: 1 },
-          { id: 2, planName: 'Starter Newsletter', domain: '@news.cloudedata.info', expirationDate: '2025-12-10', autoRenewal: false, mailboxesUsed: 3, mailboxesTotal: 5 },
-          { id: 3, planName: 'Enterprise Suite', domain: '@enterprise.cloudedata.info', expirationDate: '2027-03-01', autoRenewal: true, mailboxesUsed: 12, mailboxesTotal: 25 },
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPlans();
-  }, []);
-
-  return { plans, loading };
-};
-
-/* ============================================================
-   3‑dot menu – portal‑based dropdown (never hidden)
-   ============================================================ */
-const ActionMenu = () => {
+const ActionMenu = ({ emailOrderId, domain, isDnsVerified, onCheckDns, orderStatus }) => {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef(null);
   const navigate = useNavigate();
@@ -75,20 +49,13 @@ const ActionMenu = () => {
       top: rect.bottom + 8,
       left: rect.right,
       transform: 'translateX(-100%)',
-      zIndex: 9999,
+      zIndex: 99999,
     };
   };
 
-  const dropdown = open && (
-    <div style={getDropdownStyle()} className="w-48 bg-white border border-slate-200 rounded-xl shadow-xl py-1">
-      <button
-        onClick={() => { setOpen(false); navigate('/email/plan'); }}
-        className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-gradient-to-r hover:from-slate-100 hover:to-indigo-50 flex items-center gap-2 transition-colors rounded-lg"
-      >
-        <RefreshCw size={14} /> Manage subscription
-      </button>
-    </div>
-  );
+  const isActive = orderStatus === 'active';
+
+ 
 
   return (
     <>
@@ -100,136 +67,264 @@ const ActionMenu = () => {
       >
         <MoreHorizontal size={18} />
       </button>
-      {ReactDOM.createPortal(dropdown, document.body)}
     </>
   );
 };
 
 /* ============================================================
-   Plan Row – mailbox uses context to set selected plan
+   Order Row Component
    ============================================================ */
-const PlanRow = ({ plan }) => {
-  const [autoRenew, setAutoRenew] = useState(plan.autoRenewal);
+const OrderRow = ({ order, onCheckDns, refetchOrders }) => {
+  const orderId = order.id || order._id || order.orderId;
+  console.log('OrderRow: ID found:', orderId, 'for domain:', order.domain);
+  
+  const { data: dnsStatus, refetch: refetchDnsStatus } = useDnsStatus(orderId);
+  const isDnsVerified = dnsStatus?.allVerified === true;
+  const orderStatus = order.status;
   const navigate = useNavigate();
-  const { selectPlan } = useEmailPlan(); // <-- get the context setter
 
-  useEffect(() => setAutoRenew(plan.autoRenewal), [plan.autoRenewal]);
+  useEffect(() => {
+    // Refetch DNS status every 30 seconds if not verified
+    if (!isDnsVerified && orderStatus === 'pending_dns') {
+      const interval = setInterval(() => {
+        refetchDnsStatus();
+      }, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [isDnsVerified, orderStatus, refetchDnsStatus]);
 
-  const toggle = () => {
-    const next = !autoRenew;
-    setAutoRenew(next);
-    toast.success(`Auto-renewal ${next ? 'enabled' : 'disabled'}`);
-  };
 
-  const handleMailboxClick = () => {
-    selectPlan(plan.id);           // remember which plan the user chose
-    navigate('/emails/mailbox');   // navigate without query parameter
-  };
-
-  return (
-    <div className="grid grid-cols-[3fr_2fr_2fr_3fr] items-center bg-white/80 backdrop-blur-sm border border-slate-200/70 rounded-xl px-5 py-4 transition-all duration-300 hover:bg-white hover:border-slate-300 hover:shadow-[0_8px_24px_-6px_rgba(0,0,0,0.05)]">
-      <div>
-        <h3 className="font-semibold text-slate-800 text-sm">{plan.planName}</h3>
-        <p className="text-xs text-slate-500 font-mono mt-0.5">{plan.domain}</p>
-      </div>
-      <div className="flex items-center gap-1.5 text-slate-600 text-sm">
-        <Calendar size={14} className="text-slate-400" />
-        <span className="whitespace-nowrap font-medium">
-          {new Date(plan.expirationDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-        </span>
-      </div>
-      <div className="flex items-center gap-2">
-        <button
-          onClick={toggle}
-          className={`relative w-9 h-5 rounded-full transition-all duration-300 ${autoRenew ? 'bg-gradient-to-r from-emerald-400 to-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]' : 'bg-slate-300'}`}
-        >
-          <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${autoRenew ? 'translate-x-4' : ''}`} />
-        </button>
-        <span className="text-sm text-slate-600 font-medium">{autoRenew ? 'On' : 'Off'}</span>
-      </div>
-      <div className="flex items-center justify-end gap-3">
-        <button
-          onClick={handleMailboxClick}
-          className="group/mail flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-slate-200/80 bg-white/60 backdrop-blur-sm text-slate-700 
-                     hover:border-indigo-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-white hover:text-indigo-700 
-                     transition-all duration-300 shadow-sm hover:shadow-md"
-        >
-          <Users size={16} className="text-slate-400 group-hover/mail:text-indigo-500 transition-colors" />
-          <span className="text-sm font-semibold">{plan.mailboxesUsed}/{plan.mailboxesTotal}</span>
-          <span className="text-sm text-slate-500">Mailboxes</span>
-        </button>
-        <ActionMenu />
-      </div>
-    </div>
-  );
+const handleMailboxClick = () => {
+  const orderId = order.id || order._id || order.orderId;
+  if (isDnsVerified && orderStatus === 'active') {
+    navigate(`/emails/mailbox/${orderId}`); // Fixed: include ID in route
+  } else if (!isDnsVerified) {
+    toast.error('Please verify DNS records first');
+    onCheckDns(orderId, order.domain);
+  } else if (orderStatus !== 'active') {
+    toast.error('Order is not active yet');
+  }
 };
 
-/* ============================================================
-   Main Emails Page
-   ============================================================ */
+  // Get plan details
+  const planName = order.planId?.name || 'Email Plan';
+  const domain = order.domain;
+  const expirationDate = order.expiresAt;
+  const mailboxesUsed = order.mailboxesUsed || 0;
+  const mailboxesTotal = order.planId?.maxMailboxes || 1;
+
+  // Status badge
+  const getStatusBadge = () => {
+    if (orderStatus === 'active') {
+      return { text: 'Active', color: 'bg-green-100 text-green-700', icon: <CheckCircle size={12} /> };
+    } else if (orderStatus === 'pending_dns') {
+      return { text: 'Pending DNS', color: 'bg-amber-100 text-amber-700', icon: <AlertCircle size={12} /> };
+    } else if (orderStatus === 'pending_payment') {
+      return { text: 'Pending Payment', color: 'bg-red-100 text-red-700', icon: <AlertCircle size={12} /> };
+    }
+    return { text: orderStatus, color: 'bg-slate-100 text-slate-700', icon: null };
+  };
+
+  const statusBadge = getStatusBadge();
+ 
+
+ 
+
+ return (
+  <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4 bg-white/80 backdrop-blur-sm border border-slate-200/70 rounded-xl px-5 py-4 transition-all duration-300 hover:bg-white hover:border-slate-300 hover:shadow-[0_8px_24px_-6px_rgba(0,0,0,0.05)]">
+    {statusBadge.text === "pending_payment" ? (
+      ""
+    ) : (
+      <>
+        {/* Plan Name and Status */}
+        <div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="font-semibold text-slate-800 text-sm">{planName}</h3>
+            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusBadge.color}`}>
+              {statusBadge.icon}
+              {statusBadge.text}
+            </span>
+          </div>
+          <p className="text-xs text-slate-500 font-mono mt-0.5">{domain}</p>
+        </div>
+
+        {/* Expiration Date */}
+        <div className="flex items-center gap-1.5 text-slate-600 text-sm">
+          <Calendar size={14} className="text-slate-400" />
+          <span className="whitespace-nowrap font-medium">
+            {expirationDate ? new Date(expirationDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
+          </span>
+        </div>
+
+        {/* Mailboxes Button */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleMailboxClick}
+            className={`group/mail flex cursor-pointer items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all duration-300 shadow-sm ${
+              isDnsVerified && orderStatus === 'active'
+                ? 'border-slate-200/80 bg-white/60 text-slate-700 hover:border-indigo-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-white hover:text-indigo-700 hover:shadow-md'
+                : 'border-slate-200/80 bg-slate-50 text-slate-400 cursor-not-allowed'
+            }`}
+          >
+            <Users size={16} className="text-slate-400 group-hover/mail:text-indigo-500 transition-colors" />
+            <span className="text-sm font-semibold">{mailboxesUsed}/{mailboxesTotal}</span>
+            <span className="text-sm text-slate-500">Mailboxes</span>
+          </button>
+        </div>
+
+        {/* DNS Button */}
+        <button 
+          onClick={() => onCheckDns(orderId, domain)}
+          className="w-full sm:w-auto px-3 sm:px-4 py-2 cursor-pointer text-xs sm:text-sm font-semibold border-2 border-indigo-400 text-indigo-600 rounded-xl hover:bg-indigo-100 hover:text-indigo-800 hover:border-indigo-500 hover:shadow-[0_0_15px_rgba(99,102,241,0.3)] transition-all duration-300 active:scale-95 flex items-center justify-center gap-2"
+          title="View DNS Records"
+        >
+          <Search size={14} className="sm:w-4 sm:h-4 w-3.5 h-3.5" />
+          <span>View DNS</span>
+        </button>
+      </>
+    )}
+  </div>
+);
+  
+};
+
+
 export default function EmailsPage() {
   const navigate = useNavigate();
-  const { plans, loading } = useEmailPlans();
+  const { data: orders, isLoading, refetch: refetchOrders } = useEmailOrders();
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [selectedDomain, setSelectedDomain] = useState(null);
+  const [showDnsModal, setShowDnsModal] = useState(false);
+  const [search, setSearch] = useState('');
 
-  if (loading)
+const handleCheckDns = useCallback((orderId, domain) => {
+  console.log('EmailsPage: handleCheckDns called', { orderId, domain });
+  setSelectedOrderId(orderId);
+  setSelectedDomain(domain);
+  setShowDnsModal(true);
+  console.log('States after setting:', { showDnsModal: true, selectedOrderId: orderId });
+}, []);
+
+  const handleDnsVerified = () => {
+    setShowDnsModal(false);
+    refetchOrders();
+    toast.success('DNS verified! Your email is now active.');
+  };
+
+  useEffect(() => {
+    if (showDnsModal) {
+      console.log('Modal is triggered for Order ID:', selectedOrderId);
+    }
+  }, [showDnsModal, selectedOrderId]);
+
+  const filteredOrders = orders?.filter(order => 
+    order.status !== 'pending_payment' && (
+      order.domain?.toLowerCase().includes(search.toLowerCase()) ||
+      order.planId?.name?.toLowerCase().includes(search.toLowerCase())
+    )
+  );
+
+  if (isLoading) {
     return (
-      <div className="flex justify-center py-40">
-        <div className="animate-spin rounded-full h-10 w-10 border-2 border-slate-300 border-t-indigo-500" />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 p-6 md:p-10">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-2xl font-bold">Email Hosting</h1>
+              <p className="text-sm text-slate-500">Loading your orders...</p>
+            </div>
+          </div>
+          <SkeletonList rows={5} />
+        </div>
       </div>
     );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 p-6 md:p-10">
       {/* Header bar – breadcrumb + action button */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-10 backdrop-blur-sm bg-white/70 border border-slate-200/60 rounded-2xl px-6 py-4 shadow-sm">
-        <div className="flex items-center gap-2">
-          <button onClick={() => navigate('/emails')} className="text-2xl font-bold text-slate-800">Emails</button>
-          <ChevronRight size={18} className="text-slate-400" />
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-slate-500 hover:bg-white hover:text-indigo-600 transition-all"
-          >
-            <Home size={16} />
-            <span className="text-sm font-medium">Dashboard</span>
-          </button>
+      <div className="max-w-6xl mx-auto">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 backdrop-blur-sm bg-white/70 border border-slate-200/60 rounded-2xl px-6 py-4 shadow-sm">
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-slate-800">Email Hosting</h1>
+            <ChevronRight size={18} className="text-slate-400" />
+            <button
+              onClick={() => navigate('/')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-slate-500 hover:bg-white hover:text-indigo-600 transition-all"
+            >
+              <Home size={16} />
+              <span className="text-sm font-medium">Dashboard</span>
+            </button>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="relative hidden sm:block">
+              <input
+                type="text"
+                placeholder="Search domains..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="bg-white border border-slate-200 rounded-xl pl-4 pr-4 py-2.5 w-64 focus:outline-none focus:border-indigo-400 transition-all text-sm"
+              />
+            </div>
+            <button
+              onClick={() => navigate('/email/plan')}
+              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all active:scale-95"
+            >
+              <ShoppingCart size={16} /> Buy Email
+            </button>
+          </div>
         </div>
 
-        <button
-          onClick={() => navigate('/email/plan')}
-          className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border-2 border-slate-200 bg-white/80 backdrop-blur-sm text-slate-700 font-semibold text-sm
-                     hover:bg-gradient-to-r hover:from-indigo-50 hover:to-white hover:border-indigo-300 hover:text-indigo-700 transition-all duration-300 shadow-sm hover:shadow-md"
-        >
-          <ShoppingCart size={16} /> Buy email
-        </button>
+        {/* Column headers */}
+        {filteredOrders && filteredOrders.length > 0 && (
+          <div className="grid grid-cols-4 items-center px-5 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200/60 mb-2">
+            <div>Plan & Domain</div>
+            <div>Expiration</div>
+            <div >Mailboxes</div>
+            <div className="text-center">Actions</div>
+          </div>
+        )}
+
+        {/* Order rows */}
+        {!filteredOrders || filteredOrders.length === 0 ? (
+          <div className="text-center py-20 bg-white/70 backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-sm mt-6">
+            <Mail size={48} className="mx-auto text-slate-300 mb-4" />
+            <p className="text-slate-500">No email hosting orders found.</p>
+            <button
+              onClick={() => navigate('/email/plan')}
+              className="mt-6 px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl font-bold hover:from-indigo-600 hover:to-purple-600 transition-all shadow-md hover:shadow-lg"
+            >
+              Buy an Email Plan
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {filteredOrders.map((order) => (
+              <OrderRow 
+                key={order.id} 
+                order={order} 
+                onCheckDns={handleCheckDns}
+                refetchOrders={refetchOrders}
+              />
+            ))}
+          </div>
+        )}
       </div>
+      
 
-      {/* Column headers */}
-      <div className="grid grid-cols-[3fr_2fr_2fr_3fr] items-center px-5 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200/60 mb-2">
-        <div>Plan name</div>
-        <div>Expiration date</div>
-        <div>Auto-renewal</div>
-        <div className="text-right">Mailboxes</div>
-      </div>
-
-      {/* Plan rows */}
-      {plans.length === 0 ? (
-        <div className="text-center py-20 bg-white/70 backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-sm mt-6">
-          <Mail size={48} className="mx-auto text-slate-300 mb-4" />
-          <p className="text-slate-500">No email plans found.</p>
-          <button
-            onClick={() => navigate('/email/plan')}
-            className="mt-6 px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl font-bold hover:from-indigo-600 hover:to-purple-600 transition-all shadow-md hover:shadow-lg"
-          >
-            Get a plan
-          </button>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {plans.map((plan) => (
-            <PlanRow key={plan.id} plan={plan} />
-          ))}
-        </div>
-      )}
+      {/* DNS Verification Modal */}
+      {showDnsModal && selectedOrderId && (
+  <DkimVerificationModal
+    emailOrderId={selectedOrderId}
+    isOpen={showDnsModal}
+    onClose={() => {
+      console.log('Closing modal');
+      setShowDnsModal(false);
+    }}
+    onVerified={handleDnsVerified}
+  />
+)}
     </div>
   );
 }

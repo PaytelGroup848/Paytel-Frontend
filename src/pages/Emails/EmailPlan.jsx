@@ -6,127 +6,14 @@ import toast from 'react-hot-toast';
 import EmailConfigModal from './EmailConfigModal';
 
 
-const useEmailPlansList = () => {
-  const [plans, setPlans] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchPlans = async () => {
-      try {
-        const res = await fetch('/api/email-plans');
-        const contentType = res.headers.get('content-type') || '';
-        if (!res.ok || contentType.includes('text/html')) throw new Error();
-        const json = await res.json();
-        setPlans(Array.isArray(json) ? json : [json]);
-      } catch {
-        setPlans([
-          {
-            id: 'starter-business',
-            name: 'Starter Business Email',
-            tagline: 'For small businesses',
-            description: 'Better security and more storage for your growing team.',
-            popular: false,
-            basePriceMonthly: 29,       // Monthly price for shortest billing cycle
-            discountFactors: { 48: 0.7, 24: 0.85, 12: 1, 1: 1.5 },   // multiplier for base price to get monthly based on period
-            renewPriceMonthly: 69,       // Renewal price per month for 48 months
-            features: [
-              '100 emails/day per mailbox',
-              'Optional extra mailbox storage',
-              'Spam & virus protection',
-              'Mobile & web access',
-            ],
-            isWorkspace: false,
-          },
-          {
-            id: 'premium-business',
-            name: 'Premium Business Email',
-            tagline: 'For scaling teams',
-            description: 'Plenty of storage and advanced tools for collaboration.',
-            popular: true,
-            basePriceMonthly: 79,
-            discountFactors: { 48: 0.7, 24: 0.85, 12: 1, 1: 1.5 },
-            renewPriceMonthly: 109,
-            features: [
-              '300 emails/day per mailbox',
-              '50 GB storage per mailbox',
-              'Advanced anti‑spam',
-              'Calendar & contacts sync',
-              'Priority support',
-            ],
-            isWorkspace: false,
-          },
-          {
-            id: 'starter-google-workspace',
-            name: 'Starter Google Workspace',
-            tagline: 'For entrepreneurs',
-            description: 'Boost productivity with Google’s full suite of tools.',
-            popular: false,
-            basePriceMonthly: 609,   // fixed monthly price (only available for 12 months)
-            discountFactors: { 12: 1 },  // only 12 months
-            renewPriceMonthly: 60,      // unique renew price for 12 months
-            features: [
-              '30 GB Storage per mailbox',
-              '30 GB Calendar',
-              'Docs, Sheets, Slides',
-              'Chat team messaging',
-              'Meet video conferencing',
-              'Security & management controls',
-              '24/7 Google support',
-            ],
-            isWorkspace: true,
-            workspaceAllowedPeriods: [12],
-          },
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPlans();
-  }, []);
-
-  return { plans, loading };
-};
-
-/* ============================================================
-   Billing period options
-   ============================================================ */
-const billingOptions = [
-  { label: '48 months', months: 48, savePercent: 30 },
-  { label: '24 months', months: 24, savePercent: 15 },
-  { label: '12 months', months: 12, savePercent: 0 },
-  { label: '1 month', months: 1, savePercent: -50 }, // negative means no saving, just display
-];
-
-/* ============================================================
-   Helper – compute monthly price based on billing period
-   ============================================================ */
-const computePrice = (plan, periodMonths) => {
-  if (!plan.discountFactors || !plan.discountFactors[periodMonths]) {
-    return plan.basePriceMonthly; // fallback
-  }
-  return (plan.basePriceMonthly * plan.discountFactors[periodMonths]).toFixed(2);
-};
+import { useEmailPlans } from '../../hooks/useEmailHosting';
 
 /* ============================================================
    Plan Card – with memo for performance
    ============================================================ */
-const PlanCard = React.memo(({ plan, billingPeriod, isSelected, onSelect }) => {
-  const navigate = useNavigate();
-  
-  const isWorkspace = plan.isWorkspace;
-  const periodLabel = billingPeriod === 1 ? 'mo' : `${billingPeriod} mo`;
-
-  // Check if plan is available for the chosen period
-  const isDisabled = isWorkspace && plan.workspaceAllowedPeriods && !plan.workspaceAllowedPeriods.includes(billingPeriod);
-  const monthlyPrice = useMemo(() => computePrice(plan, billingPeriod), [plan, billingPeriod]);
-
-  const handleGetStarted = () => {
-    if (!isDisabled) {
-      onSelect(plan.id, billingPeriod);
-    }
-  };
-
-
+const PlanCard = React.memo(({ plan, billingPeriod, onSelect }) => {
+  const monthlyPrice =  Math.floor(plan.price / 100);
+  const displayPrice = monthlyPrice;
 
   return (
     <motion.div
@@ -134,11 +21,11 @@ const PlanCard = React.memo(({ plan, billingPeriod, isSelected, onSelect }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       className={`relative bg-white/80 backdrop-blur-md border rounded-3xl p-6 flex flex-col transition-all duration-300 hover:shadow-xl ${
-        plan.popular ? 'border-indigo-300 shadow-md ring-1 ring-indigo-100' : 'border-slate-200/80 hover:border-indigo-200'
-      } ${isDisabled ? 'opacity-60 pointer-events-none' : ''}`}
+        plan.slug === 'business' ? 'border-indigo-300 shadow-md ring-1 ring-indigo-100' : 'border-slate-200/80 hover:border-indigo-200'
+      }`}
     >
       {/* Popular badge */}
-      {plan.popular && (
+      {plan.slug === 'business' && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold px-4 py-1 rounded-full shadow-md flex items-center gap-1">
           <Star size={14} /> Most Popular
         </div>
@@ -146,16 +33,15 @@ const PlanCard = React.memo(({ plan, billingPeriod, isSelected, onSelect }) => {
 
       {/* Header */}
       <div className="mb-4">
-        <p className="text-xs font-bold uppercase tracking-wider text-indigo-600 mb-1">{plan.tagline}</p>
+        <p className="text-xs font-bold uppercase tracking-wider text-indigo-600 mb-1">{plan.name} Email</p>
         <h3 className="text-2xl font-black text-slate-800">{plan.name}</h3>
-        <p className="text-sm text-slate-500 mt-2 leading-relaxed">{plan.description}</p>
       </div>
 
       {/* Price */}
       <div className="mb-6">
         <div className="flex items-baseline gap-1">
-          <span className="text-4xl font-black text-slate-900">₺ {monthlyPrice}</span>
-          <span className="text-sm text-slate-500">/{periodLabel}</span>
+          <span className="text-4xl font-black text-slate-900">₹ {displayPrice}</span>
+          <span className="text-sm text-slate-500">/mo</span>
         </div>
         <p className="text-xs text-slate-400 mt-1">Price per mailbox</p>
       </div>
@@ -170,25 +56,12 @@ const PlanCard = React.memo(({ plan, billingPeriod, isSelected, onSelect }) => {
         ))}
       </ul>
 
-      {/* Renewal note */}
-      <div className="mb-6 bg-slate-50 rounded-xl p-3 text-xs text-slate-600 flex items-start gap-2">
-        <Clock size={14} className="text-slate-400 mt-0.5 shrink-0" />
-        <span>
-          {!isWorkspace ? (
-            <>₺ {plan.renewPriceMonthly}/mo when you renew · Applies at {billingPeriod}-month purchase</>
-          ) : (
-            <>₺ {plan.renewPriceMonthly}/mo when you renew for 12 months</>
-          )}
-        </span>
-      </div>
-
       {/* CTA */}
       <button
-        onClick={handleGetStarted}
-        disabled={isDisabled}
-        className="w-full py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+        onClick={() => onSelect(plan)}
+        className="w-full py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md hover:shadow-lg"
       >
-        Get started
+        Select Plan
         <ArrowRight size={18} />
       </button>
     </motion.div>
@@ -200,16 +73,11 @@ const PlanCard = React.memo(({ plan, billingPeriod, isSelected, onSelect }) => {
    ============================================================ */
 export default function EmailPlanPage() {
   const navigate = useNavigate();
-  const [configPlan, setConfigPlan] = useState(null);
-  const { plans, loading } = useEmailPlansList();
-  const [billingPeriod, setBillingPeriod] = useState(48);
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const { data: plans, isLoading } = useEmailPlans();
+  const [billingPeriod, setBillingPeriod] = useState(12); // Default to yearly for 15% discount
 
-  const handleSelectPlan = useCallback((planId) => {
-  const found = plans.find(p => p.id === planId);
-  if (found) setConfigPlan(found);
-}, [plans]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-indigo-600" />
@@ -231,65 +99,27 @@ export default function EmailPlanPage() {
             <h1 className="text-3xl md:text-4xl font-black text-slate-900">Choose your email plan</h1>
             <p className="text-slate-500 mt-2">Pick the perfect plan for your business. Upgrade anytime.</p>
           </div>
-          <div className="flex items-center gap-2">
-            <Shield size={18} className="text-indigo-500" />
-            <span className="text-xs font-bold text-slate-600">30-day money‑back guarantee</span>
-          </div>
-        </div>
-
-        {/* Billing period selector */}
-        <div className="mb-12">
-          <p className="text-sm font-bold text-slate-700 mb-4">Billing period</p>
-          <div className="flex flex-wrap gap-3">
-            {billingOptions.map((opt) => (
-              <button
-                key={opt.months}
-                onClick={() => setBillingPeriod(opt.months)}
-                className={`relative px-6 py-2.5 rounded-xl text-sm font-semibold transition-all border ${
-                  billingPeriod === opt.months
-                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-200'
-                    : 'bg-white text-slate-700 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50'
-                }`}
-              >
-                {opt.label}
-                {opt.savePercent > 0 && (
-                  <span className={`absolute -top-2 -right-2 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${billingPeriod === opt.months ? 'bg-amber-400 text-amber-900' : 'bg-emerald-100 text-emerald-700'}`}>
-                    Save {opt.savePercent}%
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Plans grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {plans.map((plan) => (
+          {plans?.map((plan) => (
             <PlanCard
               key={plan.id}
               plan={plan}
               billingPeriod={billingPeriod}
-              isSelected={false}
-              onSelect={handleSelectPlan}
+              onSelect={setSelectedPlan}
             />
           ))}
         </div>
-        {configPlan && (
-  <EmailConfigModal
-    plan={configPlan}
-    isOpen={!!configPlan}
-    onClose={() => setConfigPlan(null)}
-    onConfirm={({ plan, domain, tenure, total }) => {
-      setConfigPlan(null);
-      navigate(`/checkout?plan=${plan.id}&period=${tenure.months}&domain=${domain}`);
-    }}
-  />
-)}
 
-        {/* Footer note */}
-        <p className="text-center text-xs text-slate-400 mt-12">
-          All prices are in Turkish Lira (₺). Taxes may apply. Renewal prices are subject to change.
-        </p>
+        {selectedPlan && (
+          <EmailConfigModal
+            plan={selectedPlan}
+            isOpen={!!selectedPlan}
+            onClose={() => setSelectedPlan(null)}
+          />
+        )}
       </div>
     </div>
   );
