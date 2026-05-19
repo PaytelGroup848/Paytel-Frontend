@@ -77,7 +77,7 @@ export default function Navbar({ isSidebarOpen, onMenuClick }) {
                 {/* Animated cloud SVG */}
                 <div className="relative flex items-center justify-center h-10">
                   <motion.img
-                    src="/FullCloudedatalogosvg.svg"
+                    src="/Cloudedata.svg"
                     alt="CloudeData Logo"
                     className="h-10 object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
                     animate={{ y: [0, -2, 0] }}
