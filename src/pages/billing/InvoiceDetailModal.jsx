@@ -18,7 +18,7 @@ const formatIndianCurrency = (amount) => {
 };
 
 const InvoiceDetailModal = ({ invoiceData, onClose }) => {
-  const LOGO_URL = '/FullCloudedatalogosvg.svg';
+  const LOGO_URL = '/Cloudedata.svg';
   const userEmail = useMe()?.data?.email;
   const profile = useProfile()?.data;
   const userName = profile?.firstName;

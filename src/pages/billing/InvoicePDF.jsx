@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 25,
+    marginBottom: 20,
   },
 
   /* ── Header: NO borders at all ── */
@@ -132,7 +132,7 @@ marginTop: 30,
   },
 
   signatureBox: {
-    marginTop: 25,
+    marginTop: 15,
     alignItems: 'flex-end',
   },
 
@@ -152,7 +152,7 @@ marginTop: 30,
 const InvoicePDF = ({ invoiceData, userEmail, userName, userPhone }) => {
   if (!invoiceData) return null;
 
-  const LOGO_URL = '/FullCloudedatalogosvg.svg';
+  const LOGO_URL = '/Cloudedata.svg';
 
   const {
     companyName,

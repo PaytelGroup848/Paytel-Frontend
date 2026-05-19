@@ -43,7 +43,7 @@ const CloudVisual = () => {
       {/* Logo */}
        <div className="relative flex items-center justify-center w-full h-12">
   <motion.img
-    src="\FullCloudedatalogosvg.svg"
+    src="/Cloudedata.svg"
     alt="Cloude Data Logo"
     className="
       w-full h-12

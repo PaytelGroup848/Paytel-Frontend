@@ -44,6 +44,14 @@ export const useInvoice = (id) =>
     enabled: !!id,
   });
 
+// Get dashboard data
+export const useDashboardData = () =>
+  useQuery({
+    queryKey: ['billing', 'dashboard'],
+    queryFn: () => api.get('/billing/dashboard').then(r => r.data?.data),
+    staleTime: 1000 * 30, // 30 seconds
+  });
+
 // CREATE ORDER - Supports both VPS and WordPress
 export const useCreateOrder = () =>
   useMutation({

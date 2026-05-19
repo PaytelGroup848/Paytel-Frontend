@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Mail, Shield, ChevronRight, Globe, Check, Loader2, CircleAlert } from 'lucide-react';
+import { X, Mail, Shield, ChevronRight, Globe, Check, Loader2, CircleAlert, Minus, Plus, Users } from 'lucide-react';
 import { useCreateEmailOrder, useVerifyEmailPayment } from '../../hooks/useEmailHosting';
 import { useNavigate } from 'react-router-dom';
 import DkimVerificationModal from './DkimVerificationModal';
@@ -15,6 +15,7 @@ export default function EmailConfigModal({ plan, isOpen, onClose }) {
   const [domain, setDomain] = useState('');
   const [domainError, setDomainError] = useState('');
   const [selectedTenure, setTenure] = useState(TENURES[0]);
+  const [mailboxCount, setMailboxCount] = useState(1);
   const [showDkimModal, setShowDkimModal] = useState(false);
   const [createdOrderId, setCreatedOrderId] = useState(null);
 
@@ -25,7 +26,7 @@ export default function EmailConfigModal({ plan, isOpen, onClose }) {
 
   /* ── price math (aligned with backend) ── */
   const basePricePaise = plan.price;
-  let subtotalPaise = basePricePaise * selectedTenure.months;
+  let subtotalPaise = basePricePaise * selectedTenure.months * mailboxCount;
   if (selectedTenure.months === 12) {
     subtotalPaise = Math.floor(subtotalPaise * 0.85);
   }
@@ -53,7 +54,8 @@ export default function EmailConfigModal({ plan, isOpen, onClose }) {
       const orderData = await createOrderMutation.mutateAsync({
         planId: plan.id,
         domain,
-        tenureMonths: selectedTenure.months
+        tenureMonths: selectedTenure.months,
+        mailboxCount
       });
 
       if (!orderData.keyId) {
@@ -67,7 +69,7 @@ export default function EmailConfigModal({ plan, isOpen, onClose }) {
         amount: orderData.amount, // Use the amount confirmed by backend order
         currency: "INR",
         name: "CloudeData Email Hosting",
-        description: `${plan.name} Plan - ${domain} (${selectedTenure.label})`,
+        description: `${plan.name} Plan - ${domain} (${mailboxCount} Mailboxes, ${selectedTenure.label})`,
         order_id: orderData.orderId,
         handler: async (response) => {
           try {
@@ -217,6 +219,30 @@ export default function EmailConfigModal({ plan, isOpen, onClose }) {
       transition: 'all .2s',
       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
     }),
+    counter: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 12,
+      background: '#F8FAFC',
+      border: '1.5px solid #E2E8F0',
+      borderRadius: 12,
+      padding: '8px 12px',
+      width: 'fit-content',
+    },
+    counterBtn: {
+      width: 28,
+      height: 28,
+      borderRadius: 8,
+      border: 'none',
+      background: '#FFF',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      cursor: 'pointer',
+      color: '#4F46E5',
+      boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+      transition: 'all 0.2s',
+    }
   };
 
   return (
@@ -260,6 +286,33 @@ export default function EmailConfigModal({ plan, isOpen, onClose }) {
               </div>
               <div style={{ fontSize:12, color:'#6B7280', lineHeight:1.6 }}>
                 {plan.features.join(' · ')}
+              </div>
+            </div>
+
+            {/* Mailbox Count Selector */}
+            <div>
+              <label style={S.label}>Number of Mailboxes</label>
+              <p style={{ fontSize:12, color:'#64748B', marginBottom:12, lineHeight:1.6 }}>
+                How many mailboxes do you need? You can always add more later.
+              </p>
+              <div style={S.counter}>
+                <button 
+                  style={{...S.counterBtn, opacity: mailboxCount <= 1 ? 0.5 : 1, cursor: mailboxCount <= 1 ? 'not-allowed' : 'pointer'}}
+                  onClick={() => mailboxCount > 1 && setMailboxCount(c => c - 1)}
+                  disabled={mailboxCount <= 1}
+                >
+                  <Minus size={14} />
+                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 80, justifyContent: 'center' }}>
+                  <Users size={16} className="text-indigo-500" />
+                  <span style={{ fontSize: 16, fontWeight: 700, color: '#0F172A' }}>{mailboxCount}</span>
+                </div>
+                <button 
+                  style={S.counterBtn}
+                  onClick={() => setMailboxCount(c => c + 1)}
+                >
+                  <Plus size={14} />
+                </button>
               </div>
             </div>
 
@@ -315,7 +368,7 @@ export default function EmailConfigModal({ plan, isOpen, onClose }) {
                   const active = selectedTenure.months === tenure.months;
                   
                   // Calculate tenure price aligned with backend
-                  let tSubtotalPaise = plan.price * tenure.months;
+                  let tSubtotalPaise = plan.price * tenure.months * mailboxCount;
                   if (tenure.months === 12) {
                     tSubtotalPaise = Math.floor(tSubtotalPaise * 0.85);
                   }
@@ -357,7 +410,7 @@ export default function EmailConfigModal({ plan, isOpen, onClose }) {
                 Order Summary
               </div>
               <div style={{ display:'flex', justifyContent:'space-between', fontSize:12, color:'#64748B' }}>
-                <span>Subtotal</span>
+                <span>{mailboxCount} Mailbox{mailboxCount > 1 ? 'es' : ''}</span>
                 <span style={{ fontWeight:600, color:'#374151' }}>{fmt(subtotal)}</span>
               </div>
               <div style={{ display:'flex', justifyContent:'space-between', fontSize:12, color:'#64748B' }}>
