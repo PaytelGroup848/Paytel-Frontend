@@ -12,4 +12,22 @@ export default defineConfig({
       interval: 100,
     },
   },
+  //  Suppress parse5 warnings
+  build: {
+    rollupOptions: {
+      onwarn(warning, warn) {
+        // Ignore parse5 warning about noscript
+        if (warning.message?.includes('disallowed-content-in-noscript-in-head')) {
+          return;
+        }
+        if (warning.message?.includes('parse5')) {
+          return;
+        }
+        warn(warning);
+      }
+    }
+  },
+  //  Also suppress warnings in dev mode
+  logLevel: 'warn',
+  clearScreen: false,
 })

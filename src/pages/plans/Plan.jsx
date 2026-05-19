@@ -8,6 +8,7 @@ import { useProfile } from "../../hooks/useProfile";
 import { loadRazorpay } from "../../utils/razorpay";
 import toast from "react-hot-toast";
 import Spinner from "../../components/ui/Spinner";
+import { metaPixel } from "../../utils/metaPixel";
 
 const TAX_RATE = 0.18;
 
@@ -30,6 +31,8 @@ const PlanModal = ({ plan, onClose }) => {
         return;
       }
 
+      metaPixel.initiateCheckout();
+
       const orderData = await createOrder.mutateAsync({
         planId: plan.id || plan._id,
         duration: duration,
@@ -51,6 +54,7 @@ const PlanModal = ({ plan, onClose }) => {
               razorpay_signature: response.razorpay_signature,
               planType: 'wordpress'
             });
+            metaPixel.purchase(orderData.amount / 100, 'INR');
             onClose();
             navigate("/websites/wordpress/paid");
           } catch (err) {

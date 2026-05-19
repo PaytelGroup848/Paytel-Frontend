@@ -1,32 +1,41 @@
-// EmailConfigModal.jsx  ← new file, same folder as EmailPlanPage
-
 import React, { useState } from 'react';
-import { X, Mail, Shield, ChevronRight, Globe, Check } from 'lucide-react';
+import { X, Mail, Shield, ChevronRight, Globe, Check, Loader2, CircleAlert, Minus, Plus, Users } from 'lucide-react';
+import { useCreateEmailOrder, useVerifyEmailPayment } from '../../hooks/useEmailHosting';
+import { useNavigate } from 'react-router-dom';
+import DkimVerificationModal from './DkimVerificationModal';
+import toast from 'react-hot-toast';
 
 const TENURES = [
-  { months: 48, label: '4 Years',  discount: 30 },
-  { months: 24, label: '2 Years',  discount: 15 },
-  { months: 12, label: '1 Year',   discount: 0  },
-  { months: 1,  label: 'Monthly',  discount: 0, surcharge: true },
+  { months: 12, label: 'Yearly', discount: 15 },
+  { months: 1, label: 'Monthly', discount: 0 },
 ];
 
-export default function EmailConfigModal({ plan, isOpen, onClose, onConfirm }) {
-  const [domain, setDomain]           = useState('');
+export default function EmailConfigModal({ plan, isOpen, onClose }) {
+  const navigate = useNavigate();
+  const [domain, setDomain] = useState('');
   const [domainError, setDomainError] = useState('');
-  const [selectedTenure, setTenure]   = useState(
-    plan?.workspaceAllowedPeriods
-      ? TENURES.find(t => t.months === plan.workspaceAllowedPeriods[0]) ?? TENURES[2]
-      : TENURES[0]
-  );
+  const [selectedTenure, setTenure] = useState(TENURES[0]);
+  const [mailboxCount, setMailboxCount] = useState(1);
+  const [showDkimModal, setShowDkimModal] = useState(false);
+  const [createdOrderId, setCreatedOrderId] = useState(null);
+
+  const createOrderMutation = useCreateEmailOrder();
+  const verifyPaymentMutation = useVerifyEmailPayment();
 
   if (!isOpen || !plan) return null;
 
-  /* ── price math ── */
-  const factor       = plan.discountFactors?.[selectedTenure.months] ?? 1;
-  const monthlyPrice = plan.basePriceMonthly * factor;          // per mailbox/month
-  const subtotal     = monthlyPrice * selectedTenure.months;    // total before GST
-  const gst          = subtotal * 0.18;
-  const total        = subtotal + gst;
+  /* ── price math (aligned with backend) ── */
+  const basePricePaise = plan.price;
+  let subtotalPaise = basePricePaise * selectedTenure.months * mailboxCount;
+  if (selectedTenure.months === 12) {
+    subtotalPaise = Math.floor(subtotalPaise * 0.85);
+  }
+  const totalPaise = Math.round(subtotalPaise * 1.18);
+  const gstPaise = totalPaise - subtotalPaise;
+
+  const subtotal = subtotalPaise / 100;
+  const gst = gstPaise / 100;
+  const total = totalPaise / 100;
 
   const fmt = (n) => `₹${Number(n).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -38,9 +47,93 @@ export default function EmailConfigModal({ plan, isOpen, onClose, onConfirm }) {
     else setDomainError('');
   };
 
-  const isValid = domain.trim() && !domainError;
+  const isValid = domain.trim() && !domainError && !createOrderMutation.isPending && !verifyPaymentMutation.isPending;
 
-  /* ── inline styles (mirrors ConfigurationModal pattern) ── */
+  const handleCheckout = async () => {
+    try {
+      const orderData = await createOrderMutation.mutateAsync({
+        planId: plan.id,
+        domain,
+        tenureMonths: selectedTenure.months,
+        mailboxCount
+      });
+
+      if (!orderData.keyId) {
+        console.error('keyId is missing from response!');
+        toast.error('Payment gateway configuration error', { style: { zIndex: 99999 } });
+        return;
+      }
+
+      const options = {
+        key: orderData.keyId,
+        amount: orderData.amount, // Use the amount confirmed by backend order
+        currency: "INR",
+        name: "CloudeData Email Hosting",
+        description: `${plan.name} Plan - ${domain} (${mailboxCount} Mailboxes, ${selectedTenure.label})`,
+        order_id: orderData.orderId,
+        handler: async (response) => {
+          try {
+            const verifyResult = await verifyPaymentMutation.mutateAsync({
+              emailOrderId: orderData.emailOrderId,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpaySignature: response.razorpay_signature
+            });
+
+            if (verifyResult.dkimVerified) {
+              navigate(`/emails/manage/${orderData.emailOrderId}`);
+              onClose();
+            } else {
+              setCreatedOrderId(orderData.emailOrderId);
+              setShowDkimModal(true);
+            }
+          } catch (err) {
+            console.error("Payment verification failed", err);
+            toast.error('Payment verification failed', { style: { zIndex: 99999 } });
+          }
+        },
+        prefill: {
+          name: "",
+          email: "",
+          contact: ""
+        },
+        theme: {
+          color: "#4F46E5"
+        },
+        modal: {
+          ondismiss: function() {
+            console.log('Razorpay modal closed');
+          }
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      console.error("Order creation failed", err);
+      toast.error('Order creation failed', { style: { zIndex: 99999 } });
+    }
+  };
+
+  if (showDkimModal) {
+    return (
+      <DkimVerificationModal
+        emailOrderId={createdOrderId}
+        isOpen={showDkimModal}
+        onClose={() => {
+          setShowDkimModal(false);
+          onClose();
+          navigate(`/emails/manage/${createdOrderId}`);
+        }}
+        onVerified={() => {
+          navigate(`/emails/manage/${createdOrderId}`);
+          onClose();
+        }}
+      />
+    );
+  }
+
+  /* ── inline styles ── */
   const S = {
     overlay: {
       position: 'fixed', inset: 0, zIndex: 9999,
@@ -117,25 +210,44 @@ export default function EmailConfigModal({ plan, isOpen, onClose, onConfirm }) {
       width: '100%', padding: 13,
       borderRadius: 13, border: 'none', cursor: valid ? 'pointer' : 'not-allowed',
       background: valid
-        ? 'linear-gradient(135deg,#1a11ce 0%,#292079 100%)'
+        ? 'linear-gradient(135deg,#4F46E5 0%,#3e38ad 100%)'
         : '#E2E8F0',
       color: valid ? '#FFF' : '#94A3B8',
       fontSize: 13, fontWeight: 700, letterSpacing: '0.06em',
       textTransform: 'uppercase',
-      boxShadow: valid ? '0 4px 20px rgba(108,99,255,0.35)' : 'none',
+      boxShadow: valid ? '0 4px 20px rgba(79,70,229,0.35)' : 'none',
       transition: 'all .2s',
       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
     }),
+    counter: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 12,
+      background: '#F8FAFC',
+      border: '1.5px solid #E2E8F0',
+      borderRadius: 12,
+      padding: '8px 12px',
+      width: 'fit-content',
+    },
+    counterBtn: {
+      width: 28,
+      height: 28,
+      borderRadius: 8,
+      border: 'none',
+      background: '#FFF',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      cursor: 'pointer',
+      color: '#4F46E5',
+      boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+      transition: 'all 0.2s',
+    }
   };
-
-  /* ── tenure row ── */
-  const allowedMonths = plan.workspaceAllowedPeriods ?? [48, 24, 12, 1];
-  const tenures = TENURES.filter(t => allowedMonths.includes(t.months));
 
   return (
     <div style={S.overlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div style={S.shell}>
-
         {/* Header */}
         <div style={S.header}>
           <div style={{ display:'flex', alignItems:'center', gap:12 }}>
@@ -161,10 +273,8 @@ export default function EmailConfigModal({ plan, isOpen, onClose, onConfirm }) {
 
         {/* Body */}
         <div style={S.body}>
-
           {/* ── LEFT ── */}
           <div style={S.left}>
-
             {/* Hero blurb */}
             <div style={{
               background:'linear-gradient(135deg,#F5F3FF 0%,#EEF2FF 100%)',
@@ -175,18 +285,34 @@ export default function EmailConfigModal({ plan, isOpen, onClose, onConfirm }) {
                 {plan.name}
               </div>
               <div style={{ fontSize:12, color:'#6B7280', lineHeight:1.6 }}>
-                {plan.description}
+                {plan.features.join(' · ')}
               </div>
-              <div style={{ display:'flex', flexWrap:'wrap', gap:8, marginTop:12 }}>
-                {plan.features.slice(0, 3).map((f, i) => (
-                  <span key={i} style={{
-                    display:'flex', alignItems:'center', gap:4,
-                    fontSize:10, fontWeight:600, color:'#4F46E5',
-                    background:'#EDE9FF', borderRadius:20, padding:'3px 8px',
-                  }}>
-                    <Check size={10}/> {f}
-                  </span>
-                ))}
+            </div>
+
+            {/* Mailbox Count Selector */}
+            <div>
+              <label style={S.label}>Number of Mailboxes</label>
+              <p style={{ fontSize:12, color:'#64748B', marginBottom:12, lineHeight:1.6 }}>
+                How many mailboxes do you need? You can always add more later.
+              </p>
+              <div style={S.counter}>
+                <button 
+                  style={{...S.counterBtn, opacity: mailboxCount <= 1 ? 0.5 : 1, cursor: mailboxCount <= 1 ? 'not-allowed' : 'pointer'}}
+                  onClick={() => mailboxCount > 1 && setMailboxCount(c => c - 1)}
+                  disabled={mailboxCount <= 1}
+                >
+                  <Minus size={14} />
+                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 80, justifyContent: 'center' }}>
+                  <Users size={16} className="text-indigo-500" />
+                  <span style={{ fontSize: 16, fontWeight: 700, color: '#0F172A' }}>{mailboxCount}</span>
+                </div>
+                <button 
+                  style={S.counterBtn}
+                  onClick={() => setMailboxCount(c => c + 1)}
+                >
+                  <Plus size={14} />
+                </button>
               </div>
             </div>
 
@@ -194,12 +320,9 @@ export default function EmailConfigModal({ plan, isOpen, onClose, onConfirm }) {
             <div>
               <label style={S.label}>Your Business Domain</label>
               <p style={{ fontSize:12, color:'#64748B', marginBottom:12, lineHeight:1.6 }}>
-                Enter the domain you want to use for your business emails
-                (e.g. <strong>yourcompany.com</strong>). Make sure you own this domain —
-                you'll need to add DNS records after purchase.
+                Enter the domain you want to use for your business emails.
               </p>
               <div style={{ position:'relative' }}>
-                {/* Globe icon inside input */}
                 <Globe
                   size={16}
                   style={{ position:'absolute', left:13, top:'50%',
@@ -212,18 +335,11 @@ export default function EmailConfigModal({ plan, isOpen, onClose, onConfirm }) {
                   placeholder="yourbusiness.com"
                   onChange={(e) => { setDomain(e.target.value); setDomainError(''); }}
                   onBlur={handleDomainBlur}
-                  onFocus={(e) => (e.target.style.borderColor = '#6C63FF')}
                 />
               </div>
               {domainError && (
                 <p style={{ fontSize:11, color:'#EF4444', marginTop:6, fontWeight:500 }}>
                   ⚠ {domainError}
-                </p>
-              )}
-              {domain && !domainError && (
-                <p style={{ fontSize:11, color:'#10B981', marginTop:6, fontWeight:600,
-                  display:'flex', alignItems:'center', gap:4 }}>
-                  <Check size={12}/> Looks good! Emails will be like you@{domain}
                 </p>
               )}
             </div>
@@ -234,26 +350,31 @@ export default function EmailConfigModal({ plan, isOpen, onClose, onConfirm }) {
               border:'1px solid #FDE68A',
               display:'flex', gap:10, alignItems:'flex-start',
             }}>
-              <span style={{ fontSize:16, flexShrink:0 }}>ℹ️</span>
+               <CircleAlert size={16} style={{ color:'#92400E', flexShrink: 0, marginTop: 2 }} />
               <p style={{ fontSize:11, color:'#92400E', lineHeight:1.6, margin:0 }}>
                 After checkout you'll receive DNS records (MX, SPF, DKIM) to add to your
-                domain registrar. This usually takes 10–30 minutes to propagate.
+                domain registrar.
               </p>
             </div>
           </div>
 
           {/* ── RIGHT ── */}
           <div style={S.right}>
-
             {/* Billing Tenure */}
             <div>
               <div style={S.label}>Billing Tenure</div>
               <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
-                {tenures.map((tenure) => {
-                  const active   = selectedTenure.months === tenure.months;
-                  const mFactor  = plan.discountFactors?.[tenure.months] ?? 1;
-                  const mPrice   = plan.basePriceMonthly * mFactor;
-                  const tenTotal = mPrice * tenure.months;
+                {TENURES.map((tenure) => {
+                  const active = selectedTenure.months === tenure.months;
+                  
+                  // Calculate tenure price aligned with backend
+                  let tSubtotalPaise = plan.price * tenure.months * mailboxCount;
+                  if (tenure.months === 12) {
+                    tSubtotalPaise = Math.floor(tSubtotalPaise * 0.85);
+                  }
+                  const tTotalPaise = Math.round(tSubtotalPaise * 1.18);
+                  const tTotalINR = tTotalPaise / 100;
+
                   return (
                     <button key={tenure.months} style={S.tenureBtn(active)}
                       onClick={() => setTenure(tenure)}>
@@ -271,18 +392,10 @@ export default function EmailConfigModal({ plan, isOpen, onClose, onConfirm }) {
                             Save {tenure.discount}%
                           </div>
                         )}
-                        {tenure.surcharge && (
-                          <div style={{ fontSize:9, fontWeight:700, marginTop:2,
-                            padding:'1px 6px', borderRadius:20,
-                            background:'#FEE2E2', color:'#991B1B',
-                            display:'inline-block' }}>
-                            +50% vs annual
-                          </div>
-                        )}
                       </div>
                       <div style={{ fontSize:12, fontWeight:700,
                         color: active ? '#4F46E5' : '#374151' }}>
-                        {fmt(tenTotal)}
+                        {fmt(tTotalINR)}
                       </div>
                     </button>
                   );
@@ -296,33 +409,17 @@ export default function EmailConfigModal({ plan, isOpen, onClose, onConfirm }) {
                 letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:2 }}>
                 Order Summary
               </div>
-
-              {/* rows */}
-              {[
-                { label:`${selectedTenure.label} plan`, value: fmt(subtotal) },
-                { label:'GST (18%)',                    value: fmt(gst) },
-              ].map(({ label, value }) => (
-                <div key={label} style={{ display:'flex', justifyContent:'space-between',
-                  fontSize:12, color:'#64748B' }}>
-                  <span>{label}</span>
-                  <span style={{ fontWeight:600, color:'#374151' }}>{value}</span>
-                </div>
-              ))}
-
-              {/* monthly breakdown */}
-              <div style={{ display:'flex', justifyContent:'space-between',
-                fontSize:11, color:'#94A3B8', fontStyle:'italic' }}>
-                <span>≈ per month</span>
-                <span>{fmt((total) / selectedTenure.months)}/mo</span>
+              <div style={{ display:'flex', justifyContent:'space-between', fontSize:12, color:'#64748B' }}>
+                <span>{mailboxCount} Mailbox{mailboxCount > 1 ? 'es' : ''}</span>
+                <span style={{ fontWeight:600, color:'#374151' }}>{fmt(subtotal)}</span>
               </div>
-
-              {/* total */}
-              <div style={{ display:'flex', justifyContent:'space-between',
-                alignItems:'center', paddingTop:10, marginTop:2,
-                borderTop:'1px solid #E2E8F0' }}>
+              <div style={{ display:'flex', justifyContent:'space-between', fontSize:12, color:'#64748B' }}>
+                <span>GST (18%)</span>
+                <span style={{ fontWeight:600, color:'#374151' }}>{fmt(gst)}</span>
+              </div>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', paddingTop:10, marginTop:2, borderTop:'1px solid #E2E8F0' }}>
                 <span style={{ fontSize:13, fontWeight:700, color:'#0F172A' }}>Total Due</span>
-                <span style={{ fontSize:22, fontWeight:800, color:'#3e38ad',
-                  letterSpacing:'-0.5px' }}>{fmt(total)}</span>
+                <span style={{ fontSize:22, fontWeight:800, color:'#4F46E5' }}>{fmt(total)}</span>
               </div>
             </div>
 
@@ -330,19 +427,21 @@ export default function EmailConfigModal({ plan, isOpen, onClose, onConfirm }) {
             <button
               style={S.ctaBtn(isValid)}
               disabled={!isValid}
-              onClick={() => isValid && onConfirm({ plan, domain, tenure: selectedTenure, total })}
+              onClick={handleCheckout}
             >
-              Proceed to Checkout <ChevronRight size={14}/>
+              {(createOrderMutation.isPending || verifyPaymentMutation.isPending) ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <>Proceed to Checkout <ChevronRight size={14}/></>
+              )}
             </button>
 
-            <div style={{ display:'flex', alignItems:'center',
-              justifyContent:'center', gap:6 }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
               <Shield size={12} color="#94A3B8"/>
               <span style={{ fontSize:10, color:'#94A3B8', fontWeight:500 }}>
-                Secured by Razorpay · 256-bit SSL
+                Secured by Razorpay
               </span>
             </div>
-
           </div>
         </div>
       </div>

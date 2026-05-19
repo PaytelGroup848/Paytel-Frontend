@@ -13,7 +13,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import EmailSidebar from './EmailSidebar';
-import { useEmailPlan } from './EmailPlanContext';
+
 
 /* ============================================================
    Hook – fetch auto‑reply settings for a plan (demo fallback)

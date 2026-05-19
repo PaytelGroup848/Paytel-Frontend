@@ -54,7 +54,6 @@ import BackupsPage from './pages/wordpress/BackupsPage';
 import { useMe } from "./hooks/useAuth";
 import VPSDashboard from './pages/vps/vps_paid';
 import VpsDashboard from "./pages/vps/slidebar/vpsOverview";
-import { EmailPlanProvider } from './pages/Emails/EmailPlanContext';
 import EmailsPage from "./pages/Emails/Emails";
 import EmailMailboxPage from './pages/Emails/EmailMailboxPage';
 import EmailPlansPage from './pages/Emails/EmailPlan';
@@ -146,7 +145,7 @@ export default function App() {
   return (
     <Routes>
       {/* Public redirect */}
-      <Route path ='/' element={<HomePage/>} />
+      {/* <Route path ='/' element={<HomePage/>} /> */}
 
 
 
@@ -207,15 +206,16 @@ export default function App() {
 
 
 
-          <Route path="/emails" element={<EmailPlanProvider><EmailsPage /></EmailPlanProvider>} />
-          <Route path="/emails/mailbox" element={<EmailPlanProvider><EmailMailboxPage /></EmailPlanProvider>} />
-          <Route path="/email/plan" element={<EmailPlanProvider>< EmailPlansPage /></EmailPlanProvider>} />
-          <Route path="/emails/forwarders" element={<EmailPlanProvider><ForwardersPage /></EmailPlanProvider>} />
-          <Route path="/emails/aliases" element={<EmailPlanProvider><AliasesPage /></EmailPlanProvider>} />
-          <Route path = "/emails/autoreply" element  = { <EmailPlanProvider>     <AutoReplyPage/> </EmailPlanProvider>} /> 
-          <Route path ="/emails/logs" element ={<EmailPlanProvider>  <EmailLogsPage/>  </EmailPlanProvider>} /> 
-           <Route path = "emails/dkim" element ={<EmailPlanProvider> < DkimPage/> </EmailPlanProvider>} />
-          <Route path = "/emails/connect" element = { <EmailPlanProvider> <EmailConnect/> </EmailPlanProvider>} />
+          <Route path="/emails" element={<EmailsPage />} />
+          {/* <Route path="/emails/mailbox/:id" element={<EmailMailboxPage />} /> */}
+          <Route path="/emails/mailbox/:id" element={<EmailMailboxPage />} />
+          <Route path="/email/plan" element={< EmailPlansPage />} />
+          <Route path="/emails/forwarders" element={<ForwardersPage />} />
+          <Route path="/emails/aliases" element={<AliasesPage />} />
+          <Route path = "/emails/autoreply" element  = {     <AutoReplyPage/> } /> 
+          <Route path ="/emails/logs" element ={  <EmailLogsPage/>  } /> 
+           <Route path = "emails/dkim" element ={< DkimPage/> } />
+          <Route path = "/emails/connect" element = { <EmailConnect/> } />
 
 
           <Route path = "/billing/subscriptions" element={<SubscriptionsPage/>} />

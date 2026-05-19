@@ -4,10 +4,13 @@ import {
   ExternalLink, LifeBuoy,
   Mail, HardDrive, Plus, Activity,
   ShoppingCart, ArrowUpRight, ChevronRight, ChevronLeft,
-  Zap, IndianRupee, HelpCircle, CreditCard, Bell, User,
+  Zap, IndianRupee, HelpCircle, CreditCard, Bell, User, Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+import { useDashboardData } from '../../hooks/useBilling';
+import { useMe } from '../../hooks/useAuth';
 
 // --- import your Navbar and Sidebar components (adjust paths as needed) ---
 import Navbar from "../../components/layout/Navbar";
@@ -111,60 +114,30 @@ const TableSkeleton = () => (
    DASHBOARD (with Navbar + Sidebar)
 ════════════════════════════════════════════════════════════ */
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const { data: dashboardData, isLoading: isDashboardLoading } = useDashboardData();
+  const { data: userData } = useMe();
   const { user: userInfo } = useAuthStore();
-  const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);   // mobile sidebar state
 
-  /* ── data state (unchanged) ── */
-  const [user, setUser] = useState({
-    name: userInfo?.name || 'Amit Sharma',
-    activeServices: [],
-  });
-  const [emails, setEmails] = useState([]);
-  const [activities, setActivities] = useState([]);
+  const user = useMemo(() => ({
+    name: userData?.name || userInfo?.name || 'Amit Sharma',
+    activeServices: dashboardData?.infrastructure || [],
+  }), [userData, userInfo, dashboardData]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setUser({
-        name: userInfo?.name || 'Amit Sharma',
-        activeServices: [
-          { id: 1, type: 'WordPress',  name: 'Portfolio Site',     status: 'Active',     ip: '103.21.45.12', expiry: 'Oct 2026', region: 'Asia Pacific', price: 799 },
-          { id: 2, type: 'WordPress',  name: 'Marketing Blog',     status: 'Active',     ip: '103.21.45.13', expiry: 'Dec 2026', region: 'Asia Pacific', price: 799 },
-          { id: 3, type: 'VPS Cloud',  name: 'Backend API Server',  status: 'Processing', ip: 'Pending',      expiry: 'Nov 2026', region: 'US East', price: 1599 },
-        ],
-      });
-      setEmails([
-        { id: 1, address: 'admin@cloudedata.io',   label: 'Admin',   quota: 25, used: 4.2 },
-        { id: 2, address: 'support@cloudedata.io', label: 'Support', quota: 25, used: 11.7 },
-        { id: 3, address: 'billing@cloudedata.io', label: 'Billing', quota: 10, used: 2.1 },
-        { id: 4, address: 'dev@cloudedata.io',     label: 'Dev',     quota: 25, used: 0.3 },
-      ]);
-      setActivities([
-        { id: 1, action: 'SSL certificate auto‑renewed',  service: 'Portfolio Site',     time: '5m ago',  type: 'success' },
-        { id: 2, action: 'VPS deployment initiated',       service: 'Backend API Server', time: '22m ago', type: 'info' },
-        { id: 3, action: 'Bandwidth alert triggered',      service: 'Marketing Blog',     time: '1h ago',  type: 'warning' },
-        { id: 4, action: 'Backup completed',               service: 'Portfolio Site',     time: '3h ago',  type: 'success' },
-        { id: 5, action: 'New email account created',      service: 'Business Mail',      time: '5h ago',  type: 'info' },
-      ]);
-      setLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, [userInfo]);
+  const emails = useMemo(() => dashboardData?.emailSummary || [], [dashboardData]);
+  const loading = isDashboardLoading;
 
   /* ── filters & pagination (unchanged) ── */
   const [filterType, setFilterType] = useState('All');
-  const [showAllActivities, setShowAllActivities] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
   const activeServices = useMemo(() => user.activeServices || [], [user.activeServices]);
-  const activeCount = useMemo(() => activeServices.filter(s => s.status === 'Active').length, [activeServices]);
-  const inactiveCount = activeServices.length - activeCount;
-
-  const totalMonthlyCost = useMemo(
-    () => activeServices.reduce((sum, s) => sum + (s.price || 0), 0),
-    [activeServices]
-  );
+  const activeCount = useMemo(() => dashboardData?.stats?.activeServices || 0, [dashboardData]);
+  const inactiveCount = useMemo(() => dashboardData?.stats?.inactiveServices || 0, [dashboardData]);
+  const emailCount = useMemo(() => dashboardData?.stats?.emailAccounts || 0, [dashboardData]);
+  const totalMonthlyCost = useMemo(() => dashboardData?.stats?.totalMonthlyCost || 0, [dashboardData]);
 
   const allTypes = useMemo(() => ['All', ...Array.from(new Set(activeServices.map(s => s.type)))], [activeServices]);
   const filtered = filterType === 'All' ? activeServices : activeServices.filter(s => s.type === filterType);
@@ -177,25 +150,17 @@ const Dashboard = () => {
 
   useEffect(() => { setCurrentPage(1); }, [filterType]);
 
-  const displayedActivities = showAllActivities ? activities : activities.slice(0, 3);
-
-  const addActivity = useCallback((action, service) => {
-    setActivities(prev => [{ id: Date.now(), action, service, time: 'Just now', type: 'info' }, ...prev].slice(0, 20));
-  }, []);
+  const goTo = useCallback((path) => {
+    if (path) navigate(path);
+  }, [navigate]);
 
   const handleDeleteService = useCallback((id, name) => {
     if (window.confirm(`Delete "${name}"?`)) {
-      setUser(prev => ({ ...prev, activeServices: prev.activeServices.filter(s => s.id !== id) }));
-      addActivity(`Removed service: ${name}`, name);
+      // In a real app, this should call a delete API
+      // For now, we just inform the user
+      alert("Delete functionality is managed in individual service dashboards.");
     }
-  }, [addActivity]);
-
-  const handleDeleteEmail = useCallback((id, address) => {
-    if (window.confirm(`Delete mailbox "${address}"?`)) {
-      setEmails(prev => prev.filter(e => e.id !== id));
-      addActivity(`Removed mailbox: ${address}`, 'Business Mail');
-    }
-  }, [addActivity]);
+  }, []);
 
   const getGreeting = useCallback(() => {
     const h = new Date().getHours();
@@ -206,15 +171,9 @@ const Dashboard = () => {
 
   const popularServices = useMemo(() => [
     { name: 'WordPress Hosting', desc: 'Managed WordPress with auto‑updates, daily backups & CDN.', price: '₹61/mo', icon: Server, color: 'from-blue-500 to-blue-600', tag: 'Most Popular', path: '/websites/wordpress' },
-    { name: 'Business Email',   desc: 'Professional mailboxes @yourdomain, spam protection & webmail.', price: 'Coming Soon', icon: Mail, color: 'from-sky-500 to-sky-600', tag: 'Coming Soon', path: null },
+    { name: 'Business Email',   desc: 'Professional mailboxes @yourdomain, spam protection & webmail.', price: '₹25/mo', icon: Mail, color: 'from-sky-500 to-sky-600', tag: 'Quick Launch', path: '/emails' },
     { name: 'VPS Cloud Servers',desc: 'NVMe SSD, dedicated IP, root access, DDoS protection.', price: '₹899/mo', icon: LifeBuoy, color: 'from-emerald-500 to-emerald-600', tag: 'Best Value',  path: '/plans/vps' },
   ], []);
-
-  const goTo = useCallback((path) => {
-    if (path) window.location.href = path;
-  }, []);
-
-  const actDot = { success: 'bg-emerald-400', warning: 'bg-amber-400', info: 'bg-blue-400' };
 
   return (
     <div className="flex min-h-screen bg-[#F4F5F9] font-sans relative overflow-hidden">
@@ -249,7 +208,7 @@ const Dashboard = () => {
             >
               <div>
                 <h1 className="text-[22px] sm:text-[26px] font-black text-slate-900">
-                  {getGreeting()}, {user.name}
+                  {getGreeting()}, {user.name.split(' ')[0]}!
                 </h1>
                 <p className="text-sm text-slate-500 mt-0.5">
                   Your cloud command center - everything at a glance.
@@ -261,7 +220,9 @@ const Dashboard = () => {
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
               <StatCard label="Total Services" value={activeServices.length} icon={Layers}      accent="bg-indigo-500"  sub="Across all regions" delay={0} />
               <StatCard label="Active"         value={activeCount}          icon={CheckCircle} accent="bg-emerald-500" sub="Fully operational"  delay={0.07} />
-              <StatCard label="Inactive"       value={inactiveCount}        icon={LifeBuoy}    accent="bg-amber-500"   sub="Needs attention"    delay={0.14} />
+              <StatCard label="Needs Attention" value={inactiveCount}        icon={Activity}    accent="bg-amber-500"   sub="Check status"       delay={0.14} />
+              <StatCard label="Email Orders"   value={emailCount}           icon={Mail}        accent="bg-sky-500"     sub="Business mail"      delay={0.21} />
+              {/* <StatCard label="Monthly Burn"   value={totalMonthlyCost}     icon={IndianRupee} accent="bg-slate-800"   sub="Est. monthly cost"  delay={0.28} isCurrency /> */}
             </div>
 
             {/* ─── Main Content ─── */}
@@ -349,7 +310,11 @@ const Dashboard = () => {
                                 <td className="px-5 py-4 text-[12px] font-semibold text-slate-700">₹{svc.price}</td>
                                 <td className="px-5 py-4 text-right">
                                   <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition">
-                                    <button onClick={() => goTo(`/service/${svc.id}`)}
+                                    <button onClick={() => {
+                                      if (svc.type === 'WordPress') goTo(`/wordpress/websitedashboard/${svc.id}`);
+                                      else if (svc.type === 'VPS Cloud') goTo(`/vps/paid/${svc.id}`);
+                                      else if (svc.type === 'Email') goTo(`/emails`);
+                                    }}
                                       className="p-1.5 rounded-lg hover:bg-indigo-50 text-indigo-500 transition flex items-center gap-1 text-[11px] font-bold">
                                       <ExternalLink size={14} />
                                       <span className="hidden xl:inline">Dashboard</span>
@@ -422,41 +387,6 @@ const Dashboard = () => {
                   </div>
                 </motion.div>
 
-                {/* Recent Activity */}
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.38 }}
-                  className="bg-white/70 backdrop-blur-xl rounded-2xl border border-white/60 shadow-md p-5"
-                >
-                  <div className="flex items-center gap-2 mb-4">
-                    <h3 className="font-black text-[14px] text-slate-900">Recent Activity</h3>
-                  </div>
-                  <div className="space-y-3">
-                    {displayedActivities.map((a) => (
-                      <div key={a.id} className="flex items-start gap-3">
-                        <div className={cn('w-2 h-2 rounded-full mt-1 shrink-0', actDot[a.type] || 'bg-slate-300')} />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[11px] font-semibold text-slate-700 leading-snug">{a.action}</p>
-                          <div className="flex items-center gap-1.5 mt-0.5">
-                            <span className="text-[10px] text-slate-400">{a.service}</span>
-                            <span className="text-[10px] text-slate-300">·</span>
-                            <span className="text-[10px] text-slate-400">{a.time}</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  {activities.length > 3 && (
-                    <button
-                      onClick={() => setShowAllActivities(!showAllActivities)}
-                      className="mt-3 text-xs font-bold text-indigo-600 hover:text-indigo-700 transition w-full text-left"
-                    >
-                      {showAllActivities ? 'Show less' : `View all (${activities.length})`}
-                    </button>
-                  )}
-                </motion.div>
-
                 {/* Email Summary */}
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
@@ -467,16 +397,36 @@ const Dashboard = () => {
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <Mail size={15} className="text-sky-500" />
-                      <h3 className="font-black text-[14px] text-slate-900">Email Summary</h3>
+                      <h3 className="font-black text-[14px] text-slate-900">Email Hosting</h3>
                     </div>
-                    <button onClick={() => goTo('/email/new')} className="text-[11px] font-bold text-sky-600 hover:text-sky-700 flex items-center gap-1">
-                      <Plus size={12} /> Add
+                    <button onClick={() => goTo('/emails')} className="text-[11px] font-bold text-sky-600 hover:text-sky-700 flex items-center gap-1">
+                      Manage
                     </button>
                   </div>
-                  <div className="flex flex-col items-center justify-center py-6 text-slate-400 bg-slate-50/80 rounded-xl">
-                    <Mail size={28} className="text-sky-300 mb-2" />
-                    <span className="text-sm font-bold text-slate-500">Coming Soon</span>
-                  </div>
+                  
+                  {emails.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-6 text-slate-400 bg-slate-50/80 rounded-xl">
+                      <Mail size={28} className="text-sky-300 mb-2" />
+                      <span className="text-sm font-bold text-slate-500">No mailboxes yet</span>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {emails.slice(0, 5).map((e) => (
+                        <div key={e.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-50/70 border border-slate-100">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center text-sky-600">
+                              <Mail size={14} />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-[12px] font-bold text-slate-800 truncate">{e.address}</p>
+                              <p className="text-[10px] text-slate-400">{e.domain}</p>
+                            </div>
+                          </div>
+                          <div className={cn('w-1.5 h-1.5 rounded-full', e.status === 'Active' ? 'bg-emerald-400' : 'bg-slate-300')} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </motion.div>
               </aside>
             </div>
@@ -518,8 +468,16 @@ const Dashboard = () => {
                           </motion.button>
                         </div>
                       ) : (
-                        <div className="mt-5 flex items-center justify-center bg-slate-100/80 rounded-xl py-4">
-                          <span className="text-sm font-bold text-slate-500">Coming Soon</span>
+                        <div className="mt-5 flex items-end justify-between">
+                          <div>
+                            <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Starting from</p>
+                            <p className="text-[20px] font-black text-slate-900 leading-none mt-0.5">{s.price}</p>
+                          </div>
+                          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                            onClick={() => navigate("/email/plan")}
+                            className={cn('flex items-center gap-1.5 px-4 py-2 rounded-xl text-[13px] font-black text-white shadow-sm bg-gradient-to-r', s.color)}>
+                            Deploy <ArrowUpRight size={14} />
+                          </motion.button>
                         </div>
                       )}
                     </div>

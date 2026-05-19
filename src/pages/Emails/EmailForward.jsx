@@ -16,7 +16,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import EmailSidebar from './EmailSidebar';
-import { useEmailPlan } from './EmailPlanContext';
+
 
 /* ============================================================
    Hook – fetch forwarders for a plan (demo fallback)

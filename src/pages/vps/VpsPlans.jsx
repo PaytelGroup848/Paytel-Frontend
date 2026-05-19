@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'; // useRef added
+import React, { useState, useRef, useEffect } from 'react'; // useRef added
 import { 
   Cpu, Database, HardDrive, Monitor, Terminal, X, 
   Zap, Server, ShieldCheck, Plus, Minus, Globe, 
@@ -15,6 +15,7 @@ import { useVpsPlans } from '../../hooks/useVps';
 import ConfigurationModal from './ConfigurationModal';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import RebuildVpsModal from './slidebar/RebuildVpsModal';
+import { metaPixel } from '../../utils/metaPixel';
 
 const formatINR = (paise) => `₹${(Number(paise || 0) / 100).toLocaleString()}`;
 
@@ -35,6 +36,11 @@ export default function VpsPlans() {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const { data: plans, isLoading } = useVpsPlans(type);
   const pricingRef = useRef(null); // new ref for scrolling to plans
+
+   useEffect(() => {
+    // Track page view
+    metaPixel.pageView();
+  }, []);
 
   if (isLoading) {
     return (

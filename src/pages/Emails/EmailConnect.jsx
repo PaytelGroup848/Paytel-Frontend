@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import EmailSidebar from './EmailSidebar';
-import { useEmailPlan } from './EmailPlanContext';
+
 
 /* ============================================================
    Hook – fetch email server configuration (demo fallback)

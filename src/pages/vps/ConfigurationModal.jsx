@@ -4,6 +4,7 @@ import { useCreateOrder, useVerifyPayment } from '../../hooks/useBilling';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+import { metaPixel } from '../../utils/metaPixel';
 
 /* ─── useWindowSize hook ─────────────────────────────────────────────────── */
 function useWindowSize() {
@@ -250,6 +251,8 @@ const handleCheckout = async () => {
       toast.error('Razorpay not loaded — please refresh'); 
       return; 
     }
+
+     metaPixel.initiateCheckout();
     
     const orderData = await createOrder.mutateAsync({
       planId: plan.id || plan._id,
@@ -283,6 +286,8 @@ const handleCheckout = async () => {
       razorpay_signature: response.razorpay_signature,     
       planType: 'vps'
     });
+    const totalAmount = orderData.amount / 100; 
+    metaPixel.purchase(totalAmount, 'INR');
           navigate('/vps/paid');
           onClose();
         } catch (err) { 
