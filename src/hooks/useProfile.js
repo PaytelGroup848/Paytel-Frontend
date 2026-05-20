@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { api } from '../services/api';
 import { queryClient } from '../services/queryClient';
 
-export const useProfile = () =>
+export const useProfile = (options = {}) =>
   useQuery({
     queryKey: ['user', 'profile'],
     queryFn: async () => {
@@ -12,6 +12,7 @@ export const useProfile = () =>
       return res.data?.data;
     },
     staleTime: 1000 * 60 * 5,
+    ...options
   });
 
 export const useUpdateProfile = () =>

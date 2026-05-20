@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Mail, Lock, User, Phone, Sparkles, ArrowRight, Cloud, Shield, Zap, Globe } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -109,6 +109,8 @@ const RegisterBanner = () => {
 // ----------------------------------------
 export default function Register() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || "/home";
   const register = useRegister();
 
   const [form, setForm] = useState({
@@ -159,7 +161,7 @@ export default function Register() {
       });
 
       toast.success("Registration successful. Please login.");
-      navigate("/login");
+      navigate("/login", { state: { from } });
     } catch (_) {}
   };
 
@@ -297,6 +299,7 @@ export default function Register() {
                 <p className="text-xs text-center text-slate-600">
                   <Link
                     to="/login"
+                    state={{ from }}
                     className="font-semibold text-indigo-600 hover:text-indigo-700 transition hover:underline"
                   >
                     Sign in instead →

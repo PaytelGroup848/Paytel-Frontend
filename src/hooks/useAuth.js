@@ -60,7 +60,7 @@ export const useLogout = () => {
   });
 };
 
-export const useMe = () =>
+export const useMe = (options = {}) =>
   useQuery({
     queryKey: ['auth', 'me'],
     queryFn: async () => {
@@ -68,5 +68,6 @@ export const useMe = () =>
       return res.data?.data;
     },
     staleTime: 1000 * 60 * 5,
+    ...options
   });
 
