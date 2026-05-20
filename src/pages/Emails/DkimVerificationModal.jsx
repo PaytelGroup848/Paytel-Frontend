@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { X, Check, Copy, RefreshCw, Loader2, AlertCircle, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { useDnsRecords, useDnsStatus } from '../../hooks/useEmailHosting';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 export default function DkimVerificationModal({ emailOrderId, isOpen, onClose, onVerified }) {
   console.log('DkimVerificationModal Rendering:', { emailOrderId, isOpen });
   const { data: dnsRecords, isLoading: isDnsLoading } = useDnsRecords(emailOrderId);
   const { data: dnsStatus, isLoading: isStatusLoading, refetch: refetchStatus } = useDnsStatus(emailOrderId);
   const [expandedDkim, setExpandedDkim] = useState(false);
+  const navigate= useNavigate()
 
   if (!isOpen) return null;
 
@@ -550,7 +552,10 @@ export default function DkimVerificationModal({ emailOrderId, isOpen, onClose, o
         }}>
           {allVerified ? (
             <button
-              onClick={onVerified}
+                onClick={() => {
+    onVerified();
+    navigate("/emails");
+  }}
               style={{
                 width: '100%',
                 padding: '12px 16px',
@@ -603,7 +608,10 @@ export default function DkimVerificationModal({ emailOrderId, isOpen, onClose, o
                 )}
               </button>
               <button
-                onClick={onClose}
+                onClick={() => {
+    onClose;
+    navigate("/emails");
+  }}
                 style={{
                   width: '100%',
                   padding: '12px 16px',

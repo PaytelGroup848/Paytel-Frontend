@@ -80,8 +80,7 @@ export default function CreateMailboxModal({ isOpen, onClose, orderId, domain })
       setPassword('');
       setShowPassword(false);
     } catch (err) {
-      console.error("Failed to create mailbox", err);
-      toast.error(err.message || 'Failed to create mailbox', { style: { zIndex: 20000 } });
+      
     }
   };
 
