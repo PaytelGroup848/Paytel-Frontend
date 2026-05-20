@@ -95,8 +95,6 @@ const FeaturesCRM = () => {
                 </div>
                 <div className="p-3 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100 shadow-sm border border-slate-200/60">
                   <HiAcademicCap className="text-4xl text-amber-600" />
-
-        
                 </div>
               </div>
               <div className="text-left max-w-md">
@@ -112,14 +110,14 @@ const FeaturesCRM = () => {
         {/* ===== SECTION 3: 5 Connected Cards with Single Moving Dot on Line ===== */}
         <div className="mb-24">
           <div className="relative flex flex-wrap justify-center items-center gap-6 md:gap-12">
-            {/* Base line – darker, professional */}
-            <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent hidden md:block z-0"></div>
+            {/* Base line – darker professional gradient */}
+            <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent hidden md:block z-0"></div>
 
-            {/* Moving dot – dark color, clean shadow */}
+            {/* Moving dot – black gradient, slower speed */}
             <div className="absolute top-1/2 left-0 w-full hidden md:block z-0 overflow-visible">
               <div
-                className="absolute w-3.5 h-3.5 bg-slate-800 rounded-full shadow-[0_0_0_2px_rgba(255,255,255,0.9),0_0_8px_rgba(0,0,0,0.3)] animate-move-dot"
-                style={{ top: '-6px' }}
+                className="absolute w-3.5 h-3.5 rounded-full shadow-[0_0_0_2px_rgba(255,255,255,0.9),0_0_8px_rgba(0,0,0,0.4)] animate-move-dot"
+                style={{ top: '-6px', background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' }}
               ></div>
             </div>
 
@@ -175,20 +173,21 @@ const FeaturesCRM = () => {
         {/* ===== CTA ===== */}
         <div className="mt-16 text-center">
           <button className="inline-flex items-center gap-2 px-8 py-3.5 bg-slate-800 text-white font-semibold rounded-lg hover:bg-slate-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 border border-slate-700">
-            Request a Demo
+    request kro 
             <FaArrowRight className="text-sm" />
           </button>
         </div>
       </div>
 
-      {/* Custom keyframes for the moving dot */}
+      {/* Custom keyframes for the moving dot (slower speed) */}
+      
       <style>{`
         @keyframes move-dot {
           0% { left: 0%; }
           100% { left: calc(100% - 0.75rem); }
         }
         .animate-move-dot {
-          animation: move-dot 4s linear infinite;
+          animation: move-dot 6s linear infinite;
         }
       `}</style>
     </section>

@@ -6,7 +6,7 @@ import {
   IndianRupee, ArrowRight, Sparkles,
 } from "lucide-react";
 
-/* ── Mega menu (Services) ────────────────────────── */
+/* ── Mega menu (Services) – Hosting items now included here ── */
 const megaMenuSections = [
   {
     title: "Create Website",
@@ -23,6 +23,8 @@ const megaMenuSections = [
       { label: "Web Hosting", href: "/hosting/shared" },
       { label: "VPS Hosting", href: "/hosting/vps" },
       { label: "Node.js", href: "/hosting/nodejs" },
+      { label: "cPanel Hosting", href: "/hosting/cpanel" },       // ← added here
+      { label: "WordPress Hosting", href: "/hosting/wordpress" }, // ← duplicate but OK
       { label: "Catalogs", href: "/catalogs" },
     ],
   },
@@ -37,20 +39,14 @@ const megaMenuSections = [
   },
 ];
 
-/* ── Dropdown items ───────────────────────────── */
+/* ── Software CRM dropdown ──────────────────────── */
 const softwareCRMItems = [
   { label: "Education ERP", href: "/education-management-system" },
   { label: "Restaurant Management ERP", href: "/software/restaurant-erp" },
 ];
 
-const hostingItems = [
-  { label: "WordPress Hosting", href: "/hosting/wordpress" },
-  { label: "cPanel Hosting", href: "/hosting/cpanel" },
-];
-
-/* ── Links after Software CRM & Services ────────── */
+/* ── Remaining nav links (NO more Hosting) ─────── */
 const NAV_LINKS = [
-  { label: "Hosting", dropdown: hostingItems, icon: Monitor },
   { label: "Blog", href: "/blog", icon: BookOpen },
   { label: "Contact Us", href: "/contact", icon: PhoneCall },
 ];
@@ -68,7 +64,6 @@ export default function Navbar({
   const [profileOpen, setProfileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
 
-  // Helper to render dropdowns (Software CRM, Hosting)
   const renderDropdown = (items) => (
     <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
       <div className="bg-white/90 backdrop-blur-xl rounded-2xl border border-white/60 shadow-xl shadow-slate-200/30 p-2 min-w-[200px]">
@@ -89,12 +84,13 @@ export default function Navbar({
 
   return (
     <>
-      {/* Main navbar */}
+      {/* Main navbar with generous side padding */}
       <nav className="fixed top-0 left-0 right-0 z-50 h-16 md:h-[4.5rem] flex items-center bg-gradient-to-r from-white via-blue-50/80 to-white backdrop-blur-xl border-b border-slate-100/50 shadow-sm">
-        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
+        {/* Increased horizontal padding for spacious look */}
+        <div className="max-w-7xl mx-auto w-full px-6 sm:px-8 lg:px-12">
           <div className="flex items-center justify-between h-full">
             {/* Logo */}
-            <a href="/" className="flex items-center shrink-0 pl-1 group">
+            <a href="/" className="flex items-center shrink-0 group">
               <img
                 src={logoImg}
                 alt="CloudeData"
@@ -103,27 +99,27 @@ export default function Navbar({
               />
             </a>
 
-            {/* Desktop Center Pill – NEW ORDER */}
+            {/* Desktop Center Pill – polished UI */}
             <div className="hidden md:block">
               <div className="relative p-[1.5px] rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-sky-500 shadow-xl shadow-indigo-200/40">
-                <div className="flex items-center gap-1 bg-white/80 backdrop-blur-lg rounded-full px-2 py-1.5">
-                  {/* 1. Pricing */}
+                <div className="flex items-center gap-1 bg-white/90 backdrop-blur-lg rounded-full px-3 py-2 shadow-inner">
+                  {/* Pricing */}
                   <a
                     href="/pricing"
-                    className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-slate-700 hover:text-indigo-600 rounded-full hover:bg-white/90 transition-all"
+                    className="flex items-center gap-1.5 px-5 py-2 text-sm font-semibold text-slate-700 hover:text-indigo-600 rounded-full hover:bg-white/90 transition-all"
                   >
                     <IndianRupee size={15} />
                     Pricing
                   </a>
 
-                  {/* 2. Software CRM (dropdown) – moved before Services */}
+                  {/* Software CRM */}
                   <div
                     className="relative"
                     onMouseEnter={() => setActiveDropdown("Software CRM")}
                     onMouseLeave={() => setActiveDropdown(null)}
                   >
                     <button
-                      className={`flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-full transition-all ${
+                      className={`flex items-center gap-1.5 px-5 py-2 text-sm font-semibold rounded-full transition-all ${
                         activeDropdown === "Software CRM"
                           ? "text-indigo-600 bg-white/90 shadow-sm"
                           : "text-slate-700 hover:text-indigo-600 hover:bg-white/90"
@@ -139,18 +135,19 @@ export default function Navbar({
                       />
                     </button>
                     <AnimatePresence>
-                      {activeDropdown === "Software CRM" && renderDropdown(softwareCRMItems)}
+                      {activeDropdown === "Software CRM" &&
+                        renderDropdown(softwareCRMItems)}
                     </AnimatePresence>
                   </div>
 
-                  {/* 3. Services (mega menu) – now after Software CRM */}
+                  {/* Services (mega menu) – contains all Hosting items now */}
                   <div className="relative">
                     <button
                       onClick={() => {
                         setMegaMenuOpen(!megaMenuOpen);
                         setActiveDropdown(null);
                       }}
-                      className={`flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-full transition-all ${
+                      className={`flex items-center gap-1.5 px-5 py-2 text-sm font-semibold rounded-full transition-all ${
                         megaMenuOpen
                           ? "bg-indigo-600 text-white shadow-md"
                           : "text-slate-700 hover:text-indigo-600 hover:bg-white/90"
@@ -164,14 +161,13 @@ export default function Navbar({
                       />
                     </button>
 
-                    {/* Mega Menu Panel */}
                     <AnimatePresence>
                       {megaMenuOpen && (
                         <motion.div
                           initial={{ opacity: 0, y: 8, scale: 0.98 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 8, scale: 0.98 }}
-                          className="absolute top-full mt-2 left-1/2 -translate-x-1/2 w-[1050px] max-w-[calc(100vw-2rem)] bg-white/90 backdrop-blur-2xl rounded-3xl border border-white/60 shadow-2xl shadow-indigo-200/30 overflow-hidden z-50"
+                          className="absolute top-full mt-2 left-1/2 -translate-x-1/2 w-[1050px] max-w-[calc(100vw-2rem)] bg-white/95 backdrop-blur-2xl rounded-3xl border border-white/60 shadow-2xl shadow-indigo-200/30 overflow-hidden z-50"
                         >
                           <div className="grid grid-cols-4 gap-8 p-8">
                             {megaMenuSections.map((section, idx) => (
@@ -219,44 +215,14 @@ export default function Navbar({
                     </AnimatePresence>
                   </div>
 
-                  {/* 4. Remaining links: Hosting, Blog, Contact */}
+                  {/* Blog & Contact (no Hosting) */}
                   {NAV_LINKS.map((link) => {
                     const Icon = link.icon;
-                    if (link.dropdown) {
-                      return (
-                        <div
-                          key={link.label}
-                          className="relative"
-                          onMouseEnter={() => setActiveDropdown(link.label)}
-                          onMouseLeave={() => setActiveDropdown(null)}
-                        >
-                          <button
-                            className={`flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-full transition-all ${
-                              activeDropdown === link.label
-                                ? "text-indigo-600 bg-white/90 shadow-sm"
-                                : "text-slate-700 hover:text-indigo-600 hover:bg-white/90"
-                            }`}
-                          >
-                            <Icon size={16} />
-                            {link.label}
-                            <ChevronDown
-                              size={14}
-                              className={`transition-transform ${
-                                activeDropdown === link.label ? "rotate-180" : ""
-                              }`}
-                            />
-                          </button>
-                          <AnimatePresence>
-                            {activeDropdown === link.label && renderDropdown(link.dropdown)}
-                          </AnimatePresence>
-                        </div>
-                      );
-                    }
                     return (
                       <a
                         key={link.label}
                         href={link.href}
-                        className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-slate-700 hover:text-indigo-600 rounded-full hover:bg-white/90 transition-all"
+                        className="flex items-center gap-1.5 px-5 py-2 text-sm font-semibold text-slate-700 hover:text-indigo-600 rounded-full hover:bg-white/90 transition-all"
                       >
                         <Icon size={16} />
                         {link.label}
@@ -343,7 +309,7 @@ export default function Navbar({
         </div>
       </nav>
 
-      {/* Mobile Right Sidebar – NEW ORDER */}
+      {/* Mobile Sidebar – Hosting now inside Services */}
       <AnimatePresence>
         {mobileOpen && (
           <>
@@ -361,7 +327,6 @@ export default function Navbar({
               transition={{ type: "tween", duration: 0.3 }}
               className="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white/95 backdrop-blur-xl shadow-2xl z-50 flex flex-col overflow-y-auto md:hidden"
             >
-              {/* Header */}
               <div className="flex items-center justify-between p-4 border-b border-slate-200">
                 <span className="font-bold text-lg text-indigo-600">Menu</span>
                 <button
@@ -372,9 +337,7 @@ export default function Navbar({
                 </button>
               </div>
 
-              {/* Mobile Navigation Links – UPDATED ORDER */}
               <div className="flex-1 px-4 py-6 space-y-4">
-                {/* 1. Pricing */}
                 <a
                   href="/pricing"
                   onClick={() => setMobileOpen(false)}
@@ -384,7 +347,6 @@ export default function Navbar({
                   Pricing
                 </a>
 
-                {/* 2. Software CRM */}
                 <div className="border-t border-slate-200 pt-4">
                   <h4 className="text-sm font-bold text-indigo-600 mb-2 flex items-center gap-2">
                     <Code size={16} />
@@ -404,7 +366,7 @@ export default function Navbar({
                   </div>
                 </div>
 
-                {/* 3. Services (full sections) */}
+                {/* Services (includes Hosting items now) */}
                 <div className="border-t border-slate-200 pt-4 space-y-4">
                   {megaMenuSections.map((section, idx) => (
                     <div key={idx}>
@@ -428,27 +390,8 @@ export default function Navbar({
                   ))}
                 </div>
 
-                {/* 4. Hosting */}
-                <div className="border-t border-slate-200 pt-4">
-                  <h4 className="text-sm font-bold text-indigo-600 mb-2 flex items-center gap-2">
-                    <Monitor size={16} />
-                    Hosting
-                  </h4>
-                  <div className="space-y-1 pl-6">
-                    {hostingItems.map((item) => (
-                      <a
-                        key={item.label}
-                        href={item.href}
-                        onClick={() => setMobileOpen(false)}
-                        className="block text-sm text-slate-600 hover:text-indigo-600 transition py-1"
-                      >
-                        {item.label}
-                      </a>
-                    ))}
-                  </div>
-                </div>
+                {/* No separate Hosting section anymore */}
 
-                {/* 5. Blog */}
                 <a
                   href="/blog"
                   onClick={() => setMobileOpen(false)}
@@ -457,8 +400,6 @@ export default function Navbar({
                   <BookOpen size={18} />
                   Blog
                 </a>
-
-                {/* 6. Contact Us */}
                 <a
                   href="/contact"
                   onClick={() => setMobileOpen(false)}
@@ -469,7 +410,7 @@ export default function Navbar({
                 </a>
               </div>
 
-              {/* Mobile Auth Section */}
+              {/* Auth Section unchanged */}
               <div className="p-4 border-t border-slate-200 space-y-3">
                 <button className="flex items-center gap-3 w-full py-2 text-sm font-medium text-slate-700 hover:text-indigo-600 transition">
                   <Bell size={18} />
