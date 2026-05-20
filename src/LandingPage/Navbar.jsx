@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronDown, Menu, X, User, LogOut, LogIn, UserPlus, Bell,
@@ -23,18 +23,17 @@ const megaMenuSections = [
       { label: "Web Hosting", href: "/hosting/shared" },
       { label: "VPS Hosting", href: "/hosting/vps" },
       { label: "Node.js", href: "/hosting/nodejs" },
-      { label: "cPanel Hosting", href: "/hosting/cpanel" },       // ← added here
-      { label: "WordPress Hosting", href: "/hosting/wordpress" }, // ← duplicate but OK
-      { label: "Catalogs", href: "/catalogs" },
+      { label: "cPanel Hosting", href: "/hosting/cpanel" },
+      { label: "WordPress Hosting", href: "/website/wordpress" },
     ],
   },
   {
     title: "Accounting ERP on Cloud",
     icon: Cloud,
     items: [
-      { label: "Busy on Cloud", href: "/products/busy-on-cloud" },
-      { label: "Tally on Cloud", href: "/products/tally-on-cloud" },
-      { label: "Marg on Cloud", href: "/products/marg-cloud" },
+      { label: "Busy on Cloud", href: "/Busy-on-cloud" },
+      { label: "Tally on Cloud", href: "/Tally-on-cloud" },
+      { label: "Marg on Cloud", href: "/Marg-on-cloud" },
     ],
   },
 ];
@@ -64,6 +63,34 @@ export default function Navbar({
   const [profileOpen, setProfileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
 
+  // ── Hide on home page until scroll past hero banner ──
+  const [showNav, setShowNav] = useState(window.location.pathname !== "/");
+
+  useEffect(() => {
+    // If not home page, always show the navbar
+    if (window.location.pathname !== "/") {
+      setShowNav(true);
+      return;
+    }
+
+    const banner = document.getElementById("hero-banner");
+    if (!banner) {
+      setShowNav(true); // Fallback if banner missing
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Hide navbar while banner is in viewport, show when scrolled past
+        setShowNav(!entry.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+
+    observer.observe(banner);
+    return () => observer.disconnect();
+  }, []);
+
   const renderDropdown = (items) => (
     <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
       <div className="bg-white/90 backdrop-blur-xl rounded-2xl border border-white/60 shadow-xl shadow-slate-200/30 p-2 min-w-[200px]">
@@ -84,9 +111,15 @@ export default function Navbar({
 
   return (
     <>
-      {/* Main navbar with generous side padding */}
-      <nav className="fixed top-0 left-0 right-0 z-50 h-16 md:h-[4.5rem] flex items-center bg-gradient-to-r from-white via-blue-50/80 to-white backdrop-blur-xl border-b border-slate-100/50 shadow-sm">
-        {/* Increased horizontal padding for spacious look */}
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 h-16 md:h-[4.5rem] flex items-center bg-gradient-to-r from-white via-blue-50/80 to-white backdrop-blur-xl border-b border-slate-100/50 shadow-sm transition-all duration-300`}
+        style={{
+          opacity: showNav ? 1 : 0,
+          pointerEvents: showNav ? "auto" : "none",
+        }}
+        aria-hidden={!showNav}
+      >
+        {/* unchanged children */}
         <div className="max-w-7xl mx-auto w-full px-6 sm:px-8 lg:px-12">
           <div className="flex items-center justify-between h-full">
             {/* Logo */}
@@ -233,7 +266,7 @@ export default function Navbar({
               </div>
             </div>
 
-            {/* Right Side (unchanged) */}
+            {/* Right Side */}
             <div className="hidden md:flex items-center gap-3">
               <button className="relative p-2 text-slate-500 hover:text-indigo-600 rounded-full hover:bg-white/50 transition group">
                 <Bell size={20} />
@@ -309,7 +342,7 @@ export default function Navbar({
         </div>
       </nav>
 
-      {/* Mobile Sidebar – Hosting now inside Services */}
+      {/* Mobile Sidebar – unchanged */}
       <AnimatePresence>
         {mobileOpen && (
           <>
@@ -390,8 +423,6 @@ export default function Navbar({
                   ))}
                 </div>
 
-                {/* No separate Hosting section anymore */}
-
                 <a
                   href="/blog"
                   onClick={() => setMobileOpen(false)}
@@ -410,7 +441,6 @@ export default function Navbar({
                 </a>
               </div>
 
-              {/* Auth Section unchanged */}
               <div className="p-4 border-t border-slate-200 space-y-3">
                 <button className="flex items-center gap-3 w-full py-2 text-sm font-medium text-slate-700 hover:text-indigo-600 transition">
                   <Bell size={18} />

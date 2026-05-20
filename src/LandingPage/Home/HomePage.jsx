@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import Navbar from "../navbar";
-import DemoBanner from "./DemoBanner";
+import Banner from "./DemoBanner";
 import PlansCard from "./PlansCard";
 import Review from "./Review";
 import BusinessCard from "./businessCard";
@@ -21,7 +21,11 @@ export default function HomePage() {
         transition={{ duration: 0.5, delay: 0.2 }}
         className="relative z-0"
       >
-        <DemoBanner />
+        {/*  Wrap Banner with the ID that the Navbar observer expects */}
+        <div id="hero-banner">
+          <Banner />
+        </div>
+
         <PlansCard />
         <Review />
         <BusinessCard />
