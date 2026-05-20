@@ -76,7 +76,6 @@ const ActionMenu = ({ emailOrderId, domain, isDnsVerified, onCheckDns, orderStat
    ============================================================ */
 const OrderRow = ({ order, onCheckDns, refetchOrders }) => {
   const orderId = order.id || order._id || order.orderId;
-  console.log('OrderRow: ID found:', orderId, 'for domain:', order.domain);
   
   const { data: dnsStatus, refetch: refetchDnsStatus } = useDnsStatus(orderId);
   const isDnsVerified = dnsStatus?.allVerified === true;
@@ -126,64 +125,85 @@ const handleMailboxClick = () => {
   };
 
   const statusBadge = getStatusBadge();
+
+  console.log("this my sattus =====>>>",statusBadge )
  
 
  
 
- return (
-  <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4 bg-white/80 backdrop-blur-sm border border-slate-200/70 rounded-xl px-5 py-4 transition-all duration-300 hover:bg-white hover:border-slate-300 hover:shadow-[0_8px_24px_-6px_rgba(0,0,0,0.05)]">
-    {statusBadge.text === "pending_payment" ? (
-      ""
-    ) : (
-      <>
-        {/* Plan Name and Status */}
-        <div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="font-semibold text-slate-800 text-sm">{planName}</h3>
-            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusBadge.color}`}>
-              {statusBadge.icon}
-              {statusBadge.text}
-            </span>
-          </div>
-          <p className="text-xs text-slate-500 font-mono mt-0.5">{domain}</p>
-        </div>
+return (
+  !["pending_payment", "failed"].includes(statusBadge.text) && (
+    <div className="grid grid-cols-1 md:grid-cols-4 items-center gap-4 bg-white/80 backdrop-blur-sm border border-slate-200/70 rounded-xl px-5 py-4 transition-all duration-300 hover:bg-white hover:border-slate-300 hover:shadow-[0_8px_24px_-6px_rgba(0,0,0,0.05)]">
+      
+      {/* Plan Name and Status */}
+      <div>
+        <div className="flex items-center gap-2 flex-wrap">
+          <h3 className="font-semibold text-slate-800 text-sm">
+            {planName}
+          </h3>
 
-        {/* Expiration Date */}
-        <div className="flex items-center gap-1.5 text-slate-600 text-sm">
-          <Calendar size={14} className="text-slate-400" />
-          <span className="whitespace-nowrap font-medium">
-            {expirationDate ? new Date(expirationDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
+          <span
+            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusBadge.color}`}
+          >
+            {statusBadge.icon}
+            {statusBadge.text}
           </span>
         </div>
 
-        {/* Mailboxes Button */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleMailboxClick}
-            className={`group/mail flex cursor-pointer items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all duration-300 shadow-sm ${
-              isDnsVerified && orderStatus === 'active'
-                ? 'border-slate-200/80 bg-white/60 text-slate-700 hover:border-indigo-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-white hover:text-indigo-700 hover:shadow-md'
-                : 'border-slate-200/80 bg-slate-50 text-slate-400 cursor-not-allowed'
-            }`}
-          >
-            <Users size={16} className="text-slate-400 group-hover/mail:text-indigo-500 transition-colors" />
-            <span className="text-sm font-semibold">{mailboxesUsed}/{mailboxesTotal}</span>
-            <span className="text-sm text-slate-500">Mailboxes</span>
-          </button>
-        </div>
+        <p className="text-xs text-slate-500 font-mono mt-0.5">
+          {domain}
+        </p>
+      </div>
 
-        {/* DNS Button */}
-        <button 
-          onClick={() => onCheckDns(orderId, domain)}
-          className="w-full sm:w-auto px-3 sm:px-4 py-2 cursor-pointer text-xs sm:text-sm font-semibold border-2 border-indigo-400 text-indigo-600 rounded-xl hover:bg-indigo-100 hover:text-indigo-800 hover:border-indigo-500 hover:shadow-[0_0_15px_rgba(99,102,241,0.3)] transition-all duration-300 active:scale-95 flex items-center justify-center gap-2"
-          title="View DNS Records"
+      {/* Expiration Date */}
+      <div className="flex items-center gap-1.5 text-slate-600 text-sm">
+        <Calendar size={14} className="text-slate-400" />
+
+        <span className="whitespace-nowrap font-medium">
+          {expirationDate
+            ? new Date(expirationDate).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })
+            : "N/A"}
+        </span>
+      </div>
+
+      {/* Mailboxes Button */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={handleMailboxClick}
+          className={`group/mail flex cursor-pointer items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all duration-300 shadow-sm ${
+            isDnsVerified && orderStatus === "active"
+              ? "border-slate-200/80 bg-white/60 text-slate-700 hover:border-indigo-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-white hover:text-indigo-700 hover:shadow-md"
+              : "border-slate-200/80 bg-slate-50 text-slate-400 cursor-not-allowed"
+          }`}
         >
-          <Search size={14} className="sm:w-4 sm:h-4 w-3.5 h-3.5" />
-          <span>View DNS</span>
+          <Users
+            size={16}
+            className="text-slate-400 group-hover/mail:text-indigo-500 transition-colors"
+          />
+
+          <span className="text-sm font-semibold">
+            {mailboxesUsed}/{mailboxesTotal}
+          </span>
+
+          <span className="text-sm text-slate-500">Mailboxes</span>
         </button>
-      </>
-    )}
-  </div>
+      </div>
+
+      {/* DNS Button */}
+      <button
+        onClick={() => onCheckDns(orderId, domain)}
+        className="w-full sm:w-auto px-3 sm:px-4 py-2 cursor-pointer text-xs sm:text-sm font-semibold border-2 border-indigo-400 text-indigo-600 rounded-xl hover:bg-indigo-100 hover:text-indigo-800 hover:border-indigo-500 hover:shadow-[0_0_15px_rgba(99,102,241,0.3)] transition-all duration-300 active:scale-95 flex items-center justify-center gap-2"
+        title="View DNS Records"
+      >
+        <Search size={14} className="sm:w-4 sm:h-4 w-3.5 h-3.5" />
+        <span>View DNS</span>
+      </button>
+    </div>
+  )
 );
   
 };
