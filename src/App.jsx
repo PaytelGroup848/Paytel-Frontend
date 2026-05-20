@@ -8,6 +8,7 @@ import Dashboard from './pages/dashboard/Home';
 
 import PricingPage from './LandingPage/pricing/PricingPage';
 import EducationPage from './LandingPage/CRM/Education ERP/EducationPage';
+import RmsPage from './LandingPage/CRM/Resturant Managment/RmsPage';
 
 
 
@@ -163,6 +164,7 @@ export default function App() {
 
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/education-management-system" element={<EducationPage />} />
+      <Route path ="/software/restaurant-erp" element={<RmsPage/>}/>
 
       {/* Auth routes (no layout needed) */}
       <Route element={<AuthRoutes />}>
