@@ -16,6 +16,8 @@ import {
   Server,
   Eye,
   EyeOff,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
@@ -102,6 +104,23 @@ const PlanDetailCard = ({ order }) => (
 const MailboxTable = ({ domain, mailboxes, onDelete, onRefresh }) => {
   const { data: orders, isLoading, refetch: refetchOrders } = useEmailOrders();
   const [showPasswords, setShowPasswords] = useState({});
+  const [copiedField, setCopiedField] = useState('');
+
+const copyToClipboard = async (text, fieldKey) => {
+  try {
+    await navigator.clipboard.writeText(text);
+
+    setCopiedField(fieldKey);
+
+    toast.success('Copied to clipboard');
+
+    setTimeout(() => {
+      setCopiedField('');
+    }, 2000);
+  } catch (err) {
+    toast.error('Failed to copy');
+  }
+};
 
   const togglePassword = (email) => {
     setShowPasswords(prev => ({
@@ -154,25 +173,70 @@ const MailboxTable = ({ domain, mailboxes, onDelete, onRefresh }) => {
                   className="hover:bg-slate-50/80 transition-colors group"
                 >
                   <td className="py-4 pr-4">
-                    <div className="flex items-center gap-2">
-                      <Mail size={14} className="text-slate-400 group-hover:text-indigo-500 transition-colors" />
-                      <span className="font-medium text-slate-800">{mb.username}@{domain}</span>
-                    </div>
-                  </td>
+  <div className="flex items-center gap-2">
+    <Mail
+      size={14}
+      className="text-slate-400 group-hover:text-indigo-500 transition-colors"
+    />
+
+    <span className="font-medium text-slate-800">
+      {mb.username}@{domain}
+    </span>
+
+    <button
+      onClick={() =>
+        copyToClipboard(
+          `${mb.username}@${domain}`,
+          `email-${idx}`
+        )
+      }
+      className="p-1 cursor-pointer rounded-md hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-colors"
+      title="Copy Email"
+    >
+      {copiedField === `email-${idx}` ? (
+        <Check size={14} className="text-green-600" />
+      ) : (
+        <Copy size={14} />
+      )}
+    </button>
+  </div>
+</td>
                   <td className="py-4 pr-4 text-slate-600">{mb.name || '—'}</td>
                   <td className="py-4 pr-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-mono text-slate-600 bg-slate-50 px-2 py-0.5 rounded border border-slate-100 min-w-[100px] inline-block">
-                        {showPasswords[mb.email] ? mb.password : '••••••••'}
-                      </span>
-                      <button
-                        onClick={() => togglePassword(mb.email)}
-                        className="p-1 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
-                        title={showPasswords[mb.email] ? "Hide Password" : "Show Password"}
-                      >
-                        {showPasswords[mb.email] ? <EyeOff size={14} /> : <Eye size={14} />}
-                      </button>
-                    </div>
+  <span className="text-sm font-mono text-slate-600 bg-slate-50 px-2 py-0.5 rounded border border-slate-100 min-w-[100px] inline-block">
+    {showPasswords[mb.email] ? mb.password : '••••••••'}
+  </span>
+
+  <button
+    onClick={() => togglePassword(mb.email)}
+    className="p-1 text-slate-400 cursor-pointer hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+    title={showPasswords[mb.email] ? "Hide Password" : "Show Password"}
+  >
+    {showPasswords[mb.email] ? (
+      <EyeOff size={14} />
+    ) : (
+      <Eye size={14} />
+    )}
+  </button>
+
+  <button
+    onClick={() =>
+      copyToClipboard(
+        mb.password,
+        `password-${idx}`
+      )
+    }
+    className="p-1 rounded-md cursor-pointer hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-colors"
+    title="Copy Password"
+  >
+    {copiedField === `password-${idx}` ? (
+      <Check size={14} className="text-green-600" />
+    ) : (
+      <Copy size={14} />
+    )}
+  </button>
+</div>
                   </td>
                   <td className="py-4 pr-4">
                     <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${
@@ -189,7 +253,7 @@ const MailboxTable = ({ domain, mailboxes, onDelete, onRefresh }) => {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => window.open(`https://cloudewebmail.com`, '_blank')}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-indigo-600 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 transition-all duration-200"
+                      className="inline-flex cursor-pointer items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-indigo-600 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 transition-all duration-200"
                     >
                       <Globe size={12} /> Webmail
                     </motion.button>
