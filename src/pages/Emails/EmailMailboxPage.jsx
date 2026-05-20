@@ -21,13 +21,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import EmailSidebar from './EmailSidebar';
 import { useParams } from 'react-router-dom';
-import { useEmailOrder, useMailboxes, useCreateMailbox, useDeleteMailbox } from '../../hooks/useEmailHosting';
+import { useEmailOrder, useMailboxes, useCreateMailbox, useDeleteMailbox, useEmailOrders } from '../../hooks/useEmailHosting';
 import CreateMailboxModal from './CreateMailboxModal';
 
 /* ============================================================
    Enhanced Plan Detail Card
    ============================================================ */
 const PlanDetailCard = ({ order }) => (
+
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
@@ -87,7 +88,7 @@ const PlanDetailCard = ({ order }) => (
         <div>
           <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">Mailboxes</p>
           <p className="text-sm font-semibold text-slate-800">
-            Up to {order.planId?.maxMailboxes} Mailboxes
+            Up to {order?.mailboxCount} Mailboxes
           </p>
         </div>
       </div>
@@ -99,6 +100,7 @@ const PlanDetailCard = ({ order }) => (
    Enhanced Mailbox Table
    ============================================================ */
 const MailboxTable = ({ domain, mailboxes, onDelete, onRefresh }) => {
+  const { data: orders, isLoading, refetch: refetchOrders } = useEmailOrders();
   const [showPasswords, setShowPasswords] = useState({});
 
   const togglePassword = (email) => {
@@ -213,7 +215,7 @@ const MailboxTable = ({ domain, mailboxes, onDelete, onRefresh }) => {
 /* ============================================================
    Main Mailbox Page with Enhanced Styling
    ============================================================ */
-export default function EmailMailboxPage() {
+export default function EmailMailboxPage({totalMailBox}) {
   const navigate = useNavigate();
   const { id } = useParams();
   const { data: order, isLoading: isOrderLoading, refetch: refetchOrder } = useEmailOrder(id);
@@ -223,7 +225,6 @@ export default function EmailMailboxPage() {
 
   const handleDelete = async (email) => {
     if (window.confirm(`Are you sure you want to delete mailbox ${email}?`)) {
-      toast.loading('Deleting mailbox...', { id: 'delete' });
       try {
         await deleteMailboxMutation.mutateAsync(email);
         refetchMailboxes();
@@ -303,7 +304,10 @@ export default function EmailMailboxPage() {
               </motion.div>
             ) : (
               <>
-                <PlanDetailCard order={order} />                
+                <PlanDetailCard 
+  order={order} 
+
+/>                
                 {/* Create Mailbox Button with Animation */}
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}

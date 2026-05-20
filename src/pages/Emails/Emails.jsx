@@ -16,13 +16,11 @@ import {
   Search
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useEmailOrders, useDnsStatus } from '../../hooks/useEmailHosting';
-import DkimVerificationModal from './DkimVerificationModal'; // ✅ Import the modal
+import { useEmailOrders, useDnsStatus, useMailboxesCount } from '../../hooks/useEmailHosting';
+import DkimVerificationModal from './DkimVerificationModal';
 import SkeletonList from '../../components/ui/skeletons/SkeletonList';
 
-/* ============================================================
-   Action Menu Component
-   ============================================================ */
+
 const ActionMenu = ({ emailOrderId, domain, isDnsVerified, onCheckDns, orderStatus }) => {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef(null);
@@ -78,39 +76,31 @@ const OrderRow = ({ order, onCheckDns, refetchOrders }) => {
   const orderId = order.id || order._id || order.orderId;
   
   const { data: dnsStatus, refetch: refetchDnsStatus } = useDnsStatus(orderId);
+  const { data: mailboxesCount, refetch: refetchMailboxesCount } = useMailboxesCount(orderId);
   const isDnsVerified = dnsStatus?.allVerified === true;
   const orderStatus = order.status;
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Refetch DNS status every 30 seconds if not verified
-    if (!isDnsVerified && orderStatus === 'pending_dns') {
-      const interval = setInterval(() => {
-        refetchDnsStatus();
-      }, 30000);
-      return () => clearInterval(interval);
+  const handleMailboxClick = () => {
+    if (isDnsVerified && orderStatus === 'active') {
+      navigate(`/emails/mailbox/${orderId}`);
+    } else if (!isDnsVerified) {
+      toast.error('Please verify DNS records first');
+      onCheckDns(orderId, order.domain);
+    } else if (orderStatus !== 'active') {
+      toast.error('Order is not active yet');
     }
-  }, [isDnsVerified, orderStatus, refetchDnsStatus]);
+  };
 
-
-const handleMailboxClick = () => {
-  const orderId = order.id || order._id || order.orderId;
-  if (isDnsVerified && orderStatus === 'active') {
-    navigate(`/emails/mailbox/${orderId}`); // Fixed: include ID in route
-  } else if (!isDnsVerified) {
-    toast.error('Please verify DNS records first');
-    onCheckDns(orderId, order.domain);
-  } else if (orderStatus !== 'active') {
-    toast.error('Order is not active yet');
-  }
-};
-
-  // Get plan details
   const planName = order.planId?.name || 'Email Plan';
   const domain = order.domain;
   const expirationDate = order.expiresAt;
-  const mailboxesUsed = order.mailboxesUsed || 0;
-  const mailboxesTotal = order.planId?.maxMailboxes || 1;
+  
+  //  Get actual used mailboxes from API, fallback to 0
+  const mailboxesUsed = mailboxesCount?.used || 0;
+  const mailboxesTotal = order.mailboxCount || order.planId?.maxMailboxes || 1;
+
+  console.log('Mailboxes count:', { mailboxesUsed, mailboxesTotal });
 
   // Status badge
   const getStatusBadge = () => {
@@ -124,10 +114,7 @@ const handleMailboxClick = () => {
     return { text: orderStatus, color: 'bg-slate-100 text-slate-700', icon: null };
   };
 
-  const statusBadge = getStatusBadge();
-
-  console.log("this my sattus =====>>>",statusBadge )
- 
+  const statusBadge = getStatusBadge(); 
 
  
 
@@ -218,11 +205,9 @@ export default function EmailsPage() {
   const [search, setSearch] = useState('');
 
 const handleCheckDns = useCallback((orderId, domain) => {
-  console.log('EmailsPage: handleCheckDns called', { orderId, domain });
   setSelectedOrderId(orderId);
   setSelectedDomain(domain);
   setShowDnsModal(true);
-  console.log('States after setting:', { showDnsModal: true, selectedOrderId: orderId });
 }, []);
 
   const handleDnsVerified = () => {
@@ -231,11 +216,7 @@ const handleCheckDns = useCallback((orderId, domain) => {
     toast.success('DNS verified! Your email is now active.');
   };
 
-  useEffect(() => {
-    if (showDnsModal) {
-      console.log('Modal is triggered for Order ID:', selectedOrderId);
-    }
-  }, [showDnsModal, selectedOrderId]);
+
 
   const filteredOrders = orders?.filter(order => 
     order.status !== 'pending_payment' && (
@@ -339,7 +320,6 @@ const handleCheckDns = useCallback((orderId, domain) => {
     emailOrderId={selectedOrderId}
     isOpen={showDnsModal}
     onClose={() => {
-      console.log('Closing modal');
       setShowDnsModal(false);
     }}
     onVerified={handleDnsVerified}

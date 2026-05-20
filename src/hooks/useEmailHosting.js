@@ -95,11 +95,10 @@ export const useCreateMailbox = (orderId) => {
       // Invalidate and refetch mailboxes query
       queryClient.invalidateQueries(['mailboxes', orderId]);
     },
-    onError: (error) => {
-      console.error('Create mailbox error:', error);
-      throw error;
-    }
+   onError: (err) =>
+      toast.error(err?.response?.data?.message || 'Failed to create mailbox'),
   });
+
 };
 
 
@@ -155,4 +154,11 @@ export const useDeleteAlias = (id) =>
   });
 
 
-  
+  export const useMailboxesCount = (id) =>
+  useQuery({
+    queryKey: ['email-hosting', 'mailboxes-count', id],
+    queryFn: () => api.get(`/email-hosting/orders/${id}/mailboxes-count`).then(r => r.data?.data),
+    enabled: !!id,
+    staleTime: 0,
+    refetchInterval: 30000, // Refresh every 30 seconds
+  });
