@@ -1,29 +1,38 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { X, Check, Sparkles, Shield, Star, ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useCreateOrder, useVerifyPayment, useBillingPlans } from "../../hooks/useBilling";
-import { useMe } from "../../hooks/useAuth";
 import { useProfile } from "../../hooks/useProfile";
 import { loadRazorpay } from "../../utils/razorpay";
 import toast from "react-hot-toast";
 import Spinner from "../../components/ui/Spinner";
 import { metaPixel } from "../../utils/metaPixel";
+import { useAuthStore } from "../../store/authStore";
 
 const TAX_RATE = 0.18;
 
-/* ────────────────────────────── PlanModal (compact & professional) ────────────────────────────── */
 const PlanModal = ({ plan, onClose }) => {
   const [duration, setDuration] = useState(12);
   const navigate = useNavigate();
+  const location = useLocation();
+  // const { isAuthenticated } = useAuthStore();
   const createOrder = useCreateOrder();
   const verifyPayment = useVerifyPayment();
-  const { data: user } = useMe();
-  const { data: profile } = useProfile();
+ const { user, isAuthenticated } = useAuthStore();
+
+const { data: profile } = useProfile({
+  enabled: !!user,
+});
 
   const isProcessing = createOrder.isPending || verifyPayment.isPending;
 
   const handleCheckout = async () => {
+    if (!user) {
+      toast.error('Please login to continue');
+      navigate('/login', { state: { from: location.pathname } });
+      return;
+    }
     try {
       const isLoaded = await loadRazorpay();
       if (!isLoaded) {

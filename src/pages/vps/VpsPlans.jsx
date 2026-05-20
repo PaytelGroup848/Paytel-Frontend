@@ -184,7 +184,7 @@ export default function VpsPlans() {
           <div className="bg-white p-1.5 rounded-3xl shadow-lg shadow-slate-200/80 border border-slate-100 flex">
             <button
               onClick={() => setType('linux')}
-              className={`px-10 py-4 rounded-2xl font-semibold text-sm transition-all duration-300 flex items-center gap-3
+              className={`px-10 py-4 cursor-pointer rounded-2xl font-semibold text-sm transition-all duration-300 flex items-center gap-3
                 ${type === 'linux'
                   ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-xl shadow-indigo-500/30'
                   : 'text-slate-500 hover:bg-slate-50'}`}
@@ -194,7 +194,7 @@ export default function VpsPlans() {
             </button>
             <button
               onClick={() => setType('windows')}
-              className={`px-10 py-4 rounded-2xl font-semibold text-sm transition-all duration-300 flex items-center gap-3
+              className={`px-10 py-4 rounded-2xl cursor-pointer font-semibold text-sm transition-all duration-300 flex items-center gap-3
                 ${type === 'windows'
                   ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-xl shadow-indigo-500/30'
                   : 'text-slate-500 hover:bg-slate-50'}`}

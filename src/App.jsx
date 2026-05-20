@@ -28,7 +28,6 @@ import ManageDomain from './pages/domains/ManageDomain';
 import Settings from './pages/settings/Settings';
 import Plans from "./pages/plans/Plan";
 import Wordpress_Page from './pages/websites/wordpress/WordPress_Page';
-import WordpressNew from './pages/websites/wordpress/WordpressNew';
 import PaidWordpress from './pages/websites/wordpress/PaidWordpress';
 import Home from './pages/dashboard/Home';
 import WebsiteDashboard from './pages/websites/wordpress/websiteDashboard';
@@ -108,6 +107,15 @@ const AppRoutes = () => (
   </DashboardLayout>
 );
 
+// Public route that shows DashboardLayout only if user is logged in
+const PublicRoute = ({ children }) => {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  if (isAuthenticated) {
+    return <DashboardLayout>{children}</DashboardLayout>;
+  }
+  return children;
+};
+
 export default function App() {
   const setAuth = useAuthStore((s) => s.setAuth);
   const setAuthBootstrapped = useAuthStore((s) => s.setAuthBootstrapped);
@@ -145,14 +153,14 @@ export default function App() {
   return (
     <Routes>
       {/* Public redirect */}
-      <Route path ='/' element={<HomePage/>} />
+      {/* <Route path ='/' element={<HomePage/>} /> */}
 
+      <Route path="/vps" element={<PublicRoute><VpsPlans/></PublicRoute>} />
+      <Route path="/email/plan" element={<PublicRoute><EmailPlansPage /></PublicRoute>} />
+      <Route path="/websites/wordpress" element={<PublicRoute><Wordpress_Page /></PublicRoute>} />
 
+       <Route path="/home" element={<Dashboard />} />
 
-
-
-
-      <Route path="/home" element={<Dashboard/>} />
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/education-management-system" element={<EducationPage />} />
 
@@ -164,9 +172,7 @@ export default function App() {
       </Route>
 
       {/* Protected routes */}
-      <Route
-      element={<ProtectedRoute />}
-      >
+      <Route element={<ProtectedRoute />}>
         <Route element={<AppRoutes />}>
           <Route path="/hosting" element={<ManageHosting />} />
           <Route path="/hosting/plans" element={<HostingPlans />} />
@@ -176,8 +182,7 @@ export default function App() {
           <Route path="/domains/:id" element={<ManageDomain />} />
           <Route path="/settings/*" element={<Settings />} />
           <Route path="/plans" element={<Plans />} />
-          <Route path="/websites/wordpress" element={<Wordpress_Page />} />
-          <Route path="/websites/wordpress/new" element={<WordpressNew />} />
+          {/* <Route path="/websites/wordpress" element={<Wordpress_Page />} /> */}
           <Route path="/websites/wordpress/paid" element={<PaidWordpress />} />
           <Route path="/wordpress/websiteDashboard" element={<WebsiteDashboard />} />
           <Route path="/wordpress/websitedashboard/:id" element={<WebsiteDashboard />} />
@@ -190,8 +195,7 @@ export default function App() {
           <Route path="/websites/php" element={<PHP_Page />} />
           <Route path="/websites/php/paid" element={<PaidPhpDashboard />} />
           <Route path="/websites/nodejs" element={<NodeJS_Page />} />
-          <Route path="/vps" element={<VpsPlans/>} />
-          <Route path = "/vps/plans" element={<VpsPlans />} />
+          {/* <Route path="/vps" element={<VpsPlans/>} /> */}
           <Route path='/vps/paid' element={<VPSDashboard />} />
           <Route path="/vps/paid/:id" element={<VpsDashboard />} />
           <Route path="/vps/support/docs" element={<VPSDocumentation />} />
@@ -209,7 +213,6 @@ export default function App() {
           <Route path="/emails" element={<EmailsPage />} />
           {/* <Route path="/emails/mailbox/:id" element={<EmailMailboxPage />} /> */}
           <Route path="/emails/mailbox/:id" element={<EmailMailboxPage />} />
-          <Route path="/email/plan" element={< EmailPlansPage />} />
           <Route path="/emails/forwarders" element={<ForwardersPage />} />
           <Route path="/emails/aliases" element={<AliasesPage />} />
           <Route path = "/emails/autoreply" element  = {     <AutoReplyPage/> } /> 
@@ -224,7 +227,6 @@ export default function App() {
 
 
           <Route path = "/comingsoon" element ={<ComingSoon/>} />
-          <Route path="/home" element={<Home />} />
         </Route>
       </Route>
 

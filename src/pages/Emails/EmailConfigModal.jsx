@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { X, Mail, Shield, ChevronRight, Globe, Check, Loader2, CircleAlert, Minus, Plus, Users } from 'lucide-react';
 import { useCreateEmailOrder, useVerifyEmailPayment } from '../../hooks/useEmailHosting';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import DkimVerificationModal from './DkimVerificationModal';
 import toast from 'react-hot-toast';
+import { useAuthStore } from '../../store/authStore';
 
 const TENURES = [
   { months: 12, label: 'Yearly', discount: 15 },
@@ -12,6 +13,8 @@ const TENURES = [
 
 export default function EmailConfigModal({ plan, isOpen, onClose }) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuthStore();
   const [domain, setDomain] = useState('');
   const [domainError, setDomainError] = useState('');
   const [selectedTenure, setTenure] = useState(TENURES[0]);
@@ -50,6 +53,11 @@ export default function EmailConfigModal({ plan, isOpen, onClose }) {
   const isValid = domain.trim() && !domainError && !createOrderMutation.isPending && !verifyPaymentMutation.isPending;
 
   const handleCheckout = async () => {
+    if (!user) {
+      toast.error('Please login to continue');
+      navigate('/login', { state: { from: location.pathname } });
+      return;
+    }
     try {
       const orderData = await createOrderMutation.mutateAsync({
         planId: plan.id,

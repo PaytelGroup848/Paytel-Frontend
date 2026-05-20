@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Minus, Plus, Eye, EyeOff, Server, Shield, ChevronRight } from 'lucide-react';
 import { useCreateOrder, useVerifyPayment } from '../../hooks/useBilling';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { metaPixel } from '../../utils/metaPixel';
 
@@ -195,6 +195,7 @@ export default function ConfigurationModal({ plan, isOpen, onClose, type }) {
   const OS_OPTIONS = type === 'windows' ? WINDOWS_OS : LINUX_OS;
 
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedOs,       setSelectedOs]       = useState(OS_OPTIONS[0]);
   const [selectedTenure,   setSelectedTenure]   = useState(TENURES[1]);
   const [quantity,         setQuantity]         = useState(1);
@@ -231,6 +232,11 @@ export default function ConfigurationModal({ plan, isOpen, onClose, type }) {
   };
 
 const handleCheckout = async () => {
+  if (!user) {
+    toast.error('Please login to continue');
+    navigate('/login', { state: { from: location.pathname } });
+    return;
+  }
   if (!hostname.trim())  { toast.error('Please enter a hostname'); return; }
   if (!rootPassword)     { toast.error('Please enter a root password'); return; }
   if (!validatePassword()) return;
