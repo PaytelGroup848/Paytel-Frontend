@@ -9,6 +9,7 @@ import Dashboard from './pages/dashboard/Home';
 import PricingPage from './LandingPage/pricing/PricingPage';
 import EducationPage from './LandingPage/CRM/Education ERP/EducationPage';
 import RmsPage from './LandingPage/CRM/Resturant Managment/RmsPage';
+import BusyPage from './LandingPage/Services/busy on cloud/BusyPage';
 
 
 
@@ -70,6 +71,7 @@ import { setNavigator } from './utils/navigation';
 import SubscriptionsPage from './pages/billing/Subscription';
 import PaymentHistoryPage from "./pages/billing/paymentHistory";
 import ComingSoon from './utils/ComingSoon';
+
 
 
 
@@ -154,7 +156,7 @@ export default function App() {
   return (
     <Routes>
       {/* Public redirect */}
-      {/* <Route path ='/' element={<HomePage/>} /> */}
+      <Route path ='/' element={<HomePage/>} />
 
       <Route path="/vps" element={<PublicRoute><VpsPlans/></PublicRoute>} />
       <Route path="/email/plan" element={<PublicRoute><EmailPlansPage /></PublicRoute>} />
@@ -165,6 +167,7 @@ export default function App() {
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/education-management-system" element={<EducationPage />} />
       <Route path ="/software/restaurant-erp" element={<RmsPage/>}/>
+      <Route path = "/busy-on-cloud" element={<BusyPage/>} />
 
       {/* Auth routes (no layout needed) */}
       <Route element={<AuthRoutes />}>
