@@ -20,11 +20,10 @@ const megaMenuSections = [
     title: "Host & Deploy",
     icon: Server,
     items: [
-      { label: "Web Hosting", href: "/hosting/shared" },
-      { label: "VPS Hosting", href: "/hosting/vps" },
+       { label: "WordPress Hosting", href: "/website/wordpress" },
       { label: "Node.js", href: "/hosting/nodejs" },
       { label: "cPanel Hosting", href: "/hosting/cpanel" },
-      { label: "WordPress Hosting", href: "/website/wordpress" },
+    
     ],
   },
   {
@@ -34,6 +33,7 @@ const megaMenuSections = [
       { label: "Busy on Cloud", href: "/Busy-on-cloud" },
       { label: "Tally on Cloud", href: "/Tally-on-cloud" },
       { label: "Marg on Cloud", href: "/Marg-on-cloud" },
+      {label : "Vps on Cloud" , href : "/vps-on-cloud"}
     ],
   },
 ];
@@ -120,6 +120,7 @@ export default function Navbar({
         aria-hidden={!showNav}
       >
         {/* unchanged children */}
+      
         <div className="max-w-7xl mx-auto w-full px-6 sm:px-8 lg:px-12">
           <div className="flex items-center justify-between h-full">
             {/* Logo */}

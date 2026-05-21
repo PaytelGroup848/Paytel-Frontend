@@ -1,834 +1,449 @@
-import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import {
+  ArrowRight,
+  CheckCircle2,
+  Cloud,
+  Database,
+  HardDrive,
+  LockKeyhole,
+  Menu,
+  Network,
+  ServerCog,
+  ShieldCheck,
+  X,
+} from 'lucide-react';
 
 const NAV_LINKS = [
-  { label: "Products", href: "#products" },
-  { label: "Solutions", href: "#solutions" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "About", href: "#about" },
+  { label: 'Products', href: '#products' },
+  { label: 'Solutions', href: '#solutions' },
+  { label: 'Pricing', href: '#pricing' },
+  { label: 'About', href: '#about' },
 ];
 
 const STATS = [
-  { value: "99.99", suffix: "%", label: "Uptime SLA" },
-  { value: "12", suffix: "K+", label: "Active Users" },
-  { value: "8", suffix: "ms", label: "Avg Latency" },
+  { value: 99.99, suffix: '%', label: 'Uptime SLA' },
+  { value: 12, suffix: 'K+', label: 'Active Users' },
+  { value: 8, suffix: 'ms', label: 'Avg Latency' },
 ];
 
-/* ── Animated counter ── */
-function AnimatedNumber({ value, suffix = "" }) {
-  const [display, setDisplay] = useState(0);
-  useEffect(() => {
-    const end = parseFloat(value);
-    if (isNaN(end)) return;
-    let start = 0;
-    const step = end / 50;
-    const t = setInterval(() => {
-      start += step;
-      if (start >= end) {
-        setDisplay(end);
-        clearInterval(t);
-      } else {
-        setDisplay(parseFloat(start.toFixed(2)));
-      }
-    }, 25);
-    return () => clearInterval(t);
-  }, [value]);
-  return <>{display}{suffix}</>;
-}
+const BENEFITS = [
+  'Secure cloud servers',
+  'Application hosting',
+  'Managed backups',
+  'Firewall protection',
+];
 
-/* ── Floating orb ── */
-function Orb({ style, delay = 0 }) {
+const CLOUD_LAYERS = [
+  { title: 'Compute', detail: 'High-performance cloud servers', icon: ServerCog },
+  { title: 'Storage', detail: 'Backup-ready business data', icon: HardDrive },
+  { title: 'Network', detail: 'Reliable low-latency access', icon: Network },
+  { title: 'Security', detail: 'Protected cloud environment', icon: LockKeyhole },
+];
+
+function AnimatedNumber({ value, suffix = '' }) {
+  const [display, setDisplay] = useState(0);
+  const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (shouldReduceMotion) {
+      setDisplay(value);
+      return undefined;
+    }
+
+    let frameId;
+    let startTime;
+    const duration = 1100;
+
+    const update = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const next = value * eased;
+
+      setDisplay(value % 1 === 0 ? Math.round(next) : Number(next.toFixed(2)));
+
+      if (progress < 1) {
+        frameId = requestAnimationFrame(update);
+      }
+    };
+
+    frameId = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(frameId);
+  }, [shouldReduceMotion, value]);
+
   return (
-    <motion.div
-      style={{
-        position: "absolute",
-        borderRadius: "50%",
-        filter: "blur(120px)",
-        pointerEvents: "none",
-        ...style,
-      }}
-      animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.5, 0.3] }}
-      transition={{ duration: 10, repeat: Infinity, delay, ease: "easeInOut" }}
-    />
+    <>
+      {display}
+      {suffix}
+    </>
   );
 }
 
-/* ── Particle system ── */
-function Particles() {
-  const dots = Array.from({ length: 35 }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: Math.random() * 1.5 + 0.5,
-    dur: Math.random() * 8 + 6,
-    delay: Math.random() * 5,
-  }));
-
+function CloudServiceVisual() {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {dots.map((d) => (
-        <motion.div
-          key={d.id}
-          style={{
-            position: "absolute",
-            left: `${d.x}%`,
-            top: `${d.y}%`,
-            width: d.size,
-            height: d.size,
-            borderRadius: "50%",
-            background: "rgba(139,92,246,0.4)",
-          }}
-          animate={{ y: [0, -25, 0], opacity: [0, 0.8, 0] }}
-          transition={{ duration: d.dur, repeat: Infinity, delay: d.delay, ease: "easeInOut" }}
-        />
-      ))}
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: 26, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ delay: 0.25, duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+      className="relative mx-auto w-full max-w-xl lg:-mt-8 lg:mx-0 lg:max-w-none"
+    >
+      <div className="absolute -inset-6 rounded-[2rem] bg-blue-500/20 blur-3xl" />
+
+      <div className="relative overflow-hidden rounded-[2rem] border border-white/12 bg-white/[0.08] p-4 shadow-[0_34px_100px_rgba(2,8,23,0.48)] backdrop-blur-xl sm:p-5">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/70 to-transparent" />
+
+        <div className="rounded-[1.5rem] bg-[linear-gradient(145deg,rgba(15,23,42,0.86),rgba(30,64,175,0.35),rgba(8,47,73,0.72))] p-5 ring-1 ring-white/10 sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-cyan-200">
+                Cloudedata Platform
+              </p>
+              <h3 className="mt-2 text-2xl font-extrabold text-white sm:text-3xl">
+                Cloud services built for modern teams
+              </h3>
+            </div>
+            <div className="rounded-2xl bg-white/10 p-3 text-cyan-100 ring-1 ring-white/10">
+              <Cloud size={28} />
+            </div>
+          </div>
+
+          <div className="relative mt-8 rounded-[1.5rem] bg-slate-950/30 p-5 ring-1 ring-white/10">
+            <div className="absolute left-1/2 top-8 h-[72%] w-px -translate-x-1/2 bg-gradient-to-b from-cyan-300/0 via-cyan-300/50 to-cyan-300/0" />
+            <div className="absolute left-10 right-10 top-1/2 h-px bg-gradient-to-r from-cyan-300/0 via-cyan-300/45 to-cyan-300/0" />
+
+            <div className="relative mx-auto flex h-32 w-32 items-center justify-center rounded-full bg-blue-500/20 ring-1 ring-cyan-200/25 sm:h-40 sm:w-40">
+              <div className="absolute inset-4 rounded-full border border-cyan-200/20" />
+              <div className="absolute inset-8 rounded-full border border-cyan-200/20" />
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-blue-700 shadow-[0_18px_48px_rgba(14,165,233,0.24)] sm:h-20 sm:w-20">
+                <Cloud size={36} />
+              </div>
+            </div>
+
+            <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {CLOUD_LAYERS.map(({ title, detail, icon: Icon }, index) => (
+                <motion.div
+                  key={title}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.35 + index * 0.08, duration: 0.45 }}
+                  className="rounded-2xl bg-white/[0.09] p-4 ring-1 ring-white/10"
+                >
+                  <Icon size={20} className="text-cyan-200" />
+                  <p className="mt-3 text-sm font-extrabold text-white">{title}</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-300">{detail}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-5 grid grid-cols-3 overflow-hidden rounded-2xl bg-white/[0.08] ring-1 ring-white/10">
+            {[
+              { label: 'Servers', value: 'Cloud' },
+              { label: 'Security', value: 'Managed' },
+              { label: 'Support', value: 'Expert' },
+            ].map((item, index) => (
+              <div
+                key={item.label}
+                className={`p-3 text-center ${index > 0 ? 'border-l border-white/10' : ''}`}
+              >
+                <p className="text-sm font-extrabold text-white sm:text-base">{item.value}</p>
+                <p className="mt-1 text-[10px] font-bold uppercase text-slate-400">{item.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
 export default function Banner() {
-  const sectionRef = useRef(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [logoFailed, setLogoFailed] = useState(false);
+  const [activeHref, setActiveHref] = useState('#products');
 
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const gX = useSpring(mouseX, { stiffness: 50, damping: 20 });
-  const gY = useSpring(mouseY, { stiffness: 50, damping: 20 });
+  useEffect(() => {
+    const updateFromHash = () => {
+      if (window.location.hash) {
+        setActiveHref(window.location.hash);
+      }
+    };
 
-  const handleMouseMove = (e) => {
-    const r = sectionRef.current?.getBoundingClientRect();
-    if (!r) return;
-    mouseX.set(e.clientX - r.left - r.width / 2);
-    mouseY.set(e.clientY - r.top - r.height / 2);
-  };
+    updateFromHash();
+    window.addEventListener('hashchange', updateFromHash);
+
+    const sections = NAV_LINKS
+      .map((link) => document.querySelector(link.href))
+      .filter(Boolean);
+
+    if (!sections.length) {
+      return () => window.removeEventListener('hashchange', updateFromHash);
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (visible?.target?.id) {
+          setActiveHref(`#${visible.target.id}`);
+        }
+      },
+      { threshold: [0.25, 0.45, 0.65] }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+
+    return () => {
+      window.removeEventListener('hashchange', updateFromHash);
+      observer.disconnect();
+    };
+  }, []);
+
+  const closeMenu = () => setMobileOpen(false);
 
   return (
-    <>
-      {/* Professional font: Inter */}
-      <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet"
-      />
+    <section
+      id="hero-banner"
+      className="relative isolate min-h-[100svh] w-full overflow-hidden bg-[linear-gradient(135deg,#06111f_0%,#0b2447_48%,#082f49_100%)] text-white"
+    >
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:72px_72px] [mask-image:linear-gradient(to_bottom,black,transparent_90%)]" />
+        <div className="absolute left-0 top-0 h-[420px] w-[420px] rounded-full bg-blue-500/18 blur-3xl" />
+        <div className="absolute right-0 top-24 h-[420px] w-[420px] rounded-full bg-cyan-400/14 blur-3xl" />
+        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#06111f] to-transparent" />
+      </div>
 
-      <section
-        id="hero-banner"
-        ref={sectionRef}
-        onMouseMove={handleMouseMove}
-        className=" relative w-full overflow-hidden"
-        style={{
-          minHeight: "100svh",
-          background: "#000000",
-          fontFamily: "'Inter', sans-serif",
-        }}
+      <motion.nav
+        initial={{ opacity: 0, y: -18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute inset-x-0 top-4 z-30 px-4 sm:top-6 sm:px-6 lg:px-8"
       >
-        {/* ════ BACKGROUND LAYERS ════ */}
-        <div className="absolute inset-0 pointer-events-none select-none">
-          {/* Dark tech background image */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              backgroundImage: "url('/assets/tech-background.jpg')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              opacity: 0.15,
-              filter: "brightness(0.6) contrast(1.2)",
-            }}
-          />
-
-          {/* Gradient overlay */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background: "radial-gradient(ellipse 100% 70% at 50% 0%, rgba(139,92,246,0.08) 0%, transparent 70%)",
-            }}
-          />
-
-          {/* Tech grid pattern */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              backgroundImage: `
-                linear-gradient(rgba(139,92,246,0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(139,92,246,0.04) 1px, transparent 1px)
-              `,
-              backgroundSize: "80px 80px",
-              maskImage: "radial-gradient(ellipse 100% 70% at 50% 30%, black 20%, transparent 90%)",
-            }}
-          />
-
-          {/* Noise texture */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              opacity: 0.03,
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='4' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-            }}
-          />
-
-          {/* Floating orbs */}
-          <Orb
-            delay={0}
-            style={{
-              left: "10%",
-              top: "15%",
-              width: 500,
-              height: 500,
-              background: "rgba(139,92,246,0.12)",
-            }}
-          />
-          <Orb
-            delay={4}
-            style={{
-              right: "5%",
-              top: "45%",
-              width: 420,
-              height: 420,
-              background: "rgba(124,58,237,0.1)",
-            }}
-          />
-          <Orb
-            delay={2}
-            style={{
-              left: "50%",
-              top: "-5%",
-              width: 350,
-              height: 350,
-              background: "rgba(167,139,250,0.08)",
-            }}
-          />
-
-          {/* Cursor glow */}
+        <div className="relative mx-auto h-16 w-full max-w-7xl overflow-hidden rounded-2xl border border-white/12 bg-white/[0.09] shadow-[0_18px_60px_rgba(2,8,23,0.32)] backdrop-blur-xl">
           <motion.div
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              x: gX,
-              y: gY,
-              width: 700,
-              height: 700,
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 70%)",
-              transform: "translate(-50%, -50%)",
-            }}
+            aria-hidden="true"
+            className="absolute inset-0 bg-[linear-gradient(110deg,rgba(255,255,255,0.06)_0%,rgba(59,130,246,0.18)_35%,rgba(14,165,233,0.12)_65%,rgba(255,255,255,0.07)_100%)]"
+            animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
+            transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
+            style={{ backgroundSize: '220% 220%' }}
           />
 
-          <Particles />
+          <div className="relative flex h-full items-center justify-between gap-3 px-4 sm:px-5">
+            <a href="#hero-banner" onClick={closeMenu} className="flex min-w-0 items-center gap-3">
+              {!logoFailed ? (
+                <img
+                  src="/Cloudedata.svg"
+                  alt="Cloudedata"
+                  className="h-8 w-auto shrink-0 object-contain"
+                  onError={() => setLogoFailed(true)}
+                />
+              ) : (
+                <span className="text-lg font-extrabold tracking-normal text-white">Cloudedata</span>
+              )}
+            </a>
 
-          {/* Vignette edges */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background: "radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(0,0,0,0.4) 100%)",
-            }}
-          />
+            <div className="hidden items-center gap-1 rounded-2xl bg-white/[0.05] p-1 md:flex">
+              {NAV_LINKS.map((link) => {
+                const isActive = activeHref === link.href;
 
-          {/* Bottom fade */}
-          <div
-            style={{
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: 200,
-              background: "linear-gradient(to bottom, transparent, rgba(0,0,0,0.9))",
-            }}
-          />
-        </div>
-
-        {/* ════ FLOATING NAVBAR ════ */}
-        <motion.nav
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          style={{
-            position: "absolute",
-            top: 28,
-            left: 0,
-            right: 0,
-            zIndex: 50,
-            padding: "0 24px",
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: "100%",
-              maxWidth: 1100,
-              padding: "12px 20px",
-              borderRadius: 50,
-              background: "rgba(18,18,18,0.6)",
-              border: "1px solid rgba(255,255,255,0.06)",
-              backdropFilter: "blur(24px)",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(139,92,246,0.08) inset",
-            }}
-          >
-            {/* Logo */}
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <img src="Cloudedata.svg" alt="cloudedata" 
-                style={{ height: 32, width: "auto", objectFit: "contain" }}
-                onError={(e) => { e.target.style.display = "none"; }}
-              />
-           
+                return (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => setActiveHref(link.href)}
+                    className={`relative rounded-xl px-4 py-2 text-sm font-bold transition ${
+                      isActive ? 'text-white' : 'text-slate-300 hover:text-white'
+                    }`}
+                  >
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-active-pill"
+                        className="absolute inset-0 rounded-xl bg-white/14 ring-1 ring-white/12"
+                        transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                      />
+                    )}
+                    <span className="relative z-10">{link.label}</span>
+                  </a>
+                );
+              })}
             </div>
 
-            {/* Desktop nav links */}
-            <div style={{ display: "flex", alignItems: "center", gap: 36 }} className="hidden md:flex">
-              {NAV_LINKS.map((l) => (
-                <a
-                  key={l.label}
-                  href={l.href}
-                  style={{
-                    color: "rgba(255,255,255,0.6)",
-                    fontSize: 14,
-                    fontWeight: 500,
-                    textDecoration: "none",
-                    transition: "color 0.25s ease",
-                  }}
-                  onMouseEnter={(e) => e.target.style.color = "rgba(255,255,255,0.95)"}
-                  onMouseLeave={(e) => e.target.style.color = "rgba(255,255,255,0.6)"}
-                >
-                  {l.label}
-                </a>
-              ))}
-            </div>
-
-            {/* Right side */}
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div className="flex items-center gap-2 sm:gap-3">
               <a
                 href="#login"
-                className="hidden md:block"
-                style={{
-                  color: "rgba(255,255,255,0.6)",
-                  fontSize: 14,
-                  fontWeight: 500,
-                  textDecoration: "none",
-                }}
-                onMouseEnter={(e) => e.target.style.color = "rgba(255,255,255,0.95)"}
-                onMouseLeave={(e) => e.target.style.color = "rgba(255,255,255,0.6)"}
+                className="hidden text-sm font-bold text-slate-300 transition hover:text-white md:inline"
               >
                 Login
               </a>
 
               <motion.a
                 href="#demo"
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.97 }}
-                style={{
-                  padding: "10px 22px",
-                  borderRadius: 50,
-                  fontSize: 14,
-                  fontWeight: 600,
-                  textDecoration: "none",
-                  display: "inline-block",
-                  background: "linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)",
-                  border: "none",
-                  color: "#fff",
-                  boxShadow: "0 0 20px rgba(139,92,246,0.3)",
-                }}
+                whileHover={{ y: -1 }}
+                whileTap={{ scale: 0.98 }}
+                className="inline-flex min-h-10 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#60a5fa_0%,#22d3ee_100%)] px-4 text-sm font-extrabold text-slate-950 shadow-[0_12px_30px_rgba(34,211,238,0.2)] transition sm:px-5"
               >
-                Book Free Demo
+                Book Demo
               </motion.a>
 
-              {/* Mobile hamburger */}
               <button
-                onClick={() => setMobileOpen(!mobileOpen)}
-                className="flex md:hidden"
-                style={{ background: "none", border: "none", cursor: "pointer", padding: 6 }}
+                type="button"
+                onClick={() => setMobileOpen((open) => !open)}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/12 bg-white/10 text-white md:hidden"
+                aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={mobileOpen}
               >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="rgba(255,255,255,0.8)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                >
-                  {mobileOpen ? (
-                    <>
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </>
-                  ) : (
-                    <>
-                      <line x1="3" y1="7" x2="21" y2="7" />
-                      <line x1="3" y1="12" x2="21" y2="12" />
-                      <line x1="3" y1="17" x2="21" y2="17" />
-                    </>
-                  )}
-                </svg>
+                {mobileOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
             </div>
           </div>
+        </div>
 
-          {/* Mobile menu */}
-          <AnimatePresence>
-            {mobileOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                style={{
-                  position: "absolute",
-                  top: "calc(100% + 12px)",
-                  left: 24,
-                  right: 24,
-                  borderRadius: 20,
-                  background: "rgba(18,18,18,0.95)",
-                  border: "1px solid rgba(255,255,255,0.06)",
-                  backdropFilter: "blur(24px)",
-                  padding: "20px 24px",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 16,
-                  boxShadow: "0 8px 32px rgba(0,0,0,0.6)",
-                }}
-              >
-                {NAV_LINKS.map((l) => (
-                  <a
-                    key={l.label}
-                    href={l.href}
-                    style={{
-                      color: "rgba(255,255,255,0.6)",
-                      fontSize: 15,
-                      padding: "4px 0",
-                      textDecoration: "none",
-                    }}
-                  >
-                    {l.label}
-                  </a>
-                ))}
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="mx-auto mt-3 w-full max-w-7xl rounded-2xl border border-white/12 bg-[#071827]/95 p-4 shadow-[0_18px_48px_rgba(2,8,23,0.38)] backdrop-blur-xl md:hidden"
+            >
+              <div className="grid gap-2">
+                {NAV_LINKS.map((link) => {
+                  const isActive = activeHref === link.href;
+
+                  return (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      onClick={() => {
+                        setActiveHref(link.href);
+                        closeMenu();
+                      }}
+                      className={`rounded-xl px-3 py-3 text-sm font-bold transition ${
+                        isActive
+                          ? 'bg-white/12 text-white'
+                          : 'text-slate-300 hover:bg-white/10 hover:text-white'
+                      }`}
+                    >
+                      {link.label}
+                    </a>
+                  );
+                })}
+
                 <a
                   href="#login"
-                  style={{
-                    color: "rgba(255,255,255,0.6)",
-                    fontSize: 15,
-                    padding: "4px 0",
-                    textDecoration: "none",
-                  }}
+                  onClick={closeMenu}
+                  className="rounded-xl px-3 py-3 text-sm font-bold text-slate-300 transition hover:bg-white/10 hover:text-white"
                 >
                   Login
                 </a>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.nav>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.nav>
 
-        {/* ════ HERO CONTENT ════ */}
-        <div
-          style={{
-            position: "relative",
-            zIndex: 10,
-            maxWidth: 1200,
-            margin: "0 auto",
-            padding: "120px 32px 80px", // Reduced top padding
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 60,
-            alignItems: "start", // Align items to the top
-          }}
-          className="grid-cols-banner"
+      <div className="relative z-10 mx-auto grid min-h-[100svh] w-full max-w-7xl items-center gap-10 px-4 pb-12 pt-28 sm:px-6 sm:pb-16 sm:pt-32 lg:grid-cols-[0.95fr_1.05fr] lg:px-8 lg:pt-28">
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+          className="min-w-0"
         >
-          {/* ── LEFT CONTENT ── */}
-          <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          >
-            
+          <div className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-cyan-200/18 bg-cyan-200/10 px-3 py-1.5 text-xs font-bold uppercase text-cyan-100">
+            <Cloud size={15} className="shrink-0" />
+            <span className="truncate">Enterprise cloud infrastructure</span>
+          </div>
 
-            {/* Subtitle */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              style={{
-                color: "rgba(255,255,255,0.5)",
-                fontSize: 16,
-                lineHeight: 1.6,
-                marginBottom: 20,
-                fontWeight: 400,
-                letterSpacing: "-0.01em",
-              }}
-            >
-              Enterprise-grade cloud solutions built for speed, security, and scale.
-            </motion.p>
+          <p className="mb-4 max-w-xl text-sm font-extrabold uppercase tracking-[0.18em] text-cyan-200">
+            Cloud services for growing businesses
+          </p>
 
-            {/* H1 */}
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35, duration: 0.7 }}
-              style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: "clamp(2.5rem, 5.5vw, 4rem)",
-                fontWeight: 800,
-                color: "#fff",
-                lineHeight: 1.1,
-                letterSpacing: "-0.02em",
-                marginBottom: 20,
-              }}
-            >
-              CLOUDEDATA
-              <br />
-              <span style={{
-                background: "linear-gradient(135deg, #a78bfa 0%, #8b5cf6 50%, #7c3aed 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}>
-                YOUR CLOUD.
-                <br />
-                YOUR WAY.
-              </span>
-            </motion.h1>
+          <h1 className="max-w-4xl text-4xl font-extrabold leading-tight tracking-normal text-white sm:text-5xl lg:text-6xl">
+            Build faster, host smarter and scale your business on Cloudedata
+          </h1>
 
-            {/* Description */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.45 }}
-              style={{
-                color: "rgba(255,255,255,0.4)",
-                fontSize: 14,
-                fontWeight: 500,
-                letterSpacing: "-0.01em",
-                marginBottom: 36,
-                lineHeight: 1.6,
-              }}
-            >
-              Performance-optimized infrastructure with industry-leading 99.99% uptime SLA.
-            </motion.p>
+          <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">
+            Cloudedata helps you deploy cloud servers, host business applications, secure data
+            and support teams with infrastructure designed for speed, resilience and control.
+          </p>
 
-            {/* Pricing */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              style={{ marginBottom: 40 }}
+          <div className="mt-7 grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {BENEFITS.map((benefit) => (
+              <div key={benefit} className="flex min-w-0 items-center gap-2 text-sm font-bold text-slate-200">
+                <CheckCircle2 size={17} className="shrink-0 text-cyan-200" />
+                <span>{benefit}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <a
+              href="#demo"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[linear-gradient(135deg,#60a5fa_0%,#22d3ee_100%)] px-6 text-sm font-extrabold text-slate-950 shadow-[0_16px_38px_rgba(34,211,238,0.18)] transition hover:brightness-105"
             >
-              <p
-                style={{
-                  color: "rgba(255,255,255,0.3)",
-                  fontSize: 11,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.15em",
-                  marginBottom: 8,
-                  fontFamily: "'Inter', sans-serif",
-                }}
-              >
+              Start Free Trial
+              <ArrowRight size={17} />
+            </a>
+
+            <a
+              href="#pricing"
+              className="inline-flex min-h-12 items-center justify-center rounded-xl border border-white/14 bg-white/10 px-6 text-sm font-extrabold text-white transition hover:bg-white/14"
+            >
+              View Pricing
+            </a>
+          </div>
+
+          <div className="mt-8 sm:mt-10">
+            <div className="flex flex-wrap items-end gap-x-3">
+              <p className="w-full text-xs font-extrabold uppercase tracking-[0.16em] text-cyan-200">
                 Starting from
               </p>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
-                <span
-                  style={{
-                    fontSize: "clamp(3rem, 6vw, 4.2rem)",
-                    fontWeight: 800,
-                    color: "#fff",
-                    fontFamily: "'Inter', sans-serif",
-                    letterSpacing: "-0.03em",
-                  }}
-                >
-                  ₹290
-                </span>
-                <span
-                  style={{
-                    color: "rgba(255,255,255,0.4)",
-                    fontSize: 15,
-                    fontWeight: 500,
-                  }}
-                >
-                  /user/month
-                </span>
-              </div>
-            </motion.div>
-
-            {/* CTA button */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-            >
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.96 }}
-                style={{
-                  padding: "16px 36px",
-                  borderRadius: 12,
-                  fontSize: 15,
-                  fontWeight: 600,
-                  letterSpacing: "-0.01em",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  background: "linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)",
-                  border: "1px solid rgba(139,92,246,0.5)",
-                  color: "#fff",
-                  boxShadow: "0 0 20px rgba(139,92,246,0.3)",
-                  cursor: "pointer",
-                }}
-              >
-                Start Free Trial
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
-                </svg>
-              </motion.button>
-            </motion.div>
-
-            {/* Stats */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.75 }}
-              style={{
-                display: "flex",
-                alignItems: "stretch",
-                gap: 0,
-                marginTop: 56,
-                padding: "24px 0",
-                borderTop: "1px solid rgba(255,255,255,0.05)",
-              }}
-            >
-              {STATS.map((s, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "stretch", flex: 1 }}>
-                  <div style={{ flex: 1, textAlign: i === 0 ? "left" : "center" }}>
-                    <p
-                      style={{
-                        fontFamily: "'Inter', sans-serif",
-                        fontSize: "clamp(1.5rem, 3.5vw, 2.2rem)",
-                        fontWeight: 700,
-                        color: "#fff",
-                        lineHeight: 1,
-                        marginBottom: 6,
-                      }}
-                    >
-                      <AnimatedNumber value={s.value} suffix={s.suffix} />
-                    </p>
-                    <p
-                      style={{
-                        color: "rgba(255,255,255,0.35)",
-                        fontSize: 11,
-                        fontWeight: 500,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.12em",
-                        fontFamily: "'Inter', sans-serif",
-                      }}
-                    >
-                      {s.label}
-                    </p>
-                  </div>
-                  {i < STATS.length - 1 && (
-                    <div style={{ width: 1, background: "rgba(255,255,255,0.06)", margin: "0 24px", alignSelf: "stretch" }} />
-                  )}
-                </div>
-              ))}
-            </motion.div>
-          </motion.div>
-
-          {/* ── RIGHT COLUMN – Visual / Card ── */}
-          <motion.div
-            className="banner-img-col"
-            initial={{ opacity: 0, x: 40, scale: 0.95 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              position: "relative",
-              display: "flex",
-              alignItems: "flex-start", // Align top
-              justifyContent: "center",
-              alignSelf: "start", // Ensures top alignment
-              marginTop: 20, // Slight top offset to match badge line
-            }}
-          >
-            {/* Outer glow */}
-            <div
-              style={{
-                position: "absolute",
-                inset: -50,
-                borderRadius: "50%",
-                background: "radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%)",
-              }}
-            />
-
-            {/* Image container */}
-            <div
-              style={{
-                position: "relative",
-                width: "100%",
-                maxWidth: 560, // slightly larger
-                borderRadius: 24,
-                border: "1px solid rgba(255,255,255,0.06)",
-                background: "rgba(255,255,255,0.02)",
-                backdropFilter: "blur(10px)",
-                overflow: "hidden",
-                boxShadow: "0 50px 120px -20px rgba(0,0,0,0.8), 0 0 0 1px rgba(139,92,246,0.1) inset",
-                aspectRatio: "4/3",
-              }}
-            >
-              <img
-                src="/assets/cloudedata-hero.png"
-                alt="Cloudedata Cloud Platform"
-                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                onError={(e) => { e.target.style.display = "none"; }}
-              />
-
-              {/* Fallback tech illustration */}
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background: "linear-gradient(135deg, rgba(139,92,246,0.12), rgba(124,58,237,0.06))",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 20,
-                }}
-              >
-                <svg
-                  width="180"
-                  height="160"
-                  viewBox="0 0 180 160"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  style={{ opacity: 0.6 }}
-                >
-                  <rect x="30" y="15" width="120" height="28" rx="5" fill="rgba(139,92,246,0.15)" stroke="rgba(139,92,246,0.4)" strokeWidth="1.5" />
-                  <circle cx="140" cy="29" r="5" fill="#8b5cf6" opacity="0.8" />
-                  <rect x="40" y="22" width="65" height="5" rx="2.5" fill="rgba(167,139,250,0.3)" />
-                  <rect x="40" y="29" width="45" height="4" rx="2" fill="rgba(139,92,246,0.25)" />
-                  <rect x="30" y="52" width="120" height="28" rx="5" fill="rgba(124,58,237,0.15)" stroke="rgba(124,58,237,0.4)" strokeWidth="1.5" />
-                  <circle cx="140" cy="66" r="5" fill="#7c3aed" opacity="0.8" />
-                  <rect x="40" y="59" width="55" height="5" rx="2.5" fill="rgba(167,139,250,0.3)" />
-                  <rect x="40" y="66" width="40" height="4" rx="2" fill="rgba(124,58,237,0.25)" />
-                  <rect x="30" y="89" width="120" height="28" rx="5" fill="rgba(109,40,217,0.15)" stroke="rgba(109,40,217,0.4)" strokeWidth="1.5" />
-                  <circle cx="140" cy="103" r="5" fill="#6d28d9" opacity="0.8" />
-                  <rect x="40" y="96" width="70" height="5" rx="2.5" fill="rgba(167,139,250,0.3)" />
-                  <rect x="40" y="103" width="50" height="4" rx="2" fill="rgba(109,40,217,0.25)" />
-                  <line x1="90" y1="124" x2="90" y2="145" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
-                  <rect x="60" y="138" width="60" height="14" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
-                  <rect x="68" y="142" width="14" height="6" rx="3" fill="rgba(139,92,246,0.4)" />
-                  <rect x="86" y="142" width="14" height="6" rx="3" fill="rgba(124,58,237,0.4)" />
-                  <rect x="104" y="142" width="10" height="6" rx="3" fill="rgba(109,40,217,0.4)" />
-                </svg>
-                <p
-                  style={{
-                    color: "rgba(255,255,255,0.2)",
-                    fontSize: 12,
-                    fontFamily: "'Inter', sans-serif",
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Place image at /assets/cloudedata-hero.png
-                </p>
-              </div>
-
-              {/* Gradient overlay */}
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background: "linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.7) 100%)",
-                }}
-              />
-
-              {/* Status chip */}
-              <motion.div
-                animate={{ y: [0, -6, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                style={{
-                  position: "absolute",
-                  top: 18,
-                  right: 18,
-                  padding: "8px 14px",
-                  borderRadius: 12,
-                  background: "rgba(139,92,246,0.15)",
-                  border: "1px solid rgba(139,92,246,0.3)",
-                  backdropFilter: "blur(10px)",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#a78bfa", boxShadow: "0 0 10px #a78bfa" }} />
-                  <span style={{ color: "#c4b5fd", fontSize: 11, fontWeight: 600, fontFamily: "'Inter', sans-serif", letterSpacing: "0.03em" }}>
-                    LIVE • All Systems OK
-                  </span>
-                </div>
-              </motion.div>
-
-              {/* Deployments chip */}
-              <motion.div
-                animate={{ y: [0, 6, 0] }}
-                transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-                style={{
-                  position: "absolute",
-                  bottom: 18,
-                  left: 18,
-                  padding: "10px 16px",
-                  borderRadius: 12,
-                  background: "rgba(124,58,237,0.15)",
-                  border: "1px solid rgba(124,58,237,0.3)",
-                  backdropFilter: "blur(10px)",
-                }}
-              >
-                <p
-                  style={{
-                    color: "rgba(196,181,253,0.6)",
-                    fontSize: 10,
-                    fontWeight: 600,
-                    fontFamily: "'Inter', sans-serif",
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    marginBottom: 3,
-                  }}
-                >
-                  Deployments
-                </p>
-                <p style={{ color: "#fff", fontSize: 18, fontFamily: "'Inter', sans-serif", fontWeight: 700, letterSpacing: "-0.01em" }}>
-                  3,247
-                  <span style={{ color: "#c4b5fd", fontSize: 11, fontWeight: 500, marginLeft: 4 }}>today</span>
-                </p>
-              </motion.div>
+              <p className="text-4xl font-extrabold tracking-normal text-white sm:text-5xl">
+                Rs. 290
+                <span className="text-base font-bold text-slate-300"> /user/month</span>
+              </p>
             </div>
-          </motion.div>
-        </div>
-      </section>
+          </div>
 
-      {/* Responsive grid styles */}
-      <style>{`
-        @media (max-width: 900px) {
-          .grid-cols-banner {
-            grid-template-columns: 1fr !important;
-            gap: 48px !important;
-            padding-top: 140px !important;
-          }
-          .banner-img-col {
-            display: none !important;
-          }
-        }
-        ::-webkit-scrollbar { width: 0; }
-      `}</style>
-    </>
+          <div className="mt-6 grid grid-cols-3 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.07] backdrop-blur">
+            {STATS.map((stat, index) => (
+              <div
+                key={stat.label}
+                className={`min-w-0 p-3 text-center sm:p-4 ${index > 0 ? 'border-l border-white/10' : ''}`}
+              >
+                <p className="text-2xl font-extrabold text-white sm:text-3xl">
+                  <AnimatedNumber value={stat.value} suffix={stat.suffix} />
+                </p>
+                <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400 sm:text-xs">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        <CloudServiceVisual />
+      </div>
+
+      <div className="relative z-10 border-t border-white/10 bg-white/[0.05]">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-3 px-4 py-4 text-sm font-bold text-slate-200 sm:grid-cols-3 sm:px-6 lg:px-8">
+          {[
+            { icon: ServerCog, text: 'Cloud server deployment' },
+            { icon: ShieldCheck, text: 'Security and firewall options' },
+            { icon: Database, text: 'Backup-ready storage' },
+          ].map(({ icon: Icon, text }) => (
+            <div key={text} className="flex items-center gap-2">
+              <Icon size={17} className="text-cyan-200" />
+              {text}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

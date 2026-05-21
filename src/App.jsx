@@ -10,6 +10,8 @@ import PricingPage from './LandingPage/pricing/PricingPage';
 import EducationPage from './LandingPage/CRM/Education ERP/EducationPage';
 import RmsPage from './LandingPage/CRM/Resturant Managment/RmsPage';
 import BusyPage from './LandingPage/Services/busy on cloud/BusyPage';
+import TallyPage from "./LandingPage/Services/tally on cloud/tallyPage";
+import Margpage  from "./LandingPage/Services/Marg on cloud/MargPage";
 
 
 
@@ -168,6 +170,8 @@ export default function App() {
       <Route path="/education-management-system" element={<EducationPage />} />
       <Route path ="/software/restaurant-erp" element={<RmsPage/>}/>
       <Route path = "/busy-on-cloud" element={<BusyPage/>} />
+      <Route path ="/tally-on-cloud" element={<TallyPage/>} />
+      <Route path = "/marg-on-cloud" element={<Margpage/>} />
 
       {/* Auth routes (no layout needed) */}
       <Route element={<AuthRoutes />}>
@@ -224,6 +228,7 @@ export default function App() {
           <Route path ="/emails/logs" element ={  <EmailLogsPage/>  } /> 
            <Route path = "emails/dkim" element ={< DkimPage/> } />
           <Route path = "/emails/connect" element = { <EmailConnect/> } />
+          
 
 
           <Route path = "/billing/subscriptions" element={<SubscriptionsPage/>} />
