@@ -1,29 +1,34 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ChevronDown, Menu, X, User, LogOut, LogIn, UserPlus, Bell,
-  Globe, Server, Cloud, Code, Monitor, BookOpen, PhoneCall,
-  IndianRupee, ArrowRight, Sparkles,
+  ChevronDown,
+  Menu,
+  X,
+  LogOut,
+  LogIn,
+  UserPlus,
+  Server,
+  Cloud,
+  Code,
+  BookOpen,
+  PhoneCall,
+  IndianRupee,
+  ArrowRight,
+  Sparkles,
+  Zap,
+  Shield,
+  LayoutGrid,
 } from "lucide-react";
 
-/* ── Mega menu (Services) – Hosting items now included here ── */
+/* ───────────────── Mega Menu (Services) – Premium UI ───────────────── */
 const megaMenuSections = [
-  {
-    title: "Create Website",
-    icon: Globe,
-    items: [
-      { label: "Migrate Website", href: "/migrate" },
-      { label: "Managed WordPress Hosting", href: "/hosting/wordpress" },
-    ],
-  },
   {
     title: "Host & Deploy",
     icon: Server,
     items: [
-       { label: "WordPress Hosting", href: "/website/wordpress" },
-      { label: "Node.js", href: "/hosting/nodejs" },
-      { label: "cPanel Hosting", href: "/hosting/cpanel" },
-    
+      { label: "WordPress Hosting", href: "/dashboard.cloudedata.com/vps", tag: "Popular" },
+      { label: "Node.js Hosting", href: "/hosting/nodejs" },
+      { label: "cPanel Hosting", href: "/hosting/cpanel", tag: "Enterprise" },
     ],
   },
   {
@@ -33,114 +38,188 @@ const megaMenuSections = [
       { label: "Busy on Cloud", href: "/Busy-on-cloud" },
       { label: "Tally on Cloud", href: "/Tally-on-cloud" },
       { label: "Marg on Cloud", href: "/Marg-on-cloud" },
-      {label : "Vps on Cloud" , href : "/vps-on-cloud"}
+      { label: "VPS on Cloud", href: "/dashboard.cloudedata.com/websites/wordpress" },
     ],
   },
+ 
 ];
 
-/* ── Software CRM dropdown ──────────────────────── */
+/* ── Software CRM dropdown (enhanced) ── */
 const softwareCRMItems = [
-  { label: "Education ERP", href: "/education-management-system" },
+  { label: "Education ERP", href: "/education-management-system", tag: "New" },
   { label: "Restaurant Management ERP", href: "/software/restaurant-erp" },
+  { label: "Healthcare CRM", href: "/healthcare-crm" },
 ];
 
-/* ── Remaining nav links (NO more Hosting) ─────── */
+/* ── Main nav links ── */
 const NAV_LINKS = [
-  { label: "Blog", href: "/blog", icon: BookOpen },
-  { label: "Contact Us", href: "/contact", icon: PhoneCall },
+  { label: "Blog", href: "/cloud-hosting-blog", icon: BookOpen },
+  { label: "Contact", href: "/contact", icon: PhoneCall },
 ];
 
 export default function Navbar({
-  isLoggedIn = false,
-  notifications = 0,
   logoImg = "/Cloudedata.svg",
-  onLogin = () => {},
-  onLogout = () => {},
-  onRegister = () => {},
+  isLoggedIn = false,
+  userName = "Guest",
+  onLogin = () => console.log("Login clicked"),
+  onSignup = () => console.log("Signup clicked"),
+  onLogout = () => console.log("Logout clicked"),
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [authMenuOpen, setAuthMenuOpen] = useState(false);
 
-  // ── Hide on home page until scroll past hero banner ──
+  const navbarRef = useRef(null);
+  const megaMenuRef = useRef(null);
+  const softwareDropdownRef = useRef(null);
+  const authRef = useRef(null);
+
+  // Hide navbar on home until scrolled past hero
   const [showNav, setShowNav] = useState(window.location.pathname !== "/");
 
   useEffect(() => {
-    // If not home page, always show the navbar
     if (window.location.pathname !== "/") {
       setShowNav(true);
       return;
     }
-
     const banner = document.getElementById("hero-banner");
     if (!banner) {
-      setShowNav(true); // Fallback if banner missing
+      setShowNav(true);
       return;
     }
-
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        // Hide navbar while banner is in viewport, show when scrolled past
-        setShowNav(!entry.isIntersecting);
-      },
+      ([entry]) => setShowNav(!entry.isIntersecting),
       { threshold: 0 }
     );
-
     observer.observe(banner);
     return () => observer.disconnect();
   }, []);
 
+  // Global click-outside handler for all popups
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        megaMenuOpen &&
+        megaMenuRef.current &&
+        !megaMenuRef.current.contains(event.target) &&
+        !event.target.closest(".services-button")
+      ) {
+        setMegaMenuOpen(false);
+      }
+      if (
+        activeDropdown === "Software CRM" &&
+        softwareDropdownRef.current &&
+        !softwareDropdownRef.current.contains(event.target) &&
+        !event.target.closest(".software-crm-button")
+      ) {
+        setActiveDropdown(null);
+      }
+      if (
+        authMenuOpen &&
+        authRef.current &&
+        !authRef.current.contains(event.target) &&
+        !event.target.closest(".auth-button")
+      ) {
+        setAuthMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [megaMenuOpen, activeDropdown, authMenuOpen]);
+
   const renderDropdown = (items) => (
-    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
-      <div className="bg-white/90 backdrop-blur-xl rounded-2xl border border-white/60 shadow-xl shadow-slate-200/30 p-2 min-w-[200px]">
-        {items.map((sub) => (
+    <motion.div
+      initial={{ opacity: 0, y: -8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.2 }}
+      className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50"
+    >
+      <div className="bg-white/90 backdrop-blur-2xl rounded-2xl border border-white/40 shadow-2xl shadow-indigo-500/10 p-2 min-w-[240px]">
+        {items.map((item) => (
           <a
-            key={sub.label}
-            href={sub.href}
+            key={item.label}
+            href={item.href}
             onClick={() => setActiveDropdown(null)}
-            className="flex items-center justify-between px-4 py-2.5 text-sm text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors"
+            className="flex items-center justify-between px-4 py-2.5 text-sm font-medium text-slate-700 hover:text-indigo-600 hover:bg-indigo-50/70 rounded-xl transition-all duration-200 group"
           >
-            {sub.label}
-            <ArrowRight size={14} className="text-slate-400" />
+            <span>{item.label}</span>
+            {item.tag && (
+              <span className="text-[10px] font-bold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">
+                {item.tag}
+              </span>
+            )}
+            <ArrowRight size={14} className="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
           </a>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
+
+  // ───────────────── MODERN, DECENT, PROFESSIONAL AUTH BUTTONS ─────────────────
+  const renderDesktopAuth = () => {
+    if (isLoggedIn) {
+      return (
+        <button
+          onClick={onLogout}
+          className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-red-600 bg-white/60 backdrop-blur-sm rounded-xl border border-red-200/60 shadow-sm hover:shadow-md hover:bg-red-50/80 transition-all duration-200"
+        >
+          <LogOut size={16} />
+          Logout
+        </button>
+      );
+    }
+    return (
+      <div className="flex items-center gap-3">
+        {/* Login – ghost / outline style */}
+        <button
+          onClick={onLogin}
+          className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-slate-700 bg-transparent rounded-xl border border-slate-300/70 shadow-sm hover:shadow-md hover:border-indigo-300 hover:text-indigo-600 transition-all duration-200"
+        >
+          <LogIn size={16} />
+          Login
+        </button>
+        {/* Signup – solid but subtle gradient */}
+        <button
+          onClick={onSignup}
+          className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-xl shadow-md shadow-indigo-200/50 hover:shadow-lg hover:from-indigo-700 hover:to-indigo-600 transition-all duration-200"
+        >
+          <UserPlus size={16} />
+          Sign Up
+        </button>
+      </div>
+    );
+  };
 
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 h-16 md:h-[4.5rem] flex items-center bg-gradient-to-r from-white via-blue-50/80 to-white backdrop-blur-xl border-b border-slate-100/50 shadow-sm transition-all duration-300`}
-        style={{
-          opacity: showNav ? 1 : 0,
-          pointerEvents: showNav ? "auto" : "none",
-        }}
-        aria-hidden={!showNav}
+        ref={navbarRef}
+        className={`fixed top-0 left-0 right-0 z-50 h-16 md:h-20 flex items-center bg-white/80 backdrop-blur-2xl border-b border-slate-100/50 shadow-sm transition-all duration-500 ${
+          showNav ? "translate-y-0" : "-translate-y-full"
+        }`}
+        style={{ pointerEvents: showNav ? "auto" : "none" }}
       >
-        {/* unchanged children */}
-      
         <div className="max-w-7xl mx-auto w-full px-6 sm:px-8 lg:px-12">
-          <div className="flex items-center justify-between h-full">
+          <div className="flex items-center justify-between gap-4">
             {/* Logo */}
             <a href="/" className="flex items-center shrink-0 group">
               <img
                 src={logoImg}
                 alt="CloudeData"
-                className="h-10 sm:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md"
+                className="h-12 w-auto md:h-14 object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md"
                 onError={(e) => (e.target.style.display = "none")}
               />
             </a>
 
-            {/* Desktop Center Pill – polished UI */}
+            {/* Desktop Navigation Pill – subtle and modern */}
             <div className="hidden md:block">
-              <div className="relative p-[1.5px] rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-sky-500 shadow-xl shadow-indigo-200/40">
-                <div className="flex items-center gap-1 bg-white/90 backdrop-blur-lg rounded-full px-3 py-2 shadow-inner">
-                  {/* Pricing */}
+              <div className="relative p-[1px] rounded-full bg-gradient-to-r from-slate-200 via-indigo-200 to-slate-200 shadow-sm">
+                <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full px-4 py-1">
                   <a
                     href="/pricing"
-                    className="flex items-center gap-1.5 px-5 py-2 text-sm font-semibold text-slate-700 hover:text-indigo-600 rounded-full hover:bg-white/90 transition-all"
+                    className="flex items-center gap-1.5 px-5 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 rounded-full hover:bg-slate-50/80 transition-all duration-200"
                   >
                     <IndianRupee size={15} />
                     Pricing
@@ -148,99 +227,106 @@ export default function Navbar({
 
                   {/* Software CRM */}
                   <div
-                    className="relative"
+                    className="relative software-crm-button"
+                    ref={softwareDropdownRef}
                     onMouseEnter={() => setActiveDropdown("Software CRM")}
                     onMouseLeave={() => setActiveDropdown(null)}
                   >
                     <button
-                      className={`flex items-center gap-1.5 px-5 py-2 text-sm font-semibold rounded-full transition-all ${
+                      className={`flex items-center gap-1.5 px-5 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
                         activeDropdown === "Software CRM"
-                          ? "text-indigo-600 bg-white/90 shadow-sm"
-                          : "text-slate-700 hover:text-indigo-600 hover:bg-white/90"
+                          ? "text-indigo-600 bg-white/60 shadow-sm"
+                          : "text-slate-600 hover:text-indigo-600 hover:bg-slate-50/80"
                       }`}
                     >
-                      <Code size={16} />
+                      <Code size={15} />
                       Software CRM
                       <ChevronDown
-                        size={14}
-                        className={`transition-transform ${
+                        size={13}
+                        className={`transition-transform duration-200 ${
                           activeDropdown === "Software CRM" ? "rotate-180" : ""
                         }`}
                       />
                     </button>
                     <AnimatePresence>
-                      {activeDropdown === "Software CRM" &&
-                        renderDropdown(softwareCRMItems)}
+                      {activeDropdown === "Software CRM" && renderDropdown(softwareCRMItems)}
                     </AnimatePresence>
                   </div>
 
-                  {/* Services (mega menu) – contains all Hosting items now */}
-                  <div className="relative">
+                  {/* Services Mega Menu */}
+                  <div className="relative services-button">
                     <button
-                      onClick={() => {
-                        setMegaMenuOpen(!megaMenuOpen);
-                        setActiveDropdown(null);
-                      }}
-                      className={`flex items-center gap-1.5 px-5 py-2 text-sm font-semibold rounded-full transition-all ${
+                      onClick={() => setMegaMenuOpen(!megaMenuOpen)}
+                      className={`flex items-center gap-1.5 px-5 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
                         megaMenuOpen
                           ? "bg-indigo-600 text-white shadow-md"
-                          : "text-slate-700 hover:text-indigo-600 hover:bg-white/90"
+                          : "text-slate-600 hover:text-indigo-600 hover:bg-slate-50/80"
                       }`}
                     >
-                      <Server size={16} />
+                      <LayoutGrid size={15} />
                       Services
                       <ChevronDown
-                        size={14}
-                        className={`transition-transform ${megaMenuOpen ? "rotate-180" : ""}`}
+                        size={13}
+                        className={`transition-transform duration-200 ${
+                          megaMenuOpen ? "rotate-180" : ""
+                        }`}
                       />
                     </button>
 
                     <AnimatePresence>
                       {megaMenuOpen && (
                         <motion.div
-                          initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                          ref={megaMenuRef}
+                          initial={{ opacity: 0, y: 12, scale: 0.97 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: 8, scale: 0.98 }}
-                          className="absolute top-full mt-2 left-1/2 -translate-x-1/2 w-[1050px] max-w-[calc(100vw-2rem)] bg-white/95 backdrop-blur-2xl rounded-3xl border border-white/60 shadow-2xl shadow-indigo-200/30 overflow-hidden z-50"
+                          exit={{ opacity: 0, y: 12, scale: 0.97 }}
+                          transition={{ duration: 0.2, ease: "easeOut" }}
+                          className="absolute top-full mt-3 left-1/2 -translate-x-1/2 w-[1100px] max-w-[90vw] bg-white/95 backdrop-blur-2xl rounded-2xl border border-white/60 shadow-xl shadow-slate-200/50 overflow-hidden z-50"
                         >
-                          <div className="grid grid-cols-4 gap-8 p-8">
+                          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6">
                             {megaMenuSections.map((section, idx) => (
-                              <div key={idx} className="space-y-4">
-                                <div className="flex items-center gap-2 text-indigo-600 font-bold text-sm">
-                                  <section.icon size={20} />
+                              <div key={idx} className="space-y-3">
+                                <div className="flex items-center gap-2 text-indigo-600 font-semibold text-sm tracking-wide pb-2 border-b border-slate-100">
+                                  <section.icon size={16} />
                                   {section.title}
                                 </div>
-                                <div className="space-y-2">
+                                <div className="space-y-1">
                                   {section.items.map((item) => (
                                     <a
                                       key={item.label}
                                       href={item.href}
                                       onClick={() => setMegaMenuOpen(false)}
-                                      className="block text-sm text-slate-600 hover:text-indigo-600 transition-colors py-2 rounded-lg hover:bg-indigo-50/70 px-2"
+                                      className="flex items-center justify-between group rounded-lg px-3 py-2 text-sm text-slate-600 hover:text-indigo-600 hover:bg-indigo-50/40 transition-all"
                                     >
-                                      {item.label}
+                                      <span>{item.label}</span>
+                                      {item.tag && (
+                                        <span className="text-[10px] font-medium bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">
+                                          {item.tag}
+                                        </span>
+                                      )}
                                     </a>
                                   ))}
                                 </div>
                               </div>
                             ))}
-                            {/* Promo Banner */}
-                            <div className="relative bg-gradient-to-br from-indigo-500 to-purple-700 rounded-2xl p-6 flex flex-col justify-between overflow-hidden shadow-xl">
+                            {/* Promo Card */}
+                            <div className="relative bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-xl p-5 flex flex-col justify-between overflow-hidden shadow-md">
                               <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
-                              <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full blur-3xl" />
-                              <h3 className="text-white font-extrabold text-xl leading-tight mb-2">
-                                Free Cloud Assessment
+                              <div className="absolute bottom-0 left-0 w-24 h-24 bg-indigo-400/20 rounded-full blur-2xl" />
+                              <Zap size={24} className="text-yellow-200 mb-3" />
+                              <h3 className="text-white font-bold text-base leading-tight mb-1">
+                                Cloud Assessment
                               </h3>
-                              <p className="text-indigo-200 text-sm leading-relaxed mb-6">
-                                Get a custom roadmap for your cloud infrastructure.
+                              <p className="text-indigo-100 text-xs leading-relaxed mb-4">
+                                Free consultation & custom roadmap
                               </p>
                               <a
                                 href="#"
                                 onClick={() => setMegaMenuOpen(false)}
-                                className="inline-flex items-center gap-2 bg-white/20 text-white font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-white/30 transition-all"
+                                className="inline-flex items-center justify-center gap-1.5 bg-white/20 text-white font-medium text-xs px-3 py-1.5 rounded-lg hover:bg-white/30 transition-all"
                               >
-                                Book now
-                                <ArrowRight size={16} />
+                                Claim Offer
+                                <ArrowRight size={12} />
                               </a>
                             </div>
                           </div>
@@ -249,16 +335,15 @@ export default function Navbar({
                     </AnimatePresence>
                   </div>
 
-                  {/* Blog & Contact (no Hosting) */}
                   {NAV_LINKS.map((link) => {
                     const Icon = link.icon;
                     return (
                       <a
                         key={link.label}
                         href={link.href}
-                        className="flex items-center gap-1.5 px-5 py-2 text-sm font-semibold text-slate-700 hover:text-indigo-600 rounded-full hover:bg-white/90 transition-all"
+                        className="flex items-center gap-1.5 px-5 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 rounded-full hover:bg-slate-50/80 transition-all duration-200"
                       >
-                        <Icon size={16} />
+                        <Icon size={15} />
                         {link.label}
                       </a>
                     );
@@ -267,75 +352,13 @@ export default function Navbar({
               </div>
             </div>
 
-            {/* Right Side */}
-            <div className="hidden md:flex items-center gap-3">
-              <button className="relative p-2 text-slate-500 hover:text-indigo-600 rounded-full hover:bg-white/50 transition group">
-                <Bell size={20} />
-                {notifications > 0 && (
-                  <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white ring-2 ring-white animate-pulse">
-                    {notifications}
-                  </span>
-                )}
-              </button>
+            {/* Desktop Auth Buttons (modern & professional) */}
+            <div className="hidden md:block">{renderDesktopAuth()}</div>
 
-              <div className="relative">
-                <button
-                  onClick={() => setProfileOpen(!profileOpen)}
-                  className="flex items-center gap-2 p-1 rounded-full hover:bg-white/60 transition group"
-                >
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 p-[2px] shadow-md group-hover:shadow-lg transition-shadow">
-                    <div className="w-full h-full rounded-full bg-white/90 flex items-center justify-center backdrop-blur-sm">
-                      <User size={18} className="text-blue-700" />
-                    </div>
-                  </div>
-                </button>
-
-                {profileOpen && (
-                  <div className="absolute right-0 top-full mt-3 w-48 bg-white/90 backdrop-blur-lg rounded-2xl border border-slate-200/70 shadow-xl shadow-slate-200/40 p-2 z-50">
-                    {isLoggedIn ? (
-                      <button
-                        onClick={() => {
-                          onLogout();
-                          setProfileOpen(false);
-                        }}
-                        className="flex items-center gap-3 w-full px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl transition"
-                      >
-                        <LogOut size={16} />
-                        Logout
-                      </button>
-                    ) : (
-                      <>
-                        <button
-                          onClick={() => {
-                            onLogin();
-                            setProfileOpen(false);
-                          }}
-                          className="flex items-center gap-3 w-full px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-indigo-50 rounded-xl transition"
-                        >
-                          <LogIn size={16} />
-                          Login
-                        </button>
-                        <button
-                          onClick={() => {
-                            onRegister();
-                            setProfileOpen(false);
-                          }}
-                          className="flex items-center gap-3 w-full px-4 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl hover:from-blue-700 hover:to-indigo-700 shadow-md mt-1 transition-all"
-                        >
-                          <UserPlus size={16} />
-                          Register
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Mobile Hamburger */}
+            {/* Mobile menu button */}
             <button
               onClick={() => setMobileOpen(true)}
-              className="md:hidden p-2 text-slate-600 hover:text-indigo-600 rounded-xl hover:bg-white/60 transition"
+              className="md:hidden p-2 text-slate-600 hover:text-indigo-600 rounded-xl hover:bg-slate-50 transition-all"
             >
               <Menu size={24} />
             </button>
@@ -343,13 +366,13 @@ export default function Navbar({
         </div>
       </nav>
 
-      {/* Mobile Sidebar – unchanged */}
+      {/* Mobile Sidebar – with matching auth buttons */}
       <AnimatePresence>
         {mobileOpen && (
           <>
             <motion.div
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
+              animate={{ opacity: 0.4 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 z-40 bg-black md:hidden"
               onClick={() => setMobileOpen(false)}
@@ -359,64 +382,65 @@ export default function Navbar({
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "tween", duration: 0.3 }}
-              className="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white/95 backdrop-blur-xl shadow-2xl z-50 flex flex-col overflow-y-auto md:hidden"
+              className="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white/95 backdrop-blur-2xl shadow-xl z-50 flex flex-col overflow-y-auto md:hidden"
             >
-              <div className="flex items-center justify-between p-4 border-b border-slate-200">
-                <span className="font-bold text-lg text-indigo-600">Menu</span>
+              <div className="flex items-center justify-between p-5 border-b border-slate-100">
+                <img src={logoImg} alt="CloudeData" className="h-10 w-auto" />
                 <button
                   onClick={() => setMobileOpen(false)}
-                  className="p-2 text-slate-500 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition"
+                  className="p-2 text-slate-500 hover:text-indigo-600 rounded-full hover:bg-indigo-50 transition"
                 >
-                  <X size={24} />
+                  <X size={22} />
                 </button>
               </div>
 
-              <div className="flex-1 px-4 py-6 space-y-4">
+              <div className="flex-1 px-5 py-6 space-y-5">
                 <a
                   href="/pricing"
                   onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 py-2 text-base font-semibold text-slate-700 hover:text-indigo-600 transition"
+                  className="flex items-center gap-3 py-2 text-base font-medium text-slate-700 hover:text-indigo-600 transition"
                 >
-                  <IndianRupee size={18} />
+                  <IndianRupee size={16} />
                   Pricing
                 </a>
 
-                <div className="border-t border-slate-200 pt-4">
-                  <h4 className="text-sm font-bold text-indigo-600 mb-2 flex items-center gap-2">
-                    <Code size={16} />
+                <div>
+                  <h4 className="text-sm font-semibold text-indigo-600 mb-2 flex items-center gap-2">
+                    <Code size={14} />
                     Software CRM
                   </h4>
-                  <div className="space-y-1 pl-6">
+                  <div className="space-y-2 pl-6">
                     {softwareCRMItems.map((item) => (
                       <a
                         key={item.label}
                         href={item.href}
                         onClick={() => setMobileOpen(false)}
-                        className="block text-sm text-slate-600 hover:text-indigo-600 transition py-1"
+                        className="flex justify-between items-center text-sm text-slate-600 hover:text-indigo-600 transition py-1"
                       >
                         {item.label}
+                        {item.tag && <span className="text-[10px] bg-indigo-50 text-indigo-600 px-2 rounded-full">{item.tag}</span>}
                       </a>
                     ))}
                   </div>
                 </div>
 
-                {/* Services (includes Hosting items now) */}
-                <div className="border-t border-slate-200 pt-4 space-y-4">
+                <div className="space-y-5">
                   {megaMenuSections.map((section, idx) => (
                     <div key={idx}>
-                      <h4 className="text-sm font-bold text-indigo-600 mb-2 flex items-center gap-2">
-                        <section.icon size={16} />
+                      <h4 className="text-sm font-semibold text-indigo-600 mb-2 flex items-center gap-2">
+                        <section.icon size={14} />
                         {section.title}
                       </h4>
-                      <div className="space-y-1 pl-6">
+                      <div className="space-y-2 pl-6">
                         {section.items.map((item) => (
                           <a
                             key={item.label}
                             href={item.href}
                             onClick={() => setMobileOpen(false)}
-                            className="block text-sm text-slate-600 hover:text-indigo-600 transition py-1"
+                            className="flex justify-between items-center text-sm text-slate-600 hover:text-indigo-600 transition py-1"
                           >
                             {item.label}
+                            {item.tag && <span className="text-[10px] bg-indigo-50 text-indigo-600 px-2 rounded-full">{item.tag}</span>}
                           </a>
                         ))}
                       </div>
@@ -424,43 +448,33 @@ export default function Navbar({
                   ))}
                 </div>
 
-                <a
-                  href="/blog"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 py-2 text-base font-semibold text-slate-700 hover:text-indigo-600 transition"
-                >
-                  <BookOpen size={18} />
-                  Blog
-                </a>
-                <a
-                  href="/contact"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 py-2 text-base font-semibold text-slate-700 hover:text-indigo-600 transition"
-                >
-                  <PhoneCall size={18} />
-                  Contact Us
-                </a>
+                {NAV_LINKS.map((link) => {
+                  const Icon = link.icon;
+                  return (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 py-2 text-base font-medium text-slate-700 hover:text-indigo-600 transition"
+                    >
+                      <Icon size={16} />
+                      {link.label}
+                    </a>
+                  );
+                })}
               </div>
 
-              <div className="p-4 border-t border-slate-200 space-y-3">
-                <button className="flex items-center gap-3 w-full py-2 text-sm font-medium text-slate-700 hover:text-indigo-600 transition">
-                  <Bell size={18} />
-                  Notifications
-                  {notifications > 0 && (
-                    <span className="ml-auto bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                      {notifications}
-                    </span>
-                  )}
-                </button>
+              {/* Mobile Auth Section – same modern style */}
+              <div className="p-5 border-t border-slate-100 space-y-3">
                 {isLoggedIn ? (
                   <button
                     onClick={() => {
                       onLogout();
                       setMobileOpen(false);
                     }}
-                    className="flex items-center gap-3 w-full py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition"
+                    className="flex items-center justify-center gap-2 w-full py-2.5 text-sm font-medium text-red-600 bg-white rounded-xl border border-red-200 shadow-sm hover:bg-red-50 transition-all"
                   >
-                    <LogOut size={18} />
+                    <LogOut size={16} />
                     Logout
                   </button>
                 ) : (
@@ -470,20 +484,20 @@ export default function Navbar({
                         onLogin();
                         setMobileOpen(false);
                       }}
-                      className="flex items-center gap-3 w-full py-2 text-sm font-medium text-slate-700 hover:bg-indigo-50 rounded-lg transition"
+                      className="flex items-center justify-center gap-2 w-full py-2.5 text-sm font-medium text-slate-700 bg-white rounded-xl border border-slate-300 shadow-sm hover:border-indigo-300 hover:text-indigo-600 transition-all"
                     >
-                      <LogIn size={18} />
+                      <LogIn size={16} />
                       Login
                     </button>
                     <button
                       onClick={() => {
-                        onRegister();
+                        onSignup();
                         setMobileOpen(false);
                       }}
-                      className="flex items-center gap-3 w-full py-2 text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-md"
+                      className="flex items-center justify-center gap-2 w-full py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-xl shadow-md hover:shadow-lg transition-all"
                     >
-                      <UserPlus size={18} />
-                      Register
+                      <UserPlus size={16} />
+                      Sign Up
                     </button>
                   </>
                 )}

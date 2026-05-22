@@ -126,7 +126,6 @@ export default function MargPlans() {
                 >
                   {plan.popular && (
                     <div className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-indigo-600 px-2.5 py-1 text-[11px] font-bold uppercase text-white">
-                      <Sparkles size={13} />
                       Popular
                     </div>
                   )}
