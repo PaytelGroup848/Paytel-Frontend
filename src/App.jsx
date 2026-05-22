@@ -12,6 +12,8 @@ import RmsPage from './LandingPage/CRM/Resturant Managment/RmsPage';
 import BusyPage from './LandingPage/Services/busy on cloud/BusyPage';
 import TallyPage from "./LandingPage/Services/tally on cloud/tallyPage";
 import Margpage  from "./LandingPage/Services/Marg on cloud/MargPage";
+import BlogPage from "./LandingPage/Blog/BlogPage";
+import ContactUs from "./LandingPage/Contact/Contact";
 
 
 
@@ -73,6 +75,7 @@ import { setNavigator } from './utils/navigation';
 import SubscriptionsPage from './pages/billing/Subscription';
 import PaymentHistoryPage from "./pages/billing/paymentHistory";
 import ComingSoon from './utils/ComingSoon';
+import VpsLandingpage from './LandingPage/Services/Vps on Cloud/VpsLandingPage';
 
 
 
@@ -172,6 +175,9 @@ export default function App() {
       <Route path = "/busy-on-cloud" element={<BusyPage/>} />
       <Route path ="/tally-on-cloud" element={<TallyPage/>} />
       <Route path = "/marg-on-cloud" element={<Margpage/>} />
+      <Route path ="/vps-on-cloud" element={<VpsLandingpage/>} />
+      <Route path ="/cloud-hosting-blog" element={<BlogPage/>} />
+      <Route path = "/contact" element={<ContactUs />} />
 
       {/* Auth routes (no layout needed) */}
       <Route element={<AuthRoutes />}>
