@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link, useLocation } from "react-router-dom";  // ← important change
 import {
   ChevronDown,
   Menu,
@@ -14,19 +15,18 @@ import {
   PhoneCall,
   IndianRupee,
   ArrowRight,
-  Sparkles,
   Zap,
   Shield,
   LayoutGrid,
 } from "lucide-react";
 
-/* ───────────────── Mega Menu (Services) – Premium UI ───────────────── */
+/* ───────────────── Mega Menu (Services) ───────────────── */
 const megaMenuSections = [
   {
     title: "Host & Deploy",
     icon: Server,
     items: [
-      { label: "WordPress Hosting", href: "/dashboard.cloudedata.com/vps", tag: "Popular" },
+      { label: "WordPress Hosting", href: "/wordpress-hosting", tag: "Popular" },
       { label: "Node.js Hosting", href: "/hosting/nodejs" },
       { label: "cPanel Hosting", href: "/hosting/cpanel", tag: "Enterprise" },
     ],
@@ -38,17 +38,17 @@ const megaMenuSections = [
       { label: "Busy on Cloud", href: "/Busy-on-cloud" },
       { label: "Tally on Cloud", href: "/Tally-on-cloud" },
       { label: "Marg on Cloud", href: "/Marg-on-cloud" },
-      { label: "VPS on Cloud", href: "/dashboard.cloudedata.com/websites/wordpress" },
+      { label: "VPS on Cloud", href: "/vps-cloud" },
     ],
   },
  
 ];
 
-/* ── Software CRM dropdown (enhanced) ── */
+/* ── Software CRM dropdown ── */
 const softwareCRMItems = [
   { label: "Education ERP", href: "/education-management-system", tag: "New" },
   { label: "Restaurant Management ERP", href: "/software/restaurant-erp" },
-  { label: "Healthcare CRM", href: "/healthcare-crm" },
+  
 ];
 
 /* ── Main nav links ── */
@@ -65,6 +65,7 @@ export default function Navbar({
   onSignup = () => console.log("Signup clicked"),
   onLogout = () => console.log("Logout clicked"),
 }) {
+  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -76,10 +77,10 @@ export default function Navbar({
   const authRef = useRef(null);
 
   // Hide navbar on home until scrolled past hero
-  const [showNav, setShowNav] = useState(window.location.pathname !== "/");
+  const [showNav, setShowNav] = useState(location.pathname !== "/");
 
   useEffect(() => {
-    if (window.location.pathname !== "/") {
+    if (location.pathname !== "/") {
       setShowNav(true);
       return;
     }
@@ -94,7 +95,12 @@ export default function Navbar({
     );
     observer.observe(banner);
     return () => observer.disconnect();
-  }, []);
+  }, [location.pathname]);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
 
   // Global click-outside handler for all popups
   useEffect(() => {
@@ -138,9 +144,9 @@ export default function Navbar({
     >
       <div className="bg-white/90 backdrop-blur-2xl rounded-2xl border border-white/40 shadow-2xl shadow-indigo-500/10 p-2 min-w-[240px]">
         {items.map((item) => (
-          <a
+          <Link
             key={item.label}
-            href={item.href}
+            to={item.href}
             onClick={() => setActiveDropdown(null)}
             className="flex items-center justify-between px-4 py-2.5 text-sm font-medium text-slate-700 hover:text-indigo-600 hover:bg-indigo-50/70 rounded-xl transition-all duration-200 group"
           >
@@ -151,13 +157,16 @@ export default function Navbar({
               </span>
             )}
             <ArrowRight size={14} className="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-          </a>
+          </Link>
         ))}
       </div>
     </motion.div>
   );
 
-  // ───────────────── MODERN, DECENT, PROFESSIONAL AUTH BUTTONS ─────────────────
+  // Helper to check active link
+  const isActive = (href) => location.pathname === href;
+
+  // Auth buttons
   const renderDesktopAuth = () => {
     if (isLoggedIn) {
       return (
@@ -172,7 +181,6 @@ export default function Navbar({
     }
     return (
       <div className="flex items-center gap-3">
-        {/* Login – ghost / outline style */}
         <button
           onClick={onLogin}
           className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-slate-700 bg-transparent rounded-xl border border-slate-300/70 shadow-sm hover:shadow-md hover:border-indigo-300 hover:text-indigo-600 transition-all duration-200"
@@ -180,7 +188,6 @@ export default function Navbar({
           <LogIn size={16} />
           Login
         </button>
-        {/* Signup – solid but subtle gradient */}
         <button
           onClick={onSignup}
           className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-xl shadow-md shadow-indigo-200/50 hover:shadow-lg hover:from-indigo-700 hover:to-indigo-600 transition-all duration-200"
@@ -204,26 +211,30 @@ export default function Navbar({
         <div className="max-w-7xl mx-auto w-full px-6 sm:px-8 lg:px-12">
           <div className="flex items-center justify-between gap-4">
             {/* Logo */}
-            <a href="/" className="flex items-center shrink-0 group">
+            <Link to="/" className="flex items-center shrink-0 group">
               <img
                 src={logoImg}
                 alt="CloudeData"
                 className="h-12 w-auto md:h-14 object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md"
                 onError={(e) => (e.target.style.display = "none")}
               />
-            </a>
+            </Link>
 
-            {/* Desktop Navigation Pill – subtle and modern */}
+            {/* Desktop Navigation Pill */}
             <div className="hidden md:block">
               <div className="relative p-[1px] rounded-full bg-gradient-to-r from-slate-200 via-indigo-200 to-slate-200 shadow-sm">
                 <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full px-4 py-1">
-                  <a
-                    href="/pricing"
-                    className="flex items-center gap-1.5 px-5 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 rounded-full hover:bg-slate-50/80 transition-all duration-200"
+                  <Link
+                    to="/pricing"
+                    className={`flex items-center gap-1.5 px-5 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
+                      isActive("/pricing")
+                        ? "text-indigo-600 bg-white/60 shadow-sm"
+                        : "text-slate-600 hover:text-indigo-600 hover:bg-slate-50/80"
+                    }`}
                   >
                     <IndianRupee size={15} />
                     Pricing
-                  </a>
+                  </Link>
 
                   {/* Software CRM */}
                   <div
@@ -292,9 +303,9 @@ export default function Navbar({
                                 </div>
                                 <div className="space-y-1">
                                   {section.items.map((item) => (
-                                    <a
+                                    <Link
                                       key={item.label}
-                                      href={item.href}
+                                      to={item.href}
                                       onClick={() => setMegaMenuOpen(false)}
                                       className="flex items-center justify-between group rounded-lg px-3 py-2 text-sm text-slate-600 hover:text-indigo-600 hover:bg-indigo-50/40 transition-all"
                                     >
@@ -304,7 +315,7 @@ export default function Navbar({
                                           {item.tag}
                                         </span>
                                       )}
-                                    </a>
+                                    </Link>
                                   ))}
                                 </div>
                               </div>
@@ -313,21 +324,20 @@ export default function Navbar({
                             <div className="relative bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-xl p-5 flex flex-col justify-between overflow-hidden shadow-md">
                               <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
                               <div className="absolute bottom-0 left-0 w-24 h-24 bg-indigo-400/20 rounded-full blur-2xl" />
-                              <Zap size={24} className="text-yellow-200 mb-3" />
                               <h3 className="text-white font-bold text-base leading-tight mb-1">
                                 Cloud Assessment
                               </h3>
                               <p className="text-indigo-100 text-xs leading-relaxed mb-4">
                                 Free consultation & custom roadmap
                               </p>
-                              <a
-                                href="#"
+                              <Link
+                                to="/contact"
                                 onClick={() => setMegaMenuOpen(false)}
                                 className="inline-flex items-center justify-center gap-1.5 bg-white/20 text-white font-medium text-xs px-3 py-1.5 rounded-lg hover:bg-white/30 transition-all"
                               >
                                 Claim Offer
                                 <ArrowRight size={12} />
-                              </a>
+                              </Link>
                             </div>
                           </div>
                         </motion.div>
@@ -338,21 +348,25 @@ export default function Navbar({
                   {NAV_LINKS.map((link) => {
                     const Icon = link.icon;
                     return (
-                      <a
+                      <Link
                         key={link.label}
-                        href={link.href}
-                        className="flex items-center gap-1.5 px-5 py-2 text-sm font-medium text-slate-600 hover:text-indigo-600 rounded-full hover:bg-slate-50/80 transition-all duration-200"
+                        to={link.href}
+                        className={`flex items-center gap-1.5 px-5 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
+                          isActive(link.href)
+                            ? "text-indigo-600 bg-white/60 shadow-sm"
+                            : "text-slate-600 hover:text-indigo-600 hover:bg-slate-50/80"
+                        }`}
                       >
                         <Icon size={15} />
                         {link.label}
-                      </a>
+                      </Link>
                     );
                   })}
                 </div>
               </div>
             </div>
 
-            {/* Desktop Auth Buttons (modern & professional) */}
+            {/* Desktop Auth Buttons */}
             <div className="hidden md:block">{renderDesktopAuth()}</div>
 
             {/* Mobile menu button */}
@@ -366,7 +380,7 @@ export default function Navbar({
         </div>
       </nav>
 
-      {/* Mobile Sidebar – with matching auth buttons */}
+      {/* Mobile Sidebar */}
       <AnimatePresence>
         {mobileOpen && (
           <>
@@ -395,14 +409,16 @@ export default function Navbar({
               </div>
 
               <div className="flex-1 px-5 py-6 space-y-5">
-                <a
-                  href="/pricing"
+                <Link
+                  to="/pricing"
                   onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 py-2 text-base font-medium text-slate-700 hover:text-indigo-600 transition"
+                  className={`flex items-center gap-3 py-2 text-base font-medium transition ${
+                    isActive("/pricing") ? "text-indigo-600" : "text-slate-700 hover:text-indigo-600"
+                  }`}
                 >
                   <IndianRupee size={16} />
                   Pricing
-                </a>
+                </Link>
 
                 <div>
                   <h4 className="text-sm font-semibold text-indigo-600 mb-2 flex items-center gap-2">
@@ -411,15 +427,15 @@ export default function Navbar({
                   </h4>
                   <div className="space-y-2 pl-6">
                     {softwareCRMItems.map((item) => (
-                      <a
+                      <Link
                         key={item.label}
-                        href={item.href}
+                        to={item.href}
                         onClick={() => setMobileOpen(false)}
                         className="flex justify-between items-center text-sm text-slate-600 hover:text-indigo-600 transition py-1"
                       >
                         {item.label}
                         {item.tag && <span className="text-[10px] bg-indigo-50 text-indigo-600 px-2 rounded-full">{item.tag}</span>}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -433,15 +449,15 @@ export default function Navbar({
                       </h4>
                       <div className="space-y-2 pl-6">
                         {section.items.map((item) => (
-                          <a
+                          <Link
                             key={item.label}
-                            href={item.href}
+                            to={item.href}
                             onClick={() => setMobileOpen(false)}
                             className="flex justify-between items-center text-sm text-slate-600 hover:text-indigo-600 transition py-1"
                           >
                             {item.label}
                             {item.tag && <span className="text-[10px] bg-indigo-50 text-indigo-600 px-2 rounded-full">{item.tag}</span>}
-                          </a>
+                          </Link>
                         ))}
                       </div>
                     </div>
@@ -451,20 +467,22 @@ export default function Navbar({
                 {NAV_LINKS.map((link) => {
                   const Icon = link.icon;
                   return (
-                    <a
+                    <Link
                       key={link.label}
-                      href={link.href}
+                      to={link.href}
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center gap-3 py-2 text-base font-medium text-slate-700 hover:text-indigo-600 transition"
+                      className={`flex items-center gap-3 py-2 text-base font-medium transition ${
+                        isActive(link.href) ? "text-indigo-600" : "text-slate-700 hover:text-indigo-600"
+                      }`}
                     >
                       <Icon size={16} />
                       {link.label}
-                    </a>
+                    </Link>
                   );
                 })}
               </div>
 
-              {/* Mobile Auth Section – same modern style */}
+              {/* Mobile Auth Section */}
               <div className="p-5 border-t border-slate-100 space-y-3">
                 {isLoggedIn ? (
                   <button

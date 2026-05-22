@@ -1,288 +1,122 @@
 import { useState } from "react";
-
-const DishIllustration = () => (
-  <svg viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "280px", height: "280px" }}>
-    {/* Thali plate */}
-    <circle cx="140" cy="155" r="95" fill="#3d2513" stroke="#6b4025" strokeWidth="2.5" />
-    <circle cx="140" cy="155" r="85" fill="#4a2c18" stroke="#7a4a2a" strokeWidth="1" />
-
-    {/* Steaming rice mound in center */}
-    <ellipse cx="140" cy="165" rx="38" ry="16" fill="#faf5e6" opacity="0.9" />
-    <ellipse cx="140" cy="160" rx="32" ry="12" fill="#fffef2" opacity="0.95" />
-    {/* Rice grains */}
-    <path d="M128 158 Q130 155 132 158" stroke="#e8dcc0" strokeWidth="1" fill="none" />
-    <path d="M138 155 Q140 152 142 155" stroke="#e8dcc0" strokeWidth="1" fill="none" />
-    <path d="M148 158 Q150 155 152 158" stroke="#e8dcc0" strokeWidth="1" fill="none" />
-    {/* Steam wisps */}
-    <path d="M135 148 Q133 140 136 134" stroke="#ffffff" strokeWidth="1.2" fill="none" opacity="0.3" />
-    <path d="M140 145 Q138 137 141 131" stroke="#ffffff" strokeWidth="1.2" fill="none" opacity="0.25" />
-    <path d="M145 148 Q143 140 146 134" stroke="#ffffff" strokeWidth="1.2" fill="none" opacity="0.3" />
-
-    {/* Dal / curry bowl left */}
-    <circle cx="112" cy="150" r="24" fill="#2a1a0c" stroke="#603020" strokeWidth="1.5" />
-    <ellipse cx="112" cy="148" rx="20" ry="10" fill="#e8a52a" opacity="0.85" />
-    <ellipse cx="112" cy="146" rx="14" ry="6" fill="#f0c040" opacity="0.6" />
-    {/* Tadka / spices on dal */}
-    <circle cx="108" cy="145" r="1.8" fill="#8b4513" />
-    <circle cx="115" cy="143" r="1.5" fill="#8b4513" />
-    <circle cx="112" cy="142" r="1.3" fill="#a0522d" />
-
-    {/* Paneer / vegetable curry bowl right */}
-    <circle cx="168" cy="150" r="24" fill="#2a1a0c" stroke="#603020" strokeWidth="1.5" />
-    <ellipse cx="168" cy="148" rx="20" ry="10" fill="#d86c20" opacity="0.9" />
-    <ellipse cx="168" cy="146" rx="14" ry="6" fill="#f09030" opacity="0.5" />
-    {/* Curry pieces */}
-    <rect x="162" y="145" width="4" height="4" rx="1" fill="#faf0d7" opacity="0.7" />
-    <rect x="170" y="143" width="5" height="5" rx="1" fill="#faf0d7" opacity="0.7" />
-
-    {/* Green chutney / pickle bottom left */}
-    <circle cx="122" cy="178" r="10" fill="#2b5a1e" stroke="#3c7a2a" strokeWidth="1" opacity="0.9" />
-
-    {/* Roti / naan top right */}
-    <ellipse cx="162" cy="132" rx="16" ry="10" fill="#e0b878" transform="rotate(-15 162 132)" opacity="0.9" />
-    <ellipse cx="162" cy="132" rx="14" ry="8" fill="#f0d090" transform="rotate(-15 162 132)" opacity="0.7" />
-    {/* Brown spots on roti */}
-    <circle cx="158" cy="131" r="2" fill="#c28a4a" opacity="0.5" />
-    <circle cx="165" cy="134" r="1.8" fill="#c28a4a" opacity="0.5" />
-
-    {/* Papad standing behind */}
-    <path d="M92 162 Q96 120 100 115 Q104 120 108 162" fill="#dca56a" stroke="#b07840" strokeWidth="1" opacity="0.8" />
-    <path d="M96 160 Q98 125 100 118" stroke="#c89a58" strokeWidth="0.8" fill="none" />
-  </svg>
-);
-
-const styles = {
-  bannerWrap:
-     {marginTop:"4rem" ,
-    display: "flex",
-    alignItems: "center",
-    minHeight: "520px",
-    background: "#1a0f07",
-    borderRadius: "16px",
-    overflow: "hidden",
-    position: "relative",
-    fontFamily: "'DM Sans', sans-serif",
-    width: "100%",
-  },
-  bgTexture: {
-    position: "absolute",
-    inset: 0,
-    background: "radial-gradient(ellipse at 20% 50%, #2e1a0e 0%, #1a0f07 60%)",
-    zIndex: 0,
-  },
-  leftContent: {
-    flex: 1,
-    padding: "56px 48px",
-    position: "relative",
-    zIndex: 2,
-  },
-  badge: {
-    display: "inline-block",
-    background: "#c8822a",
-    color: "#fff8ee",
-    fontSize: "11px",
-    fontWeight: 500,
-    letterSpacing: "2.5px",
-    textTransform: "uppercase",
-    padding: "6px 16px",
-    borderRadius: "100px",
-    marginBottom: "24px",
-  },
-  mainHeading: {
-    fontFamily: "'Playfair Display', 'Georgia', serif",
-    fontSize: "clamp(36px, 4vw, 52px)",
-    fontWeight: 700,
-    color: "#f5e6c8",
-    lineHeight: 1.15,
-    margin: "0 0 8px",
-  },
-  accent: {
-    color: "#c8822a",
-    fontStyle: "italic",
-  },
-  subHeading: {
-    fontFamily: "'Playfair Display', 'Georgia', serif",
-    fontSize: "22px",
-    fontWeight: 400,
-    color: "#a07850",
-    margin: "0 0 24px",
-    fontStyle: "italic",
-  },
-  divider: {
-    width: "48px",
-    height: "2px",
-    background: "#c8822a",
-    marginBottom: "24px",
-    borderRadius: "2px",
-  },
-  quote: {
-    fontSize: "15px",
-    color: "#9e8670",
-    lineHeight: 1.75,
-    maxWidth: "380px",
-    marginBottom: "40px",
-    fontWeight: 300,
-  },
-  statsRow: {
-    display: "flex",
-    gap: "28px",
-    marginBottom: "40px",
-  },
-  statNum: {
-    fontFamily: "'Playfair Display', 'Georgia', serif",
-    fontSize: "28px",
-    fontWeight: 700,
-    color: "#c8822a",
-  },
-  statLabel: {
-    fontSize: "11px",
-    color: "#7a6050",
-    letterSpacing: "1.2px",
-    textTransform: "uppercase",
-    fontWeight: 400,
-  },
-  ctaBtn: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "10px",
-    background: "#c8822a",
-    color: "#fff8ee",
-    fontSize: "14px",
-    fontWeight: 500,
-    padding: "14px 32px",
-    borderRadius: "8px",
-    border: "none",
-    cursor: "pointer",
-    letterSpacing: "0.5px",
-    transition: "background 0.2s, transform 0.15s",
-  },
-  rightPanel: {
-    marginRight: "4rem",
-    width: "420px",
-    minHeight: "520px",
-    position: "relative",
-    zIndex: 2,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexShrink: 0,
-  },
-  dishCircle: {
-    width: "340px",
-    height: "340px",
-    borderRadius: "50%",
-    background: "#2a1608",
-    border: "2px solid #3d2010",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-    overflow: "hidden",
-    boxShadow: "0 0 80px #c8822a22",
-  },
-  accentRing: {
-    position: "absolute",
-    width: "370px",
-    height: "370px",
-    borderRadius: "50%",
-    border: "1px dashed #c8822a44",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    pointerEvents: "none",
-  },
-  cornerDeco: {
-    position: "absolute",
-    top: "32px",
-    right: "32px",
-    width: "80px",
-    height: "80px",
-    borderTop: "1px solid #c8822a33",
-    borderRight: "1px solid #c8822a33",
-    borderRadius: "0 12px 0 0",
-    zIndex: 1,
-  },
-  cornerDeco2: {
-    position: "absolute",
-    bottom: "32px",
-    left: "32px",
-    width: "80px",
-    height: "80px",
-    borderBottom: "1px solid #c8822a33",
-    borderLeft: "1px solid #c8822a33",
-    borderRadius: "0 0 0 12px",
-    zIndex: 1,
-  },
-};
+import { Utensils, Clock, CheckCircle, ArrowRight, Sparkles } from "lucide-react";
 
 export default function Banner() {
   const [hovered, setHovered] = useState(false);
 
   return (
-    <>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap"
-        rel="stylesheet"
-      />
-      <div style={styles.bannerWrap}>
-        <div style={styles.bgTexture} />
-        <div style={styles.cornerDeco} />
-        <div style={styles.cornerDeco2} />
+    <div className="relative w-full overflow-hidden bg-gradient-to-br from-red-50 via-white to-red-50 rounded-2xl shadow-xl">
+      {/* Red accent background shapes */}
+      <div className="absolute top-0 right-0 w-72 h-72 bg-red-600/10 rounded-full blur-3xl -z-0" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-red-500/5 rounded-full blur-3xl -z-0" />
 
-        {/* Left Content */}
-        <div style={styles.leftContent}>
-          <div style={styles.badge}>✦ Restaurant Management System</div>
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-16 lg:py-20 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Content */}
+          <div>
+            <div className="inline-flex items-center gap-2 bg-red-100 text-red-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-6">
+              <span>All-in-one Restaurant OS</span>
+            </div>
 
-          <h1 style={styles.mainHeading}>
-            Taste the Art<br />
-            of <span style={styles.accent}>Smart Dining</span>
-          </h1>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 leading-tight">
+              Simplify<br />
+              <span className="text-red-600">Restaurant Management</span>
+            </h1>
 
-          <p style={styles.subHeading}>Where flavour meets flawless ops</p>
+            <p className="mt-4 text-lg text-gray-600 max-w-xl">
+              From online orders to table bookings, inventory to CRM — Petpooja‑powered platform that grows with your business.
+            </p>
 
-          <div style={styles.divider} />
+            <div className="mt-8 flex flex-wrap gap-4 items-center">
+              <button
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
+                className="group bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg shadow-red-200 transition-all duration-200 flex items-center gap-2"
+              >
+                Get Started Free
+                <ArrowRight
+                  size={18}
+                  className={`transition-transform duration-200 ${
+                    hovered ? "translate-x-1" : ""
+                  }`}
+                />
+              </button>
 
-          <p style={styles.quote}>
-            Streamline your kitchen, delight every guest, and grow your
-            restaurant — all from one powerful platform built for modern dining.
-          </p>
+              <button className="text-gray-700 font-medium hover:text-red-600 transition-colors flex items-center gap-2 px-4 py-2 rounded-full hover:bg-red-50">
+                <Clock size={18} />
+                Book a Demo
+              </button>
+            </div>
 
-          <div style={styles.statsRow}>
-            {[
-              { num: "500+", label: "Restaurants" },
-              { num: "98%", label: "Uptime" },
-              { num: "2M+", label: "Orders Managed" },
-            ].map((s) => (
-              <div key={s.label}>
-                <div style={styles.statNum}>{s.num}</div>
-                <div style={styles.statLabel}>{s.label}</div>
-              </div>
-            ))}
+            {/* Stats Section */}
+            <div className="grid grid-cols-3 gap-6 mt-12 pt-6 border-t border-gray-200">
+              {[
+                { value: "15k+", label: "Active Restaurants", icon: Utensils },
+                { value: "99.9%", label: "Uptime SLA", icon: CheckCircle },
+                { value: "500M+", label: "Orders Processed", icon: Clock },
+              ].map((stat, idx) => (
+                <div key={idx} className="flex flex-col items-start">
+                  <div className="flex items-center gap-1.5 text-red-600 mb-1">
+                    <stat.icon size={18} />
+                    <span className="text-2xl font-bold text-gray-900">
+                      {stat.value}
+                    </span>
+                  </div>
+                  <span className="text-xs text-gray-500 font-medium">
+                    {stat.label}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <button
-            style={{
-              ...styles.ctaBtn,
-              ...(hovered ? { background: "#e09535", transform: "translateY(-2px)" } : {}),
-            }}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-          >
-            Get Started Free
-            <span style={{ fontSize: "18px", transition: "transform 0.2s", ...(hovered ? { transform: "translateX(4px)" } : {}) }}>
-              →
-            </span>
-          </button>
-        </div>
+          {/* Right Content – Modern Illustration / Cards */}
+          <div className="relative">
+            <div className="relative bg-white/40 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/50 p-4">
+              {/* Decorative ring */}
+              <div className="absolute -top-6 -right-6 w-24 h-24 bg-red-600/20 rounded-full blur-2xl" />
 
-        {/* Right Panel */}
-        <div style={styles.rightPanel}>
-          <div style={styles.accentRing} />
-          <div style={styles.dishCircle}>
-            <DishIllustration />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gradient-to-br from-red-500 to-red-700 rounded-xl p-5 text-white shadow-lg">
+                  <Utensils size={28} className="mb-3" />
+                  <h3 className="font-bold text-lg">Table Management</h3>
+                  <p className="text-sm text-red-100 mt-1">Real‑time floor view</p>
+                </div>
+
+                <div className="bg-white rounded-xl p-5 shadow-md border border-gray-100">
+                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mb-3">
+                    <CheckCircle size={20} className="text-red-600" />
+                  </div>
+                  <h3 className="font-bold text-gray-800">Online Orders</h3>
+                  <p className="text-xs text-gray-500 mt-1">Integrated with Zomato, Swiggy</p>
+                </div>
+
+                <div className="bg-white rounded-xl p-5 shadow-md border border-gray-100">
+                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mb-3">
+                    <Clock size={20} className="text-red-600" />
+                  </div>
+                  <h3 className="font-bold text-gray-800">Analytics</h3>
+                  <p className="text-xs text-gray-500 mt-1">Sales & inventory insights</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-red-600 to-red-800 rounded-xl p-5 text-white shadow-lg">
+                  <h3 className="font-bold text-lg">QR Ordering</h3>
+                  <p className="text-sm text-red-100 mt-1">Contactless & fast</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Floating badge */}
+            <div className="absolute -bottom-4 -left-4 bg-white rounded-full px-4 py-2 shadow-lg flex items-center gap-2 text-sm font-medium text-red-600 border border-red-100">
+             
+              Trusted by 15,000+ outlets
+            </div>
           </div>
         </div>
       </div>
-    </>
+
+      {/* Bottom red wave / separator */}
+      <div className="relative h-2 w-full bg-gradient-to-r from-red-500 to-red-700 mt-8" />
+    </div>
   );
 }

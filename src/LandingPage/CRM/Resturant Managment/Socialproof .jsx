@@ -1,8 +1,18 @@
+import { useState } from "react";
+import {
+  Building2,
+  ShoppingCart,
+  Clock,
+  Star,
+  Quote,
+  ChevronRight,
+} from "lucide-react";
+
 const stats = [
-  { icon: "ti-building-store", num: "500", suffix: "+", label: "Restaurants" },
-  { icon: "ti-shopping-cart",  num: "2",   suffix: "M+", label: "Orders Managed" },
-  { icon: "ti-clock",          num: "98",  suffix: "%",  label: "Uptime" },
-  { icon: "ti-star",           num: "4.9", suffix: "★",  label: "Avg. Rating" },
+  { icon: Building2, num: "500", suffix: "+", label: "Restaurants" },
+  { icon: ShoppingCart, num: "2", suffix: "M+", label: "Orders Managed" },
+  { icon: Clock, num: "98", suffix: "%", label: "Uptime" },
+  { icon: Star, num: "4.9", suffix: "★", label: "Avg. Rating" },
 ];
 
 const testimonials = [
@@ -29,40 +39,17 @@ const testimonials = [
   },
 ];
 
-function StatItem({ icon, num, suffix, label, isLast }) {
+function StatCard({ icon: Icon, num, suffix, label }) {
   return (
-    <div
-      style={{
-        textAlign: "center",
-        padding: "0 24px",
-        borderRight: isLast ? "none" : "1px solid #3a2010",
-      }}
-    >
-      <div style={{ fontSize: "22px", color: "#c8822a", marginBottom: "10px" }}>
-        <i className={`ti ${icon}`} aria-hidden="true" />
+    <div className="text-center p-6 border-r border-red-200/50 last:border-r-0">
+      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-100 text-red-600 mb-4">
+        <Icon className="w-6 h-6" />
       </div>
-      <div
-        style={{
-          fontFamily: "'Playfair Display', serif",
-          fontSize: "44px",
-          fontWeight: 700,
-          color: "#f5e6c8",
-          lineHeight: 1,
-          marginBottom: "6px",
-        }}
-      >
+      <div className="text-3xl md:text-4xl font-bold text-gray-900">
         {num}
-        <span style={{ color: "#c8822a" }}>{suffix}</span>
+        <span className="text-red-600">{suffix}</span>
       </div>
-      <div
-        style={{
-          fontSize: "12px",
-          color: "#7a6050",
-          letterSpacing: "1.5px",
-          textTransform: "uppercase",
-          fontWeight: 400,
-        }}
-      >
+      <div className="text-xs font-semibold uppercase tracking-wider text-gray-500 mt-1">
         {label}
       </div>
     </div>
@@ -70,71 +57,47 @@ function StatItem({ icon, num, suffix, label, isLast }) {
 }
 
 function TestimonialCard({ initials, name, role, quote }) {
+  const [hovered, setHovered] = useState(false);
+
   return (
     <div
-      style={{
-        background: "#ffffff",
-        border: "1px solid #e8d5be",
-        borderRadius: "14px",
-        padding: "28px 24px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "16px",
-      }}
+      className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 p-6 flex flex-col"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
-      <div style={{ color: "#c8822a", fontSize: "14px", letterSpacing: "2px" }}>
-        ★★★★★
+      {/* Stars */}
+      <div className="flex gap-1 mb-4">
+        {[...Array(5)].map((_, i) => (
+          <Star key={i} className="w-4 h-4 fill-red-500 text-red-500" />
+        ))}
       </div>
 
-      <p
-        style={{
-          fontSize: "14px",
-          color: "#4a3020",
-          lineHeight: 1.75,
-          fontWeight: 300,
-          margin: 0,
-          flex: 1,
-        }}
-      >
-        <span style={{ color: "#c8822a", fontSize: "20px", fontWeight: 700 }}>"</span>
-        {quote}
-        <span style={{ color: "#c8822a", fontSize: "20px", fontWeight: 700 }}>"</span>
-      </p>
+      {/* Quote */}
+      <div className="relative flex-1">
+        <Quote className="absolute -top-1 -left-1 w-6 h-6 text-red-200 opacity-50" />
+        <p className="text-gray-600 text-sm leading-relaxed pl-5 pt-1">
+          {quote}
+        </p>
+      </div>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "12px",
-          borderTop: "1px solid #f0e0cc",
-          paddingTop: "16px",
-        }}
-      >
-        <div
-          style={{
-            width: "40px",
-            height: "40px",
-            borderRadius: "50%",
-            background: "#c8822a",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "13px",
-            fontWeight: 500,
-            color: "#fff8ee",
-            flexShrink: 0,
-          }}
-        >
+      {/* Author */}
+      <div className="flex items-center gap-3 mt-6 pt-4 border-t border-gray-100">
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white font-semibold text-sm shadow-md">
           {initials}
         </div>
         <div>
-          <p style={{ fontSize: "13px", fontWeight: 500, color: "#1a0f07", margin: "0 0 2px" }}>
-            {name}
-          </p>
-          <p style={{ fontSize: "11px", color: "#9e8670", margin: 0, fontWeight: 300 }}>
-            {role}
-          </p>
+          <div className="font-semibold text-gray-900 text-sm">{name}</div>
+          <div className="text-xs text-gray-400">{role}</div>
         </div>
+      </div>
+
+      {/* Hover arrow indicator */}
+      <div
+        className={`absolute bottom-4 right-4 transition-all duration-300 ${
+          hovered ? "opacity-100 translate-x-0" : "opacity-0 translate-x-1"
+        }`}
+      >
+        <ChevronRight className="w-4 h-4 text-red-500" />
       </div>
     </div>
   );
@@ -142,82 +105,42 @@ function TestimonialCard({ initials, name, role, quote }) {
 
 export default function SocialProof() {
   return (
-    <>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap"
-        rel="stylesheet"
-      />
-      <link
-        href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
-        rel="stylesheet"
-      />
-
-      <section style={{ background: "#ffffff", fontFamily: "'DM Sans', sans-serif" }}>
-
-        {/* ── Stats Strip ── */}
-        <div style={{ background: "#1a0f07", padding: "56px 48px" }}>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
-            }}
-          >
-            {stats.map((s, i) => (
-              <StatItem key={s.label} {...s} isLast={i === stats.length - 1} />
+    <section className="bg-white">
+      {/* Stats Strip – dark but with red accents (optional) */}
+      <div className="bg-gradient-to-r from-gray-900 to-gray-800 py-12 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {stats.map((stat, idx) => (
+              <StatCard key={idx} {...stat} />
             ))}
           </div>
         </div>
+      </div>
 
-        {/* ── Testimonials ── */}
-        <div style={{ padding: "80px 48px", background: "#fffaf5" }}>
-          <div style={{ textAlign: "center", marginBottom: "48px" }}>
-            <span
-              style={{
-                display: "inline-block",
-                border: "1px solid #c8822a66",
-                color: "#c8822a",
-                fontSize: "11px",
-                letterSpacing: "2px",
-                textTransform: "uppercase",
-                padding: "6px 18px",
-                borderRadius: "100px",
-                marginBottom: "16px",
-                fontWeight: 500,
-              }}
-            >
-              ✦ What Owners Say
-            </span>
-            <h2
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: "36px",
-                fontWeight: 700,
-                color: "#1a0f07",
-                margin: 0,
-                lineHeight: 1.2,
-              }}
-            >
+      {/* Testimonials Section */}
+      <div className="py-20 px-6 lg:px-8 bg-gradient-to-b from-white to-red-50/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <div className="inline-flex items-center gap-2 bg-red-100 text-red-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
+              <Star size={14} className="fill-red-500" />
+              <span>What Owners Say</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">
               Loved by{" "}
-              <em style={{ color: "#c8822a", fontStyle: "italic" }}>
-                Restaurant Teams
-              </em>
+              <span className="text-red-600 italic">Restaurant Teams</span>
             </h2>
+            <p className="mt-3 text-gray-500 text-lg">
+              Trusted by 500+ restaurants across India
+            </p>
           </div>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-              gap: "20px",
-            }}
-          >
-            {testimonials.map((t) => (
-              <TestimonialCard key={t.name} {...t} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {testimonials.map((testimonial, idx) => (
+              <TestimonialCard key={idx} {...testimonial} />
             ))}
           </div>
         </div>
-
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
