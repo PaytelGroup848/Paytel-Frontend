@@ -9,7 +9,17 @@ import Dashboard from './pages/dashboard/Home';
 import PricingPage from './LandingPage/pricing/PricingPage';
 import EducationPage from './LandingPage/CRM/Education ERP/EducationPage';
 import RmsPage from './LandingPage/CRM/Resturant Managment/RmsPage';
+import LandingWordpress from "./LandingPage/Wordpress/LandingWordpress";
+import Landingvps from "./LandingPage/Vps/LandingVps";
 import BusyPage from './LandingPage/Services/busy on cloud/BusyPage';
+import TallyPage from "./LandingPage/Services/tally on cloud/tallyPage";
+import Margpage  from "./LandingPage/Services/Marg on cloud/MargPage";
+import BlogPage from "./LandingPage/Blog/BlogPage";
+import ContactUs from "./LandingPage/Contact/Contact";
+import PrivacyPolicy from "./LandingPage/PrivacyPolicy";
+import RefundPolicy from "./LandingPage/RefundPolicy";
+import TermsOfService from "./LandingPage/TermsAndConditions";
+import AboutPage from "./LandingPage/Aboutus";
 
 
 
@@ -73,6 +83,7 @@ import { setNavigator } from './utils/navigation';
 import SubscriptionsPage from './pages/billing/Subscription';
 import PaymentHistoryPage from "./pages/billing/paymentHistory";
 import ComingSoon from './utils/ComingSoon';
+import VpsLandingpage from './LandingPage/Services/Vps on Cloud/VpsLandingPage';
 
 
 
@@ -170,7 +181,19 @@ export default function App() {
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/education-management-system" element={<EducationPage />} />
       <Route path ="/software/restaurant-erp" element={<RmsPage/>}/>
+      <Route path ="/wordpress-hosting" element={<LandingWordpress/>}/>
+      <Route path ="/vps-cloud" element={<Landingvps/>}/>
       <Route path = "/busy-on-cloud" element={<BusyPage/>} />
+      <Route path ="/tally-on-cloud" element={<TallyPage/>} />
+      <Route path = "/marg-on-cloud" element={<Margpage/>} />
+      <Route path ="/cloud-hosting-blog" element={<BlogPage/>} />
+      <Route path = "/contact" element={<ContactUs />} />
+      <Route path ="/privacy-policy" element={<PrivacyPolicy/>}/>
+      <Route path = "/refund-policy-cloude" element={<RefundPolicy/>}/>
+      <Route path = "/term-and-conditions" element={<TermsOfService/>} />
+      <Route path ="/about-us" element={<AboutPage />} />
+
+
 
       {/* Auth routes (no layout needed) */}
       <Route element={<AuthRoutes />}>
@@ -229,6 +252,7 @@ export default function App() {
           <Route path ="/emails/logs" element ={  <EmailLogsPage/>  } /> 
            <Route path = "emails/dkim" element ={< DkimPage/> } />
           <Route path = "/emails/connect" element = { <EmailConnect/> } />
+          
 
 
           <Route path = "/billing/subscriptions" element={<SubscriptionsPage/>} />

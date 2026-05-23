@@ -1,834 +1,617 @@
-import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import {
+  ArrowRight,
+  Cloud,
+  Database,
+  Menu,
+  ServerCog,
+  ShieldCheck,
+  X,
+  Phone,
+  Rocket,
+  UserCircle,
+  AtSign,
+  Smartphone,
+  Package,
+  Send,
+  ChevronRight,
+  ChevronDown,
+  Zap,
+  Globe,
+  Lock,
+  TrendingUp
+} from 'lucide-react';
 
 const NAV_LINKS = [
-  { label: "Products", href: "#products" },
-  { label: "Solutions", href: "#solutions" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "About", href: "#about" },
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'About Us', href: '/about-us' },
+  {
+    label: 'Software CRM',
+    dropdown: [
+      { label: 'Education CRM', href: '/education-management-system' },
+      { label: 'Restaurant Management', href: '/software/restaurant-erp' },
+    ]
+  },
+  { label: 'Blog', href: '/cloud-hosting-blog', external: true },
+  { label: 'Contact', href: '/contact', external: true },
 ];
 
 const STATS = [
-  { value: "99.99", suffix: "%", label: "Uptime SLA" },
-  { value: "12", suffix: "K+", label: "Active Users" },
-  { value: "8", suffix: "ms", label: "Avg Latency" },
+  { value: 99.99, suffix: '%', label: 'Uptime SLA' },
+  { value: 12, suffix: 'K+', label: 'Active Users' },
+  { value: 8, suffix: 'ms', label: 'Avg Latency' },
 ];
 
-/* ── Animated counter ── */
-function AnimatedNumber({ value, suffix = "" }) {
-  const [display, setDisplay] = useState(0);
-  useEffect(() => {
-    const end = parseFloat(value);
-    if (isNaN(end)) return;
-    let start = 0;
-    const step = end / 50;
-    const t = setInterval(() => {
-      start += step;
-      if (start >= end) {
-        setDisplay(end);
-        clearInterval(t);
-      } else {
-        setDisplay(parseFloat(start.toFixed(2)));
-      }
-    }, 25);
-    return () => clearInterval(t);
-  }, [value]);
-  return <>{display}{suffix}</>;
-}
+const BENEFITS = [
+  { icon: Lock, text: 'Bank-grade encryption' },
+  { icon: Zap, text: 'Lightning-fast performance' },
+  { icon: Globe, text: 'Global CDN network' },
+  { icon: TrendingUp, text: 'Auto-scaling infrastructure' },
+];
 
-/* ── Floating orb ── */
-function Orb({ style, delay = 0 }) {
+const PRODUCT_OPTIONS = [
+  'Tally on Cloud',
+  'Marg on Cloud',
+  'Busy on Cloud',
+  'VPS Infrastructure',
+];
+
+function AnimatedNumber({ value, suffix = '' }) {
+  const [display, setDisplay] = useState(0);
+  const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (shouldReduceMotion) {
+      setDisplay(value);
+      return undefined;
+    }
+
+    let frameId;
+    let startTime;
+    const duration = 1200;
+
+    const update = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const next = value * eased;
+
+      setDisplay(value % 1 === 0 ? Math.round(next) : Number(next.toFixed(2)));
+
+      if (progress < 1) {
+        frameId = requestAnimationFrame(update);
+      }
+    };
+
+    frameId = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(frameId);
+  }, [shouldReduceMotion, value]);
+
   return (
-    <motion.div
-      style={{
-        position: "absolute",
-        borderRadius: "50%",
-        filter: "blur(120px)",
-        pointerEvents: "none",
-        ...style,
-      }}
-      animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.5, 0.3] }}
-      transition={{ duration: 10, repeat: Infinity, delay, ease: "easeInOut" }}
-    />
+    <>
+      {display}
+      {suffix}
+    </>
   );
 }
 
-/* ── Particle system ── */
-function Particles() {
-  const dots = Array.from({ length: 35 }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: Math.random() * 1.5 + 0.5,
-    dur: Math.random() * 8 + 6,
-    delay: Math.random() * 5,
-  }));
+function LeadCaptureCard() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.3, duration: 0.7, ease: 'easeOut' }}
+      className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none"
+    >
+      <motion.div
+        animate={{
+          opacity: [0.3, 0.5, 0.3],
+          scale: [1, 1.05, 1]
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 blur-2xl"
+      />
+
+      <div className="group relative overflow-hidden rounded-3xl border border-indigo-400/30 bg-gradient-to-br from-slate-900/80 via-indigo-950/60 to-black/90 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent" />
+        <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/5 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+
+        <div className="relative mb-8">
+          <motion.div
+            whileHover={{ scale: 1.05, rotate: 5 }}
+            className="mb-4 inline-flex items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-700 p-3.5 shadow-lg shadow-indigo-500/40"
+          >
+            {/* optional icon placeholder */}
+          </motion.div>
+          <h3 className="text-3xl font-semibold tracking-tight text-white">
+            Request a Live Demo
+          </h3>
+          <p className="mt-2 text-base text-slate-300">
+            Experience enterprise-grade cloud infrastructure. Our solutions architects will guide you through a personalized demo.
+          </p>
+        </div>
+
+        <form className="space-y-4">
+          <div className="relative group">
+            <UserCircle size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-indigo-400" />
+            <input
+              type="text"
+              placeholder="Full Name"
+              className="w-full rounded-xl border border-indigo-400/20 bg-slate-800/50 py-4 pl-12 pr-4 text-base text-white placeholder-slate-400 outline-none backdrop-blur-sm transition-all focus:border-indigo-400 focus:bg-slate-800/70 focus:ring-4 focus:ring-indigo-500/20"
+              required
+            />
+          </div>
+
+          <div className="relative group">
+            <AtSign size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-indigo-400" />
+            <input
+              type="email"
+              placeholder="Work Email"
+              className="w-full rounded-xl border border-indigo-400/20 bg-slate-800/50 py-4 pl-12 pr-4 text-base text-white placeholder-slate-400 outline-none backdrop-blur-sm transition-all focus:border-indigo-400 focus:bg-slate-800/70 focus:ring-4 focus:ring-indigo-500/20"
+              required
+            />
+          </div>
+
+          <div className="relative group">
+            <Smartphone size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-indigo-400" />
+            <input
+              type="tel"
+              placeholder="Phone Number"
+              className="w-full rounded-xl border border-indigo-400/20 bg-slate-800/50 py-4 pl-12 pr-4 text-base text-white placeholder-slate-400 outline-none backdrop-blur-sm transition-all focus:border-indigo-400 focus:bg-slate-800/70 focus:ring-4 focus:ring-indigo-500/20"
+              required
+            />
+          </div>
+
+          <div className="relative group">
+            <Package size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-indigo-400" />
+            <select
+              defaultValue=""
+              className="w-full appearance-none rounded-xl border border-indigo-400/20 bg-slate-800/50 py-4 pl-12 pr-10 text-base text-white outline-none backdrop-blur-sm transition-all focus:border-indigo-400 focus:bg-slate-800/70 focus:ring-4 focus:ring-indigo-500/20"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                backgroundPosition: 'right 1rem center',
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: '1.25rem'
+              }}
+              required
+            >
+              <option value="" disabled className="text-slate-900 bg-white">Select Solution</option>
+              {PRODUCT_OPTIONS.map((product) => (
+                <option key={product} value={product} className="text-slate-900 bg-white">
+                  {product}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <motion.button
+            whileHover={{ y: -2, scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            type="submit"
+            className="group relative mt-2 flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 py-4 text-base font-medium text-white shadow-lg shadow-indigo-500/40 transition-all hover:shadow-xl hover:shadow-indigo-500/50"
+          >
+            <span className="relative z-10">Request Demo</span>
+            <Send size={16} className="relative z-10 ml-1 transition-transform group-hover:translate-x-1" />
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-700 opacity-0 transition-opacity group-hover:opacity-100" />
+          </motion.button>
+
+          <p className="text-center text-xs text-slate-400">
+            By submitting, you agree to our{' '}
+            <a href="#privacy" className="font-medium text-indigo-400 underline-offset-2 hover:underline">
+              Privacy Policy
+            </a>
+          </p>
+        </form>
+      </div>
+    </motion.div>
+  );
+}
+
+function DropdownMenu({ item, closeMenu }) {
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {dots.map((d) => (
-        <motion.div
-          key={d.id}
-          style={{
-            position: "absolute",
-            left: `${d.x}%`,
-            top: `${d.y}%`,
-            width: d.size,
-            height: d.size,
-            borderRadius: "50%",
-            background: "rgba(139,92,246,0.4)",
-          }}
-          animate={{ y: [0, -25, 0], opacity: [0, 0.8, 0] }}
-          transition={{ duration: d.dur, repeat: Infinity, delay: d.delay, ease: "easeInOut" }}
-        />
-      ))}
+    <div
+      className="relative"
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+    >
+      <button
+        className="flex items-center gap-1 rounded-xl px-4 py-2 text-sm font-medium text-white/90 transition-all hover:bg-white/10 hover:text-white"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {item.label}
+        <ChevronDown size={16} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute left-0 top-full mt-2 w-56 overflow-hidden rounded-xl border border-white/20 bg-purple-900/95 shadow-xl backdrop-blur-xl"
+          >
+            {item.dropdown.map((subItem) => (
+              <a
+                key={subItem.label}
+                href={subItem.href}
+                onClick={closeMenu}
+                className="block px-4 py-3 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
+              >
+                {subItem.label}
+              </a>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
-export default function Banner() {
-  const sectionRef = useRef(null);
+export default function ProfessionalBanner() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [logoFailed, setLogoFailed] = useState(false);
 
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const gX = useSpring(mouseX, { stiffness: 50, damping: 20 });
-  const gY = useSpring(mouseY, { stiffness: 50, damping: 20 });
-
-  const handleMouseMove = (e) => {
-    const r = sectionRef.current?.getBoundingClientRect();
-    if (!r) return;
-    mouseX.set(e.clientX - r.left - r.width / 2);
-    mouseY.set(e.clientY - r.top - r.height / 2);
-  };
+  const closeMenu = () => setMobileOpen(false);
 
   return (
-    <>
-      {/* Professional font: Inter */}
-      <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet"
-      />
+    <section
+      id="hero-banner"
+      className="relative isolate min-h-[100svh] w-full overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 font-sans"
+    >
+      {/* Animated Background Effects */}
+      <div className="absolute inset-0 -z-10">
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.15, 0.25, 0.15],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute -left-40 top-0 h-[800px] w-[800px] rounded-full bg-blue-600/20 blur-[120px]"
+        />
+        <motion.div
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.1, 0.2, 0.1],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1
+          }}
+          className="absolute -right-40 top-40 h-[700px] w-[700px] rounded-full bg-cyan-500/15 blur-[120px]"
+        />
+        <motion.div
+          animate={{
+            scale: [1, 1.1, 1],
+            opacity: [0.15, 0.25, 0.15],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2
+          }}
+          className="absolute bottom-0 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-blue-500/18 blur-[100px]"
+        />
 
-      <section
-        id="hero-banner"
-        ref={sectionRef}
-        onMouseMove={handleMouseMove}
-        className=" relative w-full overflow-hidden"
-        style={{
-          minHeight: "100svh",
-          background: "#000000",
-          fontFamily: "'Inter', sans-serif",
-        }}
-      >
-        {/* ════ BACKGROUND LAYERS ════ */}
-        <div className="absolute inset-0 pointer-events-none select-none">
-          {/* Dark tech background image */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              backgroundImage: "url('/assets/tech-background.jpg')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              opacity: 0.15,
-              filter: "brightness(0.6) contrast(1.2)",
-            }}
-          />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e40af15_1px,transparent_1px),linear-gradient(to_bottom,#1e40af15_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_40%,#000_60%,transparent_100%)]" />
 
-          {/* Gradient overlay */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background: "radial-gradient(ellipse 100% 70% at 50% 0%, rgba(139,92,246,0.08) 0%, transparent 70%)",
-            }}
-          />
-
-          {/* Tech grid pattern */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              backgroundImage: `
-                linear-gradient(rgba(139,92,246,0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(139,92,246,0.04) 1px, transparent 1px)
-              `,
-              backgroundSize: "80px 80px",
-              maskImage: "radial-gradient(ellipse 100% 70% at 50% 30%, black 20%, transparent 90%)",
-            }}
-          />
-
-          {/* Noise texture */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              opacity: 0.03,
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='4' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-            }}
-          />
-
-          {/* Floating orbs */}
-          <Orb
-            delay={0}
-            style={{
-              left: "10%",
-              top: "15%",
-              width: 500,
-              height: 500,
-              background: "rgba(139,92,246,0.12)",
-            }}
-          />
-          <Orb
-            delay={4}
-            style={{
-              right: "5%",
-              top: "45%",
-              width: 420,
-              height: 420,
-              background: "rgba(124,58,237,0.1)",
-            }}
-          />
-          <Orb
-            delay={2}
-            style={{
-              left: "50%",
-              top: "-5%",
-              width: 350,
-              height: 350,
-              background: "rgba(167,139,250,0.08)",
-            }}
-          />
-
-          {/* Cursor glow */}
+        {[...Array(20)].map((_, i) => (
           <motion.div
+            key={i}
+            animate={{
+              y: [0, -30, 0],
+              opacity: [0.1, 0.3, 0.1],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 4,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+            className="absolute h-1 w-1 rounded-full bg-blue-400"
             style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              x: gX,
-              y: gY,
-              width: 700,
-              height: 700,
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 70%)",
-              transform: "translate(-50%, -50%)",
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
             }}
           />
+        ))}
+      </div>
 
-          <Particles />
-
-          {/* Vignette edges */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background: "radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(0,0,0,0.4) 100%)",
-            }}
-          />
-
-          {/* Bottom fade */}
-          <div
-            style={{
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: 200,
-              background: "linear-gradient(to bottom, transparent, rgba(0,0,0,0.9))",
-            }}
-          />
-        </div>
-
-        {/* ════ FLOATING NAVBAR ════ */}
-        <motion.nav
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      {/* Navigation */}
+      <motion.nav
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+        className="absolute inset-x-0 top-4 z-50 px-4 sm:top-6 sm:px-6 lg:px-8"
+      >
+        <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between rounded-2xl border border-blue-400/20 bg-white/5 px-4 shadow-2xl shadow-blue-900/40 backdrop-blur-2xl sm:px-6"
           style={{
-            position: "absolute",
-            top: 28,
-            left: 0,
-            right: 0,
-            zIndex: 50,
-            padding: "0 24px",
-            display: "flex",
-            justifyContent: "center",
+            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(30, 64, 175, 0.04) 100%)',
+            boxShadow: '0 8px 32px 0 rgba(37, 99, 235, 0.25), inset 0 1px 0 0 rgba(96, 165, 250, 0.15)'
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: "100%",
-              maxWidth: 1100,
-              padding: "12px 20px",
-              borderRadius: 50,
-              background: "rgba(18,18,18,0.6)",
-              border: "1px solid rgba(255,255,255,0.06)",
-              backdropFilter: "blur(24px)",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(139,92,246,0.08) inset",
-            }}
-          >
-            {/* Logo */}
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <img src="Cloudedata.svg" alt="cloudedata" 
-                style={{ height: 32, width: "auto", objectFit: "contain" }}
-                onError={(e) => { e.target.style.display = "none"; }}
+          <a href="#hero-banner" onClick={closeMenu} className="flex items-center gap-2 group">
+            {!logoFailed ? (
+              <img
+                src="/Cloudedata.svg"
+                alt="Cloudedata"
+                className="h-7 w-auto object-contain transition-transform group-hover:scale-105"
+                onError={() => setLogoFailed(true)}
               />
-           
-            </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 shadow-lg shadow-blue-500/40">
+                  <Cloud size={20} className="text-white" />
+                </div>
+                <span className="text-xl font-semibold tracking-tight text-white">
+                  Cloudedata
+                </span>
+              </div>
+            )}
+          </a>
 
-            {/* Desktop nav links */}
-            <div style={{ display: "flex", alignItems: "center", gap: 36 }} className="hidden md:flex">
-              {NAV_LINKS.map((l) => (
+          <div className="hidden items-center gap-1 md:flex">
+            {NAV_LINKS.map((link) => {
+              if (link.dropdown) {
+                return <DropdownMenu key={link.label} item={link} closeMenu={closeMenu} />;
+              }
+
+              return (
                 <a
-                  key={l.label}
-                  href={l.href}
-                  style={{
-                    color: "rgba(255,255,255,0.6)",
-                    fontSize: 14,
-                    fontWeight: 500,
-                    textDecoration: "none",
-                    transition: "color 0.25s ease",
-                  }}
-                  onMouseEnter={(e) => e.target.style.color = "rgba(255,255,255,0.95)"}
-                  onMouseLeave={(e) => e.target.style.color = "rgba(255,255,255,0.6)"}
+                  key={link.label}
+                  href={link.href}
+                  target={link.external ? '_blank' : undefined}
+                  rel={link.external ? 'noopener noreferrer' : undefined}
+                  className="rounded-xl px-4 py-2 text-sm font-medium text-white/90 transition-all hover:bg-white/10 hover:text-white"
                 >
-                  {l.label}
+                  {link.label}
                 </a>
-              ))}
-            </div>
-
-            {/* Right side */}
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <a
-                href="#login"
-                className="hidden md:block"
-                style={{
-                  color: "rgba(255,255,255,0.6)",
-                  fontSize: 14,
-                  fontWeight: 500,
-                  textDecoration: "none",
-                }}
-                onMouseEnter={(e) => e.target.style.color = "rgba(255,255,255,0.95)"}
-                onMouseLeave={(e) => e.target.style.color = "rgba(255,255,255,0.6)"}
-              >
-                Login
-              </a>
-
-              <motion.a
-                href="#demo"
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.97 }}
-                style={{
-                  padding: "10px 22px",
-                  borderRadius: 50,
-                  fontSize: 14,
-                  fontWeight: 600,
-                  textDecoration: "none",
-                  display: "inline-block",
-                  background: "linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)",
-                  border: "none",
-                  color: "#fff",
-                  boxShadow: "0 0 20px rgba(139,92,246,0.3)",
-                }}
-              >
-                Book Free Demo
-              </motion.a>
-
-              {/* Mobile hamburger */}
-              <button
-                onClick={() => setMobileOpen(!mobileOpen)}
-                className="flex md:hidden"
-                style={{ background: "none", border: "none", cursor: "pointer", padding: 6 }}
-              >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="rgba(255,255,255,0.8)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                >
-                  {mobileOpen ? (
-                    <>
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </>
-                  ) : (
-                    <>
-                      <line x1="3" y1="7" x2="21" y2="7" />
-                      <line x1="3" y1="12" x2="21" y2="12" />
-                      <line x1="3" y1="17" x2="21" y2="17" />
-                    </>
-                  )}
-                </svg>
-              </button>
-            </div>
+              );
+            })}
           </div>
 
-          {/* Mobile menu */}
-          <AnimatePresence>
-            {mobileOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                style={{
-                  position: "absolute",
-                  top: "calc(100% + 12px)",
-                  left: 24,
-                  right: 24,
-                  borderRadius: 20,
-                  background: "rgba(18,18,18,0.95)",
-                  border: "1px solid rgba(255,255,255,0.06)",
-                  backdropFilter: "blur(24px)",
-                  padding: "20px 24px",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 16,
-                  boxShadow: "0 8px 32px rgba(0,0,0,0.6)",
-                }}
-              >
-                {NAV_LINKS.map((l) => (
-                  <a
-                    key={l.label}
-                    href={l.href}
-                    style={{
-                      color: "rgba(255,255,255,0.6)",
-                      fontSize: 15,
-                      padding: "4px 0",
-                      textDecoration: "none",
-                    }}
-                  >
-                    {l.label}
-                  </a>
-                ))}
+          <div className="flex items-center gap-3">
+            <a
+              href="tel:9311472355"
+              className="hidden items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-3 py-2 text-sm font-medium text-white transition-all hover:bg-white/10 md:flex"
+            >
+              <Phone size={16} />
+              <span>9311472355</span>
+            </a>
+
+            <a
+              href="/login"
+              className="hidden rounded-xl px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10 md:block"
+            >
+              Login
+            </a>
+
+            <motion.a
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              href="/register"
+              className="hidden rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-5 py-2 text-sm font-medium text-white shadow-lg shadow-blue-500/40 transition-all hover:shadow-xl hover:shadow-blue-500/50 md:block"
+            >
+              Sign Up
+            </motion.a>
+
+            <button
+              type="button"
+              onClick={() => setMobileOpen((open) => !open)}
+              className="flex h-10 w-10 items-center justify-center rounded-lg text-white hover:bg-white/10 md:hidden"
+            >
+              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="absolute inset-x-4 mt-2 origin-top overflow-hidden rounded-2xl border border-blue-400/20 bg-slate-900/95 p-4 shadow-xl backdrop-blur-2xl md:hidden"
+            >
+              <div className="flex flex-col space-y-1">
+                {NAV_LINKS.map((link) => {
+                  if (link.dropdown) {
+                    return (
+                      <div key={link.label} className="flex flex-col">
+                        <div className="rounded-lg px-4 py-3 text-sm font-medium text-white">
+                          {link.label}
+                        </div>
+                        {link.dropdown.map((subItem) => (
+                          <a
+                            key={subItem.label}
+                            href={subItem.href}
+                            onClick={closeMenu}
+                            className="rounded-lg px-6 py-2 text-sm text-white/80 hover:bg-white/10 hover:text-white"
+                          >
+                            {subItem.label}
+                          </a>
+                        ))}
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      target={link.external ? '_blank' : undefined}
+                      rel={link.external ? 'noopener noreferrer' : undefined}
+                      onClick={closeMenu}
+                      className="rounded-lg px-4 py-3 text-sm font-medium text-white hover:bg-white/10"
+                    >
+                      {link.label}
+                    </a>
+                  );
+                })}
+
+                <div className="my-2 h-px bg-white/10" />
+
+                <a
+                  href="tel:9311472355"
+                  className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-white hover:bg-white/10"
+                >
+                  <Phone size={16} />
+                  <span>9311472355</span>
+                </a>
+
                 <a
                   href="#login"
-                  style={{
-                    color: "rgba(255,255,255,0.6)",
-                    fontSize: 15,
-                    padding: "4px 0",
-                    textDecoration: "none",
-                  }}
+                  onClick={closeMenu}
+                  className="rounded-lg px-4 py-3 text-sm font-medium text-white hover:bg-white/10"
                 >
                   Login
                 </a>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.nav>
 
-        {/* ════ HERO CONTENT ════ */}
-        <div
-          style={{
-            position: "relative",
-            zIndex: 10,
-            maxWidth: 1200,
-            margin: "0 auto",
-            padding: "120px 32px 80px", // Reduced top padding
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 60,
-            alignItems: "start", // Align items to the top
-          }}
-          className="grid-cols-banner"
+                <a
+                  href="#signup"
+                  onClick={closeMenu}
+                  className="mt-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 text-center text-sm font-medium text-white shadow-lg shadow-blue-500/40"
+                >
+                  Sign Up
+                </a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.nav>
+
+      {/* Main Content */}
+      <div className="relative z-10 mx-auto grid min-h-[100svh] max-w-7xl grid-cols-1 items-center gap-12 px-4 pb-16 pt-32 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12 lg:px-8 lg:pt-24">
+
+        {/* Left Column: Hero Content */}
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
+          className="flex flex-col justify-center"
         >
-          {/* ── LEFT CONTENT ── */}
+          <h1 className="text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-7xl">
+            Transform Your Business with{' '}
+            <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
+              Next-Gen Cloud Solutions
+            </span>
+          </h1>
+
+          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-300 sm:text-xl">
+            Deploy enterprise-grade infrastructure with unmatched performance, security, and scalability. Built for businesses that demand excellence.
+          </p>
+
+          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {BENEFITS.map(({ icon: Icon, text }) => (
+              <motion.div
+                key={text}
+                whileHover={{ x: 5 }}
+                className="flex items-center gap-3 text-sm font-normal text-white"
+              >
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10 backdrop-blur-sm border border-blue-400/20">
+                  <Icon size={18} className="text-blue-400" />
+                </div>
+                {text}
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+            <motion.a
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              href="#demo"
+              className="group relative inline-flex h-14 items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-8 text-base font-medium text-white shadow-2xl shadow-blue-500/40 transition-all hover:shadow-blue-500/50"
+            >
+              <span className="relative z-10">Start Free Trial</span>
+              <ArrowRight size={18} className="relative z-10 transition-transform group-hover:translate-x-1" />
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-cyan-600 opacity-0 transition-opacity group-hover:opacity-100" />
+            </motion.a>
+
+            <motion.a
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              href="#pricing"
+              className="inline-flex h-14 items-center justify-center gap-2 rounded-xl border border-blue-400/30 bg-blue-500/10 px-8 text-base font-medium text-white backdrop-blur-sm transition-all hover:bg-blue-500/20"
+            >
+              View Pricing
+              <ChevronRight size={18} />
+            </motion.a>
+          </div>
+
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="mt-12 overflow-hidden rounded-2xl border border-blue-400/20 bg-blue-500/5 p-6 shadow-2xl backdrop-blur-xl sm:p-8"
           >
-            
-
-            {/* Subtitle */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              style={{
-                color: "rgba(255,255,255,0.5)",
-                fontSize: 16,
-                lineHeight: 1.6,
-                marginBottom: 20,
-                fontWeight: 400,
-                letterSpacing: "-0.01em",
-              }}
-            >
-              Enterprise-grade cloud solutions built for speed, security, and scale.
-            </motion.p>
-
-            {/* H1 */}
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35, duration: 0.7 }}
-              style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: "clamp(2.5rem, 5.5vw, 4rem)",
-                fontWeight: 800,
-                color: "#fff",
-                lineHeight: 1.1,
-                letterSpacing: "-0.02em",
-                marginBottom: 20,
-              }}
-            >
-              CLOUDEDATA
-              <br />
-              <span style={{
-                background: "linear-gradient(135deg, #a78bfa 0%, #8b5cf6 50%, #7c3aed 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}>
-                YOUR CLOUD.
-                <br />
-                YOUR WAY.
-              </span>
-            </motion.h1>
-
-            {/* Description */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.45 }}
-              style={{
-                color: "rgba(255,255,255,0.4)",
-                fontSize: 14,
-                fontWeight: 500,
-                letterSpacing: "-0.01em",
-                marginBottom: 36,
-                lineHeight: 1.6,
-              }}
-            >
-              Performance-optimized infrastructure with industry-leading 99.99% uptime SLA.
-            </motion.p>
-
-            {/* Pricing */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              style={{ marginBottom: 40 }}
-            >
-              <p
-                style={{
-                  color: "rgba(255,255,255,0.3)",
-                  fontSize: 11,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.15em",
-                  marginBottom: 8,
-                  fontFamily: "'Inter', sans-serif",
-                }}
-              >
-                Starting from
-              </p>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
-                <span
-                  style={{
-                    fontSize: "clamp(3rem, 6vw, 4.2rem)",
-                    fontWeight: 800,
-                    color: "#fff",
-                    fontFamily: "'Inter', sans-serif",
-                    letterSpacing: "-0.03em",
-                  }}
-                >
-                  ₹290
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold uppercase tracking-wider text-blue-300">
+                  Starting From
                 </span>
-                <span
-                  style={{
-                    color: "rgba(255,255,255,0.4)",
-                    fontSize: 15,
-                    fontWeight: 500,
-                  }}
-                >
-                  /user/month
-                </span>
+                <div className="mt-2 flex items-baseline gap-1">
+                  <span className="text-4xl font-semibold tracking-tight text-white">₹290</span>
+                  <span className="text-base font-normal text-slate-300">/user/mo</span>
+                </div>
               </div>
-            </motion.div>
 
-            {/* CTA button */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-            >
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.96 }}
-                style={{
-                  padding: "16px 36px",
-                  borderRadius: 12,
-                  fontSize: 15,
-                  fontWeight: 600,
-                  letterSpacing: "-0.01em",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  background: "linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)",
-                  border: "1px solid rgba(139,92,246,0.5)",
-                  color: "#fff",
-                  boxShadow: "0 0 20px rgba(139,92,246,0.3)",
-                  cursor: "pointer",
-                }}
-              >
-                Start Free Trial
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
-                </svg>
-              </motion.button>
-            </motion.div>
+              <div className="hidden h-16 w-px bg-blue-400/20 sm:block" />
 
-            {/* Stats */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.75 }}
-              style={{
-                display: "flex",
-                alignItems: "stretch",
-                gap: 0,
-                marginTop: 56,
-                padding: "24px 0",
-                borderTop: "1px solid rgba(255,255,255,0.05)",
-              }}
-            >
-              {STATS.map((s, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "stretch", flex: 1 }}>
-                  <div style={{ flex: 1, textAlign: i === 0 ? "left" : "center" }}>
-                    <p
-                      style={{
-                        fontFamily: "'Inter', sans-serif",
-                        fontSize: "clamp(1.5rem, 3.5vw, 2.2rem)",
-                        fontWeight: 700,
-                        color: "#fff",
-                        lineHeight: 1,
-                        marginBottom: 6,
-                      }}
-                    >
-                      <AnimatedNumber value={s.value} suffix={s.suffix} />
-                    </p>
-                    <p
-                      style={{
-                        color: "rgba(255,255,255,0.35)",
-                        fontSize: 11,
-                        fontWeight: 500,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.12em",
-                        fontFamily: "'Inter', sans-serif",
-                      }}
-                    >
-                      {s.label}
-                    </p>
+              <div className="flex gap-8">
+                {STATS.slice(0, 2).map((stat) => (
+                  <div key={stat.label} className="flex flex-col">
+                    <span className="text-3xl font-semibold tracking-tight text-cyan-400">
+                      <AnimatedNumber value={stat.value} suffix={stat.suffix} />
+                    </span>
+                    <span className="mt-1 text-xs font-normal text-slate-300">{stat.label}</span>
                   </div>
-                  {i < STATS.length - 1 && (
-                    <div style={{ width: 1, background: "rgba(255,255,255,0.06)", margin: "0 24px", alignSelf: "stretch" }} />
-                  )}
-                </div>
-              ))}
-            </motion.div>
-          </motion.div>
-
-          {/* ── RIGHT COLUMN – Visual / Card ── */}
-          <motion.div
-            className="banner-img-col"
-            initial={{ opacity: 0, x: 40, scale: 0.95 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              position: "relative",
-              display: "flex",
-              alignItems: "flex-start", // Align top
-              justifyContent: "center",
-              alignSelf: "start", // Ensures top alignment
-              marginTop: 20, // Slight top offset to match badge line
-            }}
-          >
-            {/* Outer glow */}
-            <div
-              style={{
-                position: "absolute",
-                inset: -50,
-                borderRadius: "50%",
-                background: "radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%)",
-              }}
-            />
-
-            {/* Image container */}
-            <div
-              style={{
-                position: "relative",
-                width: "100%",
-                maxWidth: 560, // slightly larger
-                borderRadius: 24,
-                border: "1px solid rgba(255,255,255,0.06)",
-                background: "rgba(255,255,255,0.02)",
-                backdropFilter: "blur(10px)",
-                overflow: "hidden",
-                boxShadow: "0 50px 120px -20px rgba(0,0,0,0.8), 0 0 0 1px rgba(139,92,246,0.1) inset",
-                aspectRatio: "4/3",
-              }}
-            >
-              <img
-                src="/assets/cloudedata-hero.png"
-                alt="Cloudedata Cloud Platform"
-                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                onError={(e) => { e.target.style.display = "none"; }}
-              />
-
-              {/* Fallback tech illustration */}
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background: "linear-gradient(135deg, rgba(139,92,246,0.12), rgba(124,58,237,0.06))",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 20,
-                }}
-              >
-                <svg
-                  width="180"
-                  height="160"
-                  viewBox="0 0 180 160"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  style={{ opacity: 0.6 }}
-                >
-                  <rect x="30" y="15" width="120" height="28" rx="5" fill="rgba(139,92,246,0.15)" stroke="rgba(139,92,246,0.4)" strokeWidth="1.5" />
-                  <circle cx="140" cy="29" r="5" fill="#8b5cf6" opacity="0.8" />
-                  <rect x="40" y="22" width="65" height="5" rx="2.5" fill="rgba(167,139,250,0.3)" />
-                  <rect x="40" y="29" width="45" height="4" rx="2" fill="rgba(139,92,246,0.25)" />
-                  <rect x="30" y="52" width="120" height="28" rx="5" fill="rgba(124,58,237,0.15)" stroke="rgba(124,58,237,0.4)" strokeWidth="1.5" />
-                  <circle cx="140" cy="66" r="5" fill="#7c3aed" opacity="0.8" />
-                  <rect x="40" y="59" width="55" height="5" rx="2.5" fill="rgba(167,139,250,0.3)" />
-                  <rect x="40" y="66" width="40" height="4" rx="2" fill="rgba(124,58,237,0.25)" />
-                  <rect x="30" y="89" width="120" height="28" rx="5" fill="rgba(109,40,217,0.15)" stroke="rgba(109,40,217,0.4)" strokeWidth="1.5" />
-                  <circle cx="140" cy="103" r="5" fill="#6d28d9" opacity="0.8" />
-                  <rect x="40" y="96" width="70" height="5" rx="2.5" fill="rgba(167,139,250,0.3)" />
-                  <rect x="40" y="103" width="50" height="4" rx="2" fill="rgba(109,40,217,0.25)" />
-                  <line x1="90" y1="124" x2="90" y2="145" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
-                  <rect x="60" y="138" width="60" height="14" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
-                  <rect x="68" y="142" width="14" height="6" rx="3" fill="rgba(139,92,246,0.4)" />
-                  <rect x="86" y="142" width="14" height="6" rx="3" fill="rgba(124,58,237,0.4)" />
-                  <rect x="104" y="142" width="10" height="6" rx="3" fill="rgba(109,40,217,0.4)" />
-                </svg>
-                <p
-                  style={{
-                    color: "rgba(255,255,255,0.2)",
-                    fontSize: 12,
-                    fontFamily: "'Inter', sans-serif",
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Place image at /assets/cloudedata-hero.png
-                </p>
+                ))}
               </div>
-
-              {/* Gradient overlay */}
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background: "linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.7) 100%)",
-                }}
-              />
-
-              {/* Status chip */}
-              <motion.div
-                animate={{ y: [0, -6, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                style={{
-                  position: "absolute",
-                  top: 18,
-                  right: 18,
-                  padding: "8px 14px",
-                  borderRadius: 12,
-                  background: "rgba(139,92,246,0.15)",
-                  border: "1px solid rgba(139,92,246,0.3)",
-                  backdropFilter: "blur(10px)",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#a78bfa", boxShadow: "0 0 10px #a78bfa" }} />
-                  <span style={{ color: "#c4b5fd", fontSize: 11, fontWeight: 600, fontFamily: "'Inter', sans-serif", letterSpacing: "0.03em" }}>
-                    LIVE • All Systems OK
-                  </span>
-                </div>
-              </motion.div>
-
-              {/* Deployments chip */}
-              <motion.div
-                animate={{ y: [0, 6, 0] }}
-                transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-                style={{
-                  position: "absolute",
-                  bottom: 18,
-                  left: 18,
-                  padding: "10px 16px",
-                  borderRadius: 12,
-                  background: "rgba(124,58,237,0.15)",
-                  border: "1px solid rgba(124,58,237,0.3)",
-                  backdropFilter: "blur(10px)",
-                }}
-              >
-                <p
-                  style={{
-                    color: "rgba(196,181,253,0.6)",
-                    fontSize: 10,
-                    fontWeight: 600,
-                    fontFamily: "'Inter', sans-serif",
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    marginBottom: 3,
-                  }}
-                >
-                  Deployments
-                </p>
-                <p style={{ color: "#fff", fontSize: 18, fontFamily: "'Inter', sans-serif", fontWeight: 700, letterSpacing: "-0.01em" }}>
-                  3,247
-                  <span style={{ color: "#c4b5fd", fontSize: 11, fontWeight: 500, marginLeft: 4 }}>today</span>
-                </p>
-              </motion.div>
             </div>
           </motion.div>
-        </div>
-      </section>
+        </motion.div>
 
-      {/* Responsive grid styles */}
-      <style>{`
-        @media (max-width: 900px) {
-          .grid-cols-banner {
-            grid-template-columns: 1fr !important;
-            gap: 48px !important;
-            padding-top: 140px !important;
-          }
-          .banner-img-col {
-            display: none !important;
-          }
-        }
-        ::-webkit-scrollbar { width: 0; }
-      `}</style>
-    </>
+        {/* Right Column: Lead Capture Card */}
+        <div className="relative lg:pl-8">
+          <LeadCaptureCard />
+        </div>
+      </div>
+
+      {/* Bottom Feature Ribbon */}
+      <div className="relative z-10 border-t border-white/10 bg-white/5 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-5 text-sm font-normal text-purple-100 sm:flex-row sm:px-6 lg:px-8">
+          <span className="hidden font-semibold text-white sm:block">Trusted Infrastructure:</span>
+          <div className="flex w-full flex-wrap justify-between gap-6 sm:w-auto sm:gap-8">
+            {[
+              { icon: ServerCog, text: 'Bare Metal Servers' },
+              { icon: ShieldCheck, text: 'DDoS Protection' },
+              { icon: Database, text: 'NVMe Storage' },
+            ].map(({ icon: Icon, text }) => (
+              <div key={text} className="flex items-center gap-2.5 text-white">
+                <Icon size={18} className="text-purple-400" />
+                <span>{text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
