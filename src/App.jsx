@@ -19,6 +19,7 @@ import ContactUs from "./LandingPage/Contact/Contact";
 import PrivacyPolicy from "./LandingPage/PrivacyPolicy";
 import RefundPolicy from "./LandingPage/RefundPolicy";
 import TermsOfService from "./LandingPage/TermsAndConditions";
+import AboutPage from "./LandingPage/Aboutus";
 
 
 
@@ -187,6 +188,7 @@ export default function App() {
       <Route path ="/privacy-policy" element={<PrivacyPolicy/>}/>
       <Route path = "/refund-policy-cloude" element={<RefundPolicy/>}/>
       <Route path = "/term-and-conditions" element={<TermsOfService/>} />
+      <Route path ="/about-us" element={<AboutPage />} />
 
 
 

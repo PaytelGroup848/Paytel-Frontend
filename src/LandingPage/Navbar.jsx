@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, useLocation } from "react-router-dom";  // ← important change
+import { Link, useLocation, useNavigate } from "react-router-dom"; // added useNavigate
 import {
   ChevronDown,
   Menu,
@@ -15,8 +15,6 @@ import {
   PhoneCall,
   IndianRupee,
   ArrowRight,
-  Zap,
-  Shield,
   LayoutGrid,
 } from "lucide-react";
 
@@ -41,14 +39,12 @@ const megaMenuSections = [
       { label: "VPS on Cloud", href: "/vps-cloud" },
     ],
   },
- 
 ];
 
 /* ── Software CRM dropdown ── */
 const softwareCRMItems = [
   { label: "Education ERP", href: "/education-management-system", tag: "New" },
   { label: "Restaurant Management ERP", href: "/software/restaurant-erp" },
-  
 ];
 
 /* ── Main nav links ── */
@@ -61,11 +57,13 @@ export default function Navbar({
   logoImg = "/Cloudedata.svg",
   isLoggedIn = false,
   userName = "Guest",
-  onLogin = () => console.log("Login clicked"),
-  onSignup = () => console.log("Signup clicked"),
-  onLogout = () => console.log("Logout clicked"),
+  onLogin,        // optional external handler
+  onSignup,       // optional external handler
+  onLogout,       // optional external handler
 }) {
   const location = useLocation();
+  const navigate = useNavigate(); // 👈 get navigate function
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -134,6 +132,26 @@ export default function Navbar({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [megaMenuOpen, activeDropdown, authMenuOpen]);
 
+  // Handlers for auth actions (use props if provided, else navigate)
+  const handleLogin = () => {
+    if (onLogin) onLogin();
+    else navigate("/login");
+  };
+
+  const handleSignup = () => {
+    if (onSignup) onSignup();
+    else navigate("/register");
+  };
+
+  const handleLogout = () => {
+    if (onLogout) onLogout();
+    else {
+      // default logout: clear local storage and go home
+      localStorage.removeItem("token");
+      navigate("/");
+    }
+  };
+
   const renderDropdown = (items) => (
     <motion.div
       initial={{ opacity: 0, y: -8 }}
@@ -171,7 +189,7 @@ export default function Navbar({
     if (isLoggedIn) {
       return (
         <button
-          onClick={onLogout}
+          onClick={handleLogout}
           className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-red-600 bg-white/60 backdrop-blur-sm rounded-xl border border-red-200/60 shadow-sm hover:shadow-md hover:bg-red-50/80 transition-all duration-200"
         >
           <LogOut size={16} />
@@ -182,14 +200,14 @@ export default function Navbar({
     return (
       <div className="flex items-center gap-3">
         <button
-          onClick={onLogin}
+          onClick={handleLogin}
           className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-slate-700 bg-transparent rounded-xl border border-slate-300/70 shadow-sm hover:shadow-md hover:border-indigo-300 hover:text-indigo-600 transition-all duration-200"
         >
           <LogIn size={16} />
           Login
         </button>
         <button
-          onClick={onSignup}
+          onClick={handleSignup}
           className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-xl shadow-md shadow-indigo-200/50 hover:shadow-lg hover:from-indigo-700 hover:to-indigo-600 transition-all duration-200"
         >
           <UserPlus size={16} />
@@ -487,7 +505,7 @@ export default function Navbar({
                 {isLoggedIn ? (
                   <button
                     onClick={() => {
-                      onLogout();
+                      handleLogout();
                       setMobileOpen(false);
                     }}
                     className="flex items-center justify-center gap-2 w-full py-2.5 text-sm font-medium text-red-600 bg-white rounded-xl border border-red-200 shadow-sm hover:bg-red-50 transition-all"
@@ -499,7 +517,7 @@ export default function Navbar({
                   <>
                     <button
                       onClick={() => {
-                        onLogin();
+                        handleLogin();
                         setMobileOpen(false);
                       }}
                       className="flex items-center justify-center gap-2 w-full py-2.5 text-sm font-medium text-slate-700 bg-white rounded-xl border border-slate-300 shadow-sm hover:border-indigo-300 hover:text-indigo-600 transition-all"
@@ -509,7 +527,7 @@ export default function Navbar({
                     </button>
                     <button
                       onClick={() => {
-                        onSignup();
+                        handleSignup();
                         setMobileOpen(false);
                       }}
                       className="flex items-center justify-center gap-2 w-full py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-xl shadow-md hover:shadow-lg transition-all"
