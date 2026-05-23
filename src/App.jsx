@@ -34,8 +34,10 @@ import PaidWordpress from './pages/websites/wordpress/PaidWordpress';
 import Home from './pages/dashboard/Home';
 import WebsiteDashboard from './pages/websites/wordpress/websiteDashboard';
 import DomainEnter from './pages/websites/wordpress/domainEnter';
-import PHP_Page from './pages/websites/php/php_page';
-import PaidPhpDashboard from './pages/websites/php/PaidPhp';
+import PhpPlans from './pages/websites/php/PhpPlans';
+import MyPhpSites from './pages/websites/php/MyPhpSites';
+import PhpDnsVerify from './pages/websites/php/PhpDnsVerify';
+import PhpDashboard from './pages/websites/php/PhpDashboard';
 import NodeJS_Page from './pages/websites/nodejs/nodejs';
 import SuperAdminLayout from './pages/superadmin/SuperAdminLayout';
 import Servers from './pages/superadmin/Servers';
@@ -156,11 +158,12 @@ export default function App() {
   return (
     <Routes>
       {/* Public redirect */}
-      <Route path ='/' element={<HomePage/>} />
+      {/* <Route path ='/' element={<HomePage/>} /> */}
 
       <Route path="/vps" element={<PublicRoute><VpsPlans/></PublicRoute>} />
       <Route path="/email/plan" element={<PublicRoute><EmailPlansPage /></PublicRoute>} />
       <Route path="/websites/wordpress" element={<PublicRoute><Wordpress_Page /></PublicRoute>} />
+      <Route path="/websites/php" element={<PublicRoute><PhpPlans /></PublicRoute>} />
 
        <Route path="/home" element={<Dashboard />} />
 
@@ -197,8 +200,10 @@ export default function App() {
           <Route path="/wordpress/:id/backups" element={<BackupsPage />} />
           <Route path="wordpress/:id/database" element={<DatabasePage />} />
 
-          <Route path="/websites/php" element={<PHP_Page />} />
-          <Route path="/websites/php/paid" element={<PaidPhpDashboard />} />
+          <Route path="/websites/php" element={<PhpPlans />} />
+          <Route path="/websites/php/paid" element={<MyPhpSites />} />
+          <Route path="/websites/php/dns/:instanceId" element={<PhpDnsVerify />} />
+          <Route path="/websites/php/dashboard/:instanceId" element={<PhpDashboard />} />
           <Route path="/websites/nodejs" element={<NodeJS_Page />} />
           {/* <Route path="/vps" element={<VpsPlans/>} /> */}
           <Route path='/vps/paid' element={<VPSDashboard />} />

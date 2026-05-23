@@ -11,7 +11,7 @@ import toast from 'react-hot-toast';
 import { useSubscription } from "../../hooks/useBilling";
 
 /* ─── Helpers ────────────────────────────────────────────── */
-const typeIcons = { hosting: Globe, vps: Server, email: Mail, domain: Globe };
+const typeIcons = { hosting: Globe, vps: Server, email: Mail, domain: Globe, php: Server };
 const getIcon = (type) => typeIcons[type] || CreditCard;
 
 /* ─── Subscription Card (mobile) ─────────────────────────── */

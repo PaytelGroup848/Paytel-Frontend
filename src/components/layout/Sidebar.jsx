@@ -53,9 +53,8 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
       children: [
         { label: 'Buy WordPress', to: '/websites/wordpress' },
         ...(hasWordPress ? [{ label: 'WordPress Dashboard', to: '/websites/wordpress/paid' }] : []),
-        { label: 'PHP/HTML', to: '/websites/php' },
-        // { label: 'NodeJS App', to: '/websites/nodejs' },
-        // { label: 'PHP/HTML', to: '/comingsoon' },
+        { label: 'PHP Hosting', to: '/websites/php' },
+        { label: 'My PHP Sites', to: '/websites/php/paid' },
         { label: 'NodeJS App', to: '/comingsoon' },
       ].filter(Boolean), 
     },
