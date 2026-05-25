@@ -33,10 +33,10 @@ const megaMenuSections = [
     title: "Accounting ERP on Cloud",
     icon: Cloud,
     items: [
-      { label: "Busy on Cloud", href: "/Busy-on-cloud" },
-      { label: "Tally on Cloud", href: "/Tally-on-cloud" },
-      { label: "Marg on Cloud", href: "/Marg-on-cloud" },
-      { label: "VPS on Cloud", href: "/vps" },
+      { label: "Busy on Cloud", href: "/busy-on-cloud" },
+      { label: "Tally on Cloud", href: "/tally-on-cloud" },
+      { label: "Marg on Cloud", href: "/marg-on-cloud" },
+      { label: "VPS on Cloud", href: "/vps-cloud" },
     ],
   },
 ];
