@@ -4,6 +4,7 @@ import Banner from "./Banner";
 import Benefits from "./Benefits";
 import FeaturesSection from "./Featuressection ";
 import SocialProof from "./Socialproof ";
+import FAQ from "./RmsFaq";
 
 
 export default function RmsPage(){
@@ -11,6 +12,7 @@ export default function RmsPage(){
      <Navbar/>
      <Banner/>
      <FeaturesSection/>
+     <FAQ/>
      <SocialProof/>
 
     <Footer/>

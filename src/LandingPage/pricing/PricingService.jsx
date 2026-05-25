@@ -1,74 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 
-/* ── Custom cloud illustration (SVG) ──────────── */
-const CloudIllustration = () => (
-  <svg
-    viewBox="0 0 500 400"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className="w-full h-full drop-shadow-2xl"
-  >
-    {/* Main cloud shape */}
-    <path
-      d="M120 280c-30-30-30-80 10-100 20-10 40-10 60 0 10-40 50-70 90-50 30 10 50 40 50 70 40 10 70 50 60 90-10 30-40 50-70 50H180c-30 0-60-20-60-60z"
-      fill="url(#cloudGrad)"
-      opacity="0.9"
-    />
-    {/* Servers inside cloud */}
-    <rect x="170" y="220" width="50" height="40" rx="6" fill="white" opacity="0.95" />
-    <rect x="175" y="225" width="40" height="5" rx="2" fill="#3B82F6" />
-    <rect x="175" y="235" width="30" height="5" rx="2" fill="#3B82F6" />
-    <rect x="175" y="245" width="35" height="5" rx="2" fill="#3B82F6" />
-
-    <rect x="240" y="210" width="50" height="50" rx="6" fill="white" opacity="0.95" />
-    <rect x="245" y="215" width="40" height="5" rx="2" fill="#8B5CF6" />
-    <rect x="245" y="225" width="30" height="5" rx="2" fill="#8B5CF6" />
-    <rect x="245" y="235" width="35" height="5" rx="2" fill="#8B5CF6" />
-    <rect x="245" y="245" width="25" height="5" rx="2" fill="#8B5CF6" />
-
-    {/* Floating elements */}
-    <circle cx="330" cy="180" r="15" fill="#3B82F6" opacity="0.6">
-      <animate
-        attributeName="cy"
-        values="180;190;180"
-        dur="3s"
-        repeatCount="indefinite"
-      />
-    </circle>
-    <circle cx="140" cy="150" r="10" fill="#8B5CF6" opacity="0.5">
-      <animate
-        attributeName="cy"
-        values="150;140;150"
-        dur="2.5s"
-        repeatCount="indefinite"
-      />
-    </circle>
-    <path
-      d="M380 200l-10-5m10 5l10-5"
-      stroke="#3B82F6"
-      strokeWidth="3"
-      opacity="0.7"
-      strokeLinecap="round"
-    />
-    <path
-      d="M100 220l-5-10m5 10l-5 10"
-      stroke="#8B5CF6"
-      strokeWidth="3"
-      opacity="0.7"
-      strokeLinecap="round"
-    />
-
-    {/* Gradients */}
-    <defs>
-      <linearGradient id="cloudGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#3B82F6" />
-        <stop offset="100%" stopColor="#8B5CF6" />
-      </linearGradient>
-    </defs>
-  </svg>
-);
-
 export default function PricingService() {
   return (
     <section className="relative w-full overflow-hidden bg-gradient-to-br from-[#0b1121] via-[#131d3a] to-[#0f2b5c] pt-24 pb-20 md:pt-32 md:pb-28">
@@ -86,12 +18,30 @@ export default function PricingService() {
       <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-blue-50/10 to-transparent backdrop-blur-[2px] pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-        {/* Left content */}
+        {/* Left side – Image */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: "easeOut" }}
+          className="flex-1 flex justify-center"
+        >
+          <div className="relative w-72 h-72 md:w-80 md:h-80 lg:w-[450px] lg:h-[450px]">
+            <img
+              src="/price.png"
+              alt="Pricing illustration"
+              className="w-full h-full object-contain drop-shadow-2xl"
+            />
+          </div>
+        </motion.div>
+        
+
+        {/* Right side – Text content */}
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
           className="flex-1 text-center lg:text-left"
         >
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
@@ -105,26 +55,12 @@ export default function PricingService() {
             Affordable cloud infrastructure, VPS, and ERP hosting solutions built for Indian businesses. No hidden fees, scale as you grow.
           </p>
           <div className="flex flex-wrap justify-center lg:justify-start gap-4">
-           
             <a
               href="/contact"
               className="inline-flex items-center gap-2 border border-white/30 text-white font-semibold px-7 py-3.5 rounded-full hover:bg-white/10 backdrop-blur-sm transition-all duration-300 hover:border-white/60"
             >
               Talk to Sales
             </a>
-          </div>
-        </motion.div>
-
-        {/* Right illustration – custom SVG */}
-        <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-          className="flex-1 flex justify-center"
-        >
-          <div className="relative w-72 h-72 md:w-80 md:h-80 lg:w-[450px] lg:h-[450px]">
-            <CloudIllustration />
           </div>
         </motion.div>
       </div>

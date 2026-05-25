@@ -15,25 +15,27 @@ export default function Banner() {
           {/* Left Content */}
           <div>
             <div className="inline-flex items-center gap-2 bg-red-100 text-red-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-6">
-              <span>All-in-one Restaurant OS</span>
+              <span>Restaurant ERP Platform</span>
             </div>
 
+            {/* H1 updated as per instructions */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 leading-tight">
-              Simplify<br />
-              <span className="text-red-600">Restaurant Management</span>
+              Robust Restaurant Management System & <span className="text-red-600">Advanced Restaurant ERP Software</span>
             </h1>
 
+            {/* Sub‑headline (full SEO‑optimised paragraph) */}
             <p className="mt-4 text-lg text-gray-600 max-w-xl">
-              From online orders to table bookings, inventory to CRM — Petpooja‑powered platform that grows with your business.
+              Welcome to India's best restaurant billing software. Go beyond a basic point-of-sale terminal—experience the absolute finest billing software for restaurant outlets, fine dines, and franchises designed to seamlessly regulate live kitchen order receipts, multi-brand catalog scaling, and end-to-end accounting on the cloud.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4 items-center">
+              {/* Primary CTA */}
               <button
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
                 className="group bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg shadow-red-200 transition-all duration-200 flex items-center gap-2"
               >
-                Get Started Free
+                Deploy Free Restaurant Billing System
                 <ArrowRight
                   size={18}
                   className={`transition-transform duration-200 ${
@@ -42,13 +44,14 @@ export default function Banner() {
                 />
               </button>
 
+              {/* Secondary CTA */}
               <button className="text-gray-700 font-medium hover:text-red-600 transition-colors flex items-center gap-2 px-4 py-2 rounded-full hover:bg-red-50">
                 <Clock size={18} />
-                Book a Demo
+                Schedule a Demo for Best Billing Software for Restaurant
               </button>
             </div>
 
-            {/* Stats Section */}
+            {/* Stats Section (kept as before – still relevant) */}
             <div className="grid grid-cols-3 gap-6 mt-12 pt-6 border-t border-gray-200">
               {[
                 { value: "15k+", label: "Active Restaurants", icon: Utensils },
@@ -70,7 +73,7 @@ export default function Banner() {
             </div>
           </div>
 
-          {/* Right Content – Modern Illustration / Cards */}
+          {/* Right Content – Feature Cards (unchanged – still matches restaurant ERP) */}
           <div className="relative">
             <div className="relative bg-white/40 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/50 p-4">
               {/* Decorative ring */}
@@ -108,7 +111,6 @@ export default function Banner() {
 
             {/* Floating badge */}
             <div className="absolute -bottom-4 -left-4 bg-white rounded-full px-4 py-2 shadow-lg flex items-center gap-2 text-sm font-medium text-red-600 border border-red-100">
-             
               Trusted by 15,000+ outlets
             </div>
           </div>
