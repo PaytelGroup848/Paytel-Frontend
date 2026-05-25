@@ -12,6 +12,7 @@ import {
   Sparkles,
   Users,
 } from 'lucide-react';
+import ConfigurationModal from '../../../pages/vps/ConfigurationModal';
 
 /* ------------------------------------------------------------------ */
 /*  Data                                                              */
@@ -156,6 +157,8 @@ export default function VpsPlans() {
   const [activeTab, setActiveTab] = useState('linux'); // 'linux' | 'windows'
   const [linuxCycle, setLinuxCycle] = useState('yearly');
   const [windowsCycle, setWindowsCycle] = useState('annually');
+  const [selectedPlan, setSelectedPlan] = useState(null);
+const [configOpen, setConfigOpen] = useState(false);
 
   // Active data based on tab
   const isLinux = activeTab === 'linux';
@@ -360,17 +363,29 @@ export default function VpsPlans() {
                   </div>
 
                   {/* CTA Button */}
-                  <button
-                    type="button"
-                    className={`mt-6 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 text-sm font-extrabold transition-all ${
-                      plan.popular
-                        ? 'bg-indigo-600 text-white shadow-md hover:bg-indigo-700 hover:shadow-lg'
-                        : 'bg-teal-700 text-white shadow hover:bg-teal-800 hover:shadow-md'
-                    }`}
-                  >
-                    Buy Now
-                    <ArrowRight size={16} />
-                  </button>
+                 <button
+  type="button"
+  onClick={() => {
+    setSelectedPlan({
+      ...plan,
+      slug: plan.name.toLowerCase().replace(/\s+/g, '-'),
+      priceMonthly:
+        selectedCycle.months > 1
+          ? Math.round(totalPrice / selectedCycle.months) * 100
+          : totalPrice * 100,
+    });
+
+    setConfigOpen(true);
+  }}
+  className={`mt-6 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 text-sm font-extrabold transition-all ${
+    plan.popular
+      ? 'bg-indigo-600 text-white shadow-md hover:bg-indigo-700 hover:shadow-lg'
+      : 'bg-teal-700 text-white shadow hover:bg-teal-800 hover:shadow-md'
+  }`}
+>
+  Buy Now
+  <ArrowRight size={16} />
+</button>
                 </article>
               );
             })}
@@ -402,6 +417,12 @@ export default function VpsPlans() {
           </p>
         </div>
       </div>
+      <ConfigurationModal
+  isOpen={configOpen}
+  onClose={() => setConfigOpen(false)}
+  plan={selectedPlan || {}}
+  type={activeTab === 'windows' ? 'windows' : 'linux'}
+/>
     </section>
   );
 }
