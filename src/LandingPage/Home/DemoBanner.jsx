@@ -133,7 +133,7 @@ function LeadCaptureCard() {
     }
 
     try {
-      const response = await axios.post('https://backend.cloudedata.info/public/submit', {
+      const response = await axios.post('https://backend.cloudedata.info/api/public/submit', {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
