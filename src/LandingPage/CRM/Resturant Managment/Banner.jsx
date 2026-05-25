@@ -30,7 +30,7 @@ export default function Banner() {
 
             <div className="mt-8 flex flex-wrap gap-4 items-center">
               {/* Primary CTA */}
-              <button
+             <a href="/contact">              <button
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
                 className="group bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg shadow-red-200 transition-all duration-200 flex items-center gap-2"
@@ -43,6 +43,7 @@ export default function Banner() {
                   }`}
                 />
               </button>
+              </a>
 
               {/* Secondary CTA */}
               <button className="text-gray-700 font-medium hover:text-red-600 transition-colors flex items-center gap-2 px-4 py-2 rounded-full hover:bg-red-50">
