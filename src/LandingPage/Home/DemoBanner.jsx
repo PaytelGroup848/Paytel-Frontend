@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import axios from 'axios';   // <-- axios import
 import {
   ArrowRight,
   Cloud,
@@ -97,7 +98,64 @@ function AnimatedNumber({ value, suffix = '' }) {
   );
 }
 
+// ---------- MODIFIED LeadCaptureCard with backend integration ----------
 function LeadCaptureCard() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    product: '',
+    message: ''   // optional
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    // clear messages on new input
+    if (success) setSuccess('');
+    if (error) setError('');
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccess('');
+    setError('');
+
+    // validate required fields
+    if (!formData.name || !formData.email || !formData.phone || !formData.product) {
+      setError('Please fill all required fields.');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/public/submit', {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        product: formData.product,
+        message: formData.message || 'No message provided'
+      });
+
+      if (response.data.success) {
+        setSuccess('Thank you! Your request has been submitted. Our team will contact you soon.');
+        // reset form
+        setFormData({ name: '', email: '', phone: '', product: '', message: '' });
+      } else {
+        setError('Submission failed. Please try again.');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Network error. Please check your connection or try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -137,11 +195,38 @@ function LeadCaptureCard() {
           </p>
         </div>
 
-        <form className="space-y-4">
+        {/* Success/Error messages */}
+        <AnimatePresence>
+          {success && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="mb-4 rounded-xl bg-green-500/20 border border-green-400/50 p-3 text-sm text-green-300"
+            >
+              {success}
+            </motion.div>
+          )}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="mb-4 rounded-xl bg-red-500/20 border border-red-400/50 p-3 text-sm text-red-300"
+            >
+              {error}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="relative group">
             <UserCircle size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-indigo-400" />
             <input
               type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
               placeholder="Full Name"
               className="w-full rounded-xl border border-indigo-400/20 bg-slate-800/50 py-4 pl-12 pr-4 text-base text-white placeholder-slate-400 outline-none backdrop-blur-sm transition-all focus:border-indigo-400 focus:bg-slate-800/70 focus:ring-4 focus:ring-indigo-500/20"
               required
@@ -152,6 +237,9 @@ function LeadCaptureCard() {
             <AtSign size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-indigo-400" />
             <input
               type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               placeholder="Work Email"
               className="w-full rounded-xl border border-indigo-400/20 bg-slate-800/50 py-4 pl-12 pr-4 text-base text-white placeholder-slate-400 outline-none backdrop-blur-sm transition-all focus:border-indigo-400 focus:bg-slate-800/70 focus:ring-4 focus:ring-indigo-500/20"
               required
@@ -162,6 +250,9 @@ function LeadCaptureCard() {
             <Smartphone size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-indigo-400" />
             <input
               type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
               placeholder="Phone Number"
               className="w-full rounded-xl border border-indigo-400/20 bg-slate-800/50 py-4 pl-12 pr-4 text-base text-white placeholder-slate-400 outline-none backdrop-blur-sm transition-all focus:border-indigo-400 focus:bg-slate-800/70 focus:ring-4 focus:ring-indigo-500/20"
               required
@@ -171,7 +262,9 @@ function LeadCaptureCard() {
           <div className="relative group">
             <Package size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-indigo-400" />
             <select
-              defaultValue=""
+              name="product"
+              value={formData.product}
+              onChange={handleChange}
               className="w-full appearance-none rounded-xl border border-indigo-400/20 bg-slate-800/50 py-4 pl-12 pr-10 text-base text-white outline-none backdrop-blur-sm transition-all focus:border-indigo-400 focus:bg-slate-800/70 focus:ring-4 focus:ring-indigo-500/20"
               style={{
                 backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
@@ -181,23 +274,38 @@ function LeadCaptureCard() {
               }}
               required
             >
-              <option value="" disabled className="text-slate-900 bg-white">Select Solution</option>
+              <option value="" disabled>Select Solution</option>
               {PRODUCT_OPTIONS.map((product) => (
-                <option key={product} value={product} className="text-slate-900 bg-white">
+                <option key={product} value={product}>
                   {product}
                 </option>
               ))}
             </select>
           </div>
 
+          {/* Optional message field - uncomment if needed */}
+          {/* 
+          <div className="relative group">
+            <textarea
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              placeholder="Additional message (optional)"
+              rows="3"
+              className="w-full rounded-xl border border-indigo-400/20 bg-slate-800/50 py-3 pl-4 pr-4 text-base text-white placeholder-slate-400 outline-none backdrop-blur-sm transition-all focus:border-indigo-400 focus:bg-slate-800/70 focus:ring-4 focus:ring-indigo-500/20"
+            />
+          </div>
+          */}
+
           <motion.button
             whileHover={{ y: -2, scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-            className="group relative mt-2 flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 py-4 text-base font-medium text-white shadow-lg shadow-indigo-500/40 transition-all hover:shadow-xl hover:shadow-indigo-500/50"
+            disabled={loading}
+            className="group relative mt-2 flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 py-4 text-base font-medium text-white shadow-lg shadow-indigo-500/40 transition-all hover:shadow-xl hover:shadow-indigo-500/50 disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            <span className="relative z-10">Request Demo</span>
-            <Send size={16} className="relative z-10 ml-1 transition-transform group-hover:translate-x-1" />
+            <span className="relative z-10">{loading ? 'Submitting...' : 'Request Demo'}</span>
+            {!loading && <Send size={16} className="relative z-10 ml-1 transition-transform group-hover:translate-x-1" />}
             <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-700 opacity-0 transition-opacity group-hover:opacity-100" />
           </motion.button>
 
@@ -213,6 +321,7 @@ function LeadCaptureCard() {
   );
 }
 
+// DropdownMenu component (unchanged)
 function DropdownMenu({ item, closeMenu }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -256,6 +365,7 @@ function DropdownMenu({ item, closeMenu }) {
   );
 }
 
+// Main ProfessionalBanner component (unchanged except using the new LeadCaptureCard)
 export default function ProfessionalBanner() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [logoFailed, setLogoFailed] = useState(false);
@@ -267,7 +377,7 @@ export default function ProfessionalBanner() {
       id="hero-banner"
       className="relative isolate min-h-[100svh] w-full overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 font-sans"
     >
-      {/* Animated Background Effects */}
+      {/* Animated Background Effects - same as before */}
       <div className="absolute inset-0 -z-10">
         <motion.div
           animate={{
@@ -331,7 +441,7 @@ export default function ProfessionalBanner() {
         ))}
       </div>
 
-      {/* Navigation */}
+      {/* Navigation - same as before */}
       <motion.nav
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -399,7 +509,7 @@ export default function ProfessionalBanner() {
             >
               Login
             </a>
-
+ 
             <motion.a
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -476,7 +586,7 @@ export default function ProfessionalBanner() {
                 </a>
 
                 <a
-                  href="#login"
+                  href="/login"
                   onClick={closeMenu}
                   className="rounded-lg px-4 py-3 text-sm font-medium text-white hover:bg-white/10"
                 >
@@ -484,7 +594,7 @@ export default function ProfessionalBanner() {
                 </a>
 
                 <a
-                  href="#signup"
+                  href="/register"
                   onClick={closeMenu}
                   className="mt-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 text-center text-sm font-medium text-white shadow-lg shadow-blue-500/40"
                 >
