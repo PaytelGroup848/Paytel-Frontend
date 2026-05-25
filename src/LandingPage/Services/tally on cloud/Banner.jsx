@@ -51,7 +51,7 @@ export default function Banner() {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/api/public/submit", {
+      const response = await axios.post("http://191.44.87.202/api/public/submit", {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,

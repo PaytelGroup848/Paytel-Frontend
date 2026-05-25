@@ -83,7 +83,7 @@ import { setNavigator } from './utils/navigation';
 import SubscriptionsPage from './pages/billing/Subscription';
 import PaymentHistoryPage from "./pages/billing/paymentHistory";
 import ComingSoon from './utils/ComingSoon';
-import VpsLandingPage from './LandingPage/Services/Vps on Cloud/VpsLandingPage';
+import VpsLandingpage  from "./LandingPage/Services/Vps on Cloud/VpsLandingPage";
 
 
 
