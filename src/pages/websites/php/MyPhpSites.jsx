@@ -66,9 +66,9 @@ export default function MyPhpSites() {
 
   const handleAction = (instance) => {
     if (instance.status === 'pending_setup' || instance.status === 'pending_dns' || instance.status === 'provisioning') {
-      navigate(`/websites/php/dns/${instance.id}`);
+      navigate(`/php-hosting/dns/${instance.id}`);
     } else if (instance.status === 'active') {
-      navigate(`/websites/php/dashboard/${instance.id}`);
+      navigate(`/php-hosting/dashboard/${instance.id}`);
     }
   };
 
@@ -81,7 +81,7 @@ export default function MyPhpSites() {
             <p className="text-sm text-slate-500 font-medium mt-1">Manage your PHP and HTML websites from one place.</p>
           </div>
           <Button 
-            onClick={() => navigate('/websites/php')}
+            onClick={() => navigate('/php-hosting')}
             className="h-14 px-8 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl shadow-slate-200 flex items-center gap-3"
           >
             <Plus size={20} />
@@ -171,7 +171,7 @@ export default function MyPhpSites() {
               You haven't created any PHP or HTML hosting instances yet. Start by choosing a plan.
             </p>
             <Button 
-              onClick={() => navigate('/websites/php')}
+              onClick={() => navigate('/php-hosting')}
               className="h-14 px-10 bg-slate-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl shadow-slate-200"
             >
               Choose a Plan

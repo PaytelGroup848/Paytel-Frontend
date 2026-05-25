@@ -133,7 +133,7 @@ const OverviewTab = ({ instance }) => {
   const handleDelete = async () => {
     if (window.confirm('Are you sure? This will permanently delete the site and all files.')) {
       await deleteInstance.mutateAsync(instance.id);
-      navigate('/websites/php/paid');
+      navigate('/php-hosting/paid');
     }
   };
 
@@ -227,6 +227,21 @@ const OverviewTab = ({ instance }) => {
 };
 
 const FileManagerTab = ({ instance }) => {
+  // CRITICAL: Get the correct ID (handle both id and _id)
+  const instanceId = instance?.id || instance?._id;
+  
+  console.log('FileManagerTab - instance:', instance);
+  console.log('FileManagerTab - instanceId:', instanceId);
+  
+  // If no instanceId, don't render
+  if (!instanceId) {
+    return (
+      <div className="bg-red-50 p-4 rounded-xl text-red-600">
+        Error: Invalid instance ID. Please refresh the page.
+      </div>
+    );
+  }
+  
   const [currentPath, setCurrentPath] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState('');
@@ -238,8 +253,9 @@ const FileManagerTab = ({ instance }) => {
   const [renameNewName, setRenameNewName] = useState('');
   const [fileInputRef, setFileInputRef] = useState(null);
 
-  const { data: files, isLoading, refetch } = usePhpFileList(instance?.id, currentPath);
-  const { data: fileContentData, refetch: refetchContent } = usePhpFileContent(instance?.id, editingFile);
+  // Use instanceId everywhere instead of instance.id
+  const { data: files, isLoading, refetch } = usePhpFileList(instanceId, currentPath);
+  const { data: fileContentData, refetch: refetchContent } = usePhpFileContent(instanceId, editingFile);
   const { mutate: saveFileContent } = useSavePhpFileContent();
   const { mutate: deleteItem } = useDeletePhpItem();
   const { mutate: renameItem } = useRenamePhpItem();
@@ -272,120 +288,120 @@ const FileManagerTab = ({ instance }) => {
     setCurrentPath(parts.length ? `/${parts.join('/')}` : '');
   };
 
-  const handleFileEdit = (file) => {
-    setEditingFile(file.path);
-    refetchContent();
-    setModalType('edit');
-    setIsModalOpen(true);
-  };
+const handleFileEdit = (file) => {
+  setEditingFile(file.path);
+  refetchContent();
+  setModalType('edit');
+  setIsModalOpen(true);
+};
 
-  const handleSaveEdit = () => {
-    saveFileContent({
-      id: instance.id,
-      path: editingFile,
-      content: editContent
+const handleSaveEdit = () => {
+  saveFileContent({
+    id: instanceId,  
+    path: editingFile,
+    content: editContent
+  }, {
+    onSuccess: () => {
+      setIsModalOpen(false);
+      setEditingFile(null);
+      setEditContent('');
+      refetch();
+      toast.success('File saved successfully');
+    }
+  });
+};
+
+const handleDelete = (itemPath) => {
+  if (window.confirm(`Delete ${itemPath}?`)) {
+    deleteItem({ id: instanceId, path: itemPath }, {  // Change from instance.id
+      onSuccess: () => refetch()
+    });
+  }
+};
+
+const handleRename = () => {
+  if (renamingItem && renameNewName) {
+    renameItem({
+      id: instanceId,  
+      path: renamingItem.path,
+      newName: renameNewName
+    }, {
+      onSuccess: () => {
+        setRenamingItem(null);
+        setRenameNewName('');
+        refetch();
+        toast.success('Renamed successfully');
+      }
+    });
+  }
+};
+
+const handleCreate = () => {
+  if (modalType === 'file') {
+    createFile({
+      id: instanceId,  // Change from instance.id
+      path: currentPath,
+      fileName: newItemName,
+      content: newFileContent
     }, {
       onSuccess: () => {
         setIsModalOpen(false);
-        setEditingFile(null);
-        setEditContent('');
+        setNewItemName('');
+        setNewFileContent('');
         refetch();
-        toast.success('File saved successfully');
+        toast.success('File created');
       }
     });
-  };
+  } else if (modalType === 'folder') {
+    createFolder({
+      id: instanceId,  // Change from instance.id
+      path: currentPath,
+      folderName: newItemName
+    }, {
+      onSuccess: () => {
+        setIsModalOpen(false);
+        setNewItemName('');
+        refetch();
+        toast.success('Folder created');
+      }
+    });
+  }
+};
 
-  const handleDelete = (itemPath) => {
-    if (window.confirm(`Delete ${itemPath}?`)) {
-      deleteItem({ id: instance.id, path: itemPath }, {
-        onSuccess: () => refetch()
-      });
-    }
-  };
-
-  const handleRename = () => {
-    if (renamingItem && renameNewName) {
-      renameItem({
-        id: instance.id,
-        path: renamingItem.path,
-        newName: renameNewName
-      }, {
-        onSuccess: () => {
-          setRenamingItem(null);
-          setRenameNewName('');
-          refetch();
-          toast.success('Renamed successfully');
-        }
-      });
-    }
-  };
-
-  const handleCreate = () => {
-    if (modalType === 'file') {
-      createFile({
-        id: instance.id,
+const handleFileUpload = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64 = e.target.result.split(',')[1];
+      uploadFile({
+        id: instanceId,  // Change from instance.id
         path: currentPath,
-        fileName: newItemName,
-        content: newFileContent
+        fileName: file.name,
+        content: base64
       }, {
         onSuccess: () => {
-          setIsModalOpen(false);
-          setNewItemName('');
-          setNewFileContent('');
           refetch();
-          toast.success('File created');
+          toast.success('File uploaded');
         }
       });
-    } else if (modalType === 'folder') {
-      createFolder({
-        id: instance.id,
-        path: currentPath,
-        folderName: newItemName
-      }, {
-        onSuccess: () => {
-          setIsModalOpen(false);
-          setNewItemName('');
-          refetch();
-          toast.success('Folder created');
-        }
-      });
-    }
-  };
-
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const base64 = e.target.result.split(',')[1];
-        uploadFile({
-          id: instance.id,
-          path: currentPath,
-          fileName: file.name,
-          content: base64
-        }, {
-          onSuccess: () => {
-            refetch();
-            toast.success('File uploaded');
-          }
-        });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+    };
+    reader.readAsDataURL(file);
+  }
+};
 
 const handleDownload = (file) => {
-    console.log('Download clicked for file:', file);
-    
-    if (!file || !file.path) {
-      console.error('Invalid file object:', file);
-      toast.error('Invalid file path');
-      return;
-    }
-    
-    console.log('Downloading file with path:', file.path);
-    downloadFile({ id: instance.id, path: file.path });
-  };
+  console.log('Download clicked for file:', file);
+  
+  if (!file || !file.path) {
+    console.error('Invalid file object:', file);
+    toast.error('Invalid file path');
+    return;
+  }
+  
+  console.log('Downloading file with path:', file.path);
+  downloadFile({ id: instanceId, path: file.path });  // Change from instance.id
+};
 
 
   if (!instance) return null;
@@ -534,7 +550,7 @@ export default function PhpDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/30 flex flex-col lg:flex-row">
       <div className="w-full lg:w-80 p-6 lg:p-10 border-r border-slate-200/50 bg-white/80 backdrop-blur-xl">
-        <Link to="/websites/php/paid" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 text-xs font-bold mb-8">
+        <Link to="/php-hosting/paid" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 text-xs font-bold mb-8">
           <ArrowLeft size={14} /> All PHP Sites
         </Link>
         <div className="mb-8">

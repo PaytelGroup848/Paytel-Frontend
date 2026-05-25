@@ -163,9 +163,9 @@ const Dashboard = () => {
   }, []);
 
   const popularServices = useMemo(() => [
-    { name: 'WordPress Hosting', desc: 'Managed WordPress with auto‑updates, daily backups & CDN.', price: '₹61/mo', icon: Server, color: 'from-blue-500 to-blue-600', tag: 'Most Popular', path: '/websites/wordpress' },
+    { name: 'WordPress Hosting', desc: 'Managed WordPress with auto‑updates, daily backups & CDN.', price: '₹61/mo', icon: Server, color: 'from-blue-500 to-blue-600', tag: 'Most Popular', path: '/wordpress-hosting' },
     { name: 'Business Email',   desc: 'Professional mailboxes @yourdomain, spam protection & webmail.', price: '₹25/mo', icon: Mail, color: 'from-sky-500 to-sky-600', tag: 'Quick Launch', path: '/emails' },
-    { name: 'VPS Cloud Servers',desc: 'NVMe SSD, dedicated IP, root access, DDoS protection.', price: '₹899/mo', icon: LifeBuoy, color: 'from-emerald-500 to-emerald-600', tag: 'Best Value',  path: '/plans/vps' },
+    { name: 'VPS Cloud Servers',desc: 'NVMe SSD, dedicated IP, root access, DDoS protection.', price: '₹899/mo', icon: LifeBuoy, color: 'from-emerald-500 to-emerald-600', tag: 'Best Value',  path: '/vps-cloud' },
   ], []);
 
   return (
@@ -365,7 +365,7 @@ const Dashboard = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     {[
-                      { label: 'Deploy WP',   path: '/websites/wordpress' },
+                      { label: 'Deploy WP',   path: '/wordpress-hosting' },
                       { label: 'Add Email',   path: '/emails' },
                       { label: 'Billing-History',     path: '/payment-history' },
                       { label: 'Support',     path: '/Support' },

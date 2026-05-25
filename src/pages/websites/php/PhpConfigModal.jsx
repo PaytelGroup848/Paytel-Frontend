@@ -62,7 +62,7 @@ export default function PhpConfigModal({ plan, onClose }) {
             });
             toast.success('Payment successful!');
             onClose();
-            navigate('/websites/php/paid');
+            navigate('/php-hosting/paid');
           } catch (err) {
             toast.error('Payment verification failed');
           }

@@ -65,15 +65,38 @@ export const useSetupPhpDomain = () =>
   });
 
 
-  export const usePhpFileList = (id, path = '') =>
+// Make sure instanceId is properly passed
+export const usePhpFileList = (id, path = '') =>
   useQuery({
     queryKey: ['php', 'files', id, path],
-    queryFn: () => {
-      if (!id) throw new Error('Instance ID is required');
-      return api.get(`/php/instances/${id}/files`, { params: { path } }).then(r => r.data?.data || []);
+    queryFn: async () => {
+      if (!id) {
+        console.error('usePhpFileList: No instance ID provided');
+        return [];
+      }
+      const response = await api.get(`/php/instances/${id}/files`, { params: { path } });
+      return response.data?.data || [];
     },
     enabled: !!id,
     staleTime: 0,
+  });
+
+export const useCreatePhpFile = () =>
+  useMutation({
+    mutationFn: ({ id, path, fileName, content = '' }) => {
+      if (!id) {
+        throw new Error('Instance ID is required');
+      }
+      return api.post(`/php/instances/${id}/files/create`, { path, fileName, content }).then(r => r.data);
+    },
+    onSuccess: (_, { id, path }) => {
+      queryClient.invalidateQueries({ queryKey: ['php', 'files', id, path] });
+      toast.success('File created successfully');
+    },
+    onError: (error) => {
+      console.error('Create file error:', error);
+      toast.error(error?.response?.data?.message || 'Failed to create file');
+    },
   });
 
 // Get single file content
@@ -101,17 +124,6 @@ export const useSavePhpFileContent = () =>
     onError: () => toast.error('Failed to save file'),
   });
 
-// Create new file
-export const useCreatePhpFile = () =>
-  useMutation({
-    mutationFn: ({ id, path, fileName, content = '' }) => 
-      api.post(`/php/instances/${id}/files/create`, { path, fileName, content }).then(r => r.data),
-    onSuccess: (_, { id, path }) => {
-      queryClient.invalidateQueries({ queryKey: ['php', 'files', id, path] });
-      toast.success('File created successfully');
-    },
-    onError: () => toast.error('Failed to create file'),
-  });
 
 // Create new folder
 export const useCreatePhpFolder = () =>
