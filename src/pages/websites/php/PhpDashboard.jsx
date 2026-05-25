@@ -133,7 +133,7 @@ const OverviewTab = ({ instance }) => {
   const handleDelete = async () => {
     if (window.confirm('Are you sure? This will permanently delete the site and all files.')) {
       await deleteInstance.mutateAsync(instance.id);
-      navigate('/websites/php/paid');
+      navigate('/php-hosting/paid');
     }
   };
 
@@ -550,7 +550,7 @@ export default function PhpDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/30 flex flex-col lg:flex-row">
       <div className="w-full lg:w-80 p-6 lg:p-10 border-r border-slate-200/50 bg-white/80 backdrop-blur-xl">
-        <Link to="/websites/php/paid" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 text-xs font-bold mb-8">
+        <Link to="/php-hosting/paid" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 text-xs font-bold mb-8">
           <ArrowLeft size={14} /> All PHP Sites
         </Link>
         <div className="mb-8">

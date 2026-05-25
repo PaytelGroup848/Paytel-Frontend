@@ -39,7 +39,7 @@ export const useCreateVpsOrder = () =>
         userEmail: data.userEmail
       };
       
-      console.log('📦 Sending VPS order payload:', payload);
+      console.log('Sending VPS order payload:', payload);
       
       const response = await api.post('/vps/order', payload);
       return response.data?.data;

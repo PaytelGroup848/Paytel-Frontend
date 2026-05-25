@@ -492,7 +492,7 @@ const SettingsSection = () => {
           </div>
           <button
               onClick={() => {
-                navigate("/vps")
+                navigate("/vps-cloud")
               }}
               className="px-4 py-2 text-sm font-semibold text-indigo-600 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition"
             >

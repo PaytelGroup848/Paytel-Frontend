@@ -33,7 +33,7 @@ export default function PaidWordpress() {
       const subs = Array.isArray(subscriptions) ? subscriptions : [];
       const hasWordPress = subs.some(s => s.type === 'wordpress' && s.status === 'Active');
       if (!hasWordPress) {
-        navigate('/websites/wordpress', { replace: true });
+        navigate('/wordpress-hosting', { replace: true });
       }
     }
   }, [subscriptions, loadingSubs, navigate]);
@@ -84,7 +84,7 @@ export default function PaidWordpress() {
                  {filter === '' && (
     hasReachedLimit ? (
       <button
-        onClick={() => navigate("/websites/wordpress")}
+        onClick={() => navigate("/wordpress-hosting")}
         className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl transition-all active:scale-95 text-xs font-bold flex items-center gap-2 ml-1"
       >
         Buy WordPress

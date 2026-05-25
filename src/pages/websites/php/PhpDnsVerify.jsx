@@ -59,7 +59,7 @@ export default function PhpDnsVerify() {
           clearInterval(interval);
           setIsInstalling(false);
           toast.success('Site is live!');
-          navigate(`/websites/php/dashboard/${instanceId}`);
+          navigate(`/php-hosting/dashboard/${instanceId}`);
         }
       }, 5000);
     } catch (err) {
@@ -69,7 +69,7 @@ export default function PhpDnsVerify() {
 
   useEffect(() => {
     if (instance?.status === 'active') {
-      navigate(`/websites/php/dashboard/${instanceId}`);
+      navigate(`/php-hosting/dashboard/${instanceId}`);
     }
   }, [instance?.status, instanceId, navigate]);
 
@@ -81,7 +81,7 @@ export default function PhpDnsVerify() {
       <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-50/60 rounded-full blur-[100px] -z-10" />
 
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-2xl relative z-10">
-        <Link to="/websites/php/paid" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-black uppercase text-[10px] tracking-widest mb-10 transition-colors">
+        <Link to="/php-hosting/paid" className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-black uppercase text-[10px] tracking-widest mb-10 transition-colors">
           <ArrowLeft size={16} />
           Back to My Sites
         </Link>

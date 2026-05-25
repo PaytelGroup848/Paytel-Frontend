@@ -51,10 +51,10 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
       label: 'Websites',
       icon: Globe,
       children: [
-        { label: 'Buy WordPress', to: '/websites/wordpress' },
+        { label: 'Buy WordPress', to: '/wordpress-hosting' },
         ...(hasWordPress ? [{ label: 'WordPress Dashboard', to: '/websites/wordpress/paid' }] : []),
-        { label: 'PHP Hosting', to: '/websites/php' },
-        { label: 'My PHP Sites', to: '/websites/php/paid' },
+        { label: 'PHP Hosting', to: '/php-hosting' },
+        { label: 'My PHP Sites', to: '/php-hosting/paid' },
         { label: 'NodeJS App', to: '/comingsoon' },
       ].filter(Boolean), 
     },
@@ -62,7 +62,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
       label: 'Cloud VPS',
       icon: Cloud,
       children: [
-        { label: 'VPS Plans', to: '/vps' },
+        { label: 'VPS Plans', to: '/vps-cloud' },
         ...(hasVps ? [{ label: 'VPS Dashboard', to: '/vps/paid' }] : []),
       ].filter(Boolean),
     },

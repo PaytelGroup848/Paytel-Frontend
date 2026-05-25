@@ -157,7 +157,7 @@ export default function Navbar({ isSidebarOpen, onMenuClick }) {
 
                   {/* Menu items */}
                   <div className="space-y-0.5">
-                    <button onClick={() => navigate('/vps')} className="w-full">
+                    <button onClick={() => navigate('/vps-cloud')} className="w-full">
                       <DropdownItem icon={<LayoutDashboard size={16} />} label="Cloud Overview" />
                     </button>
                     <button onClick={() => navigate('/settings')} className="w-full">

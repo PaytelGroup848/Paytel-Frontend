@@ -1,4 +1,3 @@
-// frontend/src/pages/vps/Docker.jsx
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { 
