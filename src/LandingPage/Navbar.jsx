@@ -24,9 +24,9 @@ const megaMenuSections = [
     title: "Host & Deploy",
     icon: Server,
     items: [
-      { label: "WordPress Hosting", href: "/wordpress-hosting", tag: "Popular" },
+      { label: "WordPress Hosting", href: "/wordpress-page", tag: "Popular" },
       { label: "Node.js Hosting", href: "/hosting/nodejs" },
-      { label: "cPanel Hosting", href: "/hosting/cpanel", tag: "Enterprise" },
+      { label: "cPanel Hosting", href: "/c-panel", tag: "Enterprise" },
     ],
   },
   {
@@ -36,7 +36,7 @@ const megaMenuSections = [
       { label: "Busy on Cloud", href: "/Busy-on-cloud" },
       { label: "Tally on Cloud", href: "/Tally-on-cloud" },
       { label: "Marg on Cloud", href: "/Marg-on-cloud" },
-      { label: "VPS on Cloud", href: "/vps-cloud" },
+      { label: "VPS on Cloud", href: "/vps" },
     ],
   },
 ];

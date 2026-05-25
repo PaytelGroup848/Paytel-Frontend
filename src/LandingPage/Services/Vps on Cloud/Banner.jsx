@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
 import {
   ArrowRight,
   CheckCircle2,
@@ -40,19 +43,79 @@ const featureCards = [
   },
 ];
 
-const osOptions = ["Ubuntu 24.04 LTS", "Debian 12", "CentOS Stream 9", "Windows Server 2025"];
-const planOptions = ["1 vCPU / 2 GB RAM", "2 vCPU / 4 GB RAM", "4 vCPU / 8 GB RAM", "8 vCPU / 16 GB RAM"];
-const billingOptions = ["Monthly", "Quarterly", "Yearly"];
-
 const vpsStats = [
   { value: "99.99%", label: "Uptime SLA", icon: Clock },
   { value: "40+", label: "Data Centers", icon: MapPin },
   { value: "10 Gbps", label: "Network Speed", icon: Activity },
 ];
 
+// Service options (same as other banners)
+const serviceOptions = [
+  "Busy on Cloud",
+  "Marg on Cloud",
+  "Tally on Cloud",
+  "School CRM",
+  "Restaurant Management",
+];
+
 export default function Banner() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    mobile: "",
+    service: "",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    if (success) setSuccess("");
+    if (error) setError("");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccess("");
+    setError("");
+
+    if (!form.name || !form.email || !form.mobile || !form.service) {
+      setError("Please fill all required fields.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/public/submit", {
+        name: form.name,
+        email: form.email,
+        phone: form.mobile,
+        product: form.service,
+        message: form.message || "No message provided",
+      });
+
+      if (response.data.success) {
+        setSuccess("Thank you! Our experts will contact you soon with a personalized VPS plan.");
+        setForm({
+          name: "",
+          email: "",
+          mobile: "",
+          service: "",
+          message: "",
+        });
+      } else {
+        setError("Submission failed. Please try again.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Network error. Please check your connection or try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -70,9 +133,8 @@ export default function Banner() {
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-300 to-transparent" />
 
       <div className="relative mx-auto grid min-h-[680px] w-full max-w-7xl items-center gap-8 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-20">
-        {/* Left content */}
+        {/* Left content – unchanged */}
         <div className="min-w-0 text-slate-800">
-          {/* Pill badge */}
           <div className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-indigo-200 bg-white/80 px-3 py-1.5 text-xs font-bold uppercase text-indigo-600 shadow-sm backdrop-blur">
             <Cloud size={15} className="shrink-0" />
             <span className="truncate">Cloud VPS Hosting</span>
@@ -92,20 +154,15 @@ export default function Banner() {
             and enterprise workloads.
           </p>
 
-          {/* Benefits grid */}
           <div className="mt-7 grid grid-cols-1 gap-2 sm:grid-cols-2">
             {benefits.map((item) => (
-              <div
-                key={item}
-                className="flex min-w-0 items-center gap-2 text-sm font-semibold text-slate-700"
-              >
+              <div key={item} className="flex min-w-0 items-center gap-2 text-sm font-semibold text-slate-700">
                 <CheckCircle2 size={17} className="shrink-0 text-indigo-600" />
                 <span>{item}</span>
               </div>
             ))}
           </div>
 
-          {/* VPS Stats row */}
           <div className="mt-8 grid grid-cols-3 gap-4 max-w-lg">
             {vpsStats.map(({ value, label, icon: Icon }) => (
               <div key={label} className="text-center">
@@ -118,13 +175,9 @@ export default function Banner() {
             ))}
           </div>
 
-          {/* Feature cards – with shadows and borders */}
           <div className="mt-8 grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3">
             {featureCards.map(({ icon: Icon, title, text }) => (
-              <div
-                key={title}
-                className="rounded-xl border border-slate-200 bg-white/90 p-4 shadow-md shadow-slate-200/60 backdrop-blur transition hover:shadow-lg hover:shadow-slate-200/80"
-              >
+              <div key={title} className="rounded-xl border border-slate-200 bg-white/90 p-4 shadow-md shadow-slate-200/60 backdrop-blur transition hover:shadow-lg hover:shadow-slate-200/80">
                 <Icon size={22} className="text-indigo-600" />
                 <h3 className="mt-3 text-sm font-extrabold text-slate-800">{title}</h3>
                 <p className="mt-1 text-xs leading-5 text-slate-500">{text}</p>
@@ -132,7 +185,6 @@ export default function Banner() {
             ))}
           </div>
 
-          {/* CTA buttons */}
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <a
               href="#pricing"
@@ -150,10 +202,9 @@ export default function Banner() {
           </div>
         </div>
 
-        {/* Right side – consultation / quote form (enhanced shadows & border) */}
+        {/* Right side – DEMO REQUEST CARD (simplified, with service dropdown) */}
         <div className="min-w-0 lg:justify-self-end">
           <form
-            id="vps-form"
             onSubmit={handleSubmit}
             className="mx-auto w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl shadow-slate-200/60 sm:p-6 lg:p-7"
           >
@@ -163,92 +214,100 @@ export default function Banner() {
                 Find your perfect VPS
               </h2>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                Tell us your workload and our experts will recommend the optimal CPU, RAM,
-                and storage configuration.
+                Fill in your details and our cloud experts will recommend the best configuration for your workload.
               </p>
             </div>
 
+            {/* Feedback messages */}
+            <AnimatePresence>
+              {success && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="mb-4 rounded-xl bg-green-100 border border-green-400 p-3 text-sm text-green-800"
+                >
+                  {success}
+                </motion.div>
+              )}
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="mb-4 rounded-xl bg-red-100 border border-red-400 p-3 text-sm text-red-800"
+                >
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <label className="min-w-0">
-                <span className="mb-1.5 block text-xs font-bold text-slate-700">Full name</span>
+                <span className="mb-1.5 block text-xs font-bold text-slate-700">Full name *</span>
                 <input
                   type="text"
                   name="name"
+                  value={form.name}
+                  onChange={handleChange}
                   placeholder="John Doe"
+                  required
                   className="h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
                 />
               </label>
 
               <label className="min-w-0">
-                <span className="mb-1.5 block text-xs font-bold text-slate-700">Email address</span>
+                <span className="mb-1.5 block text-xs font-bold text-slate-700">Email address *</span>
                 <input
                   type="email"
                   name="email"
+                  value={form.email}
+                  onChange={handleChange}
                   placeholder="john@company.com"
+                  required
                   className="h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
                 />
               </label>
 
               <label className="min-w-0">
-                <span className="mb-1.5 block text-xs font-bold text-slate-700">Phone (optional)</span>
+                <span className="mb-1.5 block text-xs font-bold text-slate-700">Phone number *</span>
                 <input
                   type="tel"
-                  name="phone"
-                  placeholder="+1 555 123 4567"
+                  name="mobile"
+                  value={form.mobile}
+                  onChange={handleChange}
+                  placeholder="+91 98765 43210"
+                  required
                   className="h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
                 />
               </label>
 
               <label className="min-w-0">
-                <span className="mb-1.5 block text-xs font-bold text-slate-700">Preferred OS</span>
+                <span className="mb-1.5 block text-xs font-bold text-slate-700">Choose service *</span>
                 <select
-                  name="os"
-                  defaultValue=""
+                  name="service"
+                  value={form.service}
+                  onChange={handleChange}
+                  required
                   className="h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
                 >
-                  <option value="" disabled>Select OS</option>
-                  {osOptions.map((os) => (
-                    <option key={os} value={os}>{os}</option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="min-w-0">
-                <span className="mb-1.5 block text-xs font-bold text-slate-700">Plan size</span>
-                <select
-                  name="plan"
-                  defaultValue=""
-                  className="h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
-                >
-                  <option value="" disabled>Select plan</option>
-                  {planOptions.map((plan) => (
-                    <option key={plan} value={plan}>{plan}</option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="min-w-0">
-                <span className="mb-1.5 block text-xs font-bold text-slate-700">Billing cycle</span>
-                <select
-                  name="billing"
-                  defaultValue=""
-                  className="h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
-                >
-                  <option value="" disabled>Select cycle</option>
-                  {billingOptions.map((cycle) => (
-                    <option key={cycle} value={cycle}>{cycle}</option>
+                  <option value="" disabled>Select service</option>
+                  {serviceOptions.map((service) => (
+                    <option key={service} value={service}>{service}</option>
                   ))}
                 </select>
               </label>
 
               <label className="min-w-0 sm:col-span-2">
                 <span className="mb-1.5 block text-xs font-bold text-slate-700">
-                tell us about your workload (optional)
+                  Message (optional)
                 </span>
                 <textarea
                   name="message"
+                  value={form.message}
+                  onChange={handleChange}
                   rows={4}
-                  placeholder="E.g., expected traffic, control panel, backups..."
+                  placeholder="Describe your workload, traffic, or any specific requirements..."
                   className="w-full resize-none rounded-lg border border-slate-300 bg-slate-50 px-3 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
                 />
               </label>
@@ -256,23 +315,20 @@ export default function Banner() {
 
             <button
               type="submit"
-              className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 text-sm font-extrabold text-white shadow-lg shadow-slate-300/50 transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-300"
+              disabled={loading}
+              className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 text-sm font-extrabold text-white shadow-lg shadow-slate-300/50 transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-300 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Request a quote
-              <ArrowRight size={17} />
+              {loading ? "Submitting..." : "Request a quote"}
+              {!loading && <ArrowRight size={17} />}
             </button>
 
-            {/* Form bottom trust line */}
             <div className="mt-5 grid grid-cols-1 gap-2 border-t border-slate-200 pt-4 sm:grid-cols-3">
               {[
                 { icon: Globe, text: "Global data centers" },
                 { icon: LockKeyhole, text: "Encrypted access" },
                 { icon: Headphones, text: "24/7 expert support" },
               ].map(({ icon: Icon, text }) => (
-                <div
-                  key={text}
-                  className="flex items-center gap-2 text-xs font-semibold text-slate-600"
-                >
+                <div key={text} className="flex items-center gap-2 text-xs font-semibold text-slate-600">
                   <Icon size={15} className="shrink-0 text-slate-500" />
                   <span>{text}</span>
                 </div>
@@ -282,7 +338,7 @@ export default function Banner() {
         </div>
       </div>
 
-      {/* Bottom feature ribbon (light style) */}
+      {/* Bottom feature ribbon (unchanged) */}
       <div className="relative border-t border-slate-200 bg-white/80 backdrop-blur">
         <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-3 px-4 py-4 text-sm font-semibold text-slate-700 sm:grid-cols-3 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2">

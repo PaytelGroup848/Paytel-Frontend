@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios"; // added
 
 const SERVICE_OPTIONS = [
   "Tally on Cloud",
@@ -17,30 +18,72 @@ export default function Banner() {
     service: "Busy on Cloud",
     message: "",
   });
-  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    // clear messages on new input
+    if (success) setSuccess("");
+    if (error) setError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Demo request:", form);
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
+    setLoading(true);
+    setSuccess("");
+    setError("");
+
+    // simple validation
+    if (!form.name || !form.email || !form.mobile || !form.service) {
+      setError("Please fill all required fields.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/public/submit",
+        {
+          name: form.name,
+          email: form.email,
+          phone: form.mobile,        // backend expects "phone"
+          product: form.service,     // backend expects "product"
+          message: form.message || "No message provided",
+        }
+      );
+
+      if (response.data.success) {
+        setSuccess("Thank you! Your demo request has been submitted. Our team will contact you soon.");
+        // reset form
+        setForm({
+          name: "",
+          email: "",
+          mobile: "",
+          service: "Busy on Cloud",
+          message: "",
+        });
+      } else {
+        setError("Submission failed. Please try again.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Network error. Please check your connection or try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <section className="relative flex items-center justify-center bg-gradient-to-br from-slate-800 via-slate-900 to-indigo-950 px-4 py-12 md:py-24 overflow-hidden">
       {/* Shiny overlay */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Brighter blobs for shine */}
         <div className="absolute -top-32 -left-20 w-[36rem] h-[36rem] bg-indigo-800/20 rounded-full blur-3xl" />
         <div className="absolute top-1/3 -right-20 w-[28rem] h-[28rem] bg-cyan-600/15 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-1/3 w-[24rem] h-[24rem] bg-purple-600/15 rounded-full blur-3xl" />
-        {/* Soft glow at the top center */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[48rem] h-[16rem] bg-gradient-to-r from-indigo-300/10 via-cyan-200/5 to-transparent rounded-full blur-3xl" />
-        {/* Dot pattern (slightly more visible) */}
         <div
           className="absolute inset-0 opacity-[0.05]"
           style={{
@@ -60,7 +103,7 @@ export default function Banner() {
           className="text-center lg:text-left"
         >
           <div className="inline-block px-5 py-1.5 bg-white/5 backdrop-blur-md border border-indigo-400/20 text-indigo-300 rounded-full text-[11px] font-bold tracking-[0.2em] uppercase mb-6 shadow-sm">
-             Busy on Cloud
+            Busy on Cloud
           </div>
 
           <p className="text-lg sm:text-xl text-slate-300 max-w-xl mx-auto lg:mx-0 mb-4 leading-relaxed">
@@ -89,6 +132,9 @@ export default function Banner() {
           </div>
 
           {/* Gradient-border button */}
+                
+            <a href="/contact">   
+
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
@@ -112,7 +158,9 @@ export default function Banner() {
               </svg>
             </span>
           </motion.button>
+          </a>
         </motion.div>
+        
 
         {/* Right Card – Demo Form */}
         <motion.div
@@ -123,29 +171,36 @@ export default function Banner() {
         >
           <div className="relative bg-slate-900/60 backdrop-blur-xl rounded-3xl border border-slate-700/50 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.5)] overflow-hidden">
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-indigo-500/10 via-transparent to-cyan-500/10 pointer-events-none" />
-
+          
             <div className="relative p-5 sm:p-6">
               <h3 className="text-lg sm:text-xl font-extrabold text-white mb-4 tracking-tight">
                 Book a Free Demo
               </h3>
 
-              {submitted ? (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex flex-col items-center text-center py-8"
-                >
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500 text-white flex items-center justify-center mb-4 shadow-md shadow-emerald-500/30">
-                    <span className="text-2xl font-bold">✓</span>
-                  </div>
-                  <p className="text-lg font-bold text-white">
-                    Demo Request Sent!
-                  </p>
-                  <p className="text-sm text-slate-400">
-                    Our team will reach out shortly.
-                  </p>
-                </motion.div>
-              ) : (
+              <AnimatePresence>
+                {success && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="mb-4 rounded-xl bg-green-500/20 border border-green-400/50 p-3 text-sm text-green-300"
+                  >
+                    {success}
+                  </motion.div>
+                )}
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="mb-4 rounded-xl bg-red-500/20 border border-red-400/50 p-3 text-sm text-red-300"
+                  >
+                    {error}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {!success ? (
                 <form onSubmit={handleSubmit} className="space-y-3">
                   {/* Name */}
                   <div>
@@ -233,14 +288,15 @@ export default function Banner() {
                   {/* Submit */}
                   <motion.button
                     type="submit"
+                    disabled={loading}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full py-2.5 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 bg-[length:200%_auto] hover:bg-right text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-500/25 transition-all duration-500"
+                    className="w-full py-2.5 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 bg-[length:200%_auto] hover:bg-right text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-500/25 transition-all duration-500 disabled:opacity-70 disabled:cursor-not-allowed"
                   >
-                    Submit Demo Request
+                    {loading ? "Submitting..." : "Submit Demo Request"}
                   </motion.button>
                 </form>
-              )}
+              ) : null}
             </div>
           </div>
         </motion.div>

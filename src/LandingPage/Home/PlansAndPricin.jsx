@@ -126,7 +126,7 @@ export default function PlansPricing() {
           className="text-center max-w-3xl mx-auto"
         >
           <a
-            href="/plans"
+            href="/pricing"
             className="inline-flex items-center gap-2 px-8 py-4 bg-slate-900 text-white font-bold text-sm rounded-2xl shadow-xl shadow-slate-200 hover:bg-indigo-600 transition-all group"
           >
             View All Plans

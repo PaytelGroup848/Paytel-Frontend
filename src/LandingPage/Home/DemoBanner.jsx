@@ -176,7 +176,7 @@ function LeadCaptureCard() {
         className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 blur-2xl"
       />
 
-      <div className="group relative overflow-hidden rounded-3xl border border-indigo-400/30 bg-gradient-to-br from-slate-900/80 via-indigo-950/60 to-black/90 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
+      <div className="group relative   overflow-hidden rounded-3xl border border-indigo-400/30 bg-gradient-to-br from-slate-900/80 via-indigo-950/60 to-black/90 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent" />
         <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/5 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
 

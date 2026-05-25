@@ -180,13 +180,13 @@ const FeaturesCRM = () => {
 
         {/* ===== SECTION 6: High-End CTA Action Wrapper ===== */}
         <div className="mt-20 text-center">
-          <button 
+         <a href="/contact">      <button 
             className="inline-flex items-center gap-2 px-8 py-4 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 border border-slate-800 group"
             aria-label="Request institutional demo access"
           >
             Request a Free Demo
             <FaArrowRight className="text-xs transition-transform duration-200 group-hover:translate-x-1" />
-          </button>
+          </button> </a>
         </div>
       </div>
 

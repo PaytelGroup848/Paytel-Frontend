@@ -10,11 +10,11 @@ import PricingPage from './LandingPage/pricing/PricingPage';
 import EducationPage from './LandingPage/CRM/Education ERP/EducationPage';
 import RmsPage from './LandingPage/CRM/Resturant Managment/RmsPage';
 import LandingWordpress from "./LandingPage/Wordpress/LandingWordpress";
-import Landingvps from "./LandingPage/Vps/LandingVps";
 import BusyPage from './LandingPage/Services/busy on cloud/BusyPage';
 import TallyPage from "./LandingPage/Services/tally on cloud/tallyPage";
 import Margpage  from "./LandingPage/Services/Marg on cloud/MargPage";
 import BlogPage from "./LandingPage/Blog/BlogPage";
+import CPanelPage from "./LandingPage/C-panel/CPanelPage";
 import ContactUs from "./LandingPage/Contact/Contact";
 import PrivacyPolicy from "./LandingPage/PrivacyPolicy";
 import RefundPolicy from "./LandingPage/RefundPolicy";
@@ -83,7 +83,7 @@ import { setNavigator } from './utils/navigation';
 import SubscriptionsPage from './pages/billing/Subscription';
 import PaymentHistoryPage from "./pages/billing/paymentHistory";
 import ComingSoon from './utils/ComingSoon';
-import VpsLandingpage from './LandingPage/Services/Vps on Cloud/VpsLandingPage';
+import VpsLandingPage from './LandingPage/Services/Vps on Cloud/VpsLandingPage';
 
 
 
@@ -181,8 +181,8 @@ export default function App() {
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/education-management-system" element={<EducationPage />} />
       <Route path ="/software/restaurant-erp" element={<RmsPage/>}/>A
-      <Route path ="/wordpress-hosting" element={<LandingWordpress/>}/>
-      <Route path ="/vps-cloud" element={<Landingvps/>}/>
+      <Route path ="/wordpress-page" element={<LandingWordpress/>}/>
+      <Route path ="/vps" element={<VpsLandingPage/>} />
       <Route path = "/busy-on-cloud" element={<BusyPage/>} />
       <Route path ="/tally-on-cloud" element={<TallyPage/>} />
       <Route path = "/marg-on-cloud" element={<Margpage/>} />
@@ -192,6 +192,7 @@ export default function App() {
       <Route path = "/refund-policy-cloude" element={<RefundPolicy/>}/>
       <Route path = "/term-and-conditions" element={<TermsOfService/>} />
       <Route path ="/about-us" element={<AboutPage />} />
+     <Route path="/c-panel" element={<CPanelPage/>} />
 
 
 

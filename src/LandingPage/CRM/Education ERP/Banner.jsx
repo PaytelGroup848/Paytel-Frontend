@@ -296,16 +296,10 @@ export default function EducationBanner() {
                   boxShadow: '0 0 30px rgba(56,189,248,0.25), 0 8px 25px rgba(0,0,0,0.3)'
                 }}
               >
-                <span className="relative z-10">Book Free Demo</span>
+                 <a href="/contact">  <span className="relative z-10">Book Free Demo</span> </a>      
                 <ArrowRight className="relative z-10 ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   style={{ background: 'linear-gradient(135deg, #7DD3FC 0%, #818CF8 100%)' }} />
-              </button>
-
-              <button
-                className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 text-sm font-bold text-white/70 rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-sm hover:bg-white/[0.07] hover:border-white/20 hover:text-white transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0"
-              >
-                View Features
               </button>
             </div>
   

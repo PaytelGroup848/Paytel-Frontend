@@ -230,17 +230,6 @@ const CrmBenefits = () => {
             ))}
           </div>
         </div>
-
-        {/* CTA Button */}
-        <div className="text-center mt-20">
-          <button 
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white text-sm font-bold rounded-xl hover:bg-gray-800 transition-all shadow-md hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-white group"
-            aria-label="Initialize Core Platform Access"
-          >
-            Explore System Architecture
-            <FaArrowRight className="text-xs transition-transform duration-200 group-hover:translate-x-1" />
-          </button>
-        </div>
       </div>
 
       {/* Animation Keyframes */}

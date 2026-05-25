@@ -1,264 +1,317 @@
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
+import { ArrowRight, CheckCircle2, Cloud, Database, FileText, Headphones, LockKeyhole, MonitorSmartphone, ServerCog, ShieldCheck } from 'lucide-react';
 
-import {
-  ArrowRight,
-  CheckCircle2,
-  Cloud,
-  Database,
-  FileText,
-  Headphones,
-  LockKeyhole,
-  MonitorSmartphone,
-  ServerCog,
-  ShieldCheck,
-} from 'lucide-react';
+// Updated service options as requested
+const SERVICE_OPTIONS = [
+  "Busy on Cloud",
+  "Marg on Cloud",
+  "Tally on Cloud",
+  "School CRM",
+  "Restaurant Management",
+];
 
 const benefits = [
-  'Secure cloud access',
-  'Multi-user ERP performance',
-  'Daily backup support',
-  'Quick setup assistance',
+  "Secure cloud access",
+  "Multi-user ERP performance",
+  "Daily backup support",
+  "Quick setup assistance",
 ];
 
 const businessTypes = [
-  'Retail',
-  'Distribution',
-  'Pharmacy',
-  'FMCG',
-  'Manufacturing',
-  'Other',
+  "Retail",
+  "Distribution",
+  "Pharmacy",
+  "FMCG",
+  "Manufacturing",
+  "Other",
 ];
 
 const featureCards = [
   {
     icon: FileText,
-    title: 'Billing & GST',
-    text: 'Run invoicing, reports and tax workflows from a secure cloud setup.',
+    title: "Billing & GST",
+    text: "Run invoicing, reports and tax workflows from a secure cloud setup.",
   },
   {
     icon: Database,
-    title: 'Inventory Control',
-    text: 'Access stock, sales and purchase data across office and branch teams.',
+    title: "Inventory Control",
+    text: "Access stock, sales and purchase data across office and branch teams.",
   },
   {
     icon: ShieldCheck,
-    title: 'Protected Data',
-    text: 'Reduce local-system dependency with managed access and backup support.',
+    title: "Protected Data",
+    text: "Reduce local-system dependency with managed access and backup support.",
   },
 ];
 
 export default function Banner() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    mobile: "",
+    service: "Busy on Cloud",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    if (success) setSuccess("");
+    if (error) setError("");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccess("");
+    setError("");
+
+    if (!form.name || !form.email || !form.mobile || !form.service) {
+      setError("Please fill all required fields.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/public/submit", {
+        name: form.name,
+        email: form.email,
+        phone: form.mobile,
+        product: form.service,
+        message: form.message || "No message provided",
+      });
+
+      if (response.data.success) {
+        setSuccess("Thank you! Your demo request has been submitted. Our team will contact you soon.");
+        setForm({
+          name: "",
+          email: "",
+          mobile: "",
+          service: "Busy on Cloud",
+          message: "",
+        });
+      } else {
+        setError("Submission failed. Please try again.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Network error. Please check your connection or try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <section className="relative w-full overflow-hidden bg-[linear-gradient(135deg,#edf7f4_0%,#f8fafc_42%,#e9f0fb_100%)]">
-      <div
-        className="absolute right-0 top-0 hidden h-full w-1/2 bg-cover bg-center opacity-10 lg:block"
-        style={{
-          backgroundImage:
-            'url("https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1800&q=80")',
-        }}
-        aria-hidden="true"
-      />
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent" />
-      <div className="absolute left-0 top-0 h-full w-full bg-[radial-gradient(circle_at_18%_14%,rgba(20,184,166,0.16),transparent_30%),radial-gradient(circle_at_88%_22%,rgba(37,99,235,0.12),transparent_28%)]" />
-
-      <div className="relative mx-auto grid min-h-[680px] w-full max-w-7xl items-center gap-8 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-20">
-        <div className="min-w-0 text-slate-950">
-          <div className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-teal-200 bg-white px-3 py-1.5 text-xs font-bold uppercase text-teal-700 shadow-sm">
-            <Cloud size={15} className="shrink-0" />
-            <span className="truncate">Marg ERP on secure cloud</span>
-          </div>
-
-          <h1 className="max-w-3xl text-4xl font-extrabold leading-tight tracking-normal sm:text-5xl lg:text-6xl">
-            Marg on Cloud for faster billing, inventory and business control
-          </h1>
-
-          <p className="mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-            Move your Marg ERP setup to a reliable cloud server and let your team access
-            billing, inventory, GST reports and business data from office, branch or remote
-            locations with better continuity.
-          </p>
-
-          <div className="mt-7 grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {benefits.map((item) => (
-              <div key={item} className="flex min-w-0 items-center gap-2 text-sm font-semibold text-slate-700">
-                <CheckCircle2 size={17} className="shrink-0 text-teal-600" />
-                <span>{item}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8 grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3">
-            {featureCards.map(({ icon: Icon, title, text }) => (
-              <div key={title} className="rounded-xl border border-slate-200 bg-white/80 p-4 shadow-sm backdrop-blur">
-                <Icon size={22} className="text-slate-700" />
-                <h3 className="mt-3 text-sm font-extrabold">{title}</h3>
-                <p className="mt-1 text-xs leading-5 text-slate-600">{text}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <a
-              href="#demo"
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 text-sm font-extrabold text-white shadow-lg shadow-slate-300/60 transition hover:bg-slate-800"
-            >
-              Book Free Demo
-              <ArrowRight size={17} />
-            </a>
-            <a
-              href="#plans"
-              className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 bg-white/70 px-5 text-sm font-bold text-slate-800 transition hover:bg-white"
-            >
-              View Cloud Plans
-            </a>
-          </div>
-        </div>
-
-        <div className="min-w-0 lg:justify-self-end">
-          <form
-            id="demo"
-            onSubmit={handleSubmit}
-            className="mx-auto w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_24px_70px_rgba(15,23,42,0.14)] sm:p-6 lg:p-7"
-          >
-            <div className="mb-5">
-              <p className="text-sm font-bold uppercase text-teal-700">Book Free Demo</p>
-              <h2 className="mt-1 text-2xl font-extrabold text-slate-950 sm:text-3xl">
-                Get Marg cloud consultation
-              </h2>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                Share your details and our team will suggest the right cloud setup for your
-                users, branches and business type.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <label className="min-w-0">
-                <span className="mb-1.5 block text-xs font-bold text-slate-600">Full name</span>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Your name"
-                  className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-950 outline-none transition focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-100"
-                />
-              </label>
-
-              <label className="min-w-0">
-                <span className="mb-1.5 block text-xs font-bold text-slate-600">Phone number</span>
-                <input
-                  type="tel"
-                  name="phone"
-                  placeholder="+91 98765 43210"
-                  className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-950 outline-none transition focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-100"
-                />
-              </label>
-
-              <label className="min-w-0">
-                <span className="mb-1.5 block text-xs font-bold text-slate-600">Email address</span>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="you@company.com"
-                  className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-950 outline-none transition focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-100"
-                />
-              </label>
-
-              <label className="min-w-0">
-                <span className="mb-1.5 block text-xs font-bold text-slate-600">Business type</span>
-                <select
-                  name="businessType"
-                  defaultValue=""
-                  className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-950 outline-none transition focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-100"
-                >
-                  <option value="" disabled>Select business type</option>
-                  {businessTypes.map((type) => (
-                    <option key={type} value={type}>{type}</option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="min-w-0">
-                <span className="mb-1.5 block text-xs font-bold text-slate-600">Number of users</span>
-                <select
-                  name="users"
-                  defaultValue=""
-                  className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-950 outline-none transition focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-100"
-                >
-                  <option value="" disabled>Select users</option>
-                  <option value="1-3">1-3 users</option>
-                  <option value="4-6">4-6 users</option>
-                  <option value="7-12">7-12 users</option>
-                  <option value="12+">12+ users</option>
-                </select>
-              </label>
-
-              <label className="min-w-0">
-                <span className="mb-1.5 block text-xs font-bold text-slate-600">Current setup</span>
-                <select
-                  name="currentSetup"
-                  defaultValue=""
-                  className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-950 outline-none transition focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-100"
-                >
-                  <option value="" disabled>Select setup</option>
-                  <option value="Local computer">Local computer</option>
-                  <option value="Office server">Office server</option>
-                  <option value="Existing cloud">Existing cloud</option>
-                  <option value="New setup">New setup</option>
-                </select>
-              </label>
-
-              <label className="min-w-0 sm:col-span-2">
-                <span className="mb-1.5 block text-xs font-bold text-slate-600">Message</span>
-                <textarea
-                  name="message"
-                  rows={4}
-                  placeholder="Tell us about branches, users, data size or current Marg setup"
-                  className="w-full resize-none rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-950 outline-none transition focus:border-teal-600 focus:bg-white focus:ring-4 focus:ring-teal-100"
-                />
-              </label>
-            </div>
-
-            <button
-              type="submit"
-              className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 text-sm font-extrabold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-200"
-            >
-              Submit Demo Request
-              <ArrowRight size={17} />
-            </button>
-
-            <div className="mt-5 grid grid-cols-1 gap-2 border-t border-slate-100 pt-4 sm:grid-cols-3">
-              {[
-                { icon: MonitorSmartphone, text: 'Any location' },
-                { icon: LockKeyhole, text: 'Secure login' },
-                { icon: Headphones, text: 'Setup help' },
-              ].map(({ icon: Icon, text }) => (
-                <div key={text} className="flex items-center gap-2 text-xs font-semibold text-slate-600">
-                  <Icon size={15} className="shrink-0 text-slate-500" />
-                  <span>{text}</span>
-                </div>
-              ))}
-            </div>
-          </form>
-        </div>
+    <section className="relative flex items-center justify-center bg-gradient-to-br from-slate-800 via-slate-900 to-indigo-950 px-4 py-12 md:py-24 overflow-hidden">
+      {/* Shiny overlay */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-32 -left-20 w-[36rem] h-[36rem] bg-indigo-800/20 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 -right-20 w-[28rem] h-[28rem] bg-cyan-600/15 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 w-[24rem] h-[24rem] bg-purple-600/15 rounded-full blur-3xl" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[48rem] h-[16rem] bg-gradient-to-r from-indigo-300/10 via-cyan-200/5 to-transparent rounded-full blur-3xl" />
+        <div
+          className="absolute inset-0 opacity-[0.05]"
+          style={{
+            backgroundImage: "radial-gradient(circle, #818cf8 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
+          }}
+        />
       </div>
 
-      <div className="relative border-t border-slate-200 bg-white/70">
-        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-3 px-4 py-4 text-sm font-semibold text-slate-700 sm:grid-cols-3 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2">
-            <ServerCog size={17} className="text-teal-700" />
-            Cloud server setup
+      <div className="relative z-10 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        {/* Left Content */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center lg:text-left"
+        >
+          <div className="inline-block px-5 py-1.5 bg-white/5 backdrop-blur-md border border-indigo-400/20 text-indigo-300 rounded-full text-[11px] font-bold tracking-[0.2em] uppercase mb-6 shadow-sm">
+            Busy on Cloud
           </div>
-          <div className="flex items-center gap-2">
-            <ShieldCheck size={17} className="text-teal-700" />
-            Backup and access control
+
+          <p className="text-lg sm:text-xl text-slate-300 max-w-xl mx-auto lg:mx-0 mb-4 leading-relaxed">
+            Take control of your accounting with secure, high‑performance cloud hosting.
+          </p>
+
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.15] mb-4">
+            Power Your Business —{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
+              Marg on Cloud.
+            </span>
+          </h1>
+
+          <p className="text-sm text-slate-400 font-medium mb-6">
+            Access your Busy software anytime, anywhere, on any device — no local installation needed.
+          </p>
+
+          <div className="mb-8">
+            <p className="text-sm text-slate-500 font-medium">Starting from</p>
+            <div className="flex items-baseline gap-1 justify-center lg:justify-start">
+              <span className="text-4xl font-black text-white">₹299.00</span>
+              <span className="text-slate-400 font-medium">/user/month</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Database size={17} className="text-teal-700" />
-            Marg data migration support
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
+            className="relative inline-flex items-center justify-center px-10 py-4 font-bold text-sm text-slate-800 bg-white rounded-2xl shadow-[0_10px_30px_-5px_rgba(99,102,241,0.4)] transition-all hover:shadow-[0_15px_40px_-5px_rgba(99,102,241,0.6)]"
+          >
+            <span className="absolute inset-0 rounded-2xl p-[2px] bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 opacity-70 -z-10" />
+            <span className="relative z-10 flex items-center gap-2">
+              Start Now
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </span>
+          </motion.button>
+        </motion.div>
+
+        {/* Right Card – Demo Form with updated service options */}
+        <motion.div
+          initial={{ opacity: 0, y: 40, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="w-full max-w-sm lg:ml-40"
+        >
+          <div className="relative bg-slate-900/60 backdrop-blur-xl rounded-3xl border border-slate-700/50 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.5)] overflow-hidden">
+            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-indigo-500/10 via-transparent to-cyan-500/10 pointer-events-none" />
+
+            <div className="relative p-5 sm:p-6">
+              <h3 className="text-lg sm:text-xl font-extrabold text-white mb-4 tracking-tight">
+                Book a Free Demo
+              </h3>
+
+              <AnimatePresence>
+                {success && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="mb-4 rounded-xl bg-green-500/20 border border-green-400/50 p-3 text-sm text-green-300"
+                  >
+                    {success}
+                  </motion.div>
+                )}
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="mb-4 rounded-xl bg-red-500/20 border border-red-400/50 p-3 text-sm text-red-300"
+                  >
+                    {error}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {!success && (
+                <form onSubmit={handleSubmit} className="space-y-3">
+                  {/* Name */}
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">
+                      Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      required
+                      value={form.name}
+                      onChange={handleChange}
+                      placeholder="John Doe"
+                      className="w-full px-4 py-2 rounded-xl border border-slate-600/50 bg-slate-800/70 text-white placeholder:text-slate-500 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/20 transition outline-none text-sm font-medium"
+                    />
+                  </div>
+
+                  {/* Email */}
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      required
+                      value={form.email}
+                      onChange={handleChange}
+                      placeholder="john@company.com"
+                      className="w-full px-4 py-2 rounded-xl border border-slate-600/50 bg-slate-800/70 text-white placeholder:text-slate-500 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/20 transition outline-none text-sm font-medium"
+                    />
+                  </div>
+
+                  {/* Mobile (Phone) */}
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">
+                      Phone Number *
+                    </label>
+                    <input
+                      type="tel"
+                      name="mobile"
+                      required
+                      value={form.mobile}
+                      onChange={handleChange}
+                      placeholder="+91 98765 43210"
+                      className="w-full px-4 py-2 rounded-xl border border-slate-600/50 bg-slate-800/70 text-white placeholder:text-slate-500 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/20 transition outline-none text-sm font-medium"
+                    />
+                  </div>
+
+                  {/* Service Dropdown – Updated Options */}
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">
+                      Choose Service *
+                    </label>
+                    <select
+                      name="service"
+                      required
+                      value={form.service}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 rounded-xl border border-slate-600/50 bg-slate-800/70 text-white placeholder:text-slate-500 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/20 transition outline-none text-sm font-medium appearance-none"
+                    >
+                      {SERVICE_OPTIONS.map((opt) => (
+                        <option key={opt} value={opt} className="bg-slate-800 text-white">
+                          {opt}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Message (optional) */}
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">
+                      Message (optional)
+                    </label>
+                    <textarea
+                      name="message"
+                      rows={3}
+                      value={form.message}
+                      onChange={handleChange}
+                      placeholder="Tell us about your requirements..."
+                      className="w-full px-4 py-2 rounded-xl border border-slate-600/50 bg-slate-800/70 text-white placeholder:text-slate-500 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/20 transition outline-none text-sm font-medium resize-none"
+                    />
+                  </div>
+
+                  {/* Submit */}
+                  <motion.button
+                    type="submit"
+                    disabled={loading}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full py-2.5 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 bg-[length:200%_auto] hover:bg-right text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-500/25 transition-all duration-500 disabled:opacity-70 disabled:cursor-not-allowed"
+                  >
+                    {loading ? "Submitting..." : "Submit Demo Request"}
+                  </motion.button>
+                </form>
+              )}
+            </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

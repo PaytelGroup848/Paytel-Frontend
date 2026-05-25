@@ -135,13 +135,6 @@ const Collaboration = () => {
             ))}
           </div>
         </div>
-
-        {/* CTA Button - modern */}
-        <div className="text-center mt-16">
-          <button className="px-8 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full font-semibold shadow-xl hover:shadow-2xl transition-all hover:scale-105 hover:brightness-110">
-            Start Your Free Trial
-          </button>
-        </div>
       </div>
     </div>
   );

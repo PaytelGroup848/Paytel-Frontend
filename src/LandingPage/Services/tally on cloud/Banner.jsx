@@ -1,17 +1,84 @@
-import { ArrowRight, CheckCircle2, Cloud, LockKeyhole, ServerCog, ShieldCheck } from 'lucide-react';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
+import {
+  ArrowRight,
+  CheckCircle2,
+  Cloud,
+  LockKeyhole,
+  ServerCog,
+  ShieldCheck,
+} from "lucide-react";
 
 const services = [
-  'Tally on Cloud',
-  'Busy on cloud',
-  '',
-  'Marg on Cloud',
-  'Jwelly on cloud',
-  'Focus on cloud',
+  "Tally on Cloud",
+  "Busy on Cloud",
+  "Marg on Cloud",
+  "Jwelly on Cloud",
+  "Focus on Cloud",
 ];
 
 export default function Banner() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    service: "",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (success) setSuccess("");
+    if (error) setError("");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccess("");
+    setError("");
+
+    // basic validation
+    if (!formData.name || !formData.email || !formData.phone || !formData.service) {
+      setError("Please fill all required fields.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/public/submit", {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        product: formData.service, // mapped to "product" as backend expects
+        message: formData.message || "No message provided",
+      });
+
+      if (response.data.success) {
+        setSuccess(
+          "Thank you! Your demo request has been submitted. Our team will contact you soon."
+        );
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          service: "",
+          message: "",
+        });
+      } else {
+        setError("Submission failed. Please try again.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Network error. Please check your connection or try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -96,12 +163,38 @@ export default function Banner() {
               </p>
             </div>
 
+            {/* Feedback messages */}
+            <AnimatePresence>
+              {success && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="mb-4 rounded-xl bg-green-100 border border-green-400 p-3 text-sm text-green-800"
+                >
+                  {success}
+                </motion.div>
+              )}
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="mb-4 rounded-xl bg-red-100 border border-red-400 p-3 text-sm text-red-800"
+                >
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <label className="min-w-0">
                 <span className="mb-1.5 block text-xs font-semibold text-slate-600">Full name</span>
                 <input
                   type="text"
                   name="name"
+                  value={formData.name}
+                  onChange={handleChange}
                   placeholder="Your name"
                   className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
                 />
@@ -112,6 +205,8 @@ export default function Banner() {
                 <input
                   type="email"
                   name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   placeholder="you@company.com"
                   className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
                 />
@@ -122,6 +217,8 @@ export default function Banner() {
                 <input
                   type="tel"
                   name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
                   placeholder="+91 98765 43210"
                   className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
                 />
@@ -131,7 +228,8 @@ export default function Banner() {
                 <span className="mb-1.5 block text-xs font-semibold text-slate-600">Choose service</span>
                 <select
                   name="service"
-                  defaultValue=""
+                  value={formData.service}
+                  onChange={handleChange}
                   className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
                 >
                   <option value="" disabled>Select a service</option>
@@ -145,6 +243,8 @@ export default function Banner() {
                 <span className="mb-1.5 block text-xs font-semibold text-slate-600">Message</span>
                 <textarea
                   name="message"
+                  value={formData.message}
+                  onChange={handleChange}
                   rows={4}
                   placeholder="Tell us about users, branches or current Tally setup"
                   className="w-full resize-none rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
@@ -154,10 +254,11 @@ export default function Banner() {
 
             <button
               type="submit"
-              className="mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 text-sm font-bold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-200"
+              disabled={loading}
+              className="mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 text-sm font-bold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-200 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Submit Demo Request
-              <ArrowRight size={17} />
+              {loading ? "Submitting..." : "Submit Demo Request"}
+              {!loading && <ArrowRight size={17} />}
             </button>
 
             <p className="mt-4 text-center text-xs leading-5 text-slate-500">

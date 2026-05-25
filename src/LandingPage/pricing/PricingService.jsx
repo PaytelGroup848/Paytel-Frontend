@@ -105,13 +105,7 @@ export default function PricingService() {
             Affordable cloud infrastructure, VPS, and ERP hosting solutions built for Indian businesses. No hidden fees, scale as you grow.
           </p>
           <div className="flex flex-wrap justify-center lg:justify-start gap-4">
-            <a
-              href="#cloude-plans"
-              className="group inline-flex items-center gap-2 bg-white text-slate-900 font-semibold px-7 py-3.5 rounded-full shadow-2xl hover:shadow-white/20 hover:scale-105 transition-all duration-300"
-            >
-              View Plans
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </a>
+           
             <a
               href="/contact"
               className="inline-flex items-center gap-2 border border-white/30 text-white font-semibold px-7 py-3.5 rounded-full hover:bg-white/10 backdrop-blur-sm transition-all duration-300 hover:border-white/60"

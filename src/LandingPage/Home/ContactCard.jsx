@@ -37,21 +37,23 @@ export default function PlanHelp() {
                 Our smart Agent is here to help you find the best package for
                 your business.
               </p>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-sm rounded-2xl shadow-xl shadow-indigo-200 hover:shadow-indigo-300/50 transition-all group"
-              >
-                <Headphones size={20} />
-                Talk to Our Agent
-                <ArrowRight
-                  size={18}
-                  className="group-hover:translate-x-1 transition-transform"
-                />
-              </motion.button>
+              <a href="/contact">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-sm rounded-2xl shadow-xl shadow-indigo-200 hover:shadow-indigo-300/50 transition-all group"
+                >
+                  <Headphones size={20} />
+                  Talk to Our Agent
+                  <ArrowRight
+                    size={18}
+                    className="group-hover:translate-x-1 transition-transform"
+                  />
+                </motion.button>
+              </a>
             </motion.div>
 
-            {/* Right Image – cloud data center */}
+            {/* Right Video - Intro Video (wide/landscape format) */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -59,12 +61,19 @@ export default function PlanHelp() {
               viewport={{ once: true }}
               className="relative flex justify-center me-5 lg:justify-end p-6 lg:p-0"
             >
-              <img
-                src="/CloudService.webp"
-                alt="Cloud data center"
-                className="w-full max-w-xs sm:max-w-sm lg:max-w-md object-cover rounded-2xl shadow-md"
-                loading="lazy"
-              />
+              <div className="w-full max-w-xs sm:max-w-sm lg:max-w-md">
+                <video
+                  className="w-full h-auto rounded-2xl shadow-md"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="auto"
+                >
+                  <source src="/intro%20video_1.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
               {/* Decorative blobs */}
               <div className="absolute -top-6 -right-6 w-20 h-20 bg-gradient-to-br from-indigo-400 to-purple-400 rounded-full blur-3xl opacity-40" />
               <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-400 rounded-full blur-3xl opacity-30" />

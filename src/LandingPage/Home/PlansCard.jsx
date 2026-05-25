@@ -42,6 +42,7 @@ export default function PlansCard() {
               <div className="h-full bg-white rounded-2xl p-6 md:p-8 flex flex-col">
                 {/* Badge & Title */}
                 <div>
+                
                   <span className="inline-flex items-center rounded-full bg-teal-50 border border-teal-100 px-3.5 py-1 text-xs font-bold tracking-wide text-teal-700 uppercase">
                     Plans & Pricing
                   </span>
@@ -102,10 +103,15 @@ export default function PlansCard() {
                       <span className="text-sm text-slate-500">/month</span>
                     </div>
                   </div>
-                  <button className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-teal-600 text-white font-semibold px-5 py-3 text-sm transition-colors duration-300 shadow-lg shadow-slate-200">
+                 <a href="/pricing">  
+    
+                   <button className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-teal-600 text-white font-semibold px-5 py-3 text-sm transition-colors duration-300 shadow-lg shadow-slate-200">
                     View All Plans
                     <ChevronRight size={16} />
                   </button>
+                 
+                    </a>
+            
                 </div>
               </div>
             </motion.div>
