@@ -182,7 +182,7 @@ export default function App() {
       <Route path="/education-management-system" element={<EducationPage />} />
       <Route path ="/restaurant-management-system" element={<RmsPage/>}/>A
       <Route path ="/wordpress-hosting" element={<LandingWordpress/>}/>
-      <Route path ="/vps-cloud" element={<Landingvps/>}/>
+      <Route path ="/vps-cloud" element={<VpsLandingpage/>}/>
       <Route path = "/busy-on-cloud" element={<BusyPage/>} />
       <Route path ="/tally-on-cloud" element={<TallyPage/>} />
       <Route path = "/marg-on-cloud" element={<Margpage/>} />
