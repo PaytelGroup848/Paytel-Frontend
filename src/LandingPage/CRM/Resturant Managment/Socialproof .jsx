@@ -41,7 +41,7 @@ const testimonials = [
 
 function StatCard({ icon: Icon, num, suffix, label }) {
   return (
-    <div className="text-center p-6 border-r border-red-200/50 last:border-r-0">
+    <div className="text-center p-6 border-r border-red-200/50 last:border-r-0 mt-0 ">
       <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-100 text-red-600 mb-4">
         <Icon className="w-6 h-6" />
       </div>
@@ -105,17 +105,8 @@ function TestimonialCard({ initials, name, role, quote }) {
 
 export default function SocialProof() {
   return (
-    <section className="bg-white">
+    <section className="bg-white mt-0">
       {/* Stats Strip – dark but with red accents (optional) */}
-      <div className="bg-gradient-to-r from-gray-900 to-gray-800 py-12 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {stats.map((stat, idx) => (
-              <StatCard key={idx} {...stat} />
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* Testimonials Section */}
       <div className="py-20 px-6 lg:px-8 bg-gradient-to-b from-white to-red-50/30">
@@ -129,7 +120,7 @@ export default function SocialProof() {
               Loved by{" "}
               <span className="text-red-600 italic">Restaurant Teams</span>
             </h2>
-            <p className="mt-3 text-gray-500 text-lg">
+            <p className="mt-3 text-white-500 text-lg">
               Trusted by 500+ restaurants across India
             </p>
           </div>

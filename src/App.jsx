@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useAuthStore } from './store/authStore';
 import { api } from './services/api';
 import Dashboard from './pages/dashboard/Home';
+import ScrollToTop from './components/ScrollToTop';
 
 import PricingPage from './LandingPage/pricing/PricingPage';
 import EducationPage from './LandingPage/CRM/Education ERP/EducationPage';
@@ -84,8 +85,6 @@ import SubscriptionsPage from './pages/billing/Subscription';
 import PaymentHistoryPage from "./pages/billing/paymentHistory";
 import ComingSoon from './utils/ComingSoon';
 
-import VpsLandingpage  from "./LandingPage/Services/Vps on Cloud/VpsLandingPage";
-import VpsLandingPage from './LandingPage/Services/Vps on Cloud/VpsLandingPage';
 import VpsLandingpage from './LandingPage/Services/Vps on Cloud/VpsLandingPage';
 
 
@@ -170,7 +169,10 @@ export default function App() {
     };
   }, [clearAuth, setAuth, setAuthBootstrapped]);
 
-  return (
+  return <>     
+               
+                <ScrollToTop />
+
     <Routes>
       {/* Public redirect */}
       <Route path ='/' element={<HomePage/>} />
@@ -281,5 +283,8 @@ export default function App() {
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
-  );
+
+    </>
+            
+  
 }
