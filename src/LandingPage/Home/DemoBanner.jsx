@@ -283,19 +283,7 @@ function LeadCaptureCard() {
             </select>
           </div>
 
-          {/* Optional message field - uncomment if needed */}
-          {/* 
-          <div className="relative group">
-            <textarea
-              name="message"
-              value={formData.message}
-              onChange={handleChange}
-              placeholder="Additional message (optional)"
-              rows="3"
-              className="w-full rounded-xl border border-indigo-400/20 bg-slate-800/50 py-3 pl-4 pr-4 text-base text-white placeholder-slate-400 outline-none backdrop-blur-sm transition-all focus:border-indigo-400 focus:bg-slate-800/70 focus:ring-4 focus:ring-indigo-500/20"
-            />
-          </div>
-          */}
+        
 
           <motion.button
             whileHover={{ y: -2, scale: 1.02 }}
@@ -459,7 +447,7 @@ export default function ProfessionalBanner() {
               <img
                 src="/Cloudedata.svg"
                 alt="Cloudedata"
-                className="h-7 w-auto object-contain transition-transform group-hover:scale-105"
+                className="h-15 w-auto object-contain transition-transform group-hover:scale-105"
                 onError={() => setLogoFailed(true)}
               />
             ) : (

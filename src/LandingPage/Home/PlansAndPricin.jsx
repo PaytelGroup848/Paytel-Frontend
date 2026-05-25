@@ -7,7 +7,7 @@ const plans = [
   {
     id: "tally",
     name: "Tally on Cloud",
-    price: "₹290",
+    price: "₹299",
     period: "/month",
     desc: "Host Tally ERP securely on cloud with multi‑user access, auto backups, and unlimited companies.",
     features: ["Manage Server", "Auto Backup", "Highly Secure", "Unlimited Companies"],

@@ -74,7 +74,7 @@ const productCards = [
     title: 'Marg ERP on Cloud',
     description:
       'Run Marg ERP on our cloud VPS. Access invoices, GST, inventory, and collaborate anywhere.',
-    price: '₹290/month',
+    price: '₹299/month',
     href: '#marg-erp',
     color: 'sky',
   },
@@ -83,7 +83,7 @@ const productCards = [
     title: 'Tally on Cloud',
     description:
       'Host Tally accounting software for secure, anywhere‑access to accounts and data.',
-    price: '₹290/month',
+    price: '₹299/month',
     href: '#tally-cloud',
     color: 'amber',
   },
