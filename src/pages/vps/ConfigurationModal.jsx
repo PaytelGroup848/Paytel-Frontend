@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { metaPixel } from '../../utils/metaPixel';
+import { createPortal } from 'react-dom';
 
 /* ─── useWindowSize hook ─────────────────────────────────────────────────── */
 function useWindowSize() {
@@ -231,10 +232,11 @@ export default function ConfigurationModal({ plan, isOpen, onClose, type }) {
     return true;
   };
 
+
 const handleCheckout = async () => {
   if (!user) {
     toast.error('Please login to continue');
-    navigate('/login', { state: { from: location.pathname } });
+    navigate('/login', { state: { from: "/vps-cloud" } });
     return;
   }
   if (!hostname.trim())  { toast.error('Please enter a hostname'); return; }
@@ -327,25 +329,31 @@ const handleCheckout = async () => {
 
   const S = {
     overlay: {
-      position: 'fixed', inset: 0, zIndex: 9999,
-      background: 'rgba(15,23,42,0.50)',
-      backdropFilter: 'blur(6px)',
-      display: 'flex', alignItems: isMobile ? 'flex-end' : 'center',
-      justifyContent: 'center',
-      padding: isMobile ? 0 : '16px',
-    },
+  position: 'fixed',
+  inset: 0,
+  zIndex: 2147483646, 
+  background: 'rgba(15,23,42,0.50)',
+  backdropFilter: 'blur(6px)',
+  display: 'flex',
+  alignItems: isMobile ? 'flex-end' : 'center',
+  justifyContent: 'center',
+  padding: isMobile ? 0 : '16px',
+},
     shell: {
-      background: '#FFFFFF',
-      borderRadius: isMobile ? '20px 20px 0 0' : '20px',
-      boxShadow: '0 32px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06)',
-      width: '100%',
-      maxWidth: isSmall ? '100%' : '920px',
-      maxHeight: isMobile ? '92vh' : '96vh',
-      display: 'flex',
-      flexDirection: 'column',
-      overflow: 'hidden',
-      fontFamily: "'DM Sans', 'Segoe UI', sans-serif",
-    },
+  position: 'relative',
+  zIndex: 2147483647,
+
+  background: '#FFFFFF',
+  borderRadius: isMobile ? '20px 20px 0 0' : '20px',
+  boxShadow: '0 32px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06)',
+  width: '100%',
+  maxWidth: isSmall ? '100%' : '920px',
+  maxHeight: isMobile ? '92vh' : '96vh',
+  display: 'flex',
+  flexDirection: 'column',
+  overflow: 'hidden',
+  fontFamily: "'DM Sans', 'Segoe UI', sans-serif",
+},
     header: {
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       padding: `${hp}px ${isMobile ? 16 : 28}px ${isMobile ? 12 : 16}px`,
@@ -510,7 +518,7 @@ const handleCheckout = async () => {
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div style={S.overlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div style={S.shell} className="cfg-shell">
 
@@ -706,6 +714,7 @@ const handleCheckout = async () => {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -169,7 +169,7 @@ export default function App() {
   return (
     <Routes>
       {/* Public redirect */}
-      {/* <Route path ='/' element={<HomePage/>} /> */}
+      <Route path ='/' element={<HomePage/>} />
 
       <Route path="/vps-cloud" element={<PublicRoute><VpsPlans/></PublicRoute>} />
       <Route path="/email/plan" element={<PublicRoute><EmailPlansPage /></PublicRoute>} />
