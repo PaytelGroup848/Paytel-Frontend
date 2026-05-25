@@ -44,7 +44,7 @@ const footerLinks = {
     { label: "Tally on Cloud", badge: null , href:"/tally-on-cloud" },
     { label: "Busy on Cloud", badge: null , href:"/busy-on-cloud" },
     { label: "Marg on Cloud", badge: null , href: "/marg-on-cloud" },
-    { label: "Education CRM", badge: "Popular" },
+    { label: "Education CRM", badge: "Popular", href :"/education-management-system"} 
   ],
   Company: [
     { label: "Blog & Resources", badge: null, href :"/cloud-hosting-blog" },
