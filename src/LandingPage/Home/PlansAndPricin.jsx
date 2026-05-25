@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 // Plans data – replace with API call when backend is ready
 const plans = [
@@ -77,13 +78,16 @@ const PlanCard = ({ plan, index }) => (
       </ul>
 
       <button
+     onClick={() => {
+  window.location.href = "/pricing";
+}}
         className={`w-full py-3 rounded-xl font-bold text-sm uppercase tracking-widest transition-all ${
           plan.popular
             ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-300/30 hover:shadow-indigo-400/40"
             : "bg-slate-100 text-slate-700 hover:bg-slate-200"
         }`}
       >
-        Choose {plan.name.split(" ")[0]}
+       Choose {plan.name.split(" ")[0]}
       </button>
     </div>
   </motion.div>

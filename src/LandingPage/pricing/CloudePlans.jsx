@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Check, Sparkles, ArrowRight, Cpu, HardDrive, Users, Server,
 } from "lucide-react";
+import ConfigurationModal from "../../pages/vps/ConfigurationModal";
 
 /* ── Data (unchanged) ───────────────────────────── */
 const pricingData = {
@@ -106,7 +107,14 @@ const Tabs = ({ activeTab, setActiveTab }) => {
 };
 
 /* ── Plan Card (with icons and improved styling) ── */
-const PlanCard = ({ plan, index, formatPrice, isPopular, serviceType }) => {
+const PlanCard = ({
+  plan,
+  index,
+  formatPrice,
+  isPopular,
+  serviceType,
+  onSelectPlan,
+}) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -235,17 +243,38 @@ const PlanCard = ({ plan, index, formatPrice, isPopular, serviceType }) => {
       </div>
 
       {/* CTA Button */}
-      <a
-        href="#"
-        className={`mt-auto w-full flex items-center justify-center gap-2 py-3 px-6 rounded-xl font-semibold text-sm transition-all ${
-          isPopular
-            ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-xl shadow-blue-500/30 hover:shadow-2xl hover:scale-[1.03]"
-            : "bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-700 hover:shadow-md"
-        }`}
-      >
-        {isPopular ? "Get Started Now" : "Buy Now"}
-        <ArrowRight size={16} />
-      </a>
+     <button
+  onClick={() => {
+    if (
+      serviceType === "Linux VPS" ||
+      serviceType === "Windows VPS"
+    ) {
+      onSelectPlan(
+        {
+          id: `${serviceType}-${index}`,
+          name: plan.name,
+          vcpu: plan.vCPU,
+          ram: `${plan.ram} GB`,
+          storage: `${plan.storage} GB SSD`,
+          priceMonthly: plan.monthly
+            ? plan.monthly * 100
+            : (plan.yearly || plan.halfYearly || 0) * 100,
+          portSpeed: "1 Gbps",
+          backups: "Included",
+        },
+        serviceType === "Linux VPS" ? "linux" : "windows"
+      );
+    }
+  }}
+  className={`mt-auto w-full flex items-center justify-center gap-2 py-3 px-6 rounded-xl font-semibold text-sm transition-all ${
+    isPopular
+      ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-xl shadow-blue-500/30 hover:shadow-2xl hover:scale-[1.03]"
+      : "bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-700 hover:shadow-md"
+  }`}
+>
+  {isPopular ? "Get Started Now" : "Buy Now"}
+  <ArrowRight size={16} />
+</button>
     </motion.div>
   );
 };
@@ -253,6 +282,8 @@ const PlanCard = ({ plan, index, formatPrice, isPopular, serviceType }) => {
 /* ── Main Section ──────────────────────────────── */
 export default function CloudePlans() {
   const [activeTab, setActiveTab] = useState("Linux VPS");
+  const [selectedPlan, setSelectedPlan] = useState(null);
+const [selectedType, setSelectedType] = useState("linux");
   const currentData = pricingData[activeTab];
 
   return (
@@ -290,17 +321,29 @@ export default function CloudePlans() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
           >
             {currentData.plans.map((plan, idx) => (
-              <PlanCard
-                key={idx}
-                plan={plan}
-                index={idx}
-                formatPrice={currentData.formatPrice}
-                isPopular={idx === currentData.popular}
-                serviceType={activeTab}
-              />
+             <PlanCard
+  key={idx}
+  plan={plan}
+  index={idx}
+  formatPrice={currentData.formatPrice}
+  isPopular={idx === currentData.popular}
+  serviceType={activeTab}
+  onSelectPlan={(planData, type) => {
+    setSelectedPlan(planData);
+    setSelectedType(type);
+  }}
+/>
             ))}
           </motion.div>
         </AnimatePresence>
+        {selectedPlan && (
+  <ConfigurationModal
+    plan={selectedPlan}
+    isOpen={!!selectedPlan}
+    type={selectedType}
+    onClose={() => setSelectedPlan(null)}
+  />
+)}
       </div>
     </section>
   );

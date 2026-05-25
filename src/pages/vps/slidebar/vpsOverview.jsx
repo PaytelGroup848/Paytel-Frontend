@@ -328,7 +328,7 @@ function Dashboard({ setActive }) {
                 : 'N/A'}
             </span>
           </div>
-          <button onClick={()=>navigate("/vps-cloud")} className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-semibold rounded-lg border border-blue-200 transition-all">
+          <button onClick={()=>navigate("/vps")} className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-semibold rounded-lg border border-blue-200 transition-all">
             <TrendingUp size={14}/> Upgrade
           </button>
         </div>
@@ -362,7 +362,7 @@ function Dashboard({ setActive }) {
             <DetailItem
               label="Current plan"
               value={instance?.planId?.name}
-              action={<button onClick={()=>navigate("/vps-cloud")} className="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md hover:bg-indigo-100">Upgrade</button>}
+              action={<button onClick={()=>navigate("/vps")} className="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md hover:bg-indigo-100">Upgrade</button>}
             />
             <DetailItem label="Expiration date" value={instance?.expiresAt ? new Date(instance.expiresAt).toLocaleDateString() : 'N/A'}/>
             <DetailItem label="CPU core"   value={`${instance?.planId?.vcpu || 1} vCPU`} icon={<Cpu size={12}/>}/>
