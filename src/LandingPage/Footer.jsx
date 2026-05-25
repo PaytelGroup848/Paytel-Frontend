@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { MapPin, Mail, Phone, ChevronRight } from "lucide-react";
 
 /* ─── Social Icons ──────────────────────────────────────────────────── */
@@ -26,34 +27,37 @@ const YouTubeIcon = () => (
   </svg>
 );
 
-/* ─── Data ───────────────────────────────────────────────────────────── */
+const InstagramIcon = () => (
+  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+  </svg>
+);
+
 const footerLinks = {
   "Cloud Hosting": [
-    { label: "VPS Hosting", badge: null },
-    { label: "Linux VPS", badge: null },
-    { label: "Windows VPS", badge: null },
-    { label: "Dedicated Servers", badge: "New" },
-    { label: "Cloud Storage", badge: null },
+    { label: "VPS Hosting", badge: null, href: "/vps-cloud" },
+    { label: "Linux VPS", badge: null , href:"/pricing"},
+    { label: "Windows VPS", badge: null , href:"/pricing" },
+
   ],
   "Cloud ERP": [
-    { label: "Tally on Cloud", badge: null },
-    { label: "Busy on Cloud", badge: null },
-    { label: "Marg on Cloud", badge: null },
+    { label: "Tally on Cloud", badge: null , href:"/tally-on-cloud" },
+    { label: "Busy on Cloud", badge: null , href:"/busy-on-cloud" },
+    { label: "Marg on Cloud", badge: null , href: "/marg-on-cloud" },
     { label: "Education CRM", badge: "Popular" },
   ],
   Company: [
-    { label: "About Cloudedata", badge: null },
-    { label: "Blog & Resources", badge: null },
-    { label: "Pricing Plans", badge: null },
-    { label: "Partner Program", badge: null },
-    { label: "Contact Us", badge: null },
+    { label: "Blog & Resources", badge: null, href :"/cloud-hosting-blog" },
+    { label: "Pricing Plans", badge: null , href:"/pricing" },
+    { label: "Contact Us", badge: null ,href:"/contact" },
   ],
 };
 
 const socialLinks = [
-  { icon: <LinkedInIcon />, label: "LinkedIn", href: "#", color: "hover:bg-[#0077B5]/20 hover:border-[#0077B5]/40 hover:text-[#0077B5]" },
-  { icon: <TwitterIcon />, label: "Twitter / X", href: "#", color: "hover:bg-slate-100/10 hover:border-slate-400/40 hover:text-white" },
-  { icon: <FacebookIcon />, label: "Facebook", href: "#", color: "hover:bg-[#1877F2]/20 hover:border-[#1877F2]/40 hover:text-[#1877F2]" },
+  { icon: <LinkedInIcon />, label: "LinkedIn", href: "https://www.linkedin.com/company/cloude-data", color: "hover:bg-[#0077B5]/20 hover:border-[#0077B5]/40 hover:text-[#0077B5]" },
+  { icon: <TwitterIcon />, label: "Twitter / X", href: "https://x.com/CloudeData", color: "hover:bg-slate-100/10 hover:border-slate-400/40 hover:text-white" },
+  { icon: <FacebookIcon />, label: "Facebook", href: "https://www.facebook.com/Cloudedataa/", color: "hover:bg-[#1877F2]/20 hover:border-[#1877F2]/40 hover:text-[#1877F2]" },
+  { icon: <InstagramIcon />, label: "Instagram", href: "https://www.instagram.com/cloudedata/", color: "hover:bg-pink-500/20 hover:border-pink-500/40 hover:text-pink-400" },
   { icon: <YouTubeIcon />, label: "YouTube", href: "#", color: "hover:bg-[#FF0000]/20 hover:border-[#FF0000]/40 hover:text-[#FF0000]" },
 ];
 
@@ -108,17 +112,20 @@ const FooterLink = ({ label, badge }) => (
   </li>
 );
 
-
-
 /* ─── Main Footer ────────────────────────────────────────────────────── */
 export default function Footer({ logoImg = "/Cloudedata.svg" }) {
+  const legalLinks = [
+    { label: "Privacy Policy", path: "/privacy-policy/" },
+    { label: "Terms of Service", path: "/term-and-conditions/" },
+    { label: "Refund Policy", path: "/refund-policy-cloude/" },
+  ];
+
   return (
     <footer className="relative w-full bg-[#080d14] text-slate-400 overflow-hidden font-[system-ui]">
       {/* Background texture / glows */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-32 left-1/3 w-[600px] h-[600px] bg-blue-600/6 rounded-full blur-[120px]" />
         <div className="absolute -top-16 right-1/4 w-[400px] h-[400px] bg-blue-800/6 rounded-full blur-[100px]" />
-        {/* Subtle grid */}
         <svg className="absolute inset-0 w-full h-full opacity-[0.025]" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -133,7 +140,6 @@ export default function Footer({ logoImg = "/Cloudedata.svg" }) {
       <div className="relative h-px w-full bg-gradient-to-r from-transparent via-blue-500/60 to-transparent" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-0">
-
         {/* Trust badges */}
         <motion.div {...fadeUp(0)} className="flex flex-wrap gap-2 mb-12">
           {trustBadges.map((b) => (
@@ -149,22 +155,20 @@ export default function Footer({ logoImg = "/Cloudedata.svg" }) {
 
         {/* Main grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 pb-12">
-
           {/* Brand column */}
           <motion.div {...fadeUp(0.05)} className="lg:col-span-4 flex flex-col gap-6">
-            {/* Logo */}
-            <a href="/" className="inline-block w-fit">
+            <Link to="/" className="inline-block w-fit group">
               <img
                 src={logoImg}
-                alt="CloudeData"
-                className="h-11 w-auto object-contain brightness-150"
+                alt="CloudData"
+                className="h-16 w-auto max-w-[240px] md:h-[70px] sm:h-14 object-contain brightness-120 group-hover:brightness-150 transition-all duration-300"
                 onError={(e) => {
                   e.target.style.display = "none";
                   e.target.parentElement.innerHTML =
-                    '<span class="text-2xl font-black tracking-tight text-white">Cloude<span class="text-blue-400">Data</span></span>';
+                    '<span class="text-3xl font-black tracking-tight text-white transition-colors duration-300">Cloud<span class="text-blue-500">Data</span></span>';
                 }}
               />
-            </a>
+            </Link>
 
             <p className="text-[13px] leading-relaxed text-slate-400 max-w-xs">
               Enterprise-grade cloud infrastructure powering thousands of Indian businesses — from VPS hosting to ERP on cloud.
@@ -176,6 +180,8 @@ export default function Footer({ logoImg = "/Cloudedata.svg" }) {
                 <a
                   key={label}
                   href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={label}
                   className={`w-9 h-9 flex items-center justify-center rounded-xl border border-slate-700/60 bg-slate-800/50 text-slate-400 transition-all duration-250 ${color}`}
                 >
@@ -238,14 +244,14 @@ export default function Footer({ logoImg = "/Cloudedata.svg" }) {
           {...fadeUp(0.35)}
           className="border-t border-slate-800/70 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[12px] text-slate-500"
         >
-          <p>© {new Date().getFullYear()} CloudeData Technologies Pvt. Ltd. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} CloudData Technologies Pvt. Ltd. All rights reserved.</p>
           <div className="flex items-center gap-1">
-            {["Privacy Policy", "Terms of Service", "Refund Policy", "Sitemap"].map((link, i, arr) => (
-              <span key={link} className="flex items-center gap-1">
-                <a href="#" className="hover:text-blue-400 transition-colors duration-200 px-1">
-                  {link}
-                </a>
-                {i < arr.length - 1 && <span className="text-slate-700">·</span>}
+            {legalLinks.map((link, i, arr) => (
+              <span key={link.label} className="flex items-center gap-1">
+                <Link to={link.path} className="hover:text-blue-400 transition-colors duration-200 px-1 py-0.5">
+                  {link.label}
+                </Link>
+                {i < arr.length - 1 && <span className="text-slate-700 select-none">·</span>}
               </span>
             ))}
           </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, useLocation, useNavigate } from "react-router-dom"; // added useNavigate
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   ChevronDown,
   Menu,
@@ -16,7 +16,9 @@ import {
   IndianRupee,
   ArrowRight,
   LayoutGrid,
+  User,
 } from "lucide-react";
+import { useAuthStore } from "../store/authStore"
 
 /* ───────────────── Mega Menu (Services) ───────────────── */
 const megaMenuSections = [
@@ -53,16 +55,10 @@ const NAV_LINKS = [
   { label: "Contact", href: "/contact", icon: PhoneCall },
 ];
 
-export default function Navbar({
-  logoImg = "/Cloudedata.svg",
-  isLoggedIn = false,
-  userName = "Guest",
-  onLogin,        // optional external handler
-  onSignup,       // optional external handler
-  onLogout,       // optional external handler
-}) {
+export default function Navbar({ logoImg = "/Cloudedata.svg" }) {
   const location = useLocation();
-  const navigate = useNavigate(); // 👈 get navigate function
+  const navigate = useNavigate();
+  const { isAuthenticated, user, logout } = useAuthStore(); // 👈 get auth state & actions
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
@@ -132,24 +128,13 @@ export default function Navbar({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [megaMenuOpen, activeDropdown, authMenuOpen]);
 
-  // Handlers for auth actions (use props if provided, else navigate)
-  const handleLogin = () => {
-    if (onLogin) onLogin();
-    else navigate("/login");
-  };
+  const handleLogin = () => navigate("/login");
+  const handleSignup = () => navigate("/register");
 
-  const handleSignup = () => {
-    if (onSignup) onSignup();
-    else navigate("/register");
-  };
-
-  const handleLogout = () => {
-    if (onLogout) onLogout();
-    else {
-      // default logout: clear local storage and go home
-      localStorage.removeItem("token");
-      navigate("/");
-    }
+  const handleLogout = async () => {
+    await logout();        // clear auth store & tokens
+    navigate("/");         // go home
+    setMobileOpen(false);
   };
 
   const renderDropdown = (items) => (
@@ -181,34 +166,54 @@ export default function Navbar({
     </motion.div>
   );
 
-  // Helper to check active link
   const isActive = (href) => location.pathname === href;
 
-  // Auth buttons
+  // Desktop auth buttons (conditional on login state)
   const renderDesktopAuth = () => {
-    if (isLoggedIn) {
+    if (isAuthenticated) {
       return (
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-red-600 bg-white/60 backdrop-blur-sm rounded-xl border border-red-200/60 shadow-sm hover:shadow-md hover:bg-red-50/80 transition-all duration-200"
-        >
-          <LogOut size={16} />
-          Logout
-        </button>
+        <div className="relative auth-button" ref={authRef}>
+          <button
+            onClick={() => setAuthMenuOpen(!authMenuOpen)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white/60 backdrop-blur-sm rounded-full border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all"
+          >
+            <User size={16} />
+            <span className="max-w-[120px] truncate">{user?.name || user?.email || "Account"}</span>
+            <ChevronDown size={14} className={`transition-transform ${authMenuOpen ? "rotate-180" : ""}`} />
+          </button>
+          <AnimatePresence>
+            {authMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                className="absolute right-0 mt-2 w-48 bg-white/90 backdrop-blur-xl rounded-xl border border-slate-100 shadow-xl overflow-hidden z-50"
+              >
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                >
+                  <LogOut size={16} />
+                  Logout
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       );
     }
     return (
       <div className="flex items-center gap-3">
         <button
           onClick={handleLogin}
-          className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-slate-700 bg-transparent rounded-xl border border-slate-300/70 shadow-sm hover:shadow-md hover:border-indigo-300 hover:text-indigo-600 transition-all duration-200"
+          className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-slate-700 bg-transparent rounded-xl border border-slate-300/70 shadow-sm hover:shadow-md hover:border-indigo-300 hover:text-indigo-600 transition-all"
         >
           <LogIn size={16} />
           Login
         </button>
         <button
           onClick={handleSignup}
-          className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-xl shadow-md shadow-indigo-200/50 hover:shadow-lg hover:from-indigo-700 hover:to-indigo-600 transition-all duration-200"
+          className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-xl shadow-md shadow-indigo-200/50 hover:shadow-lg hover:from-indigo-700 hover:to-indigo-600 transition-all"
         >
           <UserPlus size={16} />
           Sign Up
@@ -502,17 +507,22 @@ export default function Navbar({
 
               {/* Mobile Auth Section */}
               <div className="p-5 border-t border-slate-100 space-y-3">
-                {isLoggedIn ? (
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      setMobileOpen(false);
-                    }}
-                    className="flex items-center justify-center gap-2 w-full py-2.5 text-sm font-medium text-red-600 bg-white rounded-xl border border-red-200 shadow-sm hover:bg-red-50 transition-all"
-                  >
-                    <LogOut size={16} />
-                    Logout
-                  </button>
+                {isAuthenticated ? (
+                  <>
+                    <div className="text-center text-sm text-slate-500 mb-2">
+                      👋 {user?.name || user?.email || "User"}
+                    </div>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setMobileOpen(false);
+                      }}
+                      className="flex items-center justify-center gap-2 w-full py-2.5 text-sm font-medium text-red-600 bg-white rounded-xl border border-red-200 shadow-sm hover:bg-red-50 transition-all"
+                    >
+                      <LogOut size={16} />
+                      Logout
+                    </button>
+                  </>
                 ) : (
                   <>
                     <button

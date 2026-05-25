@@ -199,6 +199,9 @@ export default function App() {
       <Route path = "/term-and-conditions" element={<TermsOfService/>} />
       <Route path ="/about-us" element={<AboutPage />} />
      <Route path="/c-panel" element={<CPanelPage/>} />
+     <Route path = "/privacy-policy" element={<PrivacyPolicy/>} />
+     <Route path ="/refund-policy-cloude " element={<RefundPolicy/>} />
+     <Route path ="/term-and-conditions" element={<TermsOfService/>}/>
 
 
 
