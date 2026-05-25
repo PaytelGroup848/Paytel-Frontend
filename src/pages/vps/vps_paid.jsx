@@ -28,7 +28,7 @@ const VPSDashboard = () => {
       const subs = Array.isArray(subscriptions) ? subscriptions : [];
       const hasVps = subs.some(s => s.type === 'vps' && s.status === 'Active');
       if (!hasVps) {
-        navigate('/vps-cloud', { replace: true });
+        navigate('/vps', { replace: true });
       }
     }
   }, [subscriptions, loadingSubs, navigate]);
@@ -122,7 +122,7 @@ const OSIcon = ({ os }) => {
           
 
           <button
-          onClick={() => navigate('/vps-cloud')}
+          onClick={() => navigate('/vps')}
            className="flex cursor-pointer items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all active:scale-95">
             <Plus size={18} /> New Server
           </button>
@@ -140,7 +140,7 @@ const OSIcon = ({ os }) => {
               <h3 className="text-lg font-bold">No instances found</h3>
               <p className="text-textMuted">Deploy your first VPS in minutes.</p>
             </div>
-            <Button variant="primary" onClick={() => navigate('/vps-cloud')}>Deploy Now</Button>
+            <Button variant="primary" onClick={() => navigate('/vps')}>Deploy Now</Button>
           </div>
         ) : (
           filteredInstances?.map((instance) => {

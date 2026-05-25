@@ -44,7 +44,7 @@ const megaMenuSections = [
 /* ── Software CRM dropdown ── */
 const softwareCRMItems = [
   { label: "Education ERP", href: "/education-management-system", tag: "New" },
-  { label: "Restaurant Management ERP", href: "/software/restaurant-erp" },
+  { label: "Restaurant Management ERP", href: "/restaurant-management-system" },
 ];
 
 /* ── Main nav links ── */

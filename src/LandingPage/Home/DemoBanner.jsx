@@ -31,7 +31,7 @@ const NAV_LINKS = [
     label: 'Software CRM',
     dropdown: [
       { label: 'Education CRM', href: '/education-management-system' },
-      { label: 'Restaurant Management', href: '/software/restaurant-erp' },
+      { label: 'Restaurant Management', href: '/restaurant-management-system' },
     ]
   },
   { label: 'Blog', href: '/cloud-hosting-blog', external: true },

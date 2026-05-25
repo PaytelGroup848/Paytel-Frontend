@@ -171,7 +171,7 @@ export default function App() {
       {/* Public redirect */}
       <Route path ='/' element={<HomePage/>} />
 
-      <Route path="/vps-cloud" element={<PublicRoute><VpsPlans/></PublicRoute>} />
+      <Route path="/vps" element={<PublicRoute><VpsPlans/></PublicRoute>} />
       <Route path="/email/plan" element={<PublicRoute><EmailPlansPage /></PublicRoute>} />
       <Route path="/wordpress-hosting" element={<PublicRoute><Wordpress_Page /></PublicRoute>} />
       <Route path="/php-hosting" element={<PublicRoute><PhpPlans /></PublicRoute>} />
@@ -180,7 +180,7 @@ export default function App() {
 
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/education-management-system" element={<EducationPage />} />
-      <Route path ="/software/restaurant-erp" element={<RmsPage/>}/>A
+      <Route path ="/restaurant-management-system" element={<RmsPage/>}/>A
       <Route path ="/wordpress-hosting" element={<LandingWordpress/>}/>
       <Route path ="/vps-cloud" element={<Landingvps/>}/>
       <Route path = "/busy-on-cloud" element={<BusyPage/>} />

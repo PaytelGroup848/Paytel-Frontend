@@ -236,7 +236,7 @@ export default function ConfigurationModal({ plan, isOpen, onClose, type }) {
 const handleCheckout = async () => {
   if (!user) {
     toast.error('Please login to continue');
-    navigate('/login', { state: { from: "/vps-cloud" } });
+    navigate('/login', { state: { from: "/vps" } });
     return;
   }
   if (!hostname.trim())  { toast.error('Please enter a hostname'); return; }
