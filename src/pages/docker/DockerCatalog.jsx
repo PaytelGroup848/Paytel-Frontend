@@ -221,7 +221,6 @@ export default function DockerCatalog({ instanceId, onContainerCreated }) {
         payload.commands = image.config.commands;
       }
       
-      console.log('Deploying container:', payload);
       
       const response = await api.post(`/vps/instances/${instanceId}/docker/containers`, payload);
       

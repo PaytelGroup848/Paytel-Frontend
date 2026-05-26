@@ -100,7 +100,6 @@ const OrderRow = ({ order, onCheckDns, refetchOrders }) => {
   const mailboxesUsed = mailboxesCount?.used || 0;
   const mailboxesTotal = order.mailboxCount || order.planId?.maxMailboxes || 1;
 
-  console.log('Mailboxes count:', { mailboxesUsed, mailboxesTotal });
 
   // Status badge
   const getStatusBadge = () => {

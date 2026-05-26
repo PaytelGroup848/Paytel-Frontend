@@ -185,7 +185,6 @@ const TENURES = [
 
 /* ─── Component ──────────────────────────────────────────────────────────── */
 export default function ConfigurationModal({ plan, isOpen, onClose, type }) {
-  console.log('ConfigurationModal received plan:', plan);
   const { width } = useWindowSize();
   const isMobile  = width < 640;
   const isTablet  = width >= 640 && width < 900;
@@ -275,7 +274,6 @@ const handleCheckout = async () => {
       userEmail: user?.email,
     });
     
-    console.log(' Order created:', orderData);
     
     const options = {
       key: orderData.keyId,

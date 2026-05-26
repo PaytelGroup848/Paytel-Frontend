@@ -274,8 +274,7 @@ const OverviewTab = ({ instance }) => {
 const FileManagerTab = ({ instance }) => {
   const instanceId = instance?.id || instance?._id;
   
-  console.log('FileManagerTab - instance:', instance);
-  console.log('FileManagerTab - instanceId:', instanceId);
+ 
   
   if (!instanceId) {
     return (
@@ -306,12 +305,7 @@ const FileManagerTab = ({ instance }) => {
   const { mutate: uploadFile } = useUploadPhpFile();
   const { mutate: downloadFile } = useDownloadPhpFile();
 
-  useEffect(() => {
-    if (files && files.length > 0) {
-      console.log('Files structure:', files);
-      console.log('First file path:', files[0]?.path);
-    }
-  }, [files]);
+ 
 
   useEffect(() => {
     if (fileContentData?.content) {
@@ -432,13 +426,13 @@ const FileManagerTab = ({ instance }) => {
   };
 
   const handleDownload = (file) => {
-    console.log('Download clicked for file:', file);
+   
     if (!file || !file.path) {
       console.error('Invalid file object:', file);
       toast.error('Invalid file path');
       return;
     }
-    console.log('Downloading file with path:', file.path);
+
     downloadFile({ id: instanceId, path: file.path });
   };
 

@@ -26,7 +26,6 @@ export const useLogin = () =>
 export const useRegister = () =>
   useMutation({
     mutationFn: async (payload) => {
-      console.log("REGISTER PAYLOAD:", payload);
       const res = await api.post('/auth/register', payload);
       return res.data?.data;
     },

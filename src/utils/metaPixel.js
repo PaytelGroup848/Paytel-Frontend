@@ -6,7 +6,7 @@ export const metaPixel = {
   pageView: () => {
     if (typeof fbq !== 'undefined') {
       fbq('track', 'PageView');
-      console.log(' Meta Pixel: PageView tracked');
+    
     }
   },
 
@@ -14,7 +14,7 @@ export const metaPixel = {
   initiateCheckout: () => {
     if (typeof fbq !== 'undefined') {
       fbq('track', 'InitiateCheckout');
-      console.log('Meta Pixel: InitiateCheckout tracked');
+    
     }
   },
 
@@ -25,7 +25,7 @@ export const metaPixel = {
         value: parseFloat(value),
         currency: currency
       });
-      console.log(` Meta Pixel: Purchase tracked - ₹${value} ${currency}`);
+     
     }
   },
 
@@ -38,7 +38,7 @@ export const metaPixel = {
         value: parseFloat(price),
         currency: 'INR'
       });
-      console.log(` Meta Pixel: AddToCart tracked - ${planName}`);
+     
     }
   }
 };

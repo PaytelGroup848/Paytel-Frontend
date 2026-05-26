@@ -62,7 +62,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
       label: 'Cloud VPS',
       icon: Cloud,
       children: [
-        { label: 'VPS Plans', to: '/vps-cloud' },
+        { label: 'VPS Plans', to: '/vps' },
         ...(hasVps ? [{ label: 'VPS Dashboard', to: '/vps/paid' }] : []),
       ].filter(Boolean),
     },
@@ -97,8 +97,8 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
 
     ...(isSuperAdmin ? [{ label: 'SuperAdmin', to: '/superadmin/servers', icon: Zap }] : []),
     { label: 'Settings', to: '/settings', icon: Settings },
-    // { label: 'Support', to: '/Support', icon: LifeBuoy },
-    { label: 'Support', to: '/comingsoon', icon: LifeBuoy },
+    { label: 'Support', to: '/Support', icon: LifeBuoy },
+    // { label: 'Support', to: '/comingsoon', icon: LifeBuoy },
   ];
   const handleMouseEnter = () => {
     if (isDesktop) setHovered(true);

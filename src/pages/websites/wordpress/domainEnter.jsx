@@ -13,7 +13,7 @@ export default function DomainEnter() {
 
   const dnsData = verifyDns?.data;
 
-  console.log("this is my verifydns", verifyDns?.data)
+
 
   const [domain, setDomain] = useState('');
   const [createdInstanceId, setCreatedInstanceId] = useState('');

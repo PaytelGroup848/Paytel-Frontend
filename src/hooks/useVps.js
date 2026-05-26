@@ -27,8 +27,7 @@ export const useCalculatePrice = () =>
 export const useCreateVpsOrder = () =>
   useMutation({
     mutationFn: async (data) => {
-      console.log('🔍 useCreateVpsOrder received data:', data);
-      
+     
       //  Ensure payload has all required fields
       const payload = {
         planId: data.planId,

@@ -23,6 +23,7 @@ import {
   Lock,
   TrendingUp
 } from 'lucide-react';
+import { useAuthStore } from '../../store/authStore';
 
 const NAV_LINKS = [
   { label: 'Pricing', href: '/pricing' },
@@ -357,6 +358,7 @@ function DropdownMenu({ item, closeMenu }) {
 export default function ProfessionalBanner() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [logoFailed, setLogoFailed] = useState(false);
+  const { isAuthenticated } = useAuthStore();
 
   const closeMenu = () => setMobileOpen(false);
 
@@ -482,6 +484,7 @@ export default function ProfessionalBanner() {
             })}
           </div>
 
+
           <div className="flex items-center gap-3">
             <a
               href="tel:9311472355"
@@ -490,6 +493,18 @@ export default function ProfessionalBanner() {
               <Phone size={16} />
               <span>9311472355</span>
             </a>
+
+            {isAuthenticated === true ?(
+              <motion.a
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              href="/home"
+              className="hidden rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-5 py-2 text-sm font-medium text-white shadow-lg shadow-blue-500/40 transition-all hover:shadow-xl hover:shadow-blue-500/50 md:block"
+            >
+              Dashboard
+            </motion.a>
+            ):(
+              <>
 
             <a
               href="/login"
@@ -506,6 +521,8 @@ export default function ProfessionalBanner() {
             >
               Sign Up
             </motion.a>
+            </>
+            )}
 
             <button
               type="button"
@@ -665,7 +682,7 @@ export default function ProfessionalBanner() {
                   Starting From
                 </span>
                 <div className="mt-2 flex items-baseline gap-1">
-                  <span className="text-4xl font-semibold tracking-tight text-white">₹290</span>
+                  <span className="text-4xl font-semibold tracking-tight text-white">₹299</span>
                   <span className="text-base font-normal text-slate-300">/user/mo</span>
                 </div>
               </div>
