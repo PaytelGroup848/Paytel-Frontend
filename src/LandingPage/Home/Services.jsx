@@ -1,48 +1,48 @@
 import { motion } from "framer-motion";
 import {
-  Cloud,
   Server,
-  HardDrive,
-  Shield,
-  Database,
+  Globe,
+  Code,
+  Mail,
   LifeBuoy,
+  Shield,
   ArrowRight,
 } from "lucide-react";
 
 const services = [
   {
-    title: "Tally on Cloud Hosting",
-    desc: "Run Tally ERP remotely with high speed, 24/7 access, and automatic backups. Perfect for accountants and SMEs.",
-    icon: Cloud,
-    gradient: "from-blue-500 to-cyan-500",
-  },
-  {
-    title: "Cloud Servers",
-    desc: "High‑performance virtual servers with NVMe storage, dedicated IPs, and root access for demanding apps.",
-    icon: Server,
-    gradient: "from-emerald-500 to-teal-500",
-  },
-  {
     title: "VPS Hosting",
-    desc: "Dedicated virtual private servers with full control, scalable resources, and DDoS protection.",
-    icon: HardDrive,
+    desc: "Dedicated virtual private servers with full root access, scalable resources, and enterprise‑grade DDoS protection. Ideal for growing businesses and high‑traffic applications.",
+    icon: Server,
     gradient: "from-purple-500 to-pink-500",
   },
   {
-    title: "Shared Hosting",
-    desc: "Affordable, easy‑to‑use hosting for small websites and blogs, with cPanel and one‑click installs.",
-    icon: Database,
+    title: "WordPress & cPanel Hosting",
+    desc: "Optimized WordPress hosting with cPanel control panel, one‑click installer, free SSL, and automatic updates. Perfect for blogs, portfolios, and business websites.",
+    icon: Globe,
+    gradient: "from-sky-500 to-indigo-600",
+  },
+  {
+    title: "PHP Hosting",
+    desc: "High‑performance PHP hosting with support for PHP 8.x, MySQL, and easy deployment. Built for developers and dynamic web applications.",
+    icon: Code,
     gradient: "from-amber-500 to-orange-500",
   },
   {
+    title: "Business Email Hosting",
+    desc: "Professional email hosting with your own domain, advanced spam protection, and large mailboxes. Trusted communication for your brand.",
+    icon: Mail,
+    gradient: "from-emerald-500 to-teal-500",
+  },
+  {
     title: "Managed Cloud Services",
-    desc: "Let our experts handle setup, monitoring, and maintenance of your cloud infrastructure.",
+    desc: "Let our experts handle setup, monitoring, and maintenance of your cloud infrastructure. Focus on your business while we manage the tech.",
     icon: LifeBuoy,
     gradient: "from-indigo-500 to-blue-600",
   },
   {
     title: "Data Backup & Disaster Recovery",
-    desc: "Automated backups, snapshots, and recovery plans to keep your business safe from data loss.",
+    desc: "Automated backups, snapshots, and recovery plans to keep your business safe from data loss. Restore with confidence in minutes.",
     icon: Shield,
     gradient: "from-red-500 to-pink-600",
   },
@@ -56,7 +56,7 @@ const ServiceCard = ({ service, index }) => (
     viewport={{ once: true }}
     className="group relative bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.25)] hover:shadow-[0_12px_40px_rgba(79,70,229,0.3)] transition-all duration-300 overflow-hidden flex flex-col"
   >
-    {/* Gradient accent top – shines on dark */}
+    {/* Gradient accent top */}
     <div className={`h-1.5 w-full bg-gradient-to-r ${service.gradient}`} />
     <div className="p-7 flex flex-col flex-1">
       <div className={`w-14 h-14 bg-gradient-to-br ${service.gradient} rounded-2xl flex items-center justify-center text-white shadow-lg mb-5 group-hover:scale-110 transition-transform`}>
@@ -69,9 +69,7 @@ const ServiceCard = ({ service, index }) => (
         {service.desc}
       </p>
       <div className="mt-5 pt-4 border-t border-white/10">
-        <span className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-400 group-hover:gap-2.5 transition-all">
-          Learn more <ArrowRight size={14} />
-        </span>
+      
       </div>
     </div>
   </motion.div>
@@ -96,15 +94,12 @@ export default function Services() {
           className="text-center max-w-4xl mx-auto mb-14"
         >
           <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-5 tracking-tight">
-            Our Main Services
+            Our Core Services
           </h2>
           <p className="text-base md:text-lg text-slate-300 leading-relaxed font-medium">
-            We offer safe and scalable cloud solutions that are specifically designed
-            for businesses in India. Our services include Tally on Cloud Hosting for
-            remote accounting, Cloud Servers for high‑performance applications, VPS
-            Hosting for dedicated hosting, Shared Hosting for websites, Managed Cloud
-            Services for cloud setup and management, and Data Backup & Disaster Recovery
-            for safeguarding your important business data.
+            We provide enterprise‑grade cloud solutions tailored for Indian businesses. 
+            From powerful VPS hosting to managed cloud services and secure business email, 
+            every solution is built for performance, reliability, and scalability.
           </p>
         </motion.div>
 
