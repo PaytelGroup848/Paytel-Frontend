@@ -62,7 +62,7 @@ import SnapShot from './pages/vps/slidebar/SnapShot';
 import OSPanel from './pages/vps/slidebar/Os_panel';
 import VpsSettings from "./pages/vps/slidebar/setting";
 import firewall from "./pages/vps/slidebar/security/firewall";
-import GetHelp from "./pages/vps/slidebar/support/GetHelp";
+import SupportPage from "./pages/support/Support";
 import AnalyticsPage from './pages/wordpress/AnalyticsPage';
 import BackupsPage from './pages/wordpress/BackupsPage';
 import { useMe } from "./hooks/useAuth";
@@ -246,7 +246,7 @@ export default function App() {
           <Route path="vps/backup/snapshot" element={<SnapShot />} />
           <Route path="/vps/OSPanel" element={<OSPanel />} />
           <Route path="/vps/setting" element={<VpsSettings />} />
-          <Route path="/Support" element={<GetHelp />} />
+          <Route path="/support" element={<SupportPage/>} />
           <Route path="/vps/:id/docker" element={<Docker />} />
           <Route path="/vps/security/firewall" element={<firewall />} />
 
