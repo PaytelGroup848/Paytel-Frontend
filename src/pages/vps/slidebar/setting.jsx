@@ -69,7 +69,7 @@ export default function VpsSettings() {
   const [activeTab, setActiveTab] = useState("settings"); // "settings", "ip", "ssh"
  const { id } = useParams();
   const { data: instance, isLoading: isInstanceLoading } = useVpsInstance(id);
-      console.log("THIS IS MY INSTANCE", instance)
+     
 
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8">

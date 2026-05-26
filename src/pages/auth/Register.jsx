@@ -130,7 +130,6 @@ export default function Register() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    console.log("FORM DATA:", form);
 
     const nextErrors = {};
 

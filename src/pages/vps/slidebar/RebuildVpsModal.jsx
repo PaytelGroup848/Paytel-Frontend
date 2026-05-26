@@ -362,16 +362,12 @@ export default function RebuildVpsModal({ isOpen, onClose, instance, onRebuildCo
   const rebuildVps = useRebuildVps();
 
   const osType = instance?.planId?.type
- {console.log("this is my type", osType)}
 
   const handleNext = () => setStep(step + 1);
   const handleBack = () => setStep(step - 1);
 
   const handleConfirmRebuild = async () => {
-  // Debug: Log what we have
-  console.log('Instance object:', instance);
-  console.log('Instance id:', instance?.id);
-  console.log('Instance _id:', instance?._id);
+  
   
   // Use id field (which exists) instead of _id
   const instanceId = instance?.id || instance?._id;
@@ -408,7 +404,6 @@ export default function RebuildVpsModal({ isOpen, onClose, instance, onRebuildCo
       confirmPassword: confirmPassword
     };
     
-    console.log('Rebuilding VPS with data:', rebuildData);
     
     await rebuildVps?.mutateAsync(rebuildData);
     

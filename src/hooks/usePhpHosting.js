@@ -184,7 +184,7 @@ export const useDownloadPhpFile = () =>
         throw new Error('File path is required');
       }
       
-      console.log('[Hook] Downloading:', { id, path });
+    
       
       const response = await api.get(`/php/instances/${id}/files/download`, {
         params: { path: path },

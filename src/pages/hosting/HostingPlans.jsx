@@ -56,7 +56,6 @@ export default function HostingPlans() {
   }
 
   const list = Array.isArray(plans.data) ? plans.data : [];
-  console.log("PLANS RESPONSE:", list);
   const bySlug = Object.fromEntries(list.map((p) => [p.slug, p]));
 
   const starter = bySlug.starter || list[0];

@@ -76,7 +76,6 @@ const OSIcon = ({ os }) => {
     inst.ip?.includes(search)
   );
 
-  // console.log("this is my vps paid",filteredInstances )
 
 
   // Redirect Function
