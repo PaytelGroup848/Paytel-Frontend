@@ -1,4 +1,3 @@
-// src/components/TicketTable.jsx
 import React from 'react';
 
 const TicketTable = ({ tickets, onReplyClick, onRaiseTicketClick }) => {

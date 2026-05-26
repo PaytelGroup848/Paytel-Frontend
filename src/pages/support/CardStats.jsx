@@ -1,4 +1,3 @@
-// src/components/CardStats.jsx
 import React from 'react';
 
 const CardStats = ({ tickets }) => {
