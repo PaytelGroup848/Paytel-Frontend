@@ -682,7 +682,7 @@ export default function ProfessionalBanner() {
                   Starting From
                 </span>
                 <div className="mt-2 flex items-baseline gap-1">
-                  <span className="text-4xl font-semibold tracking-tight text-white">₹290</span>
+                  <span className="text-4xl font-semibold tracking-tight text-white">₹299</span>
                   <span className="text-base font-normal text-slate-300">/user/mo</span>
                 </div>
               </div>
