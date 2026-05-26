@@ -35,21 +35,20 @@ const InstagramIcon = () => (
 
 const footerLinks = {
   "Cloud Hosting": [
-    { label: "VPS Hosting", badge: null, href: "/vps-cloud" },
-    { label: "Linux VPS", badge: null , href:"/pricing"},
-    { label: "Windows VPS", badge: null , href:"/pricing" },
-
+    { label: "VPS Hosting", href: "/vps-cloud" },
+    { label: "Linux VPS", href: "/pricing" },
+    { label: "Windows VPS", href: "/pricing" },
   ],
   "Cloud ERP": [
-    { label: "Tally on Cloud", badge: null , href:"/tally-on-cloud" },
-    { label: "Busy on Cloud", badge: null , href:"/busy-on-cloud" },
-    { label: "Marg on Cloud", badge: null , href: "/marg-on-cloud" },
-    { label: "Education CRM", badge: "Popular", href :"/education-management-system"} 
+    { label: "Tally on Cloud", href: "/tally-on-cloud" },
+    { label: "Busy on Cloud", href: "/busy-on-cloud" },
+    { label: "Marg on Cloud", href: "/marg-on-cloud" },
+    { label: "Education CRM", badge: "Popular", href: "/education-management-system" },
   ],
   Company: [
-    { label: "Blog & Resources", badge: null, href :"/cloud-hosting-blog" },
-    { label: "Pricing Plans", badge: null , href:"/pricing" },
-    { label: "Contact Us", badge: null ,href:"/contact" },
+    { label: "Blog & Resources", href: "/cloud-hosting-blog" },
+    { label: "Pricing Plans", href: "/pricing" },
+    { label: "Contact Us", href: "/contact" },
   ],
 };
 
@@ -58,7 +57,7 @@ const socialLinks = [
   { icon: <TwitterIcon />, label: "Twitter / X", href: "https://x.com/CloudeData", color: "hover:bg-slate-100/10 hover:border-slate-400/40 hover:text-white" },
   { icon: <FacebookIcon />, label: "Facebook", href: "https://www.facebook.com/Cloudedataa/", color: "hover:bg-[#1877F2]/20 hover:border-[#1877F2]/40 hover:text-[#1877F2]" },
   { icon: <InstagramIcon />, label: "Instagram", href: "https://www.instagram.com/cloudedata/", color: "hover:bg-pink-500/20 hover:border-pink-500/40 hover:text-pink-400" },
-  { icon: <YouTubeIcon />, label: "YouTube", href: "#", color: "hover:bg-[#FF0000]/20 hover:border-[#FF0000]/40 hover:text-[#FF0000]" },
+  { icon: <YouTubeIcon />, label: "YouTube", href: "https://www.youtube.com/@Cloudedata", color: "hover:bg-[#FF0000]/20 hover:border-[#FF0000]/40 hover:text-[#FF0000]" },
 ];
 
 const trustBadges = [
@@ -90,10 +89,10 @@ const SectionHeading = ({ children }) => (
   </h3>
 );
 
-const FooterLink = ({ label, badge }) => (
+const FooterLink = ({ label, badge, href }) => (
   <li>
-    <a
-      href="#"
+    <Link
+      to={href}
       className="group flex items-center justify-between text-[13px] text-slate-400 hover:text-white transition-colors duration-200 py-[3px]"
     >
       <span className="flex items-center gap-1.5">
@@ -108,7 +107,7 @@ const FooterLink = ({ label, badge }) => (
           {badge}
         </span>
       )}
-    </a>
+    </Link>
   </li>
 );
 
