@@ -17,8 +17,10 @@ import {
   ArrowRight,
   LayoutGrid,
   User,
+  Code2,
 } from "lucide-react";
 import { useAuthStore } from "../store/authStore"
+
 
 /* ───────────────── Mega Menu (Services) ───────────────── */
 const megaMenuSections = [
@@ -41,13 +43,17 @@ const megaMenuSections = [
       { label: "VPS on Cloud", href: "/vps-cloud" },
     ],
   },
+  {
+    title: "Software CRM",
+    icon: Code2,
+    items: [
+      { label: "Education ERP", href: "/education-management-system" },
+      { label: "Restaurant Managment System", href: "/restaurant-management-system" },
+    ],
+  },
 ];
 
-/* ── Software CRM dropdown ── */
-const softwareCRMItems = [
-  { label: "Education ERP", href: "/education-management-system", tag: "New" },
-  { label: "Restaurant Management ERP", href: "/restaurant-management-system" },
-];
+
 
 /* ── Main nav links ── */
 const NAV_LINKS = [
@@ -107,14 +113,7 @@ export default function Navbar({ logoImg = "/Cloudedata.svg" }) {
       ) {
         setMegaMenuOpen(false);
       }
-      if (
-        activeDropdown === "Software CRM" &&
-        softwareDropdownRef.current &&
-        !softwareDropdownRef.current.contains(event.target) &&
-        !event.target.closest(".software-crm-button")
-      ) {
-        setActiveDropdown(null);
-      }
+      
       if (
         authMenuOpen &&
         authRef.current &&
@@ -259,33 +258,7 @@ export default function Navbar({ logoImg = "/Cloudedata.svg" }) {
                     Pricing
                   </Link>
 
-                  {/* Software CRM */}
-                  <div
-                    className="relative software-crm-button"
-                    ref={softwareDropdownRef}
-                    onMouseEnter={() => setActiveDropdown("Software CRM")}
-                    onMouseLeave={() => setActiveDropdown(null)}
-                  >
-                    <button
-                      className={`flex items-center gap-1.5 px-5 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
-                        activeDropdown === "Software CRM"
-                          ? "text-indigo-600 bg-white/60 shadow-sm"
-                          : "text-slate-600 hover:text-indigo-600 hover:bg-slate-50/80"
-                      }`}
-                    >
-                      <Code size={15} />
-                      Software CRM
-                      <ChevronDown
-                        size={13}
-                        className={`transition-transform duration-200 ${
-                          activeDropdown === "Software CRM" ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
-                    <AnimatePresence>
-                      {activeDropdown === "Software CRM" && renderDropdown(softwareCRMItems)}
-                    </AnimatePresence>
-                  </div>
+                  
 
                   {/* Services Mega Menu */}
                   <div className="relative services-button">
@@ -443,25 +416,7 @@ export default function Navbar({ logoImg = "/Cloudedata.svg" }) {
                   Pricing
                 </Link>
 
-                <div>
-                  <h4 className="text-sm font-semibold text-indigo-600 mb-2 flex items-center gap-2">
-                    <Code size={14} />
-                    Software CRM
-                  </h4>
-                  <div className="space-y-2 pl-6">
-                    {softwareCRMItems.map((item) => (
-                      <Link
-                        key={item.label}
-                        to={item.href}
-                        onClick={() => setMobileOpen(false)}
-                        className="flex justify-between items-center text-sm text-slate-600 hover:text-indigo-600 transition py-1"
-                      >
-                        {item.label}
-                        {item.tag && <span className="text-[10px] bg-indigo-50 text-indigo-600 px-2 rounded-full">{item.tag}</span>}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
+             
 
                 <div className="space-y-5">
                   {megaMenuSections.map((section, idx) => (
