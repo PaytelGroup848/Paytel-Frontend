@@ -6,7 +6,7 @@ import {
   FolderOpen, 
   Globe, 
   Database, 
-  Cpu, 
+  Cpu,
   Activity, 
   AlertCircle, 
   ArrowLeft,
@@ -55,6 +55,7 @@ import Badge from '../../../components/ui/Badge';
 import Button from '../../../components/ui/Button';
 import { LuFilePen } from "react-icons/lu";
 
+// ---------- Sidebar Item ----------
 const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
   <motion.button
     onClick={onClick}
@@ -71,6 +72,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
   </motion.button>
 );
 
+// ---------- Stat Card ----------
 const StatCard = ({ icon: Icon, label, value, action, iconBg }) => (
   <motion.div
     initial={{ opacity: 0, y: 12 }}
@@ -88,7 +90,7 @@ const StatCard = ({ icon: Icon, label, value, action, iconBg }) => (
   </motion.div>
 );
 
-// Modern Modal Frame
+// ---------- ENLARGED MODAL (Professional) ----------
 const Modal = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
   return (
@@ -106,21 +108,24 @@ const Modal = ({ isOpen, onClose, title, children }) => {
           animate={{ scale: 1, y: 0, opacity: 1 }}
           exit={{ scale: 0.95, y: 10, opacity: 0 }}
           transition={{ type: "spring", damping: 25 }}
-          className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-100 relative z-10 overflow-hidden"
+          className="bg-white rounded-2xl max-w-6xl w-full shadow-2xl border border-slate-100 relative z-10 overflow-hidden"
         >
-          <div className="flex items-center justify-between px-6 py-4 bg-slate-50 border-b border-slate-100">
-            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">{title}</h3>
-            <button onClick={onClose} className="p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
-              <X size={16} />
+          <div className="flex items-center justify-between px-8 py-5 bg-slate-50 border-b border-slate-100">
+            <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">{title}</h3>
+            <button onClick={onClose} className="p-2 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
+              <X size={20} />
             </button>
           </div>
-          <div className="p-6 overflow-y-auto max-h-[calc(100vh-10rem)]">{children}</div>
+          <div className="p-8 overflow-y-auto max-h-[calc(100vh-8rem)]">
+            {children}
+          </div>
         </motion.div>
       </div>
     </AnimatePresence>
   );
 };
 
+// ---------- Overview Tab ----------
 const OverviewTab = ({ instance }) => {
   const deleteInstance = useDeletePhpInstance();
   const suspendInstance = useSuspendPhpInstance();
@@ -219,7 +224,7 @@ const OverviewTab = ({ instance }) => {
                 <Loader2 size={14} className="animate-spin text-indigo-600" /> Fetching secure metrics...
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 <div className="p-4 bg-slate-50/70 border border-slate-100 rounded-xl relative group">
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">DB Name</p>
                   <p className="font-mono text-xs font-bold text-slate-800 mt-1 truncate select-all pr-6">{credentials?.dbName || instance.dbName || 'N/A'}</p>
@@ -252,7 +257,6 @@ const OverviewTab = ({ instance }) => {
         </motion.div>
       )}
 
-      {/* Dangerous Management Actions */}
       <div className="rounded-2xl border border-red-100 bg-red-50/20 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h4 className="text-xs font-bold uppercase tracking-wider text-red-950">Critical Server Operations</h4>
@@ -271,10 +275,9 @@ const OverviewTab = ({ instance }) => {
   );
 };
 
+// ---------- File Manager Tab (Enhanced UI, Modal enlarged) ----------
 const FileManagerTab = ({ instance }) => {
   const instanceId = instance?.id || instance?._id;
-  
- 
   
   if (!instanceId) {
     return (
@@ -304,8 +307,6 @@ const FileManagerTab = ({ instance }) => {
   const { mutate: createFolder } = useCreatePhpFolder();
   const { mutate: uploadFile } = useUploadPhpFile();
   const { mutate: downloadFile } = useDownloadPhpFile();
-
- 
 
   useEffect(() => {
     if (fileContentData?.content) {
@@ -426,13 +427,10 @@ const FileManagerTab = ({ instance }) => {
   };
 
   const handleDownload = (file) => {
-   
     if (!file || !file.path) {
-      console.error('Invalid file object:', file);
       toast.error('Invalid file path');
       return;
     }
-
     downloadFile({ id: instanceId, path: file.path });
   };
 
@@ -441,8 +439,6 @@ const FileManagerTab = ({ instance }) => {
   return (
     <>
       <motion.div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
-        
-        {/* Workspace Toolbar Controls */}
         <div className="p-5 border-b border-slate-100 bg-slate-50/50">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-3 min-w-0">
@@ -456,8 +452,6 @@ const FileManagerTab = ({ instance }) => {
                 <p className="text-[11px] font-mono text-slate-400 truncate mt-0.5">/var/www/{instance.domain}{currentPath || '/'}</p>
               </div>
             </div>
-            
-            {/* Context Actions */}
             <div className="flex flex-wrap gap-2 shrink-0">
               <input type="file" ref={setFileInputRef} onChange={handleFileUpload} className="hidden" />
               <button onClick={() => fileInputRef?.click()} className="px-3 py-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-sm hover:bg-slate-50 cursor-pointer transition-all inline-flex items-center gap-1.5">
@@ -473,7 +467,6 @@ const FileManagerTab = ({ instance }) => {
           </div>
         </div>
 
-        {/* Workspace Explorer View */}
         <div className="p-2">
           {isLoading ? (
             <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 py-8 px-4 animate-pulse tracking-wider">
@@ -503,7 +496,7 @@ const FileManagerTab = ({ instance }) => {
                             {file.name}
                           </span>
                         </div>
-                      </td>
+                       </td>
                       <td className="px-4 py-3 text-slate-400 font-mono hidden sm:table-cell">{file.isDirectory ? '—' : file.size}</td>
                       <td className="px-4 py-3 text-slate-400 hidden md:table-cell">{file.modified}</td>
                       <td className="px-4 py-3 text-right">
@@ -525,7 +518,7 @@ const FileManagerTab = ({ instance }) => {
                             <Trash2 size={14} />
                           </button>
                         </div>
-                      </td>
+                       </td>
                     </tr>
                   ))}
                   {(!files || files.length === 0) && (
@@ -542,7 +535,7 @@ const FileManagerTab = ({ instance }) => {
         </div>
       </motion.div>
 
-      {/* Dynamic Modal Interfaces */}
+      {/* ENLARGED MODAL (max-w-6xl) */}
       <Modal isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); setRenamingItem(null); setEditingFile(null); }} title={
         modalType === 'file' ? 'Provision Object Instance' :
         modalType === 'folder' ? 'Create Directory Cluster' :
@@ -550,40 +543,40 @@ const FileManagerTab = ({ instance }) => {
         'Buffer Code Editor'
       }>
         {modalType === 'file' && (
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Identifier Name</label>
+              <label className="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-1.5">File Name</label>
               <input type="text" placeholder="e.g., config.php" value={newItemName} onChange={(e) => setNewItemName(e.target.value)} className="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-slate-900 transition-colors" />
             </div>
             <div>
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Initial Buffer Content</label>
-              <textarea placeholder="Write code data structural block here..." value={newFileContent} onChange={(e) => setNewFileContent(e.target.value)} rows={6} className="w-full p-3 border border-slate-200 rounded-xl font-mono text-xs outline-none focus:border-slate-900 transition-colors bg-slate-50" />
+              <label className="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-1.5">Initial Content</label>
+              <textarea placeholder="Write code here..." value={newFileContent} onChange={(e) => setNewFileContent(e.target.value)} rows={8} className="w-full p-3 border border-slate-200 rounded-xl font-mono text-xs outline-none focus:border-slate-900 transition-colors bg-slate-50" />
             </div>
             <button onClick={handleCreate} className="w-full py-3 bg-slate-900 text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-slate-800 transition-all shadow-sm">Save & Mount</button>
           </div>
         )}
         {modalType === 'folder' && (
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Directory Name</label>
+              <label className="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-1.5">Directory Name</label>
               <input type="text" placeholder="e.g., assets" value={newItemName} onChange={(e) => setNewItemName(e.target.value)} className="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-slate-900 transition-colors" />
             </div>
             <button onClick={handleCreate} className="w-full py-3 bg-slate-900 text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-slate-800 transition-all shadow-sm">Allocate Scope</button>
           </div>
         )}
         {modalType === 'rename' && renamingItem && (
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div>
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Update Descriptor Label</label>
+              <label className="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-1.5">New Name</label>
               <input type="text" value={renameNewName} onChange={(e) => setRenameNewName(e.target.value)} className="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-slate-900 transition-colors" />
             </div>
             <button onClick={handleRename} className="w-full py-3 bg-slate-900 text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-slate-800 transition-all shadow-sm">Commit Translation</button>
           </div>
         )}
         {modalType === 'edit' && (
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div className="border border-slate-200 rounded-xl overflow-hidden shadow-inner">
-              <textarea value={editContent} onChange={(e) => setEditContent(e.target.value)} rows={12} className="w-full p-4 block font-mono text-xs text-slate-800 outline-none bg-slate-50/50 leading-relaxed resize-none" />
+              <textarea value={editContent} onChange={(e) => setEditContent(e.target.value)} rows={15} className="w-full p-4 block font-mono text-sm text-slate-800 outline-none bg-slate-50/50 leading-relaxed resize-y" />
             </div>
             <button onClick={handleSaveEdit} className="w-full py-3 bg-indigo-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-indigo-500 shadow-md shadow-indigo-600/10 transition-all inline-flex items-center justify-center gap-1.5">
               <Save size={14} /> Synchronize Matrix
@@ -595,6 +588,7 @@ const FileManagerTab = ({ instance }) => {
   );
 };
 
+// ---------- Main Dashboard Component ----------
 export default function PhpDashboard() {
   const { instanceId } = useParams();
   const [activeTab, setActiveTab] = useState('overview');
@@ -614,15 +608,12 @@ export default function PhpDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50/60 flex flex-col lg:flex-row font-sans selection:bg-indigo-100">
-      
-      {/* Structural Control Panel Base Navigation */}
       <div className="w-full lg:w-76 shrink-0 p-6 lg:p-8 lg:min-h-screen lg:sticky lg:top-0 bg-white border-b lg:border-b-0 lg:border-r border-slate-200/60 flex flex-col justify-between">
         <div>
           <Link to="/php-hosting/paid" className="inline-flex items-center gap-1.5 text-slate-400 hover:text-slate-800 text-xs font-bold uppercase tracking-wider mb-8 transition-colors group">
             <ArrowLeft size={13} className="group-hover:-translate-x-0.5 transition-transform" /> Cluster Nodes
           </Link>
           
-          {/* Active Node Metadata Frame */}
           <div className="mb-8 p-1.5 rounded-2xl border border-slate-100 bg-slate-50/50">
             <div className="p-4 bg-white border border-slate-100 shadow-sm rounded-xl">
               <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-white shadow-md mb-3 ${
@@ -646,7 +637,6 @@ export default function PhpDashboard() {
           </nav>
         </div>
 
-        {/* Branding Footer Anchor */}
         <div className="mt-8 pt-4 border-t border-slate-100 hidden lg:block">
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-normal">
             Platform Matrix<br/>
@@ -655,7 +645,6 @@ export default function PhpDashboard() {
         </div>
       </div>
 
-      {/* Scope Workspace Viewport */}
       <main className="flex-1 p-5 sm:p-8 lg:p-10 max-w-7xl">
         <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-5 border-b border-slate-200/60">
           <div>
