@@ -1,11 +1,12 @@
 import { NavLink, Navigate, Outlet } from 'react-router-dom';
-import { Server, LayoutList } from 'lucide-react';
+import { Headphones, LayoutList, Server } from 'lucide-react';
 
 import { useAuthStore } from '../../store/authStore';
 
 const links = [
   { to: '/superadmin/servers', label: 'Servers', icon: Server },
   { to: '/superadmin/instances', label: 'Instances', icon: LayoutList },
+  { to: '/superadmin/support', label: 'Support', icon: Headphones },
 ];
 
 export default function SuperAdminLayout() {

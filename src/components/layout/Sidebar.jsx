@@ -97,7 +97,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
 
     ...(isSuperAdmin ? [{ label: 'SuperAdmin', to: '/superadmin/servers', icon: Zap }] : []),
     { label: 'Settings', to: '/settings', icon: Settings },
-    { label: 'Support', to: '/Support', icon: LifeBuoy },
+    { label: 'Support', to: '/support', icon: LifeBuoy },
     // { label: 'Support', to: '/comingsoon', icon: LifeBuoy },
   ];
   const handleMouseEnter = () => {
