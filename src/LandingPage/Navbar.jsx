@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+
 import {
   ChevronDown,
   Menu,
@@ -18,44 +19,72 @@ import {
   LayoutGrid,
   User,
   Code2,
+  LayoutDashboard, // <-- newly imported
 } from "lucide-react";
-import { useAuthStore } from "../store/authStore"
+import { useAuthStore } from "../store/authStore";
 
-
-/* ───────────────── Mega Menu (Services) ───────────────── */
+// ========== MEGA MENU SECTIONS (unchanged) ==========
 const megaMenuSections = [
   {
-    title: "Host & Deploy",
+    title: "Create a Website",
+    icon: Code,
+    items: [
+      {
+        label: "Managed WordPress Hosting",
+        href: "/wordpress-page",
+        description: "Fully managed, speed‑optimized WordPress hosting with daily backups.",
+      },
+      {
+        label: "Migrate a Website",
+        href: "#",
+        description: "Free, seamless migration service with zero downtime.",
+      },
+    ],
+  },
+  {
+    title: "Host and Deploy",
     icon: Server,
     items: [
-      { label: "WordPress Hosting", href: "/wordpress-page", tag: "Popular" },
-      { label: "Node.js Hosting", href: "/hosting/nodejs" },
-      { label: "cPanel Hosting", href: "/c-panel", tag: "Enterprise" },
+      {
+        label: "cPanel Hosting",
+        href: "/c-panel",
+        description: "User‑friendly control panel with one‑click installs.",
+      },
+      {
+        label: "PHP Hosting",
+        href: "#",
+        description: "Optimized PHP environment with full framework support.",
+      },
+      {
+        label: "VPS Hosting",
+        href: "/vps-cloud",
+        description: "Scalable virtual private servers with root access.",
+      },
+      {
+        label: "Node.js Hosting",
+        href: "/hosting/nodejs",
+        description: "High‑performance Node.js hosting with PM2 and auto‑scaling.",
+      },
     ],
   },
   {
-    title: "Accounting ERP on Cloud",
+    title: "Other",
     icon: Cloud,
     items: [
-      { label: "Busy on Cloud", href: "/busy-on-cloud" },
-      { label: "Tally on Cloud", href: "/tally-on-cloud" },
-      { label: "Marg on Cloud", href: "/marg-on-cloud" },
-      { label: "VPS on Cloud", href: "/vps-cloud" },
-    ],
-  },
-  {
-    title: "Software CRM",
-    icon: Code2,
-    items: [
-      { label: "Education ERP", href: "/education-management-system" },
-      { label: "Restaurant Managment System", href: "/restaurant-management-system" },
+      {
+        label: "Business Email",
+        href: "#",
+        description: "Professional email hosting with collaboration tools.",
+      },
+      {
+        label: "Self Hosted",
+        href: "#",
+        description: "Bring your own server – we manage the infrastructure.",
+      },
     ],
   },
 ];
 
-
-
-/* ── Main nav links ── */
 const NAV_LINKS = [
   { label: "Blog", href: "/cloud-hosting-blog", icon: BookOpen },
   { label: "Contact", href: "/contact", icon: PhoneCall },
@@ -64,19 +93,19 @@ const NAV_LINKS = [
 export default function Navbar({ logoImg = "/Cloudedata.svg" }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, user, logout } = useAuthStore(); // 👈 get auth state & actions
+  const { isAuthenticated, user, clearAuth } = useAuthStore();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
+  // 'activeDropdown' not used currently but kept for future
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [authMenuOpen, setAuthMenuOpen] = useState(false);
 
   const navbarRef = useRef(null);
   const megaMenuRef = useRef(null);
-  const softwareDropdownRef = useRef(null);
-  const authRef = useRef(null);
+  // authRef no longer needed – removed to clean up
 
-  // Hide navbar on home until scrolled past hero
+  // Hide navbar on home until scrolled past hero (unchanged)
   const [showNav, setShowNav] = useState(location.pathname !== "/");
 
   useEffect(() => {
@@ -97,12 +126,11 @@ export default function Navbar({ logoImg = "/Cloudedata.svg" }) {
     return () => observer.disconnect();
   }, [location.pathname]);
 
-  // Close mobile menu on route change
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
 
-  // Global click-outside handler for all popups
+  // Close popup when clicking outside the modal content (unchanged)
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -113,91 +141,53 @@ export default function Navbar({ logoImg = "/Cloudedata.svg" }) {
       ) {
         setMegaMenuOpen(false);
       }
-      
+      // authMenuOpen now unused – kept for safety but doesn't affect anything
       if (
         authMenuOpen &&
-        authRef.current &&
-        !authRef.current.contains(event.target) &&
-        !event.target.closest(".auth-button")
+        !event.target.closest(".auth-button")   // no longer exists but won't break
       ) {
         setAuthMenuOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [megaMenuOpen, activeDropdown, authMenuOpen]);
+  }, [megaMenuOpen, authMenuOpen]);
 
   const handleLogin = () => navigate("/login");
   const handleSignup = () => navigate("/register");
+  const handleDashboard = () => navigate("/dashboard");  // new handler
 
-  const handleLogout = async () => {
-    await logout();        // clear auth store & tokens
-    navigate("/");         // go home
+const handleLogout = () => {
+    clearAuth();
+    navigate("/");
     setMobileOpen(false);
-  };
-
-  const renderDropdown = (items) => (
-    <motion.div
-      initial={{ opacity: 0, y: -8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.2 }}
-      className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50"
-    >
-      <div className="bg-white/90 backdrop-blur-2xl rounded-2xl border border-white/40 shadow-2xl shadow-indigo-500/10 p-2 min-w-[240px]">
-        {items.map((item) => (
-          <Link
-            key={item.label}
-            to={item.href}
-            onClick={() => setActiveDropdown(null)}
-            className="flex items-center justify-between px-4 py-2.5 text-sm font-medium text-slate-700 hover:text-indigo-600 hover:bg-indigo-50/70 rounded-xl transition-all duration-200 group"
-          >
-            <span>{item.label}</span>
-            {item.tag && (
-              <span className="text-[10px] font-bold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">
-                {item.tag}
-              </span>
-            )}
-            <ArrowRight size={14} className="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-          </Link>
-        ))}
-      </div>
-    </motion.div>
-  );
+};
 
   const isActive = (href) => location.pathname === href;
 
-  // Desktop auth buttons (conditional on login state)
+  // ──────────────────────────────────────────────
+  // DESKTOP AUTH BUTTONS (UPDATED)
+  // ──────────────────────────────────────────────
   const renderDesktopAuth = () => {
     if (isAuthenticated) {
       return (
-        <div className="relative auth-button" ref={authRef}>
+        <div className="flex items-center gap-3">
+          {/* Dashboard button */}
           <button
-            onClick={() => setAuthMenuOpen(!authMenuOpen)}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white/60 backdrop-blur-sm rounded-full border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all"
+            onClick={handleDashboard}
+            className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-xl shadow-md shadow-indigo-200/50 hover:shadow-lg hover:from-indigo-700 hover:to-indigo-600 transition-all"
           >
-            <User size={16} />
-            <span className="max-w-[120px] truncate">{user?.name || user?.email || "Account"}</span>
-            <ChevronDown size={14} className={`transition-transform ${authMenuOpen ? "rotate-180" : ""}`} />
+            <LayoutDashboard size={16} />
+            Dashboard
           </button>
-          <AnimatePresence>
-            {authMenuOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                className="absolute right-0 mt-2 w-48 bg-white/90 backdrop-blur-xl rounded-xl border border-slate-100 shadow-xl overflow-hidden z-50"
-              >
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                >
-                  <LogOut size={16} />
-                  Logout
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Logout button */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-slate-700 bg-white/60 backdrop-blur-sm rounded-xl border border-slate-300/70 shadow-sm hover:shadow-md hover:border-red-300 hover:text-red-600 transition-all"
+          >
+            <LogOut size={16} />
+            Logout
+          </button>
         </div>
       );
     }
@@ -232,7 +222,7 @@ export default function Navbar({ logoImg = "/Cloudedata.svg" }) {
       >
         <div className="max-w-7xl mx-auto w-full px-6 sm:px-8 lg:px-12">
           <div className="flex items-center justify-between gap-4">
-            {/* Logo */}
+            {/* Logo (unchanged) */}
             <Link to="/" className="flex items-center shrink-0 group">
               <img
                 src={logoImg}
@@ -242,7 +232,7 @@ export default function Navbar({ logoImg = "/Cloudedata.svg" }) {
               />
             </Link>
 
-            {/* Desktop Navigation Pill */}
+            {/* Desktop Navigation Pill (unchanged) */}
             <div className="hidden md:block">
               <div className="relative p-[1px] rounded-full bg-gradient-to-r from-slate-200 via-indigo-200 to-slate-200 shadow-sm">
                 <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full px-4 py-1">
@@ -258,12 +248,10 @@ export default function Navbar({ logoImg = "/Cloudedata.svg" }) {
                     Pricing
                   </Link>
 
-                  
-
-                  {/* Services Mega Menu */}
+                  {/* Services Button */}
                   <div className="relative services-button">
                     <button
-                      onClick={() => setMegaMenuOpen(!megaMenuOpen)}
+                      onClick={() => setMegaMenuOpen(true)}
                       className={`flex items-center gap-1.5 px-5 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
                         megaMenuOpen
                           ? "bg-indigo-600 text-white shadow-md"
@@ -272,73 +260,8 @@ export default function Navbar({ logoImg = "/Cloudedata.svg" }) {
                     >
                       <LayoutGrid size={15} />
                       Services
-                      <ChevronDown
-                        size={13}
-                        className={`transition-transform duration-200 ${
-                          megaMenuOpen ? "rotate-180" : ""
-                        }`}
-                      />
+                      <ChevronDown size={13} />
                     </button>
-
-                    <AnimatePresence>
-                      {megaMenuOpen && (
-                        <motion.div
-                          ref={megaMenuRef}
-                          initial={{ opacity: 0, y: 12, scale: 0.97 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: 12, scale: 0.97 }}
-                          transition={{ duration: 0.2, ease: "easeOut" }}
-                          className="absolute top-full mt-3 left-1/2 -translate-x-1/2 w-[1100px] max-w-[90vw] bg-white/95 backdrop-blur-2xl rounded-2xl border border-white/60 shadow-xl shadow-slate-200/50 overflow-hidden z-50"
-                        >
-                          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6">
-                            {megaMenuSections.map((section, idx) => (
-                              <div key={idx} className="space-y-3">
-                                <div className="flex items-center gap-2 text-indigo-600 font-semibold text-sm tracking-wide pb-2 border-b border-slate-100">
-                                  <section.icon size={16} />
-                                  {section.title}
-                                </div>
-                                <div className="space-y-1">
-                                  {section.items.map((item) => (
-                                    <Link
-                                      key={item.label}
-                                      to={item.href}
-                                      onClick={() => setMegaMenuOpen(false)}
-                                      className="flex items-center justify-between group rounded-lg px-3 py-2 text-sm text-slate-600 hover:text-indigo-600 hover:bg-indigo-50/40 transition-all"
-                                    >
-                                      <span>{item.label}</span>
-                                      {item.tag && (
-                                        <span className="text-[10px] font-medium bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">
-                                          {item.tag}
-                                        </span>
-                                      )}
-                                    </Link>
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
-                            {/* Promo Card */}
-                            <div className="relative bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-xl p-5 flex flex-col justify-between overflow-hidden shadow-md">
-                              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
-                              <div className="absolute bottom-0 left-0 w-24 h-24 bg-indigo-400/20 rounded-full blur-2xl" />
-                              <h3 className="text-white font-bold text-base leading-tight mb-1">
-                                Cloud Assessment
-                              </h3>
-                              <p className="text-indigo-100 text-xs leading-relaxed mb-4">
-                                Free consultation & custom roadmap
-                              </p>
-                              <Link
-                                to="/contact"
-                                onClick={() => setMegaMenuOpen(false)}
-                                className="inline-flex items-center justify-center gap-1.5 bg-white/20 text-white font-medium text-xs px-3 py-1.5 rounded-lg hover:bg-white/30 transition-all"
-                              >
-                                Claim Offer
-                                <ArrowRight size={12} />
-                              </Link>
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
                   </div>
 
                   {NAV_LINKS.map((link) => {
@@ -362,10 +285,10 @@ export default function Navbar({ logoImg = "/Cloudedata.svg" }) {
               </div>
             </div>
 
-            {/* Desktop Auth Buttons */}
+            {/* Desktop Auth Buttons (now updated) */}
             <div className="hidden md:block">{renderDesktopAuth()}</div>
 
-            {/* Mobile menu button */}
+            {/* Mobile menu button (unchanged) */}
             <button
               onClick={() => setMobileOpen(true)}
               className="md:hidden p-2 text-slate-600 hover:text-indigo-600 rounded-xl hover:bg-slate-50 transition-all"
@@ -376,7 +299,73 @@ export default function Navbar({ logoImg = "/Cloudedata.svg" }) {
         </div>
       </nav>
 
-      {/* Mobile Sidebar */}
+      {/* ========== SERVICES MODAL (unchanged) ========== */}
+      <AnimatePresence>
+        {megaMenuOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-black/30 backdrop-blur-md z-50"
+              onClick={() => setMegaMenuOpen(false)}
+            />
+            <motion.div
+              ref={megaMenuRef}
+              initial={{ opacity: 0, scale: 0.96, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 20 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-6xl max-h-[85vh] overflow-y-auto bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/60 z-50 p-6 md:p-8"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="absolute top-4 right-4 z-10">
+                <button
+                  onClick={() => setMegaMenuOpen(false)}
+                  className="p-2 rounded-full bg-white/80 text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition shadow-sm"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
+                {megaMenuSections.map((section, idx) => (
+                  <div key={idx} className="space-y-4">
+                    <div className="flex items-center gap-2 text-indigo-600 font-semibold text-base pb-2 border-b border-indigo-100">
+                      <section.icon size={18} />
+                      {section.title}
+                    </div>
+                    <div className="space-y-4">
+                      {section.items.map((item) => (
+                        <Link
+                          key={item.label}
+                          to={item.href}
+                          onClick={() => setMegaMenuOpen(false)}
+                          className={`block group rounded-xl p-3 transition-all ${
+                            item.href === "#"
+                              ? "cursor-not-allowed opacity-70 hover:bg-white/50"
+                              : "hover:bg-indigo-50/60"
+                          }`}
+                          {...(item.href === "#" && { onClick: (e) => e.preventDefault() })}
+                        >
+                          <div className="font-medium text-slate-800 group-hover:text-indigo-700 text-base">
+                            {item.label}
+                          </div>
+                          <div className="text-sm text-slate-500 group-hover:text-slate-600 mt-1 leading-relaxed">
+                            {item.description}
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Sidebar (unchanged except for auth section) */}
       <AnimatePresence>
         {mobileOpen && (
           <>
@@ -416,8 +405,6 @@ export default function Navbar({ logoImg = "/Cloudedata.svg" }) {
                   Pricing
                 </Link>
 
-             
-
                 <div className="space-y-5">
                   {megaMenuSections.map((section, idx) => (
                     <div key={idx}>
@@ -425,16 +412,17 @@ export default function Navbar({ logoImg = "/Cloudedata.svg" }) {
                         <section.icon size={14} />
                         {section.title}
                       </h4>
-                      <div className="space-y-2 pl-6">
+                      <div className="space-y-3 pl-6">
                         {section.items.map((item) => (
                           <Link
                             key={item.label}
                             to={item.href}
                             onClick={() => setMobileOpen(false)}
-                            className="flex justify-between items-center text-sm text-slate-600 hover:text-indigo-600 transition py-1"
+                            className="block text-sm text-slate-600 hover:text-indigo-600 transition"
+                            {...(item.href === "#" && { onClick: (e) => e.preventDefault() })}
                           >
-                            {item.label}
-                            {item.tag && <span className="text-[10px] bg-indigo-50 text-indigo-600 px-2 rounded-full">{item.tag}</span>}
+                            <div>{item.label}</div>
+                            <div className="text-xs text-slate-400">{item.description}</div>
                           </Link>
                         ))}
                       </div>
@@ -460,13 +448,24 @@ export default function Navbar({ logoImg = "/Cloudedata.svg" }) {
                 })}
               </div>
 
-              {/* Mobile Auth Section */}
+              {/* Mobile Auth Section (updated) */}
               <div className="p-5 border-t border-slate-100 space-y-3">
                 {isAuthenticated ? (
                   <>
                     <div className="text-center text-sm text-slate-500 mb-2">
                       👋 {user?.name || user?.email || "User"}
                     </div>
+                    {/* Dashboard button added here */}
+                    <button
+                      onClick={() => {
+                        handleDashboard();
+                        setMobileOpen(false);
+                      }}
+                      className="flex items-center justify-center gap-2 w-full py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-xl shadow-md hover:shadow-lg transition-all"
+                    >
+                      <LayoutDashboard size={16} />
+                      Dashboard
+                    </button>
                     <button
                       onClick={() => {
                         handleLogout();
