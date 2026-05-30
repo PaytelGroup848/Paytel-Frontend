@@ -139,7 +139,7 @@ function ConfigureModal({ instanceId, isOpen, onClose }) {
                     </label>
                     <div className="flex items-center gap-2 bg-slate-800 rounded-lg px-3 py-2">
                       <span className="text-slate-200 text-sm flex-1">
-                        {creds?.wpAdminUser}
+                        admin
                       </span>
                       <button
                         onClick={() => copy(creds?.wpAdminUser, 'Username')}
@@ -293,7 +293,7 @@ export default function WebsiteDashboard() {
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <nav className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
-              <span className="hover:text-indigo-600 cursor-pointer transition-colors">Websites</span>
+              <span onClick={()=>navigate("/websites/wordpress/paid")} className="hover:text-indigo-600 cursor-pointer transition-colors">Websites</span>
               <ChevronRight size={10} />
               <span className="text-slate-600">Dashboard</span>
             </nav>

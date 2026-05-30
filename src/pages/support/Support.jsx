@@ -1,42 +1,39 @@
-// src/components/SupportPage.jsx
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+
 import CardStats from './CardStats';
 import TicketTable from './TicketTable';
 import RaiseTicketModal from './RaiseTicketModal';
 import ReplyModal from './ReplyModal';
-import { initialTickets } from './dummyTickets';
+import { useCloseTicket, useTickets } from '../../hooks/useSupport';
+
+const STATUS_TABS = ['All', 'Open', 'Pending', 'Closed'];
 
 const SupportPage = () => {
-  const [tickets, setTickets] = useState(initialTickets);
+  const [statusFilter, setStatusFilter] = useState('All');
   const [isRaiseModalOpen, setIsRaiseModalOpen] = useState(false);
   const [replyModal, setReplyModal] = useState({ isOpen: false, ticket: null });
-  const [toast, setToast] = useState({ message: "", visible: false });
 
-  const showToast = (msg) => {
-    setToast({ message: msg, visible: true });
-    setTimeout(() => setToast({ message: "", visible: false }), 4000);
-  };
+  const params = useMemo(
+    () => ({
+      page: 1,
+      limit: 50,
+      ...(statusFilter !== 'All' ? { status: statusFilter } : {}),
+    }),
+    [statusFilter]
+  );
 
-  const handleRaiseTicket = (newTicket) => {
-    setTickets(prev => [newTicket, ...prev]);
-    showToast(`✅ Ticket raised successfully! ID: ${newTicket.id}`);
-  };
+  const { data, isLoading } = useTickets(params);
+  const closeTicket = useCloseTicket();
+  const tickets = data?.items || [];
 
-  const handleSendReply = (ticketId, replyMessage) => {
-    setTickets(prev =>
-      prev.map(ticket =>
-        ticket.id === ticketId
-          ? { ...ticket, replies: [...(ticket.replies || []), { id: Date.now().toString(), text: replyMessage, sender: "user", timestamp: new Date().toISOString() }] }
-          : ticket
-      )
-    );
-    showToast(`💬 Your reply has been added to ticket ${ticketId}`);
+  const handleCloseTicket = async (ticketId) => {
+    if (!window.confirm('Close this ticket?')) return;
+    await closeTicket.mutateAsync(ticketId);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans antialiased">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 md:py-8">
-        {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">
             Support Center
@@ -45,32 +42,45 @@ const SupportPage = () => {
         </div>
 
         <CardStats tickets={tickets} />
-        <TicketTable
-          tickets={tickets}
-          onReplyClick={(ticket) => setReplyModal({ isOpen: true, ticket })}
-          onRaiseTicketClick={() => setIsRaiseModalOpen(true)}
-        />
 
-        <RaiseTicketModal
-          isOpen={isRaiseModalOpen}
-          onClose={() => setIsRaiseModalOpen(false)}
-          onRaiseTicket={handleRaiseTicket}
-        />
+        <div className="flex flex-wrap gap-2 mb-4">
+          {STATUS_TABS.map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setStatusFilter(tab)}
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
+                statusFilter === tab
+                  ? 'bg-indigo-600 text-white shadow'
+                  : 'bg-white text-gray-600 border hover:bg-gray-50'
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {isLoading ? (
+          <div className="text-center py-12 text-gray-400">
+            <i className="fas fa-spinner fa-spin mr-2"></i>
+            Loading tickets...
+          </div>
+        ) : (
+          <TicketTable
+            tickets={tickets}
+            onReplyClick={(ticket) => setReplyModal({ isOpen: true, ticket })}
+            onRaiseTicketClick={() => setIsRaiseModalOpen(true)}
+            onCloseTicket={handleCloseTicket}
+          />
+        )}
+
+        <RaiseTicketModal isOpen={isRaiseModalOpen} onClose={() => setIsRaiseModalOpen(false)} />
 
         <ReplyModal
           isOpen={replyModal.isOpen}
           onClose={() => setReplyModal({ isOpen: false, ticket: null })}
           ticket={replyModal.ticket}
-          onSendReply={handleSendReply}
         />
-
-        {/* Toast Notification */}
-        {toast.visible && (
-          <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-gray-900 text-white px-5 py-3 rounded-full shadow-xl flex items-center gap-3">
-            <i className="fas fa-ticket-alt text-indigo-300"></i>
-            <span className="font-medium">{toast.message}</span>
-          </div>
-        )}
       </div>
     </div>
   );

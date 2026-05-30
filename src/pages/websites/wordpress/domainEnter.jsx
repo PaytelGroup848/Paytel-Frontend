@@ -20,6 +20,7 @@ export default function DomainEnter() {
   const [serverIp, setServerIp] = useState('');
   const [showDnsCard, setShowDnsCard] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);
+  const lastThree = serverIp ? serverIp?.split('.').pop() : '';
 
   const { data: instanceStatus } = useInstance(createdInstanceId, {
     enabled: Boolean(createdInstanceId) && isInstalling,
@@ -123,7 +124,7 @@ export default function DomainEnter() {
                   <div className="grid grid-cols-3 text-[12px] font-semibold">
                     <div className="px-3 py-2 border-t border-indigo-100">A</div>
                     <div className="px-3 py-2 border-t border-indigo-100">@</div>
-                    <div className="px-3 py-2 border-t border-indigo-100 break-all">{serverIp || '-'}</div>
+                    <div className="px-3 py-2 border-t border-indigo-100 break-all">210.56.147.{lastThree}</div>
                   </div>
                 </div>
 {dnsData?.verified === false && (
