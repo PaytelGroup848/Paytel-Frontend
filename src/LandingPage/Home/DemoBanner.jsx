@@ -134,7 +134,7 @@ function LeadCaptureCard() {
     }
 
     try {
-      const response = await axios.post('https://backend.cloudedata.info/api/public/submit', {
+      const response = await axios.post('https://backend.cloudedata.com/api/public/submit', {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
@@ -647,28 +647,7 @@ export default function ProfessionalBanner() {
             ))}
           </div>
 
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
-            <motion.a
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              href="#demo"
-              className="group relative inline-flex h-14 items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 px-8 text-base font-medium text-white shadow-2xl shadow-blue-500/40 transition-all hover:shadow-blue-500/50"
-            >
-              <span className="relative z-10">Start Free Trial</span>
-              <ArrowRight size={18} className="relative z-10 transition-transform group-hover:translate-x-1" />
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-cyan-600 opacity-0 transition-opacity group-hover:opacity-100" />
-            </motion.a>
-
-            <motion.a
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              href="#pricing"
-              className="inline-flex h-14 items-center justify-center gap-2 rounded-xl border border-blue-400/30 bg-blue-500/10 px-8 text-base font-medium text-white backdrop-blur-sm transition-all hover:bg-blue-500/20"
-            >
-              View Pricing
-              <ChevronRight size={18} />
-            </motion.a>
-          </div>
+         
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
