@@ -44,7 +44,7 @@ export const SslCard = ({ instanceId }) => {
     );
   }
 
-  if (isSslEnabled) {
+  if (isInstalled) {
     // SSL is active - show verified, unclickable
     return (
       <div className="bg-gradient-to-br from-emerald-50 to-green-50 border border-emerald-200 p-4 rounded-xl shadow-sm opacity-90">

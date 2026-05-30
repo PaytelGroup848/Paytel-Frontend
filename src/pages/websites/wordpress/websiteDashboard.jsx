@@ -367,7 +367,12 @@ export default function WebsiteDashboard() {
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-0.5">
-                  <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+                  <h2
+                    className="text-lg font-bold cursor-pointer text-blue-700 tracking-tight"
+                    onClick={() =>
+                      window.open(`https://${siteData.domain}`, "_blank")
+                    }
+                  >
                     {siteData.domain}
                   </h2>
                   <span className="px-2 py-0.5 rounded text-[9px] font-black bg-emerald-50 text-emerald-600 border border-emerald-100 uppercase">
