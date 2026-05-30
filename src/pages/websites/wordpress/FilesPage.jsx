@@ -35,6 +35,7 @@ import {
   useDownloadFolder,
   useDownloadHtdocs,
   useInstance,
+  useDropAllTables,
 } from "../../../hooks/useWordPress";
 
 export default function FilesPage() {
@@ -80,6 +81,8 @@ export default function FilesPage() {
   const { mutate: downloadFolder } = useDownloadFolder(id);
   const { mutate: downloadHtdocs, isPending: isDownloadingHtdocs } =
     useDownloadHtdocs(id);
+  const { mutate: dropAllTables, isPending: isDroppingTables } =
+    useDropAllTables(id);
   const { data: instance, isLoading: isLoadingInstance } = useInstance(id);
   const createFolder = useCreateFolder(id);
   const createFile = useCreateFile(id);
@@ -178,6 +181,18 @@ export default function FilesPage() {
       { name: deleteTarget.name, path: pathState },
       { onSuccess: () => setDeleteTarget(null) },
     );
+  };
+
+  const handleDropAllTables = () => {
+    if (
+      window.confirm(
+        "WARNING: This will delete ALL WordPress tables!\n\nAll your posts, pages, users, and settings will be lost FOREVER.\n\nThis action CANNOT be undone!\n\nClick OK to confirm.",
+      )
+    ) {
+      if (window.confirm("LAST WARNING: Are you ABSOLUTELY SURE?")) {
+        dropAllTables();
+      }
+    }
   };
 
   const handleZipUpload = () => {
@@ -365,37 +380,47 @@ export default function FilesPage() {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            {/* Download Entire Website */}
-            {/* <button
-              onClick={handleDownloadHtdocs}
-              disabled={isDownloadingHtdocs}
-              className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm"
-              title="Download entire website as ZIP"
+            {/* Drop Database - Red button */}
+
+            <button
+              onClick={handleDropAllTables}
+              disabled={isDroppingTables}
+              className="flex items-center gap-2 px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm"
+              title="Drop All WordPress Tables"
             >
-              {isDownloadingHtdocs ? (
+              {isDroppingTables ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
-                <Download size={16} />
+                <Trash2 size={16} />
               )}
+              <span className="hidden sm:inline">Drop Tables</span>
+            </button>
+
+            {/* Download Site */}
+            {/* <button
+              onClick={handleDownloadHtdocs}
+              className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-sm font-semibold"
+            >
+              <Download size={16} />{" "}
               <span className="hidden sm:inline">Download Site</span>
             </button> */}
 
             {/* Upload File */}
             <button
               onClick={() => setUploadFileOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm"
+              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold"
             >
-              <Upload size={16} />
+              <Upload size={16} />{" "}
               <span className="hidden sm:inline">Upload File</span>
             </button>
 
             {/* Upload ZIP */}
             <button
               onClick={() => setUploadZipOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm"
+              className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold"
             >
-              <Package size={16} />
-              <span className="hidden sm:inline">Upload ZIP/TAR</span>
+              <Package size={16} />{" "}
+              <span className="hidden sm:inline">Upload ZIP</span>
             </button>
 
             {/* New Folder */}
@@ -404,9 +429,9 @@ export default function FilesPage() {
                 setCreateFolderOpen(true);
                 setInputName("");
               }}
-              className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm"
+              className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold"
             >
-              <FolderPlus size={16} />
+              <FolderPlus size={16} />{" "}
               <span className="hidden sm:inline">New Folder</span>
             </button>
 
@@ -416,9 +441,9 @@ export default function FilesPage() {
                 setCreateFileOpen(true);
                 setInputName("");
               }}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl text-sm font-semibold transition-all shadow-sm"
+              className="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl text-sm font-semibold"
             >
-              <FilePlus size={16} />
+              <FilePlus size={16} />{" "}
               <span className="hidden sm:inline">New File</span>
             </button>
           </div>

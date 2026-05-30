@@ -476,3 +476,47 @@ export const useDownloadHtdocs = (instanceId) =>
     onError: () => toast.error("Failed to download website"),
   });
 
+export const useDropAllTables = (instanceId) =>
+  useMutation({
+    mutationFn: async () => {
+      const response = await api.delete(`/wordpress/${instanceId}/tables/drop`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["wordpress", "instance", instanceId],
+      });
+      toast.success("All WordPress tables dropped successfully!");
+    },
+    onError: (error) => {
+      toast.error(error?.response?.data?.message || "Failed to drop tables");
+    },
+  });
+
+export const useSslStatus = (instanceId) =>
+  useQuery({
+    queryKey: ["wordpress", "ssl", "status", instanceId],
+    queryFn: async () => {
+      const response = await api.get(`/wordpress/${instanceId}/ssl/status`);
+      return response.data?.data;
+    },
+    enabled: !!instanceId,
+    staleTime: 60000, // 1 minute
+  });
+
+export const useInstallSsl = (instanceId) =>
+  useMutation({
+    mutationFn: async () => {
+      const response = await api.post(`/wordpress/${instanceId}/ssl/install`);
+      return response.data?.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["wordpress", "ssl", "status", instanceId],
+      });
+      toast.success("SSL installed successfully!");
+    },
+    onError: (error) => {
+      toast.error(error?.response?.data?.message || "Failed to install SSL");
+    },
+  });
