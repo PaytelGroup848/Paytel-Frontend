@@ -51,7 +51,7 @@ export default function Banner() {
     }
 
     try {
-      const response = await axios.post("https://backend.cloudedata.info/api/public/submit", {
+      const response = await axios.post("https://backend.cloudedata.com/api/public/submit", {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,

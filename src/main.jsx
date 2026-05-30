@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
+import { HelmetProvider } from 'react-helmet-async';   // 👈 add this import
 
 import { queryClient } from './services/queryClient';
 import App from './App.jsx';
@@ -12,11 +13,14 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter 
-    future={{
-  v7_relativeSplatPath: true,
-  v7_startTransition: true,
-}}>
-        <App />
+        future={{
+          v7_relativeSplatPath: true,
+          v7_startTransition: true,
+        }}
+      >
+        <HelmetProvider>   {/* 👈 wrap App with HelmetProvider */}
+          <App />
+        </HelmetProvider>
         <Toaster
           position="top-right"
           toastOptions={{
@@ -28,9 +32,7 @@ createRoot(document.getElementById('root')).render(
               zIndex: 99999,
             },
           }}
-          containerStyle={{
-    zIndex: 99999,
-  }}
+          containerStyle={{ zIndex: 99999 }}
         />
       </BrowserRouter>
     </QueryClientProvider>

@@ -86,7 +86,7 @@ import { setNavigator } from './utils/navigation';
 import SubscriptionsPage from './pages/billing/Subscription';
 import PaymentHistoryPage from "./pages/billing/paymentHistory";
 import ComingSoon from './utils/ComingSoon';
-
+import BlogDetail from './LandingPage/Blog/blogDetail'; 
 import VpsLandingpage from './LandingPage/Services/Vps on Cloud/VpsLandingPage';
 
 
@@ -178,6 +178,8 @@ export default function App() {
     <Routes>
       {/* Public redirect */}
       <Route path ='/' element={<HomePage/>} />
+       <Route path ="/cloud-hosting-blog" element={ <PublicRoute> <BlogPage/> </PublicRoute>} />
+      <Route path="/blog/:id" element={   <PublicRoute> <BlogDetail /> </PublicRoute>} />
 
       <Route path="/vps" element={<PublicRoute><VpsPlans/></PublicRoute>} />
       <Route path="/email/plan" element={<PublicRoute><EmailPlansPage /></PublicRoute>} />
@@ -194,7 +196,7 @@ export default function App() {
       <Route path = "/busy-on-cloud" element={<BusyPage/>} />
       <Route path ="/tally-on-cloud" element={<TallyPage/>} />
       <Route path = "/marg-on-cloud" element={<Margpage/>} />
-      <Route path ="/cloud-hosting-blog" element={<BlogPage/>} />
+     
       <Route path = "/contact" element={<ContactUs />} />
       <Route path ="/privacy-policy" element={<PrivacyPolicy/>}/>
       <Route path = "/refund-policy-cloude" element={<RefundPolicy/>}/>
