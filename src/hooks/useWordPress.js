@@ -240,7 +240,7 @@ export const useUploadZip = (instanceId) =>
       api
         .post(`/wordpress/${instanceId}/files/upload-archive`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
-          timeout: 30000,
+          timeout: 60000,
         })
         .then((r) => r.data),
     onSuccess: (_, variables) => {
