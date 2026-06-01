@@ -309,10 +309,10 @@ export default function App() {
             <Route path="/vps/setting" element={<VpsSettings />} />
             <Route path="/support" element={<SupportPage />} />
             <Route path="/support/tickets/:id" element={<SupportPage />} />
-            <Route
+            {/* <Route
               path="/support/tickets/:ticketId"
               element={<TicketDetail />}
-            />
+            /> */}
             <Route path="/vps/:id/docker" element={<Docker />} />
             <Route path="/vps/security/firewall" element={<firewall />} />
 
