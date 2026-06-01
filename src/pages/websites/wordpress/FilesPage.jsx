@@ -420,7 +420,7 @@ export default function FilesPage() {
               className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold"
             >
               <Package size={16} />{" "}
-              <span className="hidden sm:inline">Upload ZIP</span>
+              <span className="hidden sm:inline">Upload ZIP/TAR</span>
             </button>
 
             {/* New Folder */}
@@ -848,7 +848,7 @@ export default function FilesPage() {
             <p className="text-sm text-slate-500 mb-4">
               Upload to:{" "}
               <span className="font-mono text-xs bg-slate-100 p-1 rounded">
-                /wp-content/uploads/{pathState}
+                {pathState} 
               </span>
             </p>
 
