@@ -1,0 +1,109 @@
+import {
+  ShieldCheck,
+  Lock,
+  AlertCircle,
+  Check,
+  Shield,
+  Sparkles,
+} from "lucide-react";
+import { useInstallSsl, useSslStatus } from "../../../hooks/useWordPress";
+
+export const SslCard = ({ instanceId }) => {
+  const { data: sslStatus, isLoading, refetch } = useSslStatus(instanceId);
+  const { mutate: installSsl, isPending: isInstalling } =
+    useInstallSsl(instanceId);
+
+  const isSslEnabled = sslStatus?.enabled === true;
+  const isInstalled = sslStatus?.hasCertificate === true;
+
+  const handleInstallSsl = () => {
+    if (
+      window.confirm(
+        `Install SSL certificate for ${sslStatus?.domain}?\n\nThis will secure your website with HTTPS.`,
+      )
+    ) {
+      installSsl(undefined, {
+        onSuccess: () => {
+          refetch();
+        },
+      });
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 p-4 rounded-xl shadow-sm">
+        <div className="animate-pulse flex items-center gap-3">
+          <div className="w-10 h-10 bg-slate-200 rounded-lg" />
+          <div className="flex-1">
+            <div className="h-4 bg-slate-200 rounded w-20 mb-2" />
+            <div className="h-3 bg-slate-200 rounded w-32" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isInstalled) {
+    // SSL is active - show verified, unclickable
+    return (
+      <div className="bg-gradient-to-br from-emerald-50 to-green-50 border border-emerald-200 p-4 rounded-xl shadow-sm opacity-90">
+        <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-200/30 rounded-full -translate-y-6 translate-x-6 pointer-events-none" />
+
+        <div className="absolute top-3 right-3 flex items-center gap-1 bg-emerald-500 text-white text-[10px] font-black tracking-widest uppercase px-2 py-0.5 rounded-full">
+          <Check size={12} />
+          Verified
+        </div>
+
+        <div className="w-10 h-10 rounded-lg bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-200 mb-3">
+          <ShieldCheck className="text-white" size={18} />
+        </div>
+
+        <h4 className="font-bold text-slate-800 text-[13px] tracking-tight">
+          Security
+        </h4>
+        <p className="text-[11px] text-emerald-600 font-semibold mt-0.5">
+          SSL Active & Protected
+        </p>
+        {sslStatus?.expiryDate && (
+          <p className="text-[9px] text-emerald-500 mt-1">
+            Expires: {new Date(sslStatus.expiryDate).toLocaleDateString()}
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  // SSL not installed - clickable to install
+  return (
+    <div
+      onClick={handleInstallSsl}
+      className={`bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 p-4 rounded-xl hover:border-amber-400 hover:shadow-amber-100 hover:shadow-md transition-all cursor-pointer group shadow-sm relative overflow-hidden ${isInstalling ? "opacity-50 pointer-events-none" : ""}`}
+    >
+      <div className="absolute top-0 right-0 w-20 h-20 bg-amber-200/30 rounded-full -translate-y-6 translate-x-6 pointer-events-none" />
+
+      <div className="absolute top-3 right-3 flex items-center gap-1 bg-amber-500 text-white text-[10px] font-black tracking-widest uppercase px-2 py-0.5 rounded-full">
+        <AlertCircle size={12} />
+        Not Active
+      </div>
+
+      <div className="w-10 h-10 rounded-lg bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-200 group-hover:scale-110 transition-transform mb-3">
+        {isInstalling ? (
+          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+        ) : (
+          <Lock className="text-white" size={18} />
+        )}
+      </div>
+
+      <h4 className="font-bold text-slate-800 text-[13px] tracking-tight">
+        Security
+      </h4>
+      <p className="text-[11px] text-amber-600 font-semibold mt-0.5">
+        {isInstalling ? "Installing SSL..." : "Click to Install SSL"}
+      </p>
+      <p className="text-[9px] text-amber-500 mt-1">
+        Secure your site with HTTPS
+      </p>
+    </div>
+  );
+};

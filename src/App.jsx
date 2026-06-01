@@ -171,129 +171,181 @@ export default function App() {
     };
   }, [clearAuth, setAuth, setAuthBootstrapped]);
 
-  return <>     
-               
-                <ScrollToTop />
+  return (
+    <>
+      <ScrollToTop />
 
-    <Routes>
-      {/* Public redirect */}
-      <Route path ='/' element={<HomePage/>} />
-       <Route path ="/cloud-hosting-blog" element={ <PublicRoute> <BlogPage/> </PublicRoute>} />
-      <Route path="/blog/:id" element={   <PublicRoute> <BlogDetail /> </PublicRoute>} />
-
-      <Route path="/vps" element={<PublicRoute><VpsPlans/></PublicRoute>} />
-      <Route path="/email/plan" element={<PublicRoute><EmailPlansPage /></PublicRoute>} />
-      <Route path="/wordpress-hosting" element={<PublicRoute><Wordpress_Page /></PublicRoute>} />
-      <Route path="/php-hosting" element={<PublicRoute><PhpPlans /></PublicRoute>} />
-
-       <Route path="/home" element={<Dashboard />} />
-
-      <Route path="/pricing" element={<PricingPage />} />
-      <Route path="/education-management-system" element={<EducationPage />} />
-      <Route path ="/restaurant-management-system" element={<RmsPage/>}/>A
-      <Route path ="/wordpress-hosting" element={<LandingWordpress/>}/>
-      <Route path ="/vps-cloud" element={<VpsLandingpage/>}/>
-      <Route path = "/busy-on-cloud" element={<BusyPage/>} />
-      <Route path ="/tally-on-cloud" element={<TallyPage/>} />
-      <Route path = "/marg-on-cloud" element={<Margpage/>} />
-     
-      <Route path = "/contact" element={<ContactUs />} />
-      <Route path ="/privacy-policy" element={<PrivacyPolicy/>}/>
-      <Route path = "/refund-policy-cloude" element={<RefundPolicy/>}/>
-      <Route path = "/term-and-conditions" element={<TermsOfService/>} />
-      <Route path ="/about-us" element={<AboutPage />} />
-     <Route path="/c-panel" element={<CPanelPage/>} />
-     <Route path = "/privacy-policy" element={<PrivacyPolicy/>} />
-     <Route path ="/refund-policy-cloude " element={<RefundPolicy/>} />
-     <Route path ="/term-and-conditions" element={<TermsOfService/>}/>
-
-
-
-      {/* Auth routes (no layout needed) */}
-      <Route element={<AuthRoutes />}>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-      </Route>
-
-      {/* Protected routes */}
-      <Route element={<ProtectedRoute />}>
-        <Route element={<AppRoutes />}>
-          <Route path="/hosting" element={<ManageHosting />} />
-          <Route path="/hosting/plans" element={<HostingPlans />} />
-          <Route path="/hosting/:id" element={<HostingDetails />} />
-          <Route path="/domains" element={<Domains />} />
-          <Route path="/domains/search" element={<DomainSearch />} />
-          <Route path="/domains/:id" element={<ManageDomain />} />
-          <Route path="/settings/*" element={<Settings />} />
-          <Route path="/plans" element={<Plans />} />
-          {/* <Route path="/websites/wordpress" element={<Wordpress_Page />} /> */}
-          <Route path="/websites/wordpress/paid" element={<PaidWordpress />} />
-          <Route path="/wordpress/websiteDashboard" element={<WebsiteDashboard />} />
-          <Route path="/wordpress/websitedashboard/:id" element={<WebsiteDashboard />} />
-          <Route path="/wordpress/domainEnter" element={<DomainEnter />} />
-          <Route path="/wordpress/:id/files" element={<FilesPage />} />
-          <Route path="/wordpress/:id/analytics" element={<AnalyticsPage />} />
-          <Route path="/wordpress/:id/backups" element={<BackupsPage />} />
-          <Route path="wordpress/:id/database" element={<DatabasePage />} />
-
-          <Route path="/php-hosting" element={<PhpPlans />} />
-          <Route path="/php-hosting/paid" element={<MyPhpSites />} />
-          <Route path="/php-hosting/dns/:instanceId" element={<PhpDnsVerify />} />
-          <Route path="/php-hosting/dashboard/:instanceId" element={<PhpDashboard />} />
-          <Route path="/websites/nodejs" element={<NodeJS_Page />} />
-          {/* <Route path="/vps" element={<VpsPlans/>} /> */}
-          <Route path='/vps/paid' element={<VPSDashboard />} />
-          <Route path="/vps/paid/:id" element={<VpsDashboard />} />
-          <Route path="/vps/support/docs" element={<VPSDocumentation />} />
-          <Route path="/vps/backup" element={<BackupManager />} />
-          <Route path="vps/backup/snapshot" element={<SnapShot />} />
-          <Route path="/vps/OSPanel" element={<OSPanel />} />
-          <Route path="/vps/setting" element={<VpsSettings />} />
-          <Route path="/support" element={<SupportPage/>} />
-          <Route path="/support/tickets/:id" element={<SupportPage/>} />
-          <Route path="/vps/:id/docker" element={<Docker />} />
-          <Route path="/vps/security/firewall" element={<firewall />} />
-
-
-
-
-          <Route path="/emails" element={<EmailsPage />} />
-          {/* <Route path="/emails/mailbox/:id" element={<EmailMailboxPage />} /> */}
-          <Route path="/emails/mailbox/:id" element={<EmailMailboxPage />} />
-          <Route path="/emails/forwarders" element={<ForwardersPage />} />
-          <Route path="/emails/aliases" element={<AliasesPage />} />
-          <Route path = "/emails/autoreply" element  = {     <AutoReplyPage/> } /> 
-          <Route path ="/emails/logs" element ={  <EmailLogsPage/>  } /> 
-           <Route path = "emails/dkim" element ={< DkimPage/> } />
-          <Route path = "/emails/connect" element = { <EmailConnect/> } />
-          
-
-
-          <Route path = "/billing/subscriptions" element={<SubscriptionsPage/>} />
-          <Route path  ='/payment-history' element = {<PaymentHistoryPage/>} />
-          {/* <Route path ='/loading' element={<LoadingScreen/>}/> */}
-
-
-          <Route path = "/comingsoon" element ={<ComingSoon/>} />
+      <Routes>
+        {/* Public redirect */}
+        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/cloud-hosting-blog"
+          element={
+            <PublicRoute>
+              {" "}
+              <BlogPage />{" "}
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/blog/:id"
+          element={
+            <PublicRoute>
+              {" "}
+              <BlogDetail />{" "}
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/vps"
+          element={
+            <PublicRoute>
+              <VpsPlans />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/email/plan"
+          element={
+            <PublicRoute>
+              <EmailPlansPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/wordpress-hosting"
+          element={
+            <PublicRoute>
+              <Wordpress_Page />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/php-hosting"
+          element={
+            <PublicRoute>
+              <PhpPlans />
+            </PublicRoute>
+          }
+        />
+        <Route path="/home" element={<Dashboard />} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route
+          path="/education-management-system"
+          element={<EducationPage />}
+        />
+        <Route path="/restaurant-management-system" element={<RmsPage />} />A
+        <Route path="/wordpress-hosting" element={<LandingWordpress />} />
+        <Route path="/vps-cloud" element={<VpsLandingpage />} />
+        <Route path="/busy-on-cloud" element={<BusyPage />} />
+        <Route path="/tally-on-cloud" element={<TallyPage />} />
+        <Route path="/marg-on-cloud" element={<Margpage />} />
+        <Route path="/contact" element={<ContactUs />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/refund-policy-cloude" element={<RefundPolicy />} />
+        <Route path="/term-and-conditions" element={<TermsOfService />} />
+        <Route path="/about-us" element={<AboutPage />} />
+        <Route path="/c-panel" element={<CPanelPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/refund-policy-cloude " element={<RefundPolicy />} />
+        <Route path="/term-and-conditions" element={<TermsOfService />} />
+        {/* Auth routes (no layout needed) */}
+        <Route element={<AuthRoutes />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
         </Route>
-      </Route>
+        {/* Protected routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<AppRoutes />}>
+            <Route path="/hosting" element={<ManageHosting />} />
+            <Route path="/hosting/plans" element={<HostingPlans />} />
+            <Route path="/hosting/:id" element={<HostingDetails />} />
+            <Route path="/domains" element={<Domains />} />
+            <Route path="/domains/search" element={<DomainSearch />} />
+            <Route path="/domains/:id" element={<ManageDomain />} />
+            <Route path="/settings/*" element={<Settings />} />
+            <Route path="/plans" element={<Plans />} />
+            {/* <Route path="/websites/wordpress" element={<Wordpress_Page />} /> */}
+            <Route
+              path="/websites/wordpress/paid"
+              element={<PaidWordpress />}
+            />
+            <Route
+              path="/wordpress/websiteDashboard"
+              element={<WebsiteDashboard />}
+            />
+            <Route
+              path="/wordpress/websitedashboard/:id"
+              element={<WebsiteDashboard />}
+            />
+            <Route path="/wordpress/domainEnter" element={<DomainEnter />} />
+            <Route path="/wordpress/:id/files" element={<FilesPage />} />
+            <Route
+              path="/wordpress/:id/analytics"
+              element={<AnalyticsPage />}
+            />
+            <Route path="/wordpress/:id/backups" element={<BackupsPage />} />
+            <Route path="wordpress/:id/database" element={<DatabasePage />} />
 
+            <Route path="/php-hosting" element={<PhpPlans />} />
+            <Route path="/php-hosting/paid" element={<MyPhpSites />} />
+            <Route
+              path="/php-hosting/dns/:instanceId"
+              element={<PhpDnsVerify />}
+            />
+            <Route
+              path="/php-hosting/dashboard/:instanceId"
+              element={<PhpDashboard />}
+            />
+            <Route path="/websites/nodejs" element={<NodeJS_Page />} />
+            {/* <Route path="/vps" element={<VpsPlans/>} /> */}
+            <Route path="/vps/paid" element={<VPSDashboard />} />
+            <Route path="/vps/paid/:id" element={<VpsDashboard />} />
+            <Route path="/vps/support/docs" element={<VPSDocumentation />} />
+            <Route path="/vps/backup" element={<BackupManager />} />
+            <Route path="vps/backup/snapshot" element={<SnapShot />} />
+            <Route path="/vps/OSPanel" element={<OSPanel />} />
+            <Route path="/vps/setting" element={<VpsSettings />} />
+            <Route path="/support" element={<SupportPage />} />
+            <Route path="/support/tickets/:id" element={<SupportPage />} />
+            <Route
+              path="/support/tickets/:ticketId"
+              element={<TicketDetail />}
+            />
+            <Route path="/vps/:id/docker" element={<Docker />} />
+            <Route path="/vps/security/firewall" element={<firewall />} />
 
-      <Route path="/superadmin" element={<SuperAdminLayout />}>
-        <Route path="servers" element={<Servers />} />
-        <Route path="instances" element={<AdminInstances />} />
-        <Route path="support" element={<AdminSupport />} />
-      </Route>
+            <Route path="/emails" element={<EmailsPage />} />
+            {/* <Route path="/emails/mailbox/:id" element={<EmailMailboxPage />} /> */}
+            <Route path="/emails/mailbox/:id" element={<EmailMailboxPage />} />
+            <Route path="/emails/forwarders" element={<ForwardersPage />} />
+            <Route path="/emails/aliases" element={<AliasesPage />} />
+            <Route path="/emails/autoreply" element={<AutoReplyPage />} />
+            <Route path="/emails/logs" element={<EmailLogsPage />} />
+            <Route path="emails/dkim" element={<DkimPage />} />
+            <Route path="/emails/connect" element={<EmailConnect />} />
 
+            <Route
+              path="/billing/subscriptions"
+              element={<SubscriptionsPage />}
+            />
+            <Route path="/payment-history" element={<PaymentHistoryPage />} />
+            {/* <Route path ='/loading' element={<LoadingScreen/>}/> */}
 
-
-
-      {/* Fallback */}
-      <Route path="*" element={<Navigate to="/home" replace />} />
-    </Routes>
-
+            <Route path="/comingsoon" element={<ComingSoon />} />
+          </Route>
+        </Route>
+        <Route path="/superadmin" element={<SuperAdminLayout />}>
+          <Route path="servers" element={<Servers />} />
+          <Route path="instances" element={<AdminInstances />} />
+          <Route path="support" element={<AdminSupport />} />
+        </Route>
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/home" replace />} />
+      </Routes>
     </>
+  );
             
   
 }
