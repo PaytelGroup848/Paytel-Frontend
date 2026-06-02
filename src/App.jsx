@@ -30,6 +30,7 @@ import DashboardLayout from './components/layout/DashboardLayout';
 import { pageTransition } from './animations/variants';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
+import OtpVerify from './pages/auth/OtpVerify';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import HomePage from './LandingPage/Home/HomePage';
 import ManageHosting from './pages/hosting/ManageHosting';
@@ -253,6 +254,7 @@ export default function App() {
         <Route element={<AuthRoutes />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/verify-otp" element={<OtpVerify />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
         </Route>
         {/* Protected routes */}

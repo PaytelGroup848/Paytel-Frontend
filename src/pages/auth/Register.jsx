@@ -12,7 +12,7 @@ import { useRegister } from "../../hooks/useAuth";
 // ----------------------------------------
 // 🌥️ Left Side Banner
 // ----------------------------------------
-const RegisterBanner = () => {
+export const RegisterBanner = () => {
   const stats = [
     { value: "99.99%", label: "Uptime SLA" },
     { value: "180+", label: "Regions" },
@@ -152,15 +152,15 @@ export default function Register() {
     if (Object.keys(nextErrors).length) return;
 
     try {
-      await register.mutateAsync({
+      const data = await register.mutateAsync({
         name: form.name,
         email: form.email,
         phone: form.phone,
         password: form.password,
       });
 
-      toast.success("Registration successful. Please login.");
-      navigate("/login", { state: { from } });
+      toast.success("OTP sent to your email!");
+      navigate("/verify-otp", { state: { userId: data.userId, email: data.email, from } });
     } catch (_) {}
   };
 

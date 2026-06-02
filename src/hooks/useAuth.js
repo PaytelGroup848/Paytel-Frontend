@@ -27,13 +27,31 @@ export const useRegister = () =>
   useMutation({
     mutationFn: async (payload) => {
       const res = await api.post('/auth/register', payload);
-      return res.data?.data;
+      return res.data?.data; // returns { userId, email }
     },
-    // onSuccess: () => toast.success('Account created. Please login.'),
     onError: (error) => {
       const message = error?.response?.data?.message || 'Registration failed';
       toast.error(message);
     },
+  });
+
+export const useVerifyOtp = () =>
+  useMutation({
+    mutationFn: async ({ userId, otp }) => {
+      const res = await api.post('/auth/verify-otp', { userId, otp });
+      return res.data?.data;
+    },
+    onError: (err) => toast.error(err?.response?.data?.message || 'Invalid OTP'),
+  });
+
+export const useResendOtp = () =>
+  useMutation({
+    mutationFn: async ({ userId }) => {
+      const res = await api.post('/auth/resend-otp', { userId });
+      return res.data?.data;
+    },
+    onSuccess: () => toast.success('OTP resent to your email!'),
+    onError: (err) => toast.error(err?.response?.data?.message || 'Failed to resend OTP'),
   });
 
 export const useLogout = () => {
