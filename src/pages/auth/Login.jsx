@@ -112,7 +112,7 @@ const CloudVisual = () => {
 };
 
 // ----------------------------------------
-// 🔑 Login Page
+//  Login Page
 // ----------------------------------------
 export default function Login() {
   const navigate = useNavigate();
