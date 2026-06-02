@@ -11,7 +11,9 @@ const BlogListing = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 6;
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  // const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+  const API_URL = "https://api.marketing.cloudedata.com"
 
   useEffect(() => {
     const fetchBlogs = async () => {
