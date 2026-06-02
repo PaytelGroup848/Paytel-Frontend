@@ -1,7 +1,15 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Mail, Lock, Cloud, Shield, Zap, ArrowRight, Globe } from "lucide-react";
+import {
+  Mail,
+  Lock,
+  Cloud,
+  Shield,
+  Zap,
+  ArrowRight,
+  Globe,
+} from "lucide-react";
 
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
@@ -13,9 +21,24 @@ import { useLogin } from "../../hooks/useAuth";
 // ----------------------------------------
 const CloudVisual = () => {
   const features = [
-    { icon: Shield, text: "Advanced DDoS Protection", color: "text-blue-400", bg: "bg-blue-500/10" },
-    { icon: Zap, text: "NVMe Storage on all Nodes", color: "text-amber-400", bg: "bg-amber-500/10" },
-    { icon: Globe, text: "180+ Global Edge Locations", color: "text-emerald-400", bg: "bg-emerald-500/10" },
+    {
+      icon: Shield,
+      text: "Advanced DDoS Protection",
+      color: "text-blue-400",
+      bg: "bg-blue-500/10",
+    },
+    {
+      icon: Zap,
+      text: "NVMe Storage on all Nodes",
+      color: "text-amber-400",
+      bg: "bg-amber-500/10",
+    },
+    {
+      icon: Globe,
+      text: "180+ Global Edge Locations",
+      color: "text-emerald-400",
+      bg: "bg-emerald-500/10",
+    },
   ];
 
   const stats = [
@@ -35,31 +58,32 @@ const CloudVisual = () => {
       <div
         className="absolute inset-0 opacity-[0.04]"
         style={{
-          backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
+          backgroundImage:
+            "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
           backgroundSize: "40px 40px",
         }}
       />
 
       {/* Logo */}
-       <div className="relative flex items-center justify-center w-full h-12">
-  <motion.img
-    src="/Cloudedata.svg"
-    alt="Cloude Data Logo"
-    className="
+      <div className="relative flex items-center justify-center w-full h-12">
+        <motion.img
+          src="/Cloudedata.svg"
+          alt="Cloude Data Logo"
+          className="
       w-full h-12
       object-contain
       drop-shadow-xl
       group-hover:scale-110
       transition-transform duration-300
     "
-    animate={{ y: [0, -2, 0] }}
-    transition={{
-      repeat: Infinity,
-      duration: 3,
-      ease: "easeInOut",
-    }}
-  />
-</div>
+          animate={{ y: [0, -2, 0] }}
+          transition={{
+            repeat: Infinity,
+            duration: 3,
+            ease: "easeInOut",
+          }}
+        />
+      </div>
 
       {/* Headline + stats */}
       <div className="relative z-10 space-y-6">
@@ -75,14 +99,18 @@ const CloudVisual = () => {
             </span>
           </h2>
           <p className="text-slate-400 text-sm max-w-[260px] leading-relaxed">
-            Scalable infrastructure with enterprise-grade security and 99.99% uptime SLA.
+            Scalable infrastructure with enterprise-grade security and 99.99%
+            uptime SLA.
           </p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-2">
           {stats.map((s, i) => (
-            <div key={i} className="rounded-xl bg-white/5 border border-white/[0.08] px-3 py-2.5 text-center">
+            <div
+              key={i}
+              className="rounded-xl bg-white/5 border border-white/[0.08] px-3 py-2.5 text-center"
+            >
               <div className="text-lg font-bold text-white">{s.value}</div>
               <div className="text-[10px] text-slate-500 mt-0.5">{s.label}</div>
             </div>
@@ -103,7 +131,9 @@ const CloudVisual = () => {
             <div className={`p-1.5 rounded-lg ${item.bg}`}>
               <item.icon className={`h-4 w-4 ${item.color}`} />
             </div>
-            <span className="text-sm text-slate-200 font-medium">{item.text}</span>
+            <span className="text-sm text-slate-200 font-medium">
+              {item.text}
+            </span>
           </motion.div>
         ))}
       </div>
@@ -137,8 +167,22 @@ export default function Login() {
     if (Object.keys(nextErrors).length) return;
 
     try {
-      await login.mutateAsync({ email: form.email, password: form.password });
-      navigate(from);
+      // await login.mutateAsync({ email: form.email, password: form.password });
+      // navigate(from);
+
+      const res = await login.mutateAsync({
+        email: form.email,
+        password: form.password,
+      });
+
+      const role = res?.user?.role;
+      console.log("this is my res", role);
+
+      if (role === "superadmin") {
+        navigate("/superadmin/servers");
+      } else {
+        navigate(from);
+      }
     } catch (_) {}
   };
 
@@ -152,7 +196,6 @@ export default function Login() {
       >
         {/* Card */}
         <div className="bg-white rounded-[28px] shadow-[0_24px_64px_-12px_rgba(0,0,0,0.14)] overflow-hidden flex flex-col md:flex-row border border-slate-100 md:h-[600px]">
-
           {/* ── Left dark panel ── */}
           <div className="hidden md:block md:w-[44%]">
             <CloudVisual />
@@ -161,7 +204,6 @@ export default function Login() {
           {/* ── Right form panel ── */}
           <div className="flex-1 flex flex-col justify-center px-8 py-10 md:px-12 lg:px-16 border-l border-slate-100">
             <div className="max-w-[360px] mx-auto w-full">
-
               {/* Header */}
               <motion.header
                 initial={{ y: -10, opacity: 0 }}
@@ -222,24 +264,28 @@ export default function Login() {
                 </div>
 
                 {/* Submit */}
-                <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} className="pt-1">
+                <motion.div
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="pt-1"
+                >
                   <Button
                     type="submit"
                     loading={login.isPending}
                     className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-100 flex items-center justify-center gap-2 transition-all text-sm"
                   >
-                    {!login.isPending && (
-                      <>
-                        Sign In →
-                      </>
-                    )}
+                    {!login.isPending && <>Sign In →</>}
                     {login.isPending && "Authenticating..."}
                   </Button>
                 </motion.div>
 
                 <p className="text-center text-xs text-slate-500 pt-1">
                   Don't have an account?{" "}
-                  <Link to="/register" state={{ from }} className="font-bold text-indigo-600 hover:text-indigo-700 hover:underline transition">
+                  <Link
+                    to="/register"
+                    state={{ from }}
+                    className="font-bold text-indigo-600 hover:text-indigo-700 hover:underline transition"
+                  >
                     Create one →
                   </Link>
                 </p>
