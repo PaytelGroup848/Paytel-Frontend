@@ -517,6 +517,16 @@ export const useInstallSsl = (instanceId) =>
       toast.success("SSL installed successfully!");
     },
     onError: (error) => {
-      toast.error(error?.response?.data?.message || "Failed to install SSL");
+      const message = error?.response?.data?.message;
+      if (
+        message?.includes("rate limit") ||
+        error?.response?.data?.code === "RATE_LIMITED"
+      ) {
+        toast.error(
+          "Let's Encrypt rate limit exceeded. Please wait 24 hours before trying again.",
+        );
+      } else {
+        toast.error(message || "Failed to install SSL");
+      }
     },
   });
