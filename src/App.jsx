@@ -1,19 +1,25 @@
+import { useEffect } from "react";
+import {
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+import { motion } from "framer-motion";
+import { useAuthStore } from "./store/authStore";
+import { api } from "./services/api";
+import Dashboard from "./pages/dashboard/Home";
+import ScrollToTop from "./components/ScrollToTop";
 
-import { useEffect } from 'react';
-import { Navigate, Outlet, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { useAuthStore } from './store/authStore';
-import { api } from './services/api';
-import Dashboard from './pages/dashboard/Home';
-import ScrollToTop from './components/ScrollToTop';
-
-import PricingPage from './LandingPage/pricing/PricingPage';
-import EducationPage from './LandingPage/CRM/Education ERP/EducationPage';
-import RmsPage from './LandingPage/CRM/Resturant Managment/RmsPage';
+import PricingPage from "./LandingPage/pricing/PricingPage";
+import EducationPage from "./LandingPage/CRM/Education ERP/EducationPage";
+import RmsPage from "./LandingPage/CRM/Resturant Managment/RmsPage";
 import LandingWordpress from "./LandingPage/Wordpress/LandingWordpress";
-import BusyPage from './LandingPage/Services/busy on cloud/BusyPage';
+import BusyPage from "./LandingPage/Services/busy on cloud/BusyPage";
 import TallyPage from "./LandingPage/Services/tally on cloud/tallyPage";
-import Margpage  from "./LandingPage/Services/Marg on cloud/MargPage";
+import Margpage from "./LandingPage/Services/Marg on cloud/MargPage";
 import BlogPage from "./LandingPage/Blog/BlogPage";
 import CPanelPage from "./LandingPage/C-panel/CPanelPage";
 import ContactUs from "./LandingPage/Contact/Contact";
@@ -22,78 +28,71 @@ import RefundPolicy from "./LandingPage/RefundPolicy";
 import TermsOfService from "./LandingPage/TermsAndConditions";
 import AboutPage from "./LandingPage/Aboutus";
 
-
-
-import Spinner from './components/ui/Spinner';
-import AuthLayout from './components/layout/AuthLayout';
-import DashboardLayout from './components/layout/DashboardLayout';
-import { pageTransition } from './animations/variants';
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import OtpVerify from './pages/auth/OtpVerify';
-import ForgotPassword from './pages/auth/ForgotPassword';
-import HomePage from './LandingPage/Home/HomePage';
-import ManageHosting from './pages/hosting/ManageHosting';
-import HostingPlans from './pages/hosting/HostingPlans';
-import HostingDetails from './pages/hosting/HostingDetails';
-import Domains from './pages/domains/Domains';
-import DomainSearch from './pages/domains/DomainSearch';
-import ManageDomain from './pages/domains/ManageDomain';
-import Settings from './pages/settings/Settings';
+import Spinner from "./components/ui/Spinner";
+import AuthLayout from "./components/layout/AuthLayout";
+import DashboardLayout from "./components/layout/DashboardLayout";
+import { pageTransition } from "./animations/variants";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import OtpVerify from "./pages/auth/OtpVerify";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import HomePage from "./LandingPage/Home/HomePage";
+import ManageHosting from "./pages/hosting/ManageHosting";
+import HostingPlans from "./pages/hosting/HostingPlans";
+import HostingDetails from "./pages/hosting/HostingDetails";
+import Domains from "./pages/domains/Domains";
+import DomainSearch from "./pages/domains/DomainSearch";
+import ManageDomain from "./pages/domains/ManageDomain";
+import Settings from "./pages/settings/Settings";
 import Plans from "./pages/plans/Plan";
-import Wordpress_Page from './pages/websites/wordpress/WordPress_Page';
-import PaidWordpress from './pages/websites/wordpress/PaidWordpress';
-import Home from './pages/dashboard/Home';
-import WebsiteDashboard from './pages/websites/wordpress/websiteDashboard';
-import DomainEnter from './pages/websites/wordpress/domainEnter';
-import PhpPlans from './pages/websites/php/PhpPlans';
-import MyPhpSites from './pages/websites/php/MyPhpSites';
-import PhpDnsVerify from './pages/websites/php/PhpDnsVerify';
-import PhpDashboard from './pages/websites/php/PhpDashboard';
-import NodeJS_Page from './pages/websites/nodejs/nodejs';
-import SuperAdminLayout from './pages/superadmin/SuperAdminLayout';
-import Servers from './pages/superadmin/Servers';
-import AdminInstances from './pages/superadmin/Instances';
-import FilesPage from './pages/websites/wordpress/FilesPage';
-import DatabasePage from './pages/websites/wordpress/DatabasePage';
-import VpsPlans from './pages/vps/VpsPlans';
-import VPSDocumentation from './pages/vps/slidebar/docs';
-import BackupManager from './pages/vps/slidebar/BackupManager';
-import SnapShot from './pages/vps/slidebar/SnapShot';
-import OSPanel from './pages/vps/slidebar/Os_panel';
+import Wordpress_Page from "./pages/websites/wordpress/WordPress_Page";
+import PaidWordpress from "./pages/websites/wordpress/PaidWordpress";
+import Home from "./pages/dashboard/Home";
+import WebsiteDashboard from "./pages/websites/wordpress/websiteDashboard";
+import DomainEnter from "./pages/websites/wordpress/domainEnter";
+import PhpPlans from "./pages/websites/php/PhpPlans";
+import MyPhpSites from "./pages/websites/php/MyPhpSites";
+import PhpDnsVerify from "./pages/websites/php/PhpDnsVerify";
+import PhpDashboard from "./pages/websites/php/PhpDashboard";
+import NodeJS_Page from "./pages/websites/nodejs/nodejs";
+import SuperAdminLayout from "./pages/superadmin/SuperAdminLayout";
+import Servers from "./pages/superadmin/Servers";
+import AdminInstances from "./pages/superadmin/Instances";
+import FilesPage from "./pages/websites/wordpress/FilesPage";
+import DatabasePage from "./pages/websites/wordpress/DatabasePage";
+import VpsPlans from "./pages/vps/VpsPlans";
+import VPSDocumentation from "./pages/vps/slidebar/docs";
+import BackupManager from "./pages/vps/slidebar/BackupManager";
+import SnapShot from "./pages/vps/slidebar/SnapShot";
+import OSPanel from "./pages/vps/slidebar/Os_panel";
 import VpsSettings from "./pages/vps/slidebar/setting";
 import firewall from "./pages/vps/slidebar/security/firewall";
 import SupportPage from "./pages/support/Support";
 import TicketDetail from "./pages/support/TicketDetail";
 import AdminSupport from "./pages/superadmin/AdminSupport";
-import AnalyticsPage from './pages/wordpress/AnalyticsPage';
-import BackupsPage from './pages/wordpress/BackupsPage';
+import AnalyticsPage from "./pages/wordpress/AnalyticsPage";
+import BackupsPage from "./pages/wordpress/BackupsPage";
 import { useMe } from "./hooks/useAuth";
-import VPSDashboard from './pages/vps/vps_paid';
+import VPSDashboard from "./pages/vps/vps_paid";
 import VpsDashboard from "./pages/vps/slidebar/vpsOverview";
 import EmailsPage from "./pages/Emails/Emails";
-import EmailMailboxPage from './pages/Emails/EmailMailboxPage';
-import EmailPlansPage from './pages/Emails/EmailPlan';
-import ForwardersPage from './pages/Emails/EmailForward';
-import AliasesPage from './pages/Emails/EmailAlias';
-import  AutoReplyPage from './pages/Emails/EmailAutoReply'; 
-import EmailConnect from './pages/Emails/EmailConnect';
-import EmailLogsPage from './pages/Emails/EmailLogsPage';
-import DkimPage from './pages/Emails/EmailDkim';
-import Docker from './pages/vps/Docker';
-import { setNavigator } from './utils/navigation';
+import EmailMailboxPage from "./pages/Emails/EmailMailboxPage";
+import EmailPlansPage from "./pages/Emails/EmailPlan";
+import ForwardersPage from "./pages/Emails/EmailForward";
+import AliasesPage from "./pages/Emails/EmailAlias";
+import AutoReplyPage from "./pages/Emails/EmailAutoReply";
+import EmailConnect from "./pages/Emails/EmailConnect";
+import EmailLogsPage from "./pages/Emails/EmailLogsPage";
+import DkimPage from "./pages/Emails/EmailDkim";
+import Docker from "./pages/vps/Docker";
+import { setNavigator } from "./utils/navigation";
 // import LoadingScreen from './pages/loading';
 
-import SubscriptionsPage from './pages/billing/Subscription';
+import SubscriptionsPage from "./pages/billing/Subscription";
 import PaymentHistoryPage from "./pages/billing/paymentHistory";
-import ComingSoon from './utils/ComingSoon';
-import BlogDetail from './LandingPage/Blog/blogDetail'; 
-import VpsLandingpage from './LandingPage/Services/Vps on Cloud/VpsLandingPage';
-
-
-
-
-
+import ComingSoon from "./utils/ComingSoon";
+import BlogDetail from "./LandingPage/Blog/blogDetail";
+import VpsLandingpage from "./LandingPage/Services/Vps on Cloud/VpsLandingPage";
 
 // Protected Route wrapper
 const ProtectedRoute = () => {
@@ -111,7 +110,8 @@ const ProtectedRoute = () => {
       </div>
     );
   }
-  if (!isAuthenticated) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  if (!isAuthenticated)
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   return <Outlet />;
 };
 
@@ -142,9 +142,9 @@ export default function App() {
   const setAuth = useAuthStore((s) => s.setAuth);
   const setAuthBootstrapped = useAuthStore((s) => s.setAuthBootstrapped);
   const clearAuth = useAuthStore((s) => s.clearAuth);
-   const navigate = useNavigate();
+  const navigate = useNavigate();
 
- useEffect(() => {
+  useEffect(() => {
     setNavigator(navigate);
   }, [navigate]);
 
@@ -153,7 +153,7 @@ export default function App() {
 
     const bootstrap = async () => {
       try {
-        const refreshRes = await api.post('/auth/refresh-token');
+        const refreshRes = await api.post("/auth/refresh-token");
         const newToken = refreshRes.data?.data?.accessToken;
         const user = refreshRes.data?.data?.user;
 
@@ -235,7 +235,7 @@ export default function App() {
           path="/education-management-system"
           element={<EducationPage />}
         />
-        <Route path="/restaurant-management-system" element={<RmsPage />} />A
+        <Route path="/restaurant-management-system" element={<RmsPage />} />
         <Route path="/wordpress-hosting" element={<LandingWordpress />} />
         <Route path="/vps-cloud" element={<VpsLandingpage />} />
         <Route path="/busy-on-cloud" element={<BusyPage />} />
@@ -348,6 +348,4 @@ export default function App() {
       </Routes>
     </>
   );
-            
-  
 }
