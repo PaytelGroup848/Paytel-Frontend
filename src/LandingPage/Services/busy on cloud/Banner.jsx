@@ -45,14 +45,14 @@ export default function Banner() {
 
     try {
       const response = await axios.post(
-        "https://backend.cloudedata.com/api/public/submit",
+        "https://api.marketing.cloudedata.com/api/public/submit",
         {
           name: form.name,
           email: form.email,
-          phone: form.mobile,        // backend expects "phone"
-          product: form.service,     // backend expects "product"
+          phone: form.mobile, // backend expects "phone"
+          product: form.service, // backend expects "product"
           message: form.message || "No message provided",
-        }
+        },
       );
 
       if (response.data.success) {

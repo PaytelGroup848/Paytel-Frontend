@@ -78,13 +78,16 @@ export default function Banner() {
     }
 
     try {
-      const response = await axios.post("https://backend.cloudedata.com/api/public/submit", {
-        name: form.name,
-        email: form.email,
-        phone: form.mobile,
-        product: form.service,
-        message: form.message || "No message provided",
-      });
+      const response = await axios.post(
+        "https://api.marketing.cloudedata.com/api/public/submit",
+        {
+          name: form.name,
+          email: form.email,
+          phone: form.mobile,
+          product: form.service,
+          message: form.message || "No message provided",
+        },
+      );
 
       if (response.data.success) {
         setSuccess("Thank you! Your demo request has been submitted. Our team will contact you soon.");

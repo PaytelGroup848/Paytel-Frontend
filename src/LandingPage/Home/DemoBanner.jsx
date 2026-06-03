@@ -134,13 +134,16 @@ function LeadCaptureCard() {
     }
 
     try {
-      const response = await axios.post('https://backend.cloudedata.com/api/public/submit', {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        product: formData.product,
-        message: formData.message || 'No message provided'
-      });
+      const response = await axios.post(
+        "https://api.marketing.cloudedata.com/api/public/submit",
+        {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          product: formData.product,
+          message: formData.message || "No message provided",
+        },
+      );
 
       if (response.data.success) {
         setSuccess('Thank you! Your request has been submitted. Our team will contact you soon.');

@@ -70,13 +70,16 @@ export default function ContactUs() {
       : extraInfo || "No additional message";
 
     try {
-      const response = await axios.post("https://backend.cloudedata.com/api/public/submit", {
-        name: form.name,
-        email: form.email,
-        phone: form.phone,
-        product: "Contact Inquiry", // fixed for contact page
-        message: fullMessage,
-      });
+      const response = await axios.post(
+        "https://api.marketing.cloudedata.com/api/public/submit",
+        {
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          product: "Contact Inquiry", // fixed for contact page
+          message: fullMessage,
+        },
+      );
 
       if (response.data.success) {
         setSuccess("Thank you! Your inquiry has been submitted. Our team will respond within 1 business day.");
