@@ -30,7 +30,9 @@ const BlogDetail = () => {
   const [copied, setCopied] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  // const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+  const API_URL = "https://api.marketing.cloudedata.com";
 
   const getEmbedUrl = (url) => {
     if (!url) return null;

@@ -2,7 +2,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Banner from './Banner';
 import BlogListing from './BlogListing';
-import Navbar from "../Navbar";
 import Footer from "../Footer";
 
 export default function BlogPage() {
@@ -27,8 +26,8 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 font-sans flex flex-col selection:bg-indigo-200/50">
-      {/* Global Navbar */}
-      <Navbar />
+     
+  
 
       {/* Main Content */}
       <motion.main
