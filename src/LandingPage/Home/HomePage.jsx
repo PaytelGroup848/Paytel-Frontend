@@ -5,7 +5,7 @@ import PlansCard from "./PlansCard";
 import Review from "./Review";
 import BusinessCard from "./businessCard";
 import Services from "./Services";
-import PlansAndPricing from "./PlansAndPricin";
+import PlansAndPricing from "./PlansAndPricing";
 import ContactCard from "./ContactCard";
 import Footer from "../Footer";
 
