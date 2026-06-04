@@ -178,23 +178,28 @@ function LeadCaptureCard() {
     if (!name || !email || !phone || !product) { setError("Please fill all required fields."); return; }
     setLoading(true);
     try {
-      const res = await axios.post("https://backend.cloudedata.com/api/public/submit", {
-        name, email, phone, product, message: "No message provided",
+      const response = await axios.post('https://backend.cloudedata.com/api/public/submit', {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        product: formData.product,
+        message: formData.message || 'No message provided'
       });
-      if (res.data.success) {
-        setSuccess("We'll be in touch shortly!");
-        setFormData({ name: "", email: "", phone: "", product: "" });
-      } else { setError("Submission failed. Please retry."); }
-    } catch { setError("Network error. Please try again."); }
-    finally  { setLoading(false); }
-  }, [formData]);
 
-  const inp =
-    "w-full pl-10 pr-3 py-[11px] rounded-xl text-[13.5px] text-white placeholder:text-slate-500 " +
-    "bg-white/[0.05] border border-white/[0.09] " +
-    "focus:outline-none focus:border-cyan-400/40 focus:bg-white/[0.08] transition-all duration-200";
-
-  const iconCls = "absolute left-3 top-1/2 -translate-y-1/2 text-slate-500";
+      if (response.data.success) {
+        setSuccess('Thank you! Your request has been submitted. Our team will contact you soon.');
+        // reset form
+        setFormData({ name: '', email: '', phone: '', product: '', message: '' });
+      } else {
+        setError('Submission failed. Please try again.');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Network error. Please check your connection or try again later.');
+    } finally {
+      setLoading(false);
+    }
+  })
 
   return (
     <motion.div

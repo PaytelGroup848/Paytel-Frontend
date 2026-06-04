@@ -67,13 +67,16 @@ export default function CpanelBanner() {
     }
 
     try {
-      const response = await axios.post("https://backend.cloudedata.com/api/public/submit", {
-        name: form.name,
-        email: form.email,
-        phone: form.phone,
-        product: form.plan,
-        message: form.message || "No additional message",
-      });
+      const response = await axios.post(
+        "https://api.marketing.cloudedata.com/api/public/submit",
+        {
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          product: form.plan,
+          message: form.message || "No additional message",
+        },
+      );
 
       if (response.data.success) {
         setSuccess("Thank you! Our hosting experts will contact you shortly with a tailored cPanel solution.");
