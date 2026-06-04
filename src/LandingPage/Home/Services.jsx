@@ -7,6 +7,7 @@ import {
   LifeBuoy,
   Shield,
   ArrowRight,
+  Tally5,
 } from "lucide-react";
 
 const services = [
@@ -41,11 +42,11 @@ const services = [
     gradient: "from-indigo-500 to-blue-600",
   },
   {
-    title: "Data Backup & Disaster Recovery",
-    desc: "Automated backups, snapshots, and recovery plans to keep your business safe from data loss. Restore with confidence in minutes.",
-    icon: Shield,
-    gradient: "from-red-500 to-pink-600",
-  },
+  title: "Tally on Cloud Hosting",
+  desc: "Access your Tally data securely from anywhere, anytime. Enjoy high-speed cloud infrastructure, multi-user access, and seamless business operations without local server limitations.",
+  icon: Tally5,
+  gradient: "from-red-500 to-pink-600",
+},
 ];
 
 const ServiceCard = ({ service, index }) => (
