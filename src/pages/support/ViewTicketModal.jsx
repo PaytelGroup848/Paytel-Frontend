@@ -1,5 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { X, Send, Paperclip, ExternalLink } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  X,
+  Send,
+  Paperclip,
+  ExternalLink,
+  Loader2,
+  LockKeyhole,
+  MessageSquareReply,
+  XCircle,
+} from "lucide-react";
 import { useAddReply, useCloseTicket } from "../../hooks/useSupport";
 import { getSocket } from "../../services/socket";
 import toast from "react-hot-toast";
@@ -7,28 +16,35 @@ import toast from "react-hot-toast";
 const ReplyBubble = ({ reply }) => {
   const isUser = reply.sender === "user";
   return (
-    <div className={`flex ${isUser ? "justify-end" : "justify-start"} mb-4`}>
+    <div className={`flex ${isUser ? "justify-end" : "justify-start"} mb-3`}>
       <div
-        className={`max-w-[75%] rounded-2xl px-4 py-3 shadow-sm ${
-          isUser ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-800"
+        className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+          isUser
+            ? "bg-indigo-600 text-white rounded-br-sm"
+            : "bg-slate-100 text-slate-800 rounded-bl-sm"
         }`}
       >
-        <p className="text-xs font-bold opacity-80 mb-1">
+        <p
+          className={`text-xs font-semibold mb-1 ${isUser ? "text-indigo-200" : "text-slate-400"}`}
+        >
           {reply.senderName || (isUser ? "You" : "Support")}
         </p>
-        <p className="text-sm whitespace-pre-wrap">{reply.text}</p>
+        <p className="text-sm whitespace-pre-wrap leading-relaxed">
+          {reply.text}
+        </p>
         {reply.attachment?.url && (
           <a
             href={reply.attachment.url}
             target="_blank"
             rel="noreferrer"
-            className={`text-xs underline mt-2 block ${isUser ? "text-indigo-100" : "text-indigo-600"}`}
+            className={`flex items-center gap-1 text-xs underline mt-2 ${isUser ? "text-indigo-200" : "text-indigo-500"}`}
           >
-            📎 {reply.attachment.name || "View attachment"}
+            <Paperclip size={11} />
+            {reply.attachment.name || "View attachment"}
           </a>
         )}
         <span
-          className={`text-[10px] block mt-2 ${isUser ? "text-indigo-200" : "text-gray-400"}`}
+          className={`text-[10px] block mt-1.5 ${isUser ? "text-indigo-300" : "text-slate-400"}`}
         >
           {new Date(reply.timestamp).toLocaleString()}
         </span>
@@ -38,9 +54,9 @@ const ReplyBubble = ({ reply }) => {
 };
 
 const statusStyles = {
-  Open: "bg-red-100 text-red-700",
-  Pending: "bg-yellow-100 text-yellow-700",
-  Closed: "bg-green-100 text-green-700",
+  Open: "bg-red-50 text-red-600 border border-red-100",
+  Pending: "bg-amber-50 text-amber-600 border border-amber-100",
+  Closed: "bg-emerald-50 text-emerald-600 border border-emerald-100",
 };
 
 export default function ViewTicketModal({
@@ -54,6 +70,7 @@ export default function ViewTicketModal({
   const [fileName, setFileName] = useState("");
   const [liveReplies, setLiveReplies] = useState([]);
   const [status, setStatus] = useState("");
+  const scrollRef = useRef(null);
 
   const replyMutation = useAddReply(ticket?.ticketId);
   const closeTicket = useCloseTicket();
@@ -64,7 +81,6 @@ export default function ViewTicketModal({
 
   useEffect(() => {
     if (!isOpen || !ticket?.ticketId) return;
-
     const socket = getSocket();
     socket.emit("join:ticket", ticket.ticketId);
 
@@ -93,6 +109,13 @@ export default function ViewTicketModal({
     };
   }, [isOpen, ticket?.ticketId, onRefresh]);
 
+  // Auto-scroll on new replies
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [liveReplies]);
+
   if (!isOpen || !ticket) return null;
 
   const mergedReplies = [...(ticket.replies || [])];
@@ -110,11 +133,9 @@ export default function ViewTicketModal({
       toast.error("Please enter a reply");
       return;
     }
-
     const fd = new FormData();
     fd.append("text", replyText);
     if (replyFile) fd.append("attachment", replyFile);
-
     await replyMutation.mutateAsync(fd);
     setReplyText("");
     setReplyFile(null);
@@ -132,61 +153,93 @@ export default function ViewTicketModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
-          <div>
-            <p className="text-xs font-mono opacity-80">{ticket.ticketId}</p>
-            <h2 className="text-xl font-bold">{ticket.subject}</h2>
-            <p className="text-sm opacity-80 mt-1">
-              {ticket.department} · {ticket.priority} priority
-            </p>
+        <div className="flex items-start justify-between px-6 py-4 border-b border-slate-100 shrink-0">
+          <div className="flex items-start gap-3 min-w-0">
+            <div className="w-9 h-9 bg-indigo-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+              <MessageSquareReply size={17} className="text-indigo-600" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="text-base font-semibold text-slate-800 truncate">
+                  {ticket.subject}
+                </h2>
+                <span
+                  className={`px-2.5 py-0.5 rounded-lg text-xs font-semibold flex-shrink-0 ${statusStyles[status] || "bg-slate-50 text-slate-500 border border-slate-100"}`}
+                >
+                  {status}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                <span className="text-xs font-mono text-slate-400">
+                  #{ticket.ticketId}
+                </span>
+                <span className="text-slate-200 text-xs">·</span>
+                <span className="text-xs text-slate-400">
+                  {ticket.department}
+                </span>
+                <span className="text-slate-200 text-xs">·</span>
+                <span className="text-xs text-slate-400">
+                  {ticket.priority} priority
+                </span>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span
-              className={`px-3 py-1 rounded-full text-xs font-semibold ${statusStyles[status] || "bg-gray-100 text-gray-700"}`}
-            >
-              {status}
-            </span>
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-            >
-              <X size={20} />
-            </button>
-          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors flex-shrink-0 ml-2"
+          >
+            <X size={16} />
+          </button>
         </div>
 
-        {/* Initial Message */}
-        <div className="p-5 bg-gray-50 border-b">
-          <p className="text-sm font-medium text-gray-500 mb-2">
-            Initial Message
-          </p>
-          <p className="text-gray-700">{ticket.message}</p>
-          {ticket.attachment?.url && (
-            <a
-              href={ticket.attachment.url}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 mt-3 text-indigo-600 text-sm hover:underline"
-            >
-              <ExternalLink size={14} />
-              {ticket.attachment.name || "View attachment"}
-            </a>
-          )}
-          <p className="text-xs text-gray-400 mt-3">
-            Created: {new Date(ticket.createdAt).toLocaleString()}
-          </p>
-        </div>
-
-        {/* Conversation Thread */}
-        <div className="flex-1 overflow-y-auto p-5 min-h-[300px] max-h-[400px]">
-          <h3 className="font-semibold text-gray-700 mb-4">Conversation</h3>
+        {/* Conversation */}
+        <div
+          ref={scrollRef}
+          className="flex-1 overflow-y-auto scrollbar-hide px-6 py-4 min-h-0"
+        >
+          <div className="px-6 pt-4 shrink-0">
+            <div className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-3">
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">
+                First Message
+              </p>
+              <p className="text-sm text-slate-600 leading-relaxed line-clamp-3">
+                {ticket.message}
+              </p>
+              {ticket.attachment?.url && (
+                <a
+                  href={ticket.attachment.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 mt-2 text-xs text-indigo-500 hover:text-indigo-700 hover:underline"
+                >
+                  <ExternalLink size={11} />
+                  {ticket.attachment.name || "View attachment"}
+                </a>
+              )}
+              <p className="text-xs text-slate-300 mt-2">
+                {new Date(ticket.createdAt).toLocaleString()}
+              </p>
+            </div>
+          </div>
           {mergedReplies.length === 0 ? (
-            <p className="text-gray-400 text-center py-8">
-              No replies yet. Support will respond soon.
-            </p>
+            <div className="flex flex-col items-center justify-center h-full py-10 gap-2">
+              <div className="w-10 h-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center">
+                <MessageSquareReply size={18} className="text-slate-300" />
+              </div>
+              <p className="text-sm text-slate-400">No replies yet</p>
+              <p className="text-xs text-slate-300">
+                Support will respond soon
+              </p>
+            </div>
           ) : (
             mergedReplies.map((rep, idx) => (
               <ReplyBubble key={rep.replyId || rep._id || idx} reply={rep} />
@@ -194,57 +247,67 @@ export default function ViewTicketModal({
           )}
         </div>
 
-        {/* Reply Form */}
-        {canReply && (
-          <div className="p-5 border-t bg-gray-50">
-            <form onSubmit={handleSubmit}>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Your Reply
-              </label>
+        {/* Reply Form / Closed */}
+        <div className="px-6 pb-5 pt-3 border-t border-slate-100 shrink-0">
+          {canReply ? (
+            <form onSubmit={handleSubmit} className="space-y-3">
               <textarea
                 rows={3}
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
-                className="w-full border rounded-xl p-3 focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none"
-                placeholder="Type your message..."
+                placeholder="Write your reply..."
+                className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all resize-none scrollbar-hide"
               />
-              <div className="mt-3 flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-2">
-                  <label className="cursor-pointer bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1.5 rounded-lg text-sm transition-colors">
-                    <Paperclip size={14} className="inline mr-1" />
-                    Attach
-                    <input
-                      type="file"
-                      accept="image/*,.pdf,.doc,.docx"
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-                        setReplyFile(file || null);
-                        setFileName(file ? file.name : "");
-                      }}
-                      className="hidden"
-                    />
-                  </label>
-                  {fileName && (
-                    <span className="text-xs text-green-600 truncate max-w-[150px]">
-                      {fileName}
-                    </span>
-                  )}
-                </div>
+
+              {/* File Upload */}
+              <label className="flex items-center gap-3 w-full border border-dashed border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/30 rounded-xl px-4 py-2.5 cursor-pointer transition-all group">
+                <Paperclip
+                  size={14}
+                  className="text-slate-400 group-hover:text-indigo-500 flex-shrink-0 transition-colors"
+                />
+                <span className="text-xs text-slate-400 group-hover:text-indigo-500 transition-colors truncate">
+                  {fileName || "Attach a file (image, PDF or doc)"}
+                </span>
+                <input
+                  type="file"
+                  accept="image/*,.pdf,.doc,.docx"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    setReplyFile(file || null);
+                    setFileName(file ? file.name : "");
+                  }}
+                  className="hidden"
+                />
+              </label>
+
+              {/* Actions */}
+              <div className="flex items-center justify-between gap-2 pt-1 flex-wrap">
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="flex items-center gap-1.5 px-4 py-2.5 bg-red-50 hover:bg-red-100 border border-red-100 text-red-600 rounded-xl text-sm font-medium transition-all"
+                >
+                  <XCircle size={14} />
+                  Close Ticket
+                </button>
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={handleClose}
-                    className="px-4 py-2 border border-red-300 text-red-600 rounded-lg text-sm font-medium hover:bg-red-50 transition-colors"
+                    onClick={onClose}
+                    className="px-4 py-2.5 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-all"
                   >
-                    Close Ticket
+                    Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={replyMutation.isPending || !replyText.trim()}
-                    className="px-5 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 disabled:opacity-50 transition-colors flex items-center gap-2"
+                    className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-all shadow-sm"
                   >
                     {replyMutation.isPending ? (
-                      "Sending..."
+                      <>
+                        <Loader2 size={14} className="animate-spin" />{" "}
+                        Sending...
+                      </>
                     ) : (
                       <>
                         <Send size={14} /> Send Reply
@@ -254,8 +317,15 @@ export default function ViewTicketModal({
                 </div>
               </div>
             </form>
-          </div>
-        )}
+          ) : (
+            <div className="flex items-center justify-center gap-2 py-3 bg-slate-50 border border-slate-100 rounded-xl">
+              <LockKeyhole size={14} className="text-slate-400" />
+              <p className="text-sm text-slate-400">
+                This ticket is closed and no longer accepts replies.
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

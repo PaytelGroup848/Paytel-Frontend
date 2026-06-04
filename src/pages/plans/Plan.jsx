@@ -2,7 +2,11 @@ import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { X, Check, Sparkles, Shield, Star, ArrowRight } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useCreateOrder, useVerifyPayment, useBillingPlans } from "../../hooks/useBilling";
+import {
+  useCreateOrder,
+  useVerifyPayment,
+  useBillingPlans,
+} from "../../hooks/useBilling";
 import { useProfile } from "../../hooks/useProfile";
 import { loadRazorpay } from "../../utils/razorpay";
 import toast from "react-hot-toast";
@@ -19,18 +23,18 @@ const PlanModal = ({ plan, onClose }) => {
   // const { isAuthenticated } = useAuthStore();
   const createOrder = useCreateOrder();
   const verifyPayment = useVerifyPayment();
- const { user, isAuthenticated } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
 
-const { data: profile } = useProfile({
-  enabled: !!user,
-});
+  const { data: profile } = useProfile({
+    enabled: !!user,
+  });
 
   const isProcessing = createOrder.isPending || verifyPayment.isPending;
 
   const handleCheckout = async () => {
     if (!user) {
-      toast.error('Please login to continue');
-      navigate('/login', { state: { from: location.pathname } });
+      toast.error("Please login to continue");
+      navigate("/login", { state: { from: location.pathname } });
       return;
     }
     try {
@@ -61,17 +65,19 @@ const { data: profile } = useProfile({
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-              planType: 'wordpress'
+              planType: "wordpress",
             });
-            metaPixel.purchase(orderData.amount / 100, 'INR');
+            metaPixel.purchase(orderData.amount / 100, "INR");
             onClose();
             navigate("/websites/wordpress/paid");
           } catch (err) {
-            console.error('Verification error:', err);
+            console.error("Verification error:", err);
           }
         },
         prefill: {
-          name: profile ? `${profile.firstName} ${profile.lastName}` : (user?.name || "User"),
+          name: profile
+            ? `${profile.firstName} ${profile.lastName}`
+            : user?.name || "User",
           email: user?.email || "",
           contact: profile?.phone || "",
         },
@@ -86,7 +92,7 @@ const { data: profile } = useProfile({
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err) {
-      console.error('Checkout error:', err);
+      console.error("Checkout error:", err);
     }
   };
 
@@ -128,7 +134,10 @@ const { data: profile } = useProfile({
               Billing Configuration
             </p>
             <p className="text-sm font-bold text-slate-900">
-              {plan.name} <span className="text-slate-400 font-medium">· {duration} months</span>
+              {plan.name}{" "}
+              <span className="text-slate-400 font-medium">
+                · {duration} months
+              </span>
             </p>
           </div>
           <button
@@ -143,7 +152,9 @@ const { data: profile } = useProfile({
         <div className="p-5 grid grid-cols-1 md:grid-cols-5 gap-5">
           {/* Duration options (3/5) */}
           <div className="md:col-span-3 space-y-2">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Select tenure</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
+              Select tenure
+            </p>
             {durations.map((item) => {
               const price = getMonthlyBase(item.months);
               const isSelected = duration === item.months;
@@ -167,21 +178,35 @@ const { data: profile } = useProfile({
                           : "border-slate-200 group-hover:border-indigo-300"
                       }`}
                     >
-                      {isSelected && <Check size={10} className="text-white" strokeWidth={4} />}
+                      {isSelected && (
+                        <Check
+                          size={10}
+                          className="text-white"
+                          strokeWidth={4}
+                        />
+                      )}
                     </div>
                     <div>
-                      <p className={`text-xs font-bold ${isSelected ? "text-slate-900" : "text-slate-700"}`}>
+                      <p
+                        className={`text-xs font-bold ${isSelected ? "text-slate-900" : "text-slate-700"}`}
+                      >
                         {item.months} Months
                       </p>
                       {item.save && (
-                        <p className="text-[10px] font-black text-emerald-600 tracking-tight">{item.save}</p>
+                        <p className="text-[10px] font-black text-emerald-600 tracking-tight">
+                          {item.save}
+                        </p>
                       )}
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className={`text-base font-black tracking-tight ${isSelected ? "text-indigo-600" : "text-slate-900"}`}>
+                    <p
+                      className={`text-base font-black tracking-tight ${isSelected ? "text-indigo-600" : "text-slate-900"}`}
+                    >
                       ₹{price.toLocaleString()}
-                      <span className="text-[10px] font-medium ml-0.5 opacity-40">/mo</span>
+                      <span className="text-[10px] font-medium ml-0.5 opacity-40">
+                        /mo
+                      </span>
                     </p>
                   </div>
                 </motion.div>
@@ -194,14 +219,20 @@ const { data: profile } = useProfile({
             <div className="space-y-3">
               <div className="flex justify-between text-xs font-medium text-slate-500">
                 <span>Subtotal · {duration} months</span>
-                <span className="text-slate-900 font-bold">₹{subtotal.toLocaleString()}</span>
+                <span className="text-slate-900 font-bold">
+                  ₹{subtotal.toLocaleString()}
+                </span>
               </div>
               <div className="flex justify-between text-xs font-medium text-slate-500">
                 <span>GST (18%)</span>
-                <span className="text-emerald-600 font-bold">₹{taxes.toLocaleString()}</span>
+                <span className="text-emerald-600 font-bold">
+                  ₹{taxes.toLocaleString()}
+                </span>
               </div>
               <div className="pt-3 mt-3 border-t border-slate-200 flex justify-between items-center">
-                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Total Amount</span>
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                  Total Amount
+                </span>
                 <span className="text-2xl font-black text-slate-900 tracking-tight">
                   ₹{grandTotal.toLocaleString()}
                 </span>
@@ -253,7 +284,12 @@ export default function Plans() {
         id: "661d4a8e2f3a1c001f8e4a01",
         name: "Starter",
         monthly: 199,
-        features: ["1 Domain Instance", "Standard Network", "Cloud Backup", "24/7 Access"],
+        features: [
+          "1 Domain Instance",
+          "Standard Network",
+          "Cloud Backup",
+          "24/7 Access",
+        ],
       },
       {
         id: "661d4a8e2f3a1c001f8e4a02",
@@ -296,8 +332,14 @@ export default function Plans() {
       {/* Background blobs */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute -top-40 -left-40 w-[40rem] h-[40rem] bg-indigo-200/30 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" />
-        <div className="absolute top-1/3 -right-40 w-[35rem] h-[35rem] bg-purple-200/20 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-        <div className="absolute -bottom-20 left-1/3 w-[30rem] h-[30rem] bg-cyan-200/20 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '4s' }} />
+        <div
+          className="absolute top-1/3 -right-40 w-[35rem] h-[35rem] bg-purple-200/20 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"
+          style={{ animationDelay: "2s" }}
+        />
+        <div
+          className="absolute -bottom-20 left-1/3 w-[30rem] h-[30rem] bg-cyan-200/20 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"
+          style={{ animationDelay: "4s" }}
+        />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
@@ -312,7 +354,11 @@ export default function Plans() {
             Pricing Plans
           </span>
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-6 leading-[1.05]">
-            Choose your <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">website</span>.
+            Choose your{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
+              website
+            </span>
+            .
           </h1>
           <p className="text-lg text-slate-500 max-w-2xl mx-auto">
             No hidden fees. Start building with confidence.
@@ -320,7 +366,7 @@ export default function Plans() {
         </motion.div>
 
         {/* Plans grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-10">
           {plans.map((plan, index) => {
             const isPopular = plan.popular;
             return (
@@ -345,29 +391,48 @@ export default function Plans() {
                   {isPopular && (
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
                       <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-xs font-black px-6 py-1.5 rounded-full shadow-xl shadow-indigo-300/50">
-                        <Star size={14} className="text-amber-300" fill="currentColor" />
+                        <Star
+                          size={14}
+                          className="text-amber-300"
+                          fill="currentColor"
+                        />
                         MOST POPULAR
                       </span>
                     </div>
                   )}
 
                   <div className="mb-6">
-                    <h3 className="text-lg font-bold text-slate-800 mb-1">{plan.name}</h3>
-                    <p className="text-xs text-slate-400 font-medium">Ideal for growing projects</p>
+                    <h3 className="text-lg font-bold text-slate-800 mb-1">
+                      {plan.name}
+                    </h3>
+                    <p className="text-xs text-slate-400 font-medium">
+                      Ideal for growing projects
+                    </p>
                   </div>
 
                   <div className="flex items-baseline gap-1 mb-6">
                     <span className="text-5xl font-black text-slate-900">
                       ₹{(plan.monthly || plan.price / 100).toLocaleString()}
                     </span>
-                    <span className="text-slate-400 font-medium text-sm">/month</span>
+                    <span className="text-slate-400 font-medium text-sm">
+                      /month
+                    </span>
                   </div>
 
                   <ul className="space-y-5 mb-10 flex-1">
                     {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-3 text-slate-600">
-                        <div className={`p-1 rounded-full ${isPopular ? "bg-indigo-100" : "bg-slate-100"}`}>
-                          <Check size={16} className="text-emerald-500 flex-shrink-0" strokeWidth={3} />
+                      <li
+                        key={i}
+                        className="flex items-start gap-3 text-slate-600"
+                      >
+                        <div
+                          className={`p-1 rounded-full ${isPopular ? "bg-indigo-100" : "bg-slate-100"}`}
+                        >
+                          <Check
+                            size={16}
+                            className="text-emerald-500 flex-shrink-0"
+                            strokeWidth={3}
+                          />
                         </div>
                         <span className="text-sm font-medium">{feature}</span>
                       </li>
@@ -380,9 +445,10 @@ export default function Plans() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.97 }}
                     className={`w-full py-4 rounded-2xl font-bold text-sm tracking-widest uppercase transition-all flex items-center justify-center gap-2
-                      ${isPopular
-                        ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-400/40 hover:shadow-2xl hover:shadow-indigo-400/50"
-                        : "bg-slate-900 text-white shadow-md hover:bg-indigo-600 hover:shadow-lg"
+                      ${
+                        isPopular
+                          ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-400/40 hover:shadow-2xl hover:shadow-indigo-400/50"
+                          : "bg-slate-900 text-white shadow-md hover:bg-indigo-600 hover:shadow-lg"
                       }
                     `}
                   >

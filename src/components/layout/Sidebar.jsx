@@ -1,7 +1,7 @@
 // Sidebar.jsx (fully updated)
-import { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence, supportsFlags } from 'framer-motion';
+import { useState, useEffect } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import { motion, AnimatePresence, supportsFlags } from "framer-motion";
 import {
   ChevronRight,
   CreditCard,
@@ -15,12 +15,16 @@ import {
   LifeBuoy,
   Mails,
   SeparatorVertical,
-  Cloud
-} from 'lucide-react';
-import { useSubscription } from '../../hooks/useBilling';
-import { useLogout, useMe } from '../../hooks/useAuth';
+  Cloud,
+} from "lucide-react";
+import { useSubscription } from "../../hooks/useBilling";
+import { useLogout, useMe } from "../../hooks/useAuth";
+import { MdSupportAgent } from "react-icons/md";
 
-export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } }) {
+export default function Sidebar({
+  mobileOpen = false,
+  onMobileClose = () => {},
+}) {
   const [hovered, setHovered] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768);
@@ -30,74 +34,84 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
 
   useEffect(() => {
     const handleResize = () => setIsDesktop(window.innerWidth > 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const subscriptions = Array.isArray(subscription?.data) ? subscription.data : [];
-  const hasWordPress = subscriptions.some(s => s.type === 'wordpress' && s.status === 'Active');
-  const hasVps = subscriptions.some(s => s.type === 'vps' && s.status === 'Active');
+  const subscriptions = Array.isArray(subscription?.data)
+    ? subscription.data
+    : [];
+  const hasWordPress = subscriptions.some(
+    (s) => s.type === "wordpress" && s.status === "Active",
+  );
+  const hasVps = subscriptions.some(
+    (s) => s.type === "vps" && s.status === "Active",
+  );
 
-  const isExpanded = isDesktop ? (hovered || mobileOpen) : mobileOpen;
+  const isExpanded = isDesktop ? hovered || mobileOpen : mobileOpen;
 
   const userRoles = useMe();
   const Roles = userRoles?.data?.role;
   const isSuperAdmin = Roles === "superadmin";
 
-
   const navItems = [
-    { label: 'Home', to: '/home', icon: LayoutDashboard },
+    { label: "Home", to: "/home", icon: LayoutDashboard },
     {
-      label: 'Websites',
+      label: "Websites",
       icon: Globe,
       children: [
-        { label: 'Buy WordPress', to: '/wordpress-hosting' },
-        ...(hasWordPress ? [{ label: 'WordPress Dashboard', to: '/websites/wordpress/paid' }] : []),
-        { label: 'PHP Hosting', to: '/php-hosting' },
-        { label: 'My PHP Sites', to: '/php-hosting/paid' },
-        { label: 'NodeJS App', to: '/comingsoon' },
-      ].filter(Boolean), 
-    },
-    {
-      label: 'Cloud VPS',
-      icon: Cloud,
-      children: [
-        { label: 'VPS Plans', to: '/vps' },
-        ...(hasVps ? [{ label: 'VPS Dashboard', to: '/vps/paid' }] : []),
+        { label: "Buy WordPress", to: "/wordpress-hosting" },
+        ...(hasWordPress
+          ? [{ label: "WordPress Dashboard", to: "/websites/wordpress/paid" }]
+          : []),
+        { label: "PHP Hosting", to: "/php-hosting" },
+        { label: "My PHP Sites", to: "/php-hosting/paid" },
+        // { label: 'NodeJS App', to: '/comingsoon' },
       ].filter(Boolean),
     },
-   
+    {
+      label: "Cloud VPS",
+      icon: Cloud,
+      children: [
+        { label: "VPS Plans", to: "/vps" },
+        ...(hasVps ? [{ label: "VPS Dashboard", to: "/vps/paid" }] : []),
+      ].filter(Boolean),
+    },
 
-     {
-      label: 'Emails',
+    {
+      label: "Emails",
       icon: Mails,
       children: [
-        { label: 'Buy Emails', to: '/email/plan' },
-        { label: 'Email Dashboard', to: '/emails' },
+        { label: "Buy Emails", to: "/email/plan" },
+        { label: "Email Dashboard", to: "/emails" },
       ],
     },
 
     {
-      label: 'Billing',
+      label: "Billing",
       icon: CreditCard,
       children: [
-        { label: 'Subscriptions', to: '/billing/subscriptions' },
-        { label: 'Payment-history', to: '/payment-history' },
+        { label: "Subscriptions", to: "/billing/subscriptions" },
+        { label: "Payment-history", to: "/payment-history" },
       ],
     },
-   
-    {
-      label: 'Software', icon: SeparatorVertical, children: [
-         { label: 'Education ERP', to: '/comingsoon' },
-        // { label: 'Education ERP', to: 'software/education' },
-        // { label: 'Resturants Management', to: 'software/restaurants' },
-         { label: 'Resturants Management', to: '/comingsoon' },
-      ]
-    },
 
-    ...(isSuperAdmin ? [{ label: 'SuperAdmin', to: '/superadmin/servers', icon: Zap }] : []),
-    { label: 'Settings', to: '/settings', icon: Settings },
-    { label: 'Support', to: '/support', icon: LifeBuoy },
+    // {
+    //   label: "Software",
+    //   icon: SeparatorVertical,
+    //   children: [
+    //     { label: "Education ERP", to: "/comingsoon" },
+    //     // { label: 'Education ERP', to: 'software/education' },
+    //     // { label: 'Resturants Management', to: 'software/restaurants' },
+    //     { label: "Resturants Management", to: "/comingsoon" },
+    //   ],
+    // },
+
+    ...(isSuperAdmin
+      ? [{ label: "SuperAdmin", to: "/superadmin/servers", icon: Zap }]
+      : []),
+    { label: "Settings", to: "/settings", icon: Settings },
+    { label: "Support", to: "/support", icon: MdSupportAgent },
     // { label: 'Support', to: '/comingsoon', icon: LifeBuoy },
   ];
   const handleMouseEnter = () => {
@@ -125,22 +139,19 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
         )}
       </AnimatePresence>
 
-
-
       <motion.aside
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         animate={{
-          width: mobileOpen ? '280px' : (isExpanded ? '260px' : '84px'),
+          width: mobileOpen ? "280px" : isExpanded ? "260px" : "84px",
           x: mobileOpen || isDesktop ? 0 : -350,
         }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
         className="fixed md:sticky top-0 left-0 h-screen z-[70] flex flex-col bg-white/95 backdrop-blur-xl border-r border-slate-100 shadow-2xl shadow-slate-200/50"
       >
         {/* Brand Section with Close Button on Mobile */}
         <div className="h-20 flex items-center px-5 justify-between overflow-hidden border-b border-slate-100/80">
           <div className="flex items-center gap-3 cursor-pointer min-w-max">
-
             <div className="relative flex items-center justify-center w-12 h-12">
               <motion.img
                 src="/Cloudedatalogo.svg"
@@ -194,23 +205,28 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
             const Icon = item.icon;
             const hasChildren = !!item.children;
             const isMenuOpen = openMenu === item.label;
-            const isActive = location.pathname.startsWith(item.to) && !hasChildren;
+            const isActive =
+              location.pathname.startsWith(item.to) && !hasChildren;
 
             return (
               <div key={item.label} className="relative">
                 {hasChildren ? (
                   <button
                     onClick={() => setOpenMenu(isMenuOpen ? null : item.label)}
-                    className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200 ${isMenuOpen
-                        ? 'bg-indigo-50 text-indigo-700'
-                        : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
-                      }`}
+                    className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200 ${
+                      isMenuOpen
+                        ? "bg-indigo-50 text-indigo-700"
+                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+                    }`}
                   >
                     <Icon size={20} className="shrink-0" />
                     {isExpanded && (
                       <>
                         <span className="flex-1 text-left">{item.label}</span>
-                        <ChevronRight size={14} className={`transition-transform duration-300 ${isMenuOpen ? 'rotate-90 text-indigo-500' : 'text-slate-400'}`} />
+                        <ChevronRight
+                          size={14}
+                          className={`transition-transform duration-300 ${isMenuOpen ? "rotate-90 text-indigo-500" : "text-slate-400"}`}
+                        />
                       </>
                     )}
                   </button>
@@ -222,16 +238,20 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
                     }}
                     className={({ isActive }) => `
                       relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200
-                      ${isActive
-                        ? 'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-md shadow-indigo-200'
-                        : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+                      ${
+                        isActive
+                          ? "bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-md shadow-indigo-200"
+                          : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                       }
                     `}
                   >
                     <Icon size={20} className="shrink-0" />
                     {isExpanded && <span>{item.label}</span>}
                     {isActive && isExpanded && (
-                      <motion.div layoutId="activeHighlight" className="absolute right-3 w-1.5 h-1.5 bg-white rounded-full shadow-sm" />
+                      <motion.div
+                        layoutId="activeHighlight"
+                        className="absolute right-3 w-1.5 h-1.5 bg-white rounded-full shadow-sm"
+                      />
                     )}
                   </NavLink>
                 )}
@@ -240,7 +260,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
                   {hasChildren && isMenuOpen && isExpanded && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
+                      animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       className="ml-11 mt-1 space-y-1 border-l border-slate-100 pl-2"
                     >
@@ -253,9 +273,10 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
                           }}
                           className={({ isActive }) => `
                             block py-2 px-3 text-[12px] font-medium rounded-lg transition-all duration-150
-                            ${isActive
-                              ? 'text-indigo-700 bg-indigo-50/70'
-                              : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50 hover:pl-4'
+                            ${
+                              isActive
+                                ? "text-indigo-700 bg-indigo-50/70"
+                                : "text-slate-500 hover:text-slate-700 hover:bg-slate-50 hover:pl-4"
                             }
                           `}
                         >
@@ -276,7 +297,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
             onClick={() => logout.mutate()}
             disabled={logout.isPending}
             className={`w-full flex items-center gap-3 rounded-xl transition-all duration-300 group
-              ${!isExpanded ? 'p-2 justify-center' : 'px-4 py-3'}
+              ${!isExpanded ? "p-2 justify-center" : "px-4 py-3"}
               bg-gradient-to-r from-slate-800 to-slate-900 hover:from-red-600 hover:to-red-700 shadow-lg
             `}
           >
@@ -286,7 +307,7 @@ export default function Sidebar({ mobileOpen = false, onMobileClose = () => { } 
             {isExpanded && (
               <div className="flex flex-col items-start text-left">
                 <span className="text-xs font-semibold text-white/90">
-                  {logout.isPending ? 'Logging out...' : 'Logout'}
+                  {logout.isPending ? "Logging out..." : "Logout"}
                 </span>
                 <span className="text-[9px] text-slate-300 group-hover:text-red-200 transition-colors">
                   End your session
