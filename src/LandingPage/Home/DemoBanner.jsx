@@ -1,9 +1,3 @@
-/**
- * ProfessionalBanner — Professional Hero Banner
- *
- * Fonts required in index.html:
- * <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet"/>
- */
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -338,7 +332,7 @@ function LeadCaptureCard() {
                     className="absolute z-50 w-full mt-1.5 rounded-2xl overflow-hidden border border-white/[0.08] shadow-[0_24px_64px_rgba(0,0,0,0.65)]"
                     style={{ background: "rgba(5,10,28,0.98)", backdropFilter: "blur(28px)" }}
                   >
-                    <div className="p-1.5 max-h-52 overflow-y-auto">
+                    <div className="p-1.5 max-h-47 overflow-y-auto">
                       {PRODUCTS.map((p) => (
                         <li key={p} className="list-none">
                           <button type="button" onClick={() => handleSelect(p)}
