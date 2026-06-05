@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-
-import { useCreateTicket } from '../../hooks/useSupport';
-import { useAuthStore } from '../../store/authStore';
+import React, { useState } from "react";
+import { X, Plus, Paperclip, Loader2, Send } from "lucide-react";
+import { useCreateTicket } from "../../hooks/useSupport";
+import { useAuthStore } from "../../store/authStore";
 
 const RaiseTicketModal = ({ isOpen, onClose }) => {
   const user = useAuthStore((s) => s.user);
   const mutation = useCreateTicket();
 
   const [formData, setFormData] = useState({
-    name: user?.name || user?.fullName || '',
-    email: user?.email || '',
-    department: 'General Enquiry',
-    priority: 'Medium',
-    subject: '',
-    message: '',
+    name: user?.name || user?.fullName || "",
+    email: user?.email || "",
+    department: "General Enquiry",
+    priority: "Medium",
+    subject: "",
+    message: "",
     file: null,
   });
-  const [fileName, setFileName] = useState('');
+  const [fileName, setFileName] = useState("");
 
   if (!isOpen) return null;
 
@@ -28,94 +28,139 @@ const RaiseTicketModal = ({ isOpen, onClose }) => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFormData((prev) => ({ ...prev, file }));
-    setFileName(file ? file.name : '');
+    setFileName(file ? file.name : "");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim() || !formData.subject.trim()) {
-      alert('Please fill name, email, subject and message');
+    if (
+      !formData.name.trim() ||
+      !formData.email.trim() ||
+      !formData.message.trim() ||
+      !formData.subject.trim()
+    ) {
+      alert("Please fill name, email, subject and message");
       return;
     }
 
     const fd = new FormData();
-    fd.append('name', formData.name);
-    fd.append('email', formData.email);
-    fd.append('department', formData.department);
-    fd.append('priority', formData.priority);
-    fd.append('subject', formData.subject);
-    fd.append('message', formData.message);
-    if (formData.file) fd.append('attachment', formData.file);
+    fd.append("name", formData.name);
+    fd.append("email", formData.email);
+    fd.append("department", formData.department);
+    fd.append("priority", formData.priority);
+    fd.append("subject", formData.subject);
+    fd.append("message", formData.message);
+    if (formData.file) fd.append("attachment", formData.file);
 
     await mutation.mutateAsync(fd);
     setFormData({
-      name: user?.name || user?.fullName || '',
-      email: user?.email || '',
-      department: 'General Enquiry',
-      priority: 'Medium',
-      subject: '',
-      message: '',
+      name: user?.name || user?.fullName || "",
+      email: user?.email || "",
+      department: "General Enquiry",
+      priority: "Medium",
+      subject: "",
+      message: "",
       file: null,
     });
-    setFileName('');
+    setFileName("");
     onClose();
   };
 
+  const inputClass =
+    "w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all bg-white";
+  const labelClass =
+    "block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5";
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-        <div className="flex justify-between items-center p-5 border-b">
-          <h2 className="text-2xl font-bold text-gray-800">
-            <i className="fas fa-plus-circle text-indigo-500 mr-2"></i>
-            Raise New Ticket
-          </h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">
-            <i className="fas fa-times text-xl"></i>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto scrollbar-hide"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-indigo-50 rounded-xl flex items-center justify-center">
+              <Plus size={17} className="text-indigo-600" />
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-slate-800">
+                Raise a Ticket
+              </h2>
+              <p className="text-xs text-slate-400 mt-0.5">
+                We'll get back to you as soon as possible
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors"
+          >
+            <X size={16} />
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Full Name *</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-400"
-              placeholder="John Doe"
-            />
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+          {/* Name + Email */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className={labelClass}>
+                Full Name <span className="text-red-400">*</span>
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className={inputClass}
+                placeholder="John Doe"
+              />
+            </div>
+            <div>
+              <label className={labelClass}>
+                Email <span className="text-red-400">*</span>
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className={inputClass}
+                placeholder="user@example.com"
+              />
+            </div>
           </div>
+
+          {/* Subject */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Email *</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-400"
-              placeholder="user@example.com"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Subject *</label>
+            <label className={labelClass}>
+              Subject <span className="text-red-400">*</span>
+            </label>
             <input
               type="text"
               name="subject"
               value={formData.subject}
               onChange={handleChange}
               required
-              className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-400"
+              className={inputClass}
               placeholder="Brief summary of your issue"
             />
           </div>
+
+          {/* Department + Priority */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Department</label>
+              <label className={labelClass}>Department</label>
               <select
                 name="department"
                 value={formData.department}
                 onChange={handleChange}
-                className="w-full border rounded-lg px-4 py-2 bg-white"
+                className={inputClass}
               >
                 <option>General Enquiry</option>
                 <option>Technical</option>
@@ -123,12 +168,12 @@ const RaiseTicketModal = ({ isOpen, onClose }) => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Priority</label>
+              <label className={labelClass}>Priority</label>
               <select
                 name="priority"
                 value={formData.priority}
                 onChange={handleChange}
-                className="w-full border rounded-lg px-4 py-2 bg-white"
+                className={inputClass}
               >
                 <option>Low</option>
                 <option>Medium</option>
@@ -136,43 +181,73 @@ const RaiseTicketModal = ({ isOpen, onClose }) => {
               </select>
             </div>
           </div>
+
+          {/* Message */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Message *</label>
+            <label className={labelClass}>
+              Message <span className="text-red-400">*</span>
+            </label>
             <textarea
               name="message"
-              rows="3"
+              rows={4}
               value={formData.message}
               onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-400"
-              placeholder="Describe your issue..."
+              className={inputClass}
+              placeholder="Describe your issue in detail..."
             />
           </div>
+
+          {/* Attachment */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Attachment (optional)</label>
-            <input
-              type="file"
-              accept="image/*,.pdf"
-              onChange={handleFileChange}
-              className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:text-indigo-700"
-            />
+            <label className={labelClass}>
+              Attachment <span className="text-slate-300">(optional)</span>
+            </label>
+            <label className="flex items-center gap-3 w-full border border-dashed border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/30 rounded-xl px-4 py-3 cursor-pointer transition-all group">
+              <Paperclip
+                size={15}
+                className="text-slate-400 group-hover:text-indigo-500 flex-shrink-0 transition-colors"
+              />
+              <span className="text-sm text-slate-400 group-hover:text-indigo-500 transition-colors truncate">
+                {fileName || "Click to attach a file (image or PDF)"}
+              </span>
+              <input
+                type="file"
+                accept="image/*,.pdf"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </label>
             {fileName && (
-              <p className="text-xs text-green-600 mt-1">
-                <i className="fas fa-paperclip mr-1"></i>
+              <p className="text-xs text-emerald-600 mt-1.5 flex items-center gap-1">
+                <Paperclip size={11} />
                 {fileName}
               </p>
             )}
           </div>
-          <div className="flex justify-end gap-3 pt-3">
-            <button type="button" onClick={onClose} className="px-5 py-2 border rounded-lg text-gray-700 hover:bg-gray-50">
+
+          {/* Footer Buttons */}
+          <div className="flex justify-end gap-2.5 pt-2 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2.5 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-all"
+            >
               Cancel
             </button>
             <button
               type="submit"
               disabled={mutation.isPending}
-              className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-md disabled:opacity-60 flex items-center gap-2"
+              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-all shadow-sm"
             >
-              {mutation.isPending && <i className="fas fa-spinner fa-spin"></i>}
-              Submit Ticket
+              {mutation.isPending ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" /> Submitting...
+                </>
+              ) : (
+                <>
+                  <Send size={14} /> Submit Ticket
+                </>
+              )}
             </button>
           </div>
         </form>

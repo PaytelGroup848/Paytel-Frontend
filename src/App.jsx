@@ -68,7 +68,6 @@ import OSPanel from "./pages/vps/slidebar/Os_panel";
 import VpsSettings from "./pages/vps/slidebar/setting";
 import firewall from "./pages/vps/slidebar/security/firewall";
 import SupportPage from "./pages/support/Support";
-import TicketDetail from "./pages/support/TicketDetail";
 import AdminSupport from "./pages/superadmin/AdminSupport";
 import AnalyticsPage from "./pages/wordpress/AnalyticsPage";
 import BackupsPage from "./pages/wordpress/BackupsPage";
@@ -311,10 +310,6 @@ export default function App() {
             <Route path="/vps/setting" element={<VpsSettings />} />
             <Route path="/support" element={<SupportPage />} />
             <Route path="/support/tickets/:id" element={<SupportPage />} />
-            {/* <Route
-              path="/support/tickets/:ticketId"
-              element={<TicketDetail />}
-            /> */}
             <Route path="/vps/:id/docker" element={<Docker />} />
             <Route path="/vps/security/firewall" element={<firewall />} />
 

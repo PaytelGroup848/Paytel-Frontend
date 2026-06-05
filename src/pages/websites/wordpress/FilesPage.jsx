@@ -17,7 +17,15 @@ import {
   Download,
   Scissors,
   ArchiveRestore,
+  Globe,
+  AlertTriangle,
+  Info,
+  CheckCircle,
+  Database,
+  Lock,
+  BadgeInfo,
 } from "lucide-react";
+
 import toast from "react-hot-toast";
 
 import {
@@ -65,6 +73,7 @@ export default function FilesPage() {
 
   const [moveMode, setMoveMode] = useState(false);
   const [moveSource, setMoveSource] = useState(null);
+  const [migrationOpen, setMigrationOpen] = useState(false);
 
   const { data: files = [], isLoading, refetch } = useGetFiles(id, pathState);
   const { mutate: uploadZip, isPending: isUploading } = useUploadZip(id);
@@ -87,6 +96,14 @@ export default function FilesPage() {
   const createFolder = useCreateFolder(id);
   const createFile = useCreateFile(id);
   const deleteItem = useDeleteItem(id);
+
+  const filteredFiles = useMemo(() => {
+    if (!pathState) {
+      return files.filter((item) => !["logs", "conf"].includes(item.name));
+    }
+
+    return files;
+  }, [files, pathState]);
 
   const isArchiveFile = (fileName) => {
     return (
@@ -231,10 +248,6 @@ export default function FilesPage() {
       return;
     }
 
-    console.log("Selected file:", selectedFile);
-    console.log("File is File instance:", selectedFile instanceof File);
-    console.log("File name:", selectedFile.name);
-
     // Create FormData
     const formData = new FormData();
     formData.append("file", selectedFile); // This should work
@@ -242,8 +255,6 @@ export default function FilesPage() {
 
     // Verify FormData has the file
     const fileFromFormData = formData.get("file");
-    console.log("File from FormData:", fileFromFormData);
-    console.log("File name from FormData:", fileFromFormData?.name);
 
     uploadFile(
       { file: selectedFile, path: pathState },
@@ -254,7 +265,6 @@ export default function FilesPage() {
           refetch();
         },
         onError: (error) => {
-          console.error("Upload error:", error);
           toast.error(
             error?.response?.data?.message || "Failed to upload file",
           );
@@ -274,19 +284,12 @@ export default function FilesPage() {
       fullPath = file.name;
     }
 
-    console.log("[handleViewFile] File:", file);
-    console.log("[handleViewFile] Full path:", fullPath);
-
     setEditingFile({ ...file, path: fullPath });
     setIsEditing(false);
     // Refetch will happen automatically when editingFile changes
   };
 
   const handleDownloadFile = (item) => {
-    console.log("Downloading item:", item);
-    console.log("Item path:", item.path);
-    console.log("Item type:", item.type);
-
     if (item.type === "folder") {
       downloadFolder({ folderPath: item.path });
     } else {
@@ -335,11 +338,6 @@ export default function FilesPage() {
   const handleRename = () => {
     if (!renameTarget || !newName.trim()) return;
 
-    console.log("Rename target:", renameTarget);
-    console.log("Old path:", renameTarget.path);
-    console.log("New name:", newName);
-    console.log("Is folder:", renameTarget.type === "folder");
-
     renameItem(
       {
         oldPath: renameTarget.path, // This should be relative path like 'balaji.postservers.net'
@@ -354,7 +352,6 @@ export default function FilesPage() {
           toast.success("Renamed successfully");
         },
         onError: (error) => {
-          console.error("Rename error:", error);
           toast.error(error?.response?.data?.message || "Failed to rename");
         },
       },
@@ -383,9 +380,17 @@ export default function FilesPage() {
             {/* Drop Database - Red button */}
 
             <button
+              onClick={() => setMigrationOpen(true)}
+              className="flex cursor-pointer items-center gap-2 px-4 py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm"
+            >
+              <BadgeInfo size={16} />
+              <span className="hidden sm:inline">Migration Steps</span>
+            </button>
+
+            <button
               onClick={handleDropAllTables}
               disabled={isDroppingTables}
-              className="flex items-center gap-2 px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm"
+              className="flex items-center cursor-pointer gap-2 px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm"
               title="Drop All WordPress Tables"
             >
               {isDroppingTables ? (
@@ -408,7 +413,7 @@ export default function FilesPage() {
             {/* Upload File */}
             <button
               onClick={() => setUploadFileOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold"
+              className="flex items-center cursor-pointer gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold"
             >
               <Upload size={16} />{" "}
               <span className="hidden sm:inline">Upload File</span>
@@ -417,7 +422,7 @@ export default function FilesPage() {
             {/* Upload ZIP */}
             <button
               onClick={() => setUploadZipOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold"
+              className="flex items-center cursor-pointer gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold"
             >
               <Package size={16} />{" "}
               <span className="hidden sm:inline">Upload ZIP/TAR</span>
@@ -429,7 +434,7 @@ export default function FilesPage() {
                 setCreateFolderOpen(true);
                 setInputName("");
               }}
-              className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold"
+              className="flex items-center cursor-pointer gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold"
             >
               <FolderPlus size={16} />{" "}
               <span className="hidden sm:inline">New Folder</span>
@@ -441,7 +446,7 @@ export default function FilesPage() {
                 setCreateFileOpen(true);
                 setInputName("");
               }}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl text-sm font-semibold"
+              className="flex items-center gap-2 px-4 py-2.5 cursor-pointer bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl text-sm font-semibold"
             >
               <FilePlus size={16} />{" "}
               <span className="hidden sm:inline">New File</span>
@@ -518,7 +523,7 @@ export default function FilesPage() {
                     Loading files...
                   </td>
                 </tr>
-              ) : files.length === 0 ? (
+              ) : filteredFiles.length === 0 ? (
                 <tr>
                   <td
                     className="px-5 py-8 text-center text-slate-400"
@@ -528,7 +533,7 @@ export default function FilesPage() {
                   </td>
                 </tr>
               ) : (
-                files.map((item, index) => (
+                filteredFiles.map((item, index) => (
                   <tr
                     key={`${item.name}-${index}`}
                     className="group border-t border-slate-100 hover:bg-slate-50/60 transition-colors"
@@ -641,12 +646,12 @@ export default function FilesPage() {
             <div className="text-center py-10 text-slate-400 bg-white rounded-2xl border border-slate-200">
               Loading files...
             </div>
-          ) : files.length === 0 ? (
+          ) : filteredFiles.length === 0 ? (
             <div className="text-center py-10 text-slate-400 bg-white rounded-2xl border border-slate-200">
               This folder is empty.
             </div>
           ) : (
-            files.map((item, index) => (
+            filteredFiles.map((item, index) => (
               <div
                 key={`${item.name}-${index}`}
                 className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm"
@@ -761,7 +766,7 @@ export default function FilesPage() {
                     setFileContent("");
                     setIsEditing(false);
                   }}
-                  className="p-2 text-slate-400 hover:text-slate-600 rounded-lg"
+                  className="p-2 cursor-pointer text-slate-400 hover:text-slate-600 rounded-lg"
                 >
                   <X size={18} />
                 </button>
@@ -796,7 +801,7 @@ export default function FilesPage() {
               </h3>
               <button
                 onClick={() => setRenameTarget(null)}
-                className="p-1.5 hover:bg-slate-100 rounded-lg"
+                className="p-1.5 cursor-pointer hover:bg-slate-100 rounded-lg"
               >
                 <X size={18} />
               </button>
@@ -839,7 +844,7 @@ export default function FilesPage() {
               </h3>
               <button
                 onClick={() => setUploadFileOpen(false)}
-                className="p-1.5 hover:bg-slate-100 rounded-lg"
+                className="p-1.5 cursor-pointer hover:bg-slate-100 rounded-lg"
               >
                 <X size={18} />
               </button>
@@ -848,7 +853,7 @@ export default function FilesPage() {
             <p className="text-sm text-slate-500 mb-4">
               Upload to:{" "}
               <span className="font-mono text-xs bg-slate-100 p-1 rounded">
-                {pathState} 
+                {pathState}
               </span>
             </p>
 
@@ -908,7 +913,7 @@ export default function FilesPage() {
               </h3>
               <button
                 onClick={() => setUploadZipOpen(false)}
-                className="p-1.5 hover:bg-slate-100 rounded-lg"
+                className="p-1.5 cursor-pointer hover:bg-slate-100 rounded-lg"
               >
                 <X size={18} />
               </button>
@@ -978,7 +983,7 @@ export default function FilesPage() {
               </h3>
               <button
                 onClick={() => setCreateFolderOpen(false)}
-                className="p-1.5 hover:bg-slate-100 rounded-lg"
+                className="p-1.5 cursor-pointer hover:bg-slate-100 rounded-lg"
               >
                 <X size={18} />
               </button>
@@ -1022,7 +1027,7 @@ export default function FilesPage() {
               </h3>
               <button
                 onClick={() => setCreateFileOpen(false)}
-                className="p-1.5 hover:bg-slate-100 rounded-lg"
+                className="p-1.5 cursor-pointer hover:bg-slate-100 rounded-lg"
               >
                 <X size={18} />
               </button>
@@ -1084,6 +1089,250 @@ export default function FilesPage() {
                 className="flex-1 py-2.5 bg-red-500 text-white rounded-xl text-sm font-semibold hover:bg-red-600 disabled:opacity-50"
               >
                 {deleteItem.isPending ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {migrationOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center">
+                  <BadgeInfo className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <h2 className="text-base font-semibold text-slate-800">
+                    Website Migration Guide
+                  </h2>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Follow these steps to migrate your website successfully
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setMigrationOpen(false)}
+                className="p-1.5 cursor-pointer hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="overflow-y-auto px-6 py-5 space-y-3">
+              {/* Step 1 */}
+              <div className="border border-slate-100 rounded-xl p-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-semibold flex-shrink-0">
+                    1
+                  </span>
+                  <h3 className="font-semibold text-sm text-slate-800">
+                    Drop existing database tables
+                  </h3>
+                </div>
+                <p className="text-sm text-slate-500 ml-10">
+                  Click{" "}
+                  <span className="font-medium text-slate-700">
+                    Drop Tables
+                  </span>{" "}
+                  and remove all existing WordPress tables before importing your
+                  database.
+                </p>
+                <div className="mt-3 ml-10 bg-red-50 rounded-lg p-3 flex items-start gap-2">
+                  <AlertTriangle
+                    size={14}
+                    className="text-red-500 mt-0.5 flex-shrink-0"
+                  />
+                  <p className="text-xs text-red-700">
+                    This action cannot be undone. Make sure you have a backup.
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="border border-slate-100 rounded-xl p-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-semibold flex-shrink-0">
+                    2
+                  </span>
+                  <h3 className="font-semibold text-sm text-slate-800">
+                    Delete existing htdocs folder
+                  </h3>
+                </div>
+                <p className="text-sm text-slate-500 ml-10">
+                  Delete the entire{" "}
+                  <code className="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs">
+                    htdocs
+                  </code>{" "}
+                  folder from your server.
+                </p>
+                <div className="mt-3 ml-10 bg-blue-50 rounded-lg p-3 flex items-start gap-2">
+                  <Info
+                    size={14}
+                    className="text-blue-500 mt-0.5 flex-shrink-0"
+                  />
+                  <p className="text-xs text-blue-700">
+                    A fresh htdocs folder is created automatically when you
+                    upload your ZIP or TAR archive.
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="border border-slate-100 rounded-xl p-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-semibold flex-shrink-0">
+                    3
+                  </span>
+                  <h3 className="font-semibold text-sm text-slate-800">
+                    Upload website files
+                  </h3>
+                </div>
+                <p className="text-sm text-slate-500 ml-10">
+                  Click{" "}
+                  <span className="font-medium text-slate-700">
+                    Upload ZIP/TAR
+                  </span>{" "}
+                  and select your website backup archive.
+                </p>
+                <div className="mt-3 ml-10 bg-green-50 rounded-lg p-3 flex items-start gap-2">
+                  <CheckCircle
+                    size={14}
+                    className="text-green-500 mt-0.5 flex-shrink-0"
+                  />
+                  <p className="text-xs text-green-700">
+                    ZIP/TAR files are extracted automatically after upload.
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 4 */}
+              <div className="border border-slate-100 rounded-xl p-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-semibold flex-shrink-0">
+                    4
+                  </span>
+                  <h3 className="font-semibold text-sm text-slate-800">
+                    Open phpMyAdmin
+                  </h3>
+                </div>
+                <p className="text-sm text-slate-500 ml-10">
+                  Launch phpMyAdmin to manage your database import.
+                </p>
+                <div className="ml-10 mt-3">
+                  <button
+                    onClick={() =>
+                      window.open(
+                        `/wordpress/${id}/database`,
+                        "_blank",
+                        "noopener,noreferrer",
+                      )
+                    }
+                    className="inline-flex cursor-pointer items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors"
+                  >
+                    <Database size={14} />
+                    Open phpMyAdmin
+                  </button>
+                </div>
+                <div className="mt-3 ml-10 bg-amber-50 rounded-lg p-3 flex items-start gap-2">
+                  <Lock
+                    size={14}
+                    className="text-amber-500 mt-0.5 flex-shrink-0"
+                  />
+                  <p className="text-xs text-amber-700">
+                    First login attempt may fail due to added security. Simply
+                    log in again — the second attempt will succeed.
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 5 */}
+              <div className="border border-slate-100 rounded-xl p-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-semibold flex-shrink-0">
+                    5
+                  </span>
+                  <h3 className="font-semibold text-sm text-slate-800">
+                    Import database
+                  </h3>
+                </div>
+                <ol className="ml-10 list-decimal pl-4 space-y-1.5 text-sm text-slate-500">
+                  <li>Select your database from the sidebar</li>
+                  <li>
+                    Click the{" "}
+                    <span className="font-medium text-slate-700">Import</span>{" "}
+                    tab
+                  </li>
+                  <li>
+                    Choose your{" "}
+                    <code className="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-xs">
+                      .sql
+                    </code>{" "}
+                    file
+                  </li>
+                  <li>
+                    Click the{" "}
+                    <span className="font-medium text-slate-700">Import</span>{" "}
+                    button to begin
+                  </li>
+                  <li>Wait for the confirmation message</li>
+                </ol>
+              </div>
+
+              {/* Step 6 */}
+              <div className="border border-slate-100 rounded-xl p-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs font-semibold flex-shrink-0">
+                    6
+                  </span>
+                  <h3 className="font-semibold text-sm text-slate-800">
+                    Update domain URL
+                  </h3>
+                </div>
+                <p className="text-sm text-slate-500 ml-10 mb-2">
+                  Open the options table and update these two fields:
+                </p>
+                <div className="ml-10 bg-slate-50 border border-slate-100 rounded-lg px-3 py-2 font-mono text-xs text-slate-600">
+                  siteurl
+                  <br />
+                  home
+                </div>
+                <p className="text-xs text-slate-400 ml-10 mt-2 mb-1.5">
+                  Change both values to your new domain:
+                </p>
+                <div className="ml-10 bg-slate-50 border border-slate-100 rounded-lg px-3 py-2 font-mono text-xs text-blue-600">
+                  https://{instance?.domain}
+                </div>
+              </div>
+
+              {/* Success */}
+              <div className="bg-green-50 border border-green-100 rounded-xl p-4 flex items-start gap-3">
+                <CheckCircle
+                  size={18}
+                  className="text-green-500 flex-shrink-0 mt-0.5"
+                />
+                <div>
+                  <p className="text-sm font-semibold text-green-800">
+                    Migration complete
+                  </p>
+                  <p className="text-xs text-green-600 mt-0.5">
+                    Your website should now be live and accessible at your new
+                    domain.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="border-t border-slate-100 px-6 py-4 flex justify-end">
+              <button
+                onClick={() => setMigrationOpen(false)}
+                className="px-5 py-2 cursor-pointer bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium rounded-xl transition-colors"
+              >
+                Got it
               </button>
             </div>
           </div>
