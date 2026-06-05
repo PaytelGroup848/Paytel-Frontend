@@ -46,7 +46,7 @@ const megaMenuSections = [
     items: [
       {
         label: "cPanel Hosting",
-        href: "#",
+        href: "/c-panel",
         description: "User‑friendly control panel with one‑click installs.",
       },
       {
@@ -72,7 +72,7 @@ const megaMenuSections = [
     items: [
       {
         label: "Business Email",
-        href: "/emails",
+        href: "/email/plan",
         description: "Professional email hosting with collaboration tools.",
       },
       {

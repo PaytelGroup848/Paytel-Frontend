@@ -67,7 +67,7 @@ export default function PrivacyPolicy() {
                   </p>
                   <p>Unless stated otherwise, the contracting entity is:</p>
                   <div className="bg-gradient-to-r from-slate-50 to-white rounded-xl p-5 border-l-4 border-blue-500 shadow-sm">
-                    <p className="font-semibold text-slate-800">Paytel Financial Technologies Pvt. Ltd.</p>
+                    <p className="font-semibold text-slate-800">Paytel Terminal Pvt. Ltd.</p>
                     <p className="text-sm text-slate-600">Registered Address: Okhla Industrial Estate, Phase 3, New Delhi – 110020, India</p>
                   </div>
                   <p>This Agreement governs your use of:</p>
