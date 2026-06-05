@@ -202,14 +202,14 @@ export default function AboutPage() {
             className="mt-10 flex flex-wrap justify-center gap-4"
           >
             <a
-              href="#demo"
+              href="/login"
               className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-teal-500 to-indigo-500 text-white px-8 py-3.5 font-semibold shadow-lg shadow-indigo-500/30 hover:shadow-xl transition-all"
             >
               Get Started
               <ChevronRight size={18} />
             </a>
             <a
-              href="#contact"
+              href="/contact"
               className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/5 backdrop-blur-sm px-8 py-3.5 font-semibold text-white hover:bg-white/10 transition-all"
             >
               Contact Sales
@@ -663,7 +663,7 @@ export default function AboutPage() {
               className="inline-flex items-center gap-2 rounded-xl bg-teal-500 hover:bg-teal-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-teal-500/30 transition-all"
             >
               <Phone size={18} />
-              +91 9311472355
+              +91 9311472357
             </a>
             <a
               href="#demo"

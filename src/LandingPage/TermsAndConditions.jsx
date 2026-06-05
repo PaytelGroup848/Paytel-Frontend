@@ -13,7 +13,7 @@ export default function TermsOfService() {
       
       {/* Hero Section – clean and minimal */}
       <div className="relative overflow-hidden bg-white border-b border-slate-200">
-        <div className="max-w-4xl mx-auto px-6 py-20 sm:py-24 lg:px-8">
+        <div className="w-[90vw] mx-auto px-6 py-20 sm:py-24 lg:px-8">
           <div className="flex items-center gap-3 mb-6">
             <div className="p-2 bg-blue-600 rounded-xl shadow-md">
               <Scale className="h-6 w-6 text-white" />
@@ -44,7 +44,7 @@ export default function TermsOfService() {
       </div>
 
       {/* Document Body – single column, document feel */}
-      <div className="max-w-4xl mx-auto px-6 py-16 lg:px-8">
+      <div className="w-[90vw] mx-auto px-6 py-16 lg:px-8">
         <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
           <div className="h-1 bg-gradient-to-r from-blue-600 to-indigo-600" />
           <div className="p-8 md:p-12 space-y-8">

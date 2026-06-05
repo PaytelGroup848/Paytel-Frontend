@@ -54,17 +54,7 @@ export default function Banner() {
         animate="visible"
       >
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-          {/* Tag / Pill */}
-          <motion.div 
-            variants={fadeInUp} 
-            className="flex items-center gap-2.5 px-5 py-2.5 bg-white/80 backdrop-blur-md border border-white/80 rounded-full text-xs font-semibold tracking-wider text-indigo-700 shadow-md shadow-indigo-200/30 mb-8"
-          >
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-500 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-indigo-600"></span>
-            </span>
-            Cloud Insights & Developer Tutorials
-          </motion.div>
+         
 
           {/* Main heading – fixed clipping */}
           <motion.h1 
@@ -74,7 +64,7 @@ export default function Banner() {
             <span className="inline-block bg-gradient-to-b from-slate-800 via-slate-700 to-slate-600 bg-clip-text text-transparent pb-2">
               Cloudedata
             </span>{' '}
-            <span className="inline-block bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent drop-shadow-xl">
+            <span className=" pb-3 inline-block bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent drop-shadow-xl">
               Blog
             </span>
           </motion.h1>
