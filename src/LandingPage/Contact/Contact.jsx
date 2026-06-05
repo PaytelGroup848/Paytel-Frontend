@@ -130,7 +130,7 @@ export default function ContactUs() {
                 <h2 className="text-xs font-bold uppercase tracking-widest text-slate-900">Corporate HQ</h2>
               </div>
               <p className="text-sm text-slate-700 leading-relaxed font-medium">
-                Paytel Financial Technologies Pvt. Ltd.
+                Paytel Terminal Pvt. Ltd.
               </p>
               <p className="text-sm text-slate-500 mt-2 leading-relaxed">
                 A 212, First Floor, Okhla Industrial Estate Phase-3, New Delhi, 110020, India

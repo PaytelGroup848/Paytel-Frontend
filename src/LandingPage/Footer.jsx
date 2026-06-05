@@ -200,6 +200,9 @@ export default function Footer({ logoImg = "/Cloudedata.svg" }) {
                 </span>
                 <span>{contactDetails.phone}</span>
               </a>
+
+
+
               <a
                 href={`mailto:${contactDetails.email}`}
                 className="group flex items-center gap-3 text-[13px] text-slate-400 hover:text-white transition-colors"
@@ -243,7 +246,7 @@ export default function Footer({ logoImg = "/Cloudedata.svg" }) {
           {...fadeUp(0.35)}
           className="border-t border-slate-800/70 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[12px] text-slate-500"
         >
-          <p>© {new Date().getFullYear()} CloudData Technologies Pvt. Ltd. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Paytel Terminal Pvt. Ltd. All rights reserved.</p>
           <div className="flex items-center gap-1">
             {legalLinks.map((link, i, arr) => (
               <span key={link.label} className="flex items-center gap-1">
