@@ -176,10 +176,11 @@ export default function Login() {
       });
 
       const role = res?.user?.role;
-      console.log("this is my res", role);
 
       if (role === "superadmin") {
         navigate("/superadmin/servers");
+      } else if (role === "support") {
+        navigate("/superadmin/support");
       } else {
         navigate(from);
       }

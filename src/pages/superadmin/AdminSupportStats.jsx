@@ -1,27 +1,63 @@
-import React from 'react';
+import React from "react";
+import {
+  Ticket,
+  FolderOpen,
+  Clock,
+  CheckCircle,
+  MessageSquareReply,
+} from "lucide-react";
+import { useTicketStats } from "../../hooks/useSupport";
 
-import { useTicketStats } from '../../hooks/useSupport';
+const cards = [
+  {
+    key: "total",
+    label: "Total Tickets",
+    icon: Ticket,
+    iconBg: "bg-blue-500/10",
+    iconColor: "text-blue-400",
+    valueColor: "text-blue-400",
+  },
+  {
+    key: "open",
+    label: "Open",
+    icon: FolderOpen,
+    iconBg: "bg-red-500/10",
+    iconColor: "text-red-400",
+    valueColor: "text-red-400",
+  },
+  {
+    key: "pending",
+    label: "Pending",
+    icon: Clock,
+    iconBg: "bg-amber-500/10",
+    iconColor: "text-amber-400",
+    valueColor: "text-amber-400",
+  },
+  {
+    key: "closed",
+    label: "Closed",
+    icon: CheckCircle,
+    iconBg: "bg-emerald-500/10",
+    iconColor: "text-emerald-400",
+    valueColor: "text-emerald-400",
+  },
+  {
+    key: "repliedBySupport",
+    label: "Replied by Support",
+    icon: MessageSquareReply,
+    iconBg: "bg-violet-500/10",
+    iconColor: "text-violet-400",
+    valueColor: "text-violet-400",
+  },
+];
 
 const AdminSupportStats = () => {
   const { data: stats, isLoading } = useTicketStats();
 
-  const cards = [
-    { title: 'Total Tickets', value: stats?.total ?? 0, icon: 'fa-ticket-alt', color: 'from-blue-500 to-blue-600' },
-    { title: 'Open', value: stats?.open ?? 0, icon: 'fa-folder-open', color: 'from-red-500 to-red-600' },
-    { title: 'Pending', value: stats?.pending ?? 0, icon: 'fa-clock', color: 'from-amber-500 to-amber-600' },
-    { title: 'Closed', value: stats?.closed ?? 0, icon: 'fa-check-circle', color: 'from-green-500 to-green-600' },
-    {
-      title: 'Replied by Support',
-      value: stats?.repliedBySupport ?? 0,
-      icon: 'fa-reply-all',
-      color: 'from-purple-500 to-purple-600',
-    },
-  ];
-
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-        {[1, 2, 3, 4, 5].map((i) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        {[...Array(5)].map((_, i) => (
           <div key={i} className="h-24 rounded-2xl bg-white/5 animate-pulse" />
         ))}
       </div>
@@ -29,21 +65,30 @@ const AdminSupportStats = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-      {cards.map((stat) => (
-        <div
-          key={stat.title}
-          className={`bg-gradient-to-br ${stat.color} rounded-2xl shadow-lg p-5 text-white`}
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-white/80 text-sm font-medium">{stat.title}</p>
-              <p className="text-3xl font-extrabold mt-1">{stat.value}</p>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+      {cards.map(
+        ({ key, label, icon: Icon, iconBg, iconColor, valueColor }) => (
+          <div
+            key={key}
+            className="bg-slate-800/60 border border-white/5 rounded-2xl p-4 hover:bg-slate-800 transition-all"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div
+                className={`w-9 h-9 ${iconBg} rounded-xl flex items-center justify-center`}
+              >
+                <Icon size={17} className={iconColor} />
+              </div>
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                {label}
+              </span>
             </div>
-            <i className={`fas ${stat.icon} text-3xl text-white/30`}></i>
+            <p className={`text-3xl font-bold tabular-nums ${valueColor}`}>
+              {stats?.[key] ?? 0}
+            </p>
+            <p className="text-xs text-slate-500 mt-1">{label}</p>
           </div>
-        </div>
-      ))}
+        ),
+      )}
     </div>
   );
 };
