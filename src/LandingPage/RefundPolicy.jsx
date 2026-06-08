@@ -7,18 +7,18 @@ export default function RefundPolicy() {
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-white to-blue-100">
       <Navbar />
       
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-white shadow-2xl border-b border-slate-200/80">
+      {/* Hero Section – fixed: removed overflow-hidden to prevent clipping descenders */}
+      <div className="relative bg-white shadow-2xl border-b border-slate-200/80">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-indigo-500/10 to-transparent" />
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
-        <div className="max-w-6xl mx-auto px-6 py-20 sm:py-24 lg:px-8 relative">
+        <div className="w-[90vw] mx-auto px-6 py-20 sm:py-24 lg:px-8 relative">
           <div className="flex items-center gap-3 mb-6">
             <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
               <RefreshCw className="h-6 w-6 text-white" />
             </div>
             <span className="text-sm font-semibold text-blue-600 uppercase tracking-wider bg-blue-50 px-3 py-1 rounded-full">Financial Policy</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">
+          <h1 className=" pb-5 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">
             Refund Policy
           </h1>
           <p className="mt-6 text-lg text-slate-600 max-w-3xl leading-relaxed">
@@ -42,7 +42,7 @@ export default function RefundPolicy() {
       </div>
 
       {/* Document Body */}
-      <div className="max-w-6xl mx-auto px-6 py-16 lg:px-8">
+      <div className="w-[90vw] mx-auto px-6 py-16 lg:px-8">
         <div className="relative">
           <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-transparent rounded-3xl blur-xl -z-10" />
           

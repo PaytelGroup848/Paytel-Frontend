@@ -48,7 +48,7 @@ const services = [
     title: "Co‑Location Services",
     desc: "Enterprise‑grade data center hosting for full control and security over your physical servers.",
     image:
-      "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=400&fit=crop&auto=format&q=80",
+      "https://stl.tech/blog/data-centre-colocation-services/",
   },
   {
     icon: TrendingUp,
@@ -126,28 +126,28 @@ const peoplePoints = [
 
 const teamMembers = [
   {
-    name: "Rajesh Sharma",
+    name: " Mr. Arjun Vashisht",
     role: "CEO & Founder",
     image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face&auto=format&q=80",
+      "/ArjunVashist.png",
   },
   {
-    name: "Priya Patel",
-    role: "CTO",
+    name: "Mr. Umesh yadav ",
+    role: "Server administrator",
     image:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop&crop=face&auto=format&q=80",
+      "/Umesh yadav.avif",
   },
   {
-    name: "Amit Kumar",
-    role: "Head of Support",
+    name: " Mr.Nikhil Batham ",
+    role: "Marketing Head",
     image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face&auto=format&q=80",
+      "/nkhil",
   },
   {
-    name: "Sneha Verma",
-    role: "Cloud Architect",
+    name: "Mr. Balram Rana  ",
+    role: "Head of Server Department",
     image:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face&auto=format&q=80",
+      "/balram",
   },
 ];
 
@@ -202,14 +202,14 @@ export default function AboutPage() {
             className="mt-10 flex flex-wrap justify-center gap-4"
           >
             <a
-              href="#demo"
+              href="/login"
               className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-teal-500 to-indigo-500 text-white px-8 py-3.5 font-semibold shadow-lg shadow-indigo-500/30 hover:shadow-xl transition-all"
             >
               Get Started
               <ChevronRight size={18} />
             </a>
             <a
-              href="#contact"
+              href="/contact"
               className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/5 backdrop-blur-sm px-8 py-3.5 font-semibold text-white hover:bg-white/10 transition-all"
             >
               Contact Sales
@@ -600,11 +600,11 @@ export default function AboutPage() {
                 </li>
                 <li className="flex items-center gap-3 text-slate-700">
                   <Phone size={20} className="text-teal-500" />
-                  +91 9311472355
+                  +91 9311472357
                 </li>
                 <li className="flex items-center gap-3 text-slate-700">
                   <Mail size={20} className="text-indigo-500" />
-                  hello@cloudedata.in
+                  info@cloudedata.com
                 </li>
               </ul>
             </motion.div>
@@ -663,10 +663,10 @@ export default function AboutPage() {
               className="inline-flex items-center gap-2 rounded-xl bg-teal-500 hover:bg-teal-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-teal-500/30 transition-all"
             >
               <Phone size={18} />
-              +91 9311472355
+              +91 9311472357
             </a>
             <a
-              href="#demo"
+              href="/"
               className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 backdrop-blur-sm px-8 py-3.5 font-semibold text-white hover:bg-white/20 transition-all"
             >
               Request a Demo

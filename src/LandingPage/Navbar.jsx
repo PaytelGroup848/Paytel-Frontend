@@ -56,7 +56,7 @@ const megaMenuSections = [
       },
       {
         label: "VPS Hosting",
-        href: "/vps",
+        href: "/vps-cloud",
         description: "Scalable virtual private servers with root access.",
       },
       {
