@@ -94,7 +94,7 @@ export default function SuperAdminLayout() {
               Support Panel
             </div>
           ) : (
-            <div className="text-xs uppercase tracking-widest text-red-300 font-bold">
+            <div className="text-xs text-center uppercase tracking-widest text-red-300 font-bold">
               Control Panel
             </div>
           )}

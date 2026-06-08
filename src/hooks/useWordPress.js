@@ -530,3 +530,35 @@ export const useInstallSsl = (instanceId) =>
       }
     },
   });
+
+export const useSuspendInstance = () =>
+  useMutation({
+    mutationFn: async (id) => {
+      const response = await api.post(`/wordpress/${id}/suspend`);
+      return response.data?.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["wordpress", "instances"] });
+      toast.success("Instance suspended successfully");
+    },
+    onError: (err) => {
+      toast.error(err?.response?.data?.message || "Failed to suspend instance");
+    },
+  });
+
+export const useUnsuspendInstance = () =>
+  useMutation({
+    mutationFn: async (id) => {
+      const response = await api.post(`/wordpress/${id}/unsuspend`);
+      return response.data?.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["wordpress", "instances"] });
+      toast.success("Instance unsuspended successfully");
+    },
+    onError: (err) => {
+      toast.error(
+        err?.response?.data?.message || "Failed to unsuspend instance",
+      );
+    },
+  });

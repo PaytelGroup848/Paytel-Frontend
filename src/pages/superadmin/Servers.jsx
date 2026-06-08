@@ -1,12 +1,17 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 
-import Modal from '../../components/ui/Modal';
-import { useAddServer, useDeleteServer, useServers, useUpdateServer } from '../../hooks/useAdminServers';
-import ServerStats from './ServerStats';
+import Modal from "../../components/ui/Modal";
+import {
+  useAddServer,
+  useDeleteServer,
+  useServers,
+  useUpdateServer,
+} from "../../hooks/useAdminServers";
+import ServerStats from "./ServerStats";
 
 const initialForm = {
-  ip: '',
-  sshPassword: '',
+  ip: "",
+  sshPassword: "",
 };
 
 export default function Servers() {
@@ -18,7 +23,7 @@ export default function Servers() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(initialForm);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [statsServerId, setStatsServerId] = useState('');
+  const [statsServerId, setStatsServerId] = useState("");
 
   const openAdd = () => {
     setEditing(null);
@@ -29,8 +34,8 @@ export default function Servers() {
   const openEdit = (server) => {
     setEditing(server);
     setForm({
-      ip: server.ip || '',
-      sshPassword: '',
+      ip: server.ip || "",
+      sshPassword: "",
     });
     setIsModalOpen(true);
   };
@@ -38,7 +43,10 @@ export default function Servers() {
   const submit = async (e) => {
     e.preventDefault();
     if (editing?._id || editing?.id) {
-      await updateServer.mutateAsync({ id: editing.id || editing._id, payload: form });
+      await updateServer.mutateAsync({
+        id: editing.id || editing._id,
+        payload: form,
+      });
     } else {
       await addServer.mutateAsync(form);
     }
@@ -53,7 +61,10 @@ export default function Servers() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Server Management</h1>
-        <button onClick={openAdd} className="px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-semibold">
+        <button
+          onClick={openAdd}
+          className="px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-semibold"
+        >
           Add Server
         </button>
       </div>
@@ -73,7 +84,10 @@ export default function Servers() {
           <tbody>
             {isLoading ? (
               <tr>
-                <td colSpan={6} className="px-4 py-6 text-center text-textMuted">
+                <td
+                  colSpan={6}
+                  className="px-4 py-6 text-center text-textMuted"
+                >
                   Loading servers...
                 </td>
               </tr>
@@ -82,14 +96,19 @@ export default function Servers() {
                 <tr key={s.id || s._id} className="border-t border-white/10">
                   <Td>{s.name}</Td>
                   <Td>{s.ip}</Td>
-                  <Td>{[s.location, s.region].filter(Boolean).join(', ') || '-'}</Td>
+                  <Td>
+                    {[s.location, s.region].filter(Boolean).join(", ") || "-"}
+                  </Td>
                   <Td>
                     {s.usedSlots}/{s.totalSlots}
                   </Td>
-                  <Td>{s.isActive ? 'Active' : 'Inactive'}</Td>
+                  <Td>{s.isActive ? "Active" : "Inactive"}</Td>
                   <Td>
                     <div className="flex gap-2">
-                      <button onClick={() => openEdit(s)} className="px-2 py-1 rounded bg-white/10">
+                      <button
+                        onClick={() => openEdit(s)}
+                        className="px-2 py-1 rounded bg-white/10"
+                      >
                         Edit
                       </button>
                       <button
@@ -99,7 +118,9 @@ export default function Servers() {
                         View Stats
                       </button>
                       <button
-                        disabled={(s.usedSlots || 0) > 0 || deleteServer.isPending}
+                        disabled={
+                          (s.usedSlots || 0) > 0 || deleteServer.isPending
+                        }
                         onClick={() => deleteServer.mutate(s.id || s._id)}
                         className="px-2 py-1 rounded bg-red-600/70 disabled:opacity-50"
                       >
@@ -121,7 +142,6 @@ export default function Servers() {
           setEditing(null);
           setForm(initialForm);
         }}
-        title={editing ? 'Edit Server' : 'Add Server'}
       >
         <form onSubmit={submit} className="space-y-3 text-sm max-w-md mx-auto">
           <Input
@@ -139,18 +159,32 @@ export default function Servers() {
             onChange={(v) => setForm((p) => ({ ...p, sshPassword: v }))}
             required
           />
-          <button type="submit" className="mt-2 px-4 py-2 rounded bg-red-600 text-white text-sm font-semibold">
-            {editing ? 'Update Server' : 'Add Server'}
+          <button
+            type="submit"
+            className="mt-2 px-4 py-2 rounded bg-red-600 text-white text-sm font-semibold"
+          >
+            {editing ? "Update Server" : "Add Server"}
           </button>
         </form>
       </Modal>
 
-      <ServerStats serverId={statsServerId} isOpen={Boolean(statsServerId)} onClose={() => setStatsServerId('')} />
+      <ServerStats
+        serverId={statsServerId}
+        isOpen={Boolean(statsServerId)}
+        onClose={() => setStatsServerId("")}
+      />
     </div>
   );
 }
 
-function Input({ label, value, onChange, type = 'text', required = false, placeholder = '' }) {
+function Input({
+  label,
+  value,
+  onChange,
+  type = "text",
+  required = false,
+  placeholder = "",
+}) {
   return (
     <label className="block">
       <span className="text-xs text-textMuted">{label}</span>
