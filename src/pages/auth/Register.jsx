@@ -1,17 +1,27 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Mail, Lock, User, Phone, Sparkles, ArrowRight, Cloud, Shield, Zap, Globe } from "lucide-react";
+import {
+  Mail,
+  Lock,
+  User,
+  Phone,
+  Sparkles,
+  ArrowRight,
+  Cloud,
+  Shield,
+  Zap,
+  Globe,
+} from "lucide-react";
 import toast from "react-hot-toast";
 
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
 import { slideUp } from "../../animations/variants";
 import { useRegister } from "../../hooks/useAuth";
+import { PhoneInput } from "react-international-phone";
+import "react-international-phone/style.css";
 
-// ----------------------------------------
-// 🌥️ Left Side Banner
-// ----------------------------------------
 export const RegisterBanner = () => {
   const stats = [
     { value: "99.99%", label: "Uptime SLA" },
@@ -44,24 +54,24 @@ export const RegisterBanner = () => {
       <div className="relative z-10 flex h-full flex-col justify-between p-7 text-white">
         {/* Logo */}
         <div className="relative flex items-center justify-center w-full h-12">
-  <motion.img
-    src="\Cloudedata.svg"
-    alt="Cloude Data Logo"
-    className="
+          <motion.img
+            src="\Cloudedata.svg"
+            alt="Cloude Data Logo"
+            className="
       w-full h-12
       object-contain
       drop-shadow-xl
       group-hover:scale-110
       transition-transform duration-300
     "
-    animate={{ y: [0, -2, 0] }}
-    transition={{
-      repeat: Infinity,
-      duration: 3,
-      ease: "easeInOut",
-    }}
-  />
-</div>
+            animate={{ y: [0, -2, 0] }}
+            transition={{
+              repeat: Infinity,
+              duration: 3,
+              ease: "easeInOut",
+            }}
+          />
+        </div>
 
         {/* Main copy */}
         <div className="space-y-4">
@@ -72,16 +82,22 @@ export const RegisterBanner = () => {
               <span className="text-blue-300">cloud infrastructure</span>
             </h2>
             <p className="text-xs text-white/70 mt-2 max-w-[220px] leading-relaxed">
-              Enterprise-grade tools, global scalability, and world-class support — from day one.
+              Enterprise-grade tools, global scalability, and world-class
+              support — from day one.
             </p>
           </div>
 
           {/* Stats row */}
           <div className="grid grid-cols-3 gap-2 pt-1">
             {stats.map((s, i) => (
-              <div key={i} className="rounded-xl bg-white/10 backdrop-blur-md border border-white/10 px-3 py-2 text-center">
+              <div
+                key={i}
+                className="rounded-xl bg-white/10 backdrop-blur-md border border-white/10 px-3 py-2 text-center"
+              >
                 <div className="text-base font-bold text-white">{s.value}</div>
-                <div className="text-[10px] text-white/60 mt-0.5">{s.label}</div>
+                <div className="text-[10px] text-white/60 mt-0.5">
+                  {s.label}
+                </div>
               </div>
             ))}
           </div>
@@ -104,9 +120,6 @@ export const RegisterBanner = () => {
   );
 };
 
-// ----------------------------------------
-// 🔑 Register Page
-// ----------------------------------------
 export default function Register() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -124,7 +137,11 @@ export default function Register() {
   const [errors, setErrors] = useState({});
 
   const onChange = (e) => {
-    setForm((s) => ({ ...s, [e.target.name]: e.target.value }));
+    let value = e.target.value;
+    // if (e.target.name === "phone")
+    //   value = value.replace(/\D/g, "").slice(0, 10); // sirf digits, max 10
+    if (e.target.name === "name") value = value.replace(/[^a-zA-Z\s]/g, ""); // sirf letters & spaces
+    setForm((s) => ({ ...s, [e.target.name]: value }));
     setErrors((s) => ({ ...s, [e.target.name]: "" }));
   };
 
@@ -134,18 +151,25 @@ export default function Register() {
     const nextErrors = {};
 
     if (!form.name) nextErrors.name = "Name is required";
-    if (!form.email) nextErrors.email = "Email is required";
+    else if (!/^[a-zA-Z\s]+$/.test(form.name))
+      nextErrors.name = "Name can only contain letters";
+
     if (!form.phone) nextErrors.phone = "Phone number is required";
+    else if (form.phone.length < 8)
+      nextErrors.phone = "Enter a valid phone number";
+
+    if (!form.email) nextErrors.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+      nextErrors.email = "Enter a valid email address";
+
     if (!form.password) nextErrors.password = "Password is required";
-
-    if (form.phone && form.phone.length < 10)
-      nextErrors.phone = "Phone number must be at least 10 digit";
-
-    if (form.password && form.password.length < 8)
+    else if (form.password.length < 8)
       nextErrors.password = "Password must be at least 8 characters";
 
-    if (form.confirmPassword !== form.password)
-      nextErrors.confirmPassword = "Passwords must match";
+    if (!form.confirmPassword)
+      nextErrors.confirmPassword = "Please confirm your password";
+    else if (form.confirmPassword !== form.password)
+      nextErrors.confirmPassword = "Passwords do not match";
 
     setErrors(nextErrors);
 
@@ -155,17 +179,24 @@ export default function Register() {
       const data = await register.mutateAsync({
         name: form.name,
         email: form.email,
-        phone: form.phone,
+        phone: form.phone.replace(/^\+\d{1,2}/, ""),
         password: form.password,
       });
 
       toast.success("OTP sent to your email!");
-      navigate("/verify-otp", { state: { userId: data.userId, email: data.email, from } });
+      navigate("/verify-otp", {
+        state: {
+          userId: data.userId,
+          email: data.email,
+          from: location.state?.from,
+          pendingOrder: location.state?.pendingOrder,
+        },
+      });
     } catch (_) {}
   };
 
   return (
-    <div className="min-h-screen rounded-2xl flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 p-4 overflow-auto">
+    <div>
       <motion.div
         variants={slideUp}
         initial="hidden"
@@ -174,7 +205,6 @@ export default function Register() {
       >
         {/* Card */}
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col lg:flex-row">
-
           {/* ── Left Banner ── */}
           <div className="hidden lg:block lg:w-[38%] min-h-[520px]">
             <RegisterBanner />
@@ -183,7 +213,6 @@ export default function Register() {
           {/* ── Right Form ── */}
           <div className="flex-1 flex flex-col justify-center px-6 py-7 sm:px-8 sm:py-8">
             <div className="w-full max-w-lg mx-auto">
-
               {/* Header */}
               <motion.div
                 initial={{ y: -10, opacity: 0 }}
@@ -191,7 +220,6 @@ export default function Register() {
                 transition={{ delay: 0.1 }}
                 className="mb-5"
               >
-             
                 <h2 className="text-2xl font-bold text-slate-900">
                   Create an <span className="text-indigo-600">account</span>
                 </h2>
@@ -201,10 +229,9 @@ export default function Register() {
               </motion.div>
 
               {/* Form */}
-              <form onSubmit={onSubmit} className="space-y-3">
-
+              <form onSubmit={onSubmit} className="space-y-4">
                 {/* Row 1 — Name + Phone */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Input
                     label="Full Name"
                     name="name"
@@ -215,20 +242,43 @@ export default function Register() {
                     icon={User}
                     autoComplete="name"
                   />
-                  <Input
-                    label="Phone Number"
-                    name="phone"
-                    type="tel"
-                    placeholder="9998887776"
-                    value={form.phone}
-                    onChange={onChange}
-                    error={errors.phone}
-                    icon={Phone}
-                    autoComplete="tel"
-                  />
+
+                  <div className="w-full z-50">
+                    <label className="block text-sm font-medium text-slate-600 mb-2">
+                      Phone Number
+                    </label>
+                    <PhoneInput
+                      defaultCountry="in"
+                      forceDialCode
+                      value={form.phone}
+                      onChange={(phone) => {
+                        setForm((s) => ({ ...s, phone }));
+                        setErrors((s) => ({ ...s, phone: "" }));
+                      }}
+                      style={{
+                        "--react-international-phone-border-radius": "0.75rem",
+                        "--react-international-phone-border-color": errors.phone
+                          ? "#f87171"
+                          : "#e2e8f0",
+                        "--react-international-phone-background-color":
+                          "#ffffff",
+                        "--react-international-phone-text-color": "#1e293b",
+                        "--react-international-phone-selected-dropdown-item-background-color":
+                          "#eef2ff",
+                        "--react-international-phone-font-size": "14px",
+                        "--react-international-phone-height": "44px",
+                        width: "100%",
+                      }}
+                    />
+                    {errors.phone && (
+                      <p className="mt-2 text-sm text-red-500">
+                        {errors.phone}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
-                {/* Row 2 — Email (full width) */}
+                {/* Row 2 — Email */}
                 <Input
                   label="Email Address"
                   name="email"
@@ -242,7 +292,7 @@ export default function Register() {
                 />
 
                 {/* Row 3 — Password + Confirm */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Input
                     label="Password"
                     name="password"
@@ -267,39 +317,71 @@ export default function Register() {
                   />
                 </div>
 
+                {/* Password strength bar */}
+                {form.password && (
+                  <div className="flex items-center gap-2 -mt-1">
+                    {[...Array(4)].map((_, i) => (
+                      <div
+                        key={i}
+                        className={`h-1 flex-1 rounded-full transition-all duration-300 ${
+                          form.password.length >= (i + 1) * 3
+                            ? form.password.length >= 10
+                              ? "bg-green-400"
+                              : form.password.length >= 7
+                                ? "bg-amber-400"
+                                : "bg-red-400"
+                            : "bg-white/10"
+                        }`}
+                      />
+                    ))}
+                    <span className="text-xs text-textMuted shrink-0">
+                      {form.password.length >= 10
+                        ? "Strong"
+                        : form.password.length >= 7
+                          ? "Medium"
+                          : "Weak"}
+                    </span>
+                  </div>
+                )}
 
                 {/* Submit */}
-                <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
+                <motion.div
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="pt-1"
+                >
                   <Button
                     type="submit"
                     loading={register.isPending}
-                    className="w-full py-2.5 rounded-xl font-semibold text-sm bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200 transition-all duration-200 flex items-center justify-center gap-2"
+                    className="w-full py-3 rounded-xl font-semibold text-sm bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white shadow-lg shadow-indigo-500/20 transition-all duration-200 flex items-center justify-center gap-2"
                   >
                     {!register.isPending && (
                       <>
-                        Create Account →
-                        
+                        <span>Create Account</span>
                       </>
                     )}
-                    {register.isPending && "Creating account..."}
+                    {register.isPending && (
+                      <>
+                        <span>Creating account...</span>
+                      </>
+                    )}
                   </Button>
                 </motion.div>
 
-                {/* Divider + sign in link */}
-                <div className="relative my-1">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-slate-200" />
-                  </div>
-                  <div className="relative flex justify-center text-[11px]">
-                    <span className="bg-white px-3 text-slate-500">Already have an account?</span>
-                  </div>
+                {/* Divider */}
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 h-px bg-white/10" />
+                  <span className="text-xs text-textMuted">
+                    Already have an account?
+                  </span>
+                  <div className="flex-1 h-px bg-white/10" />
                 </div>
 
-                <p className="text-xs text-center text-slate-600">
+                <p className="text-xs text-center">
                   <Link
                     to="/login"
                     state={{ from }}
-                    className="font-semibold text-indigo-600 hover:text-indigo-700 transition hover:underline"
+                    className="font-semibold text-indigo-400 hover:text-indigo-300 transition hover:underline"
                   >
                     Sign in instead →
                   </Link>
@@ -308,8 +390,6 @@ export default function Register() {
             </div>
           </div>
         </div>
-
-    
       </motion.div>
     </div>
   );

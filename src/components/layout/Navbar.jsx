@@ -109,11 +109,11 @@ export default function Navbar({ isSidebarOpen, onMenuClick }) {
 
         {/* RIGHT: Notifications + Compact Professional Profile */}
         <div className="flex items-center gap-3 sm:gap-4">
-          <button className="relative p-3 rounded-2xl bg-white/70 backdrop-blur-md border border-white/60 text-slate-500 hover:text-indigo-600 hover:bg-white hover:border-indigo-200 transition-all group shadow-sm">
+          {/* <button className="relative p-3 rounded-2xl bg-white/70 backdrop-blur-md border border-white/60 text-slate-500 hover:text-indigo-600 hover:bg-white hover:border-indigo-200 transition-all group shadow-sm">
             <Bell size={20} strokeWidth={2} />
             <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-indigo-500 rounded-full border-2 border-white group-hover:animate-ping" />
             <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-indigo-500 rounded-full border-2 border-white" />
-          </button>
+          </button> */}
 
           {/* Compact Profile Button */}
           <div className="relative" ref={menuRef}>

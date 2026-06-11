@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import { X, Check, Sparkles, Shield, Star, ArrowRight } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -13,6 +13,11 @@ import toast from "react-hot-toast";
 import Spinner from "../../components/ui/Spinner";
 import { metaPixel } from "../../utils/metaPixel";
 import { useAuthStore } from "../../store/authStore";
+import {
+  savePendingOrder,
+  getPendingOrder,
+  clearPendingOrder,
+} from "../../utils/pendingOrder";
 
 const TAX_RATE = 0.18;
 
@@ -25,6 +30,16 @@ const PlanModal = ({ plan, onClose }) => {
   const verifyPayment = useVerifyPayment();
   const { user, isAuthenticated } = useAuthStore();
 
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const pending = getPendingOrder();
+    if (!pending || pending.service !== "wordpress") return;
+
+    if (pending.duration) setDuration(pending.duration);
+
+    clearPendingOrder();
+  }, [isAuthenticated, plan]);
+
   const { data: profile } = useProfile({
     enabled: !!user,
   });
@@ -32,9 +47,17 @@ const PlanModal = ({ plan, onClose }) => {
   const isProcessing = createOrder.isPending || verifyPayment.isPending;
 
   const handleCheckout = async () => {
-    if (!user) {
-      toast.error("Please login to continue");
-      navigate("/login", { state: { from: location.pathname } });
+    if (!isAuthenticated) {
+      savePendingOrder({
+        service: "wordpress",
+        planId: plan.id || plan._id,
+        planName: plan.name,
+        duration: duration,
+        amount: grandTotal,
+      });
+      navigate("/register", {
+        state: { from: "/wordpress/domainEnter", pendingOrder: true },
+      });
       return;
     }
     try {

@@ -15,6 +15,7 @@ import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
 import { slideUp } from "../../animations/variants";
 import { useLogin } from "../../hooks/useAuth";
+import { usePendingOrderRestore } from '../../hooks/usePendingOrderRestore';
 
 // ----------------------------------------
 // 🌑 Left Dark Panel
@@ -145,10 +146,11 @@ const CloudVisual = () => {
 //  Login Page
 // ----------------------------------------
 export default function Login() {
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
   const from = location.state?.from || "/home";
   const login = useLogin();
+  const { restoreAndRedirect, getPendingOrder } = usePendingOrderRestore();
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
@@ -167,15 +169,19 @@ export default function Login() {
     if (Object.keys(nextErrors).length) return;
 
     try {
-      // await login.mutateAsync({ email: form.email, password: form.password });
-      // navigate(from);
-
-      const res = await login.mutateAsync({
-        email: form.email,
-        password: form.password,
-      });
-
+      const res = await login.mutateAsync({ email: form.email, password: form.password });
       const role = res?.user?.role;
+
+      // Check for pending order returnPath
+      const pending = getPendingOrder();
+      if (pending?.returnPath) {
+        navigate(pending.returnPath, { replace: true });
+        return;
+      }
+
+      // Try to restore other pending order types if returnPath not present
+      const restored = restoreAndRedirect();
+      if (restored) return;
 
       if (role === "superadmin") {
         navigate("/superadmin/servers");
@@ -188,7 +194,18 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 p-4 md:p-8">
+    <div>
+      {location.state?.pendingOrder && (
+        <div className="max-w-5xl mx-auto mb-6 flex items-center gap-3 rounded-xl bg-indigo-50 border border-indigo-200 px-4 py-3">
+          <span className="text-xl">🖥️</span>
+          <div>
+            <p className="text-indigo-800 font-semibold text-xs">Your order is saved!</p>
+            <p className="text-indigo-600 text-xs">
+              {location.state?.message || 'Sign in to complete your order.'}
+            </p>
+          </div>
+        </div>
+      )}
       <motion.div
         variants={slideUp}
         initial="hidden"
@@ -294,11 +311,6 @@ export default function Login() {
             </div>
           </div>
         </div>
-
-        {/* Footer */}
-        <p className="text-center text-[10px] text-slate-400 mt-4 uppercase tracking-widest">
-          CloudData • Enterprise Cloud Platform
-        </p>
       </motion.div>
     </div>
   );

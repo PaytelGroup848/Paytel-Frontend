@@ -1,32 +1,71 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, Sparkles, Shield, Star, ArrowRight, Calendar, Clock, CreditCard } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useCreateOrder, useVerifyPayment } from '../../../hooks/useBilling';
-import { useCreatePhpOrder, useVerifyPhpPayment } from '../../../hooks/usePhpHosting';
-import { useAuthStore } from '../../../store/authStore';
-import { useProfile } from '../../../hooks/useProfile';
-import { loadRazorpay } from '../../../utils/razorpay';
-import toast from 'react-hot-toast';
-import Spinner from '../../../components/ui/Spinner';
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  X,
+  Check,
+  Sparkles,
+  Shield,
+  Star,
+  ArrowRight,
+  Calendar,
+  Clock,
+  CreditCard,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useCreateOrder, useVerifyPayment } from "../../../hooks/useBilling";
+import {
+  useCreatePhpOrder,
+  useVerifyPhpPayment,
+} from "../../../hooks/usePhpHosting";
+import { useAuthStore } from "../../../store/authStore";
+import { useProfile } from "../../../hooks/useProfile";
+import { loadRazorpay } from "../../../utils/razorpay";
+import toast from "react-hot-toast";
+import Spinner from "../../../components/ui/Spinner";
+import {
+  savePendingOrder,
+  getPendingOrder,
+  clearPendingOrder,
+} from "../../../utils/pendingOrder";
 
 const TAX_RATE = 0.18;
 
 export default function PhpConfigModal({ plan, onClose }) {
   const [duration, setDuration] = useState(1);
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
   const { data: profile } = useProfile({ enabled: !!user });
-  
+
   const createOrder = useCreateOrder();
   const verifyPayment = useVerifyPayment();
 
   const isProcessing = createOrder.isPending || verifyPayment.isPending;
 
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const pending = getPendingOrder();
+    if (!pending || pending.service !== "php") return;
+
+    // We only have duration in this modal for now, siteType/domain are on other steps usually
+    // but the task specified siteType/domain for PHP. Let's check if they exist here.
+    if (pending.duration) setDuration(pending.duration);
+
+    clearPendingOrder();
+  }, [isAuthenticated, plan]);
+
   const handleCheckout = async () => {
-    if (!user) {
-      toast.error('Please login to continue');
-      navigate('/login');
+    if (!isAuthenticated) {
+      savePendingOrder({
+        service: "php",
+        planId: plan.id || plan._id,
+        planName: plan.name,
+        duration: duration,
+        // domain: domain, // if available in this scope
+        // siteType: siteType, // if available in this scope
+      });
+      navigate("/register", {
+        state: { from: "/php-hosting", pendingOrder: true },
+      });
       return;
     }
 
@@ -37,17 +76,17 @@ export default function PhpConfigModal({ plan, onClose }) {
         return;
       }
 
-      const orderData = await createOrder.mutateAsync({ 
+      const orderData = await createOrder.mutateAsync({
         planId: plan._id,
         duration: duration,
-        planType: 'php'
+        planType: "php",
       });
 
       const options = {
         key: orderData.keyId,
         amount: orderData.amount,
-        currency: 'INR',
-        name: 'CloudeData',
+        currency: "INR",
+        name: "CloudeData",
         description: `Hosting: ${plan.name} - ${duration} Months`,
         order_id: orderData.orderId,
         handler: async (response) => {
@@ -56,21 +95,23 @@ export default function PhpConfigModal({ plan, onClose }) {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-              planType: 'php'
+              planType: "php",
             });
-            toast.success('Payment successful!');
+            toast.success("Payment successful!");
             onClose();
-            navigate('/php-hosting/paid');
+            navigate("/php-hosting/paid");
           } catch (err) {
-            toast.error('Payment verification failed');
+            toast.error("Payment verification failed");
           }
         },
         prefill: {
-          name: profile ? `${profile.firstName} ${profile.lastName}` : (user?.name || "User"),
+          name: profile
+            ? `${profile.firstName} ${profile.lastName}`
+            : user?.name || "User",
           email: user?.email || "",
           contact: profile?.phone || "",
         },
-        theme: { color: '#6366F1' },
+        theme: { color: "#6366F1" },
       };
 
       const rzp = new window.Razorpay(options);
@@ -142,7 +183,9 @@ export default function PhpConfigModal({ plan, onClose }) {
           <div className="lg:col-span-3 space-y-4">
             <div className="flex items-center gap-2">
               <Calendar size={14} className="text-indigo-500" />
-              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Select tenure</p>
+              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                Select tenure
+              </p>
             </div>
             <div className="space-y-3">
               {durations.map((item) => {
@@ -167,27 +210,48 @@ export default function PhpConfigModal({ plan, onClose }) {
                       />
                     )}
                     <div className="flex items-center gap-4">
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                        isSelected ? "border-indigo-600 bg-indigo-600" : "border-slate-300 group-hover:border-indigo-400"
-                      }`}>
-                        {isSelected && <Check size={12} className="text-white" strokeWidth={3} />}
+                      <div
+                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                          isSelected
+                            ? "border-indigo-600 bg-indigo-600"
+                            : "border-slate-300 group-hover:border-indigo-400"
+                        }`}
+                      >
+                        {isSelected && (
+                          <Check
+                            size={12}
+                            className="text-white"
+                            strokeWidth={3}
+                          />
+                        )}
                       </div>
                       <div>
-                        <p className={`text-sm font-bold ${isSelected ? "text-slate-900" : "text-slate-700"}`}>
-                          {item.months} {item.months === 1 ? 'Month' : 'Months'}
+                        <p
+                          className={`text-sm font-bold ${isSelected ? "text-slate-900" : "text-slate-700"}`}
+                        >
+                          {item.months} {item.months === 1 ? "Month" : "Months"}
                         </p>
                         {item.save && (
                           <div className="flex items-center gap-1 mt-0.5">
-                            <Star size={10} className="text-emerald-500 fill-emerald-500" />
-                            <p className="text-[10px] font-black text-emerald-600 tracking-tight">{item.save}</p>
+                            <Star
+                              size={10}
+                              className="text-emerald-500 fill-emerald-500"
+                            />
+                            <p className="text-[10px] font-black text-emerald-600 tracking-tight">
+                              {item.save}
+                            </p>
                           </div>
                         )}
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className={`text-xl font-black tracking-tight ${isSelected ? "text-indigo-600" : "text-slate-800"}`}>
+                      <p
+                        className={`text-xl font-black tracking-tight ${isSelected ? "text-indigo-600" : "text-slate-800"}`}
+                      >
                         ₹{price.toLocaleString()}
-                        <span className="text-[11px] font-medium ml-0.5 text-slate-400">/mo</span>
+                        <span className="text-[11px] font-medium ml-0.5 text-slate-400">
+                          /mo
+                        </span>
                       </p>
                     </div>
                   </motion.div>
@@ -209,27 +273,39 @@ export default function PhpConfigModal({ plan, onClose }) {
             <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl p-5 border border-slate-200 shadow-lg shadow-slate-200/50 sticky top-4">
               <div className="flex items-center gap-2 mb-4 pb-2 border-b border-slate-200">
                 <CreditCard size={16} className="text-indigo-500" />
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Payment Summary</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  Payment Summary
+                </p>
               </div>
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Plan</span>
-                  <span className="font-medium text-slate-800">{plan.name}</span>
+                  <span className="font-medium text-slate-800">
+                    {plan.name}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Duration</span>
-                  <span className="font-medium text-slate-800">{duration} month(s)</span>
+                  <span className="font-medium text-slate-800">
+                    {duration} month(s)
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm pt-1">
                   <span className="text-slate-500">Subtotal</span>
-                  <span className="font-semibold text-slate-800">₹{subtotal.toLocaleString()}</span>
+                  <span className="font-semibold text-slate-800">
+                    ₹{subtotal.toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">GST (18%)</span>
-                  <span className="font-semibold text-emerald-600">₹{taxes.toLocaleString()}</span>
+                  <span className="font-semibold text-emerald-600">
+                    ₹{taxes.toLocaleString()}
+                  </span>
                 </div>
                 <div className="pt-3 mt-2 border-t-2 border-dashed border-slate-200 flex justify-between items-center">
-                  <span className="text-[11px] font-black text-slate-500 uppercase tracking-wider">Total</span>
+                  <span className="text-[11px] font-black text-slate-500 uppercase tracking-wider">
+                    Total
+                  </span>
                   <span className="text-2xl font-black bg-gradient-to-r from-slate-800 to-indigo-800 bg-clip-text text-transparent">
                     ₹{grandTotal.toLocaleString()}
                   </span>
@@ -265,7 +341,10 @@ export default function PhpConfigModal({ plan, onClose }) {
             ) : (
               <>
                 Proceed to Payment
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight
+                  size={16}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
               </>
             )}
           </motion.button>

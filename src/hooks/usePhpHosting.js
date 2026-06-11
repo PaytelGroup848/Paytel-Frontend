@@ -222,9 +222,21 @@ export const useDeletePhpInstance = () =>
     mutationFn: (id) => api.delete(`/php/instances/${id}`).then(r => r.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['php', 'instances'] });
-      toast.success('Instance deleted successfully');
+      toast.success('Site deletion request sent');
     },
-    onError: () => toast.error('Failed to delete instance'),
+    onError: (err) => toast.error(err?.response?.data?.message || 'Failed to delete site'),
+  });
+
+export const useUpdatePhpPlan = () =>
+  useMutation({
+    mutationFn: ({ id, data }) =>
+      api.put(`/php/plans/${id}`, data).then((r) => r.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['php', 'plans'] });
+      toast.success('Plan updated successfully');
+    },
+    onError: (err) =>
+      toast.error(err?.response?.data?.message || 'Failed to update plan'),
   });
 
 export const useSuspendPhpInstance = () =>

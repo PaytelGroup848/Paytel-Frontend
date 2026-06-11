@@ -136,13 +136,26 @@ export const useDeleteInstance = () =>
   useMutation({
     mutationFn: async (id) => {
       const res = await api.delete(`/wordpress/${id}`);
-      return res.data?.data;
+      return res.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wordpress", "instances"] });
-      toast.success("Instance deleted");
+      toast.success("Site deletion request sent");
     },
-    onError: () => toast.error("Failed to delete instance"),
+    onError: (err) =>
+      toast.error(err?.response?.data?.message || "Failed to delete site"),
+  });
+
+export const useUpdateWpPlan = () =>
+  useMutation({
+    mutationFn: ({ id, data }) =>
+      api.put(`/wordpress/plans/${id}`, data).then((r) => r.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["wordpress", "plans"] });
+      toast.success("Plan updated successfully");
+    },
+    onError: (err) =>
+      toast.error(err?.response?.data?.message || "Failed to update plan"),
   });
 
 export const useDbTables = (id) =>

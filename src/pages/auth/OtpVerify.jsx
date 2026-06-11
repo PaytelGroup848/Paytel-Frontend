@@ -6,12 +6,14 @@ import toast from "react-hot-toast";
 import { useVerifyOtp, useResendOtp } from "../../hooks/useAuth";
 import { useAuthStore } from "../../store/authStore";
 import { RegisterBanner } from "./Register";
+import { usePendingOrderRestore } from "../../hooks/usePendingOrderRestore";
 
 export default function OtpVerify() {
   const location = useLocation();
   const navigate = useNavigate();
   const { userId, email, from } = location.state || {};
   const setAuth = useAuthStore((s) => s.setAuth);
+  const { restoreAndRedirect, getPendingOrder } = usePendingOrderRestore();
 
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [shake, setShake] = useState(false);
@@ -70,13 +72,24 @@ export default function OtpVerify() {
     }
     try {
       const data = await verifyOtp.mutateAsync({ userId, otp: otpString });
+
       setAuth({
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
         user: data.user,
       });
+
       toast.success("Email verified! Welcome to CloudeData");
-      navigate(from || "/home");
+
+      const pending = getPendingOrder();
+      if (pending?.returnPath) {
+        navigate(pending.returnPath, { replace: true });
+      } else {
+        const restored = restoreAndRedirect();
+        if (!restored) {
+          navigate(from || "/home");
+        }
+      }
     } catch (err) {
       setShake(true);
       setOtp(["", "", "", ""]);

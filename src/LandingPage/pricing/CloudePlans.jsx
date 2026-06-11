@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import {
   Check, Sparkles, ArrowRight, Cpu, HardDrive, Users, Server,
 } from "lucide-react";
-import ConfigurationModal from "../../pages/vps/ConfigurationModal";
 
 /* ── Data (unchanged) ───────────────────────────── */
 const pricingData = {
@@ -282,8 +282,7 @@ const PlanCard = ({
 /* ── Main Section ──────────────────────────────── */
 export default function CloudePlans() {
   const [activeTab, setActiveTab] = useState("Linux VPS");
-  const [selectedPlan, setSelectedPlan] = useState(null);
-const [selectedType, setSelectedType] = useState("linux");
+  const navigate = useNavigate();
   const currentData = pricingData[activeTab];
 
   return (
@@ -329,21 +328,19 @@ const [selectedType, setSelectedType] = useState("linux");
   isPopular={idx === currentData.popular}
   serviceType={activeTab}
   onSelectPlan={(planData, type) => {
-    setSelectedPlan(planData);
-    setSelectedType(type);
+    // If it's VPS, navigate to configure page
+    if (activeTab.includes("VPS")) {
+      // Need a way to get actual plan ID if possible, but these are static landing page plans
+      // For now, using a slugified name as ID or a placeholder if actual ID isn't available
+      // The VPS plans in landing page usually correspond to some backend plans
+      // For landing page static plans, we might need to redirect to /vps first or have a mapping
+      navigate(`/vps/configure/${type}/${planData.id}`);
+    }
   }}
 />
             ))}
           </motion.div>
         </AnimatePresence>
-        {selectedPlan && (
-  <ConfigurationModal
-    plan={selectedPlan}
-    isOpen={!!selectedPlan}
-    type={selectedType}
-    onClose={() => setSelectedPlan(null)}
-  />
-)}
       </div>
     </section>
   );

@@ -17,6 +17,19 @@ export const useEmailOrders = () =>
     staleTime: 0,
   });
 
+export const useUpdateEmailPlan = () =>
+  useMutation({
+    mutationFn: ({ id, data }) =>
+      api.put(`/email-hosting/plans/${id}`, data).then((r) => r.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['email-hosting', 'plans'] });
+      toast.success('Plan updated successfully');
+    },
+    onError: (err) =>
+      toast.error(err?.response?.data?.message || 'Failed to update plan'),
+  });
+
+
 export const useEmailOrder = (id) =>
   useQuery({
     queryKey: ['email-hosting', 'order', id],

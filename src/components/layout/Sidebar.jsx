@@ -108,7 +108,20 @@ export default function Sidebar({
     // },
 
     ...(isSuperAdmin
-      ? [{ label: "SuperAdmin", to: "/superadmin/servers", icon: Zap }]
+      ? [
+          {
+            label: "SuperAdmin",
+            icon: Zap,
+            children: [
+              { label: "Servers", to: "/superadmin/servers" },
+              { label: "Instances", to: "/superadmin/instances" },
+              { label: "Support", to: "/superadmin/support" },
+              { label: "User Management", to: "/superadmin/users" },
+              { label: "Products", to: "/superadmin/products" },
+              { label: "Invoices", to: "/superadmin/invoices" },
+            ],
+          },
+        ]
       : []),
     { label: "Settings", to: "/settings", icon: Settings },
     { label: "Support", to: "/support", icon: MdSupportAgent },

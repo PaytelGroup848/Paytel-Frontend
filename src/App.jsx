@@ -61,6 +61,7 @@ import AdminInstances from "./pages/superadmin/Instances";
 import FilesPage from "./pages/websites/wordpress/FilesPage";
 import DatabasePage from "./pages/websites/wordpress/DatabasePage";
 import VpsPlans from "./pages/vps/VpsPlans";
+import VpsConfigurePage from "./pages/vps/VpsConfigurePage";
 import VPSDocumentation from "./pages/vps/slidebar/docs";
 import BackupManager from "./pages/vps/slidebar/BackupManager";
 import SnapShot from "./pages/vps/slidebar/SnapShot";
@@ -69,6 +70,9 @@ import VpsSettings from "./pages/vps/slidebar/setting";
 import firewall from "./pages/vps/slidebar/security/firewall";
 import SupportPage from "./pages/support/Support";
 import AdminSupport from "./pages/superadmin/AdminSupport";
+import UserManagement from "./pages/superadmin/UserManagement";
+import Products from "./pages/superadmin/Products";
+import Invoices from "./pages/superadmin/Invoices";
 import AnalyticsPage from "./pages/wordpress/AnalyticsPage";
 import BackupsPage from "./pages/wordpress/BackupsPage";
 import { useMe } from "./hooks/useAuth";
@@ -113,6 +117,7 @@ const ProtectedRoute = () => {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   return <Outlet />;
 };
+
 
 // Layout for auth pages
 const AuthRoutes = () => (
@@ -249,6 +254,9 @@ export default function App() {
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/refund-policy-cloude " element={<RefundPolicy />} />
         <Route path="/term-and-conditions" element={<TermsOfService />} />
+        <Route path="/vps" element={<VpsPlans />} />
+        <Route path="/vps/configure/:planType/:planId" element={<VpsConfigurePage />} />
+
         {/* Auth routes (no layout needed) */}
         <Route element={<AuthRoutes />}>
           <Route path="/login" element={<Login />} />
@@ -301,7 +309,7 @@ export default function App() {
             />
             <Route path="/websites/nodejs" element={<NodeJS_Page />} />
             {/* <Route path="/vps" element={<VpsPlans/>} /> */}
-            <Route path="/vps/paid" element={<VPSDashboard />} />
+              <Route path="/vps/paid" element={<VPSDashboard />} />
             <Route path="/vps/paid/:id" element={<VpsDashboard />} />
             <Route path="/vps/support/docs" element={<VPSDocumentation />} />
             <Route path="/vps/backup" element={<BackupManager />} />
@@ -337,6 +345,9 @@ export default function App() {
           <Route path="servers" element={<Servers />} />
           <Route path="instances" element={<AdminInstances />} />
           <Route path="support" element={<AdminSupport />} />
+          <Route path="users" element={<UserManagement />} />
+          <Route path="products" element={<Products />} />
+          <Route path="invoices" element={<Invoices />} />
         </Route>
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/home" replace />} />

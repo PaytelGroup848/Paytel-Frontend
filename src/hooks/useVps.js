@@ -125,9 +125,22 @@ export const useDeleteVps = () =>
     mutationFn: (id) => api.delete(`/vps/instances/${id}`).then((r) => r.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vps', 'instances'] });
-      toast.success('VPS deleted successfully');
+      toast.success('VPS deletion request sent');
     },
-    onError: () => toast.error('Failed to delete VPS'),
+    onError: (err) =>
+      toast.error(err?.response?.data?.message || 'Failed to delete VPS'),
+  });
+
+export const useUpdateVpsPlan = () =>
+  useMutation({
+    mutationFn: ({ id, data }) =>
+      api.put(`/vps/plans/${id}`, data).then((r) => r.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vps', 'plans'] });
+      toast.success('Plan updated successfully');
+    },
+    onError: (err) =>
+      toast.error(err?.response?.data?.message || 'Failed to update plan'),
   });
 
 

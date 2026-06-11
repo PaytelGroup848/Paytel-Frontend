@@ -4,7 +4,8 @@ import { ChevronRight, Check, ArrowRight, Clock, Shield, Sparkles, Star } from '
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import EmailConfigModal from './EmailConfigModal';
-
+import { useAuthStore } from '../../store/authStore';
+import { getPendingOrder } from '../../utils/pendingOrder';
 
 import { useEmailPlans } from '../../hooks/useEmailHosting';
 
@@ -76,6 +77,20 @@ export default function EmailPlanPage() {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const { data: plans, isLoading } = useEmailPlans();
   const [billingPeriod, setBillingPeriod] = useState(12); // Default to yearly for 15% discount
+  const { isAuthenticated } = useAuthStore();
+
+  useEffect(() => {
+    if (!isAuthenticated || !plans) return;
+    const pending = getPendingOrder();
+    if (!pending || pending.service !== 'email') return;
+
+    if (pending.planId) {
+      const plan = plans.find(p => (p.id || p._id) === pending.planId);
+      if (plan) {
+        setSelectedPlan(plan);
+      }
+    }
+  }, [isAuthenticated, plans]);
 
   if (isLoading) {
     return (
