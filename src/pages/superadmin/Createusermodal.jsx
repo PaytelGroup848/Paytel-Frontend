@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AlertCircle, Eye, EyeOff } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import Modal from "./Modal";
 import { useCreateAdminUser } from "../../hooks/useAdminUsers";
 
@@ -15,8 +15,8 @@ export default function CreateUserModal({
     password: "",
     role: "user",
   });
-  const [errors, setErrors] = useState({});
-  const createMutation = useCreateAdminUser();
+ const [errors, setErrors] = useState({});
+ const createMutation = useCreateAdminUser();
   const [showPassword, setShowPassword] = useState(false);
 
   const isDark = theme === "dark";
