@@ -322,6 +322,18 @@ function EditPlanModal({ plan, type, isOpen, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // FIX: Get the correct ID from plan object
+    const planId = plan.id || plan._id || plan.slug;
+
+    console.log("Plan object:", plan);
+    console.log("Using Plan ID:", planId);
+
+    if (!planId) {
+      toast.error("Plan ID is missing. Please refresh and try again.");
+      return;
+    }
+
     const payload = {
       name: formData.name,
       priceMonthly: formData.price,
@@ -341,7 +353,21 @@ function EditPlanModal({ plan, type, isOpen, onClose }) {
             ? updatePhp
             : updateEmail;
 
-    mutation.mutate({ id: plan.id, data: payload }, { onSuccess: onClose });
+    mutation.mutate(
+      { id: planId, data: payload },
+      {
+        onSuccess: () => {
+          onClose();
+          toast.success("Plan updated successfully");
+        },
+        onError: (error) => {
+          console.error("Update error:", error);
+          toast.error(
+            error?.response?.data?.message || "Failed to update plan",
+          );
+        },
+      },
+    );
   };
 
   /* shared input style */
