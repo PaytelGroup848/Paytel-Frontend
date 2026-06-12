@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Mail, Lock, Cloud, Shield, Zap, Globe } from "lucide-react";
@@ -8,9 +8,27 @@ import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
 import { slideUp } from "../../animations/variants";
 import { useRegister } from "../../hooks/useAuth";
+import { getUserIp } from "../../utils/ipUtils";
 
-const handleGoogleAuth = () => {
-  window.location.href = `${import.meta.env.VITE_AUTH_URL || "http://localhost:3001"}/api/auth/google`;
+const handleGoogleAuth = async () => {
+  // Get real client IP
+  let clientIp = null;
+  try {
+    clientIp = await getUserIp();
+    
+
+    // Save IP in localStorage
+    if (clientIp) {
+      localStorage.setItem("oauth_client_ip", clientIp);
+    
+    }
+  } catch (error) {
+    console.error("[GoogleAuth] Failed to get IP:", error);
+  }
+
+  // Redirect to Google OAuth
+  const authUrl = `${import.meta.env.VITE_AUTH_URL || "http://localhost:3001"}/api/auth/google`;
+  window.location.href = authUrl;
 };
 
 export default function Register() {
@@ -23,8 +41,25 @@ export default function Register() {
     email: "",
     password: "",
   });
-
   const [errors, setErrors] = useState({});
+  const [clientIp, setClientIp] = useState(null);
+  const [isGettingIp, setIsGettingIp] = useState(true);
+
+  // Get user's real IP on component mount
+  useEffect(() => {
+    const fetchIp = async () => {
+      try {
+        const ip = await getUserIp();
+        setClientIp(ip);
+       
+      } catch (error) {
+        console.error("[Register] Failed to get IP:", error);
+      } finally {
+        setIsGettingIp(false);
+      }
+    };
+    fetchIp();
+  }, []);
 
   const onChange = (e) => {
     let value = e.target.value;
@@ -53,6 +88,7 @@ export default function Register() {
       const data = await register.mutateAsync({
         email: form.email,
         password: form.password,
+        clientIp: clientIp, // Send the real client IP
       });
 
       toast.success("OTP sent to your email!");
@@ -83,13 +119,7 @@ export default function Register() {
                 <motion.img
                   src="/Cloudedata.svg"
                   alt="Cloude Data Logo"
-                  className="
-      w-full h-15 mb-15
-      object-contain
-      drop-shadow-xl
-      group-hover:scale-110
-      transition-transform duration-300
-    "
+                  className="w-full h-15 mb-15 object-contain drop-shadow-xl group-hover:scale-110 transition-transform duration-300"
                   animate={{ y: [0, -2, 0] }}
                   transition={{
                     repeat: Infinity,

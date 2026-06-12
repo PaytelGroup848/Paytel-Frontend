@@ -9,9 +9,27 @@ import Button from "../../components/ui/Button";
 import { slideUp } from "../../animations/variants";
 import { useLogin } from "../../hooks/useAuth";
 import { usePendingOrderRestore } from "../../hooks/usePendingOrderRestore";
+import { getUserIp } from "../../utils/ipUtils";
 
-const handleGoogleAuth = () => {
-  window.location.href = `${import.meta.env.VITE_AUTH_URL || "http://localhost:3001"}/api/auth/google`;
+const handleGoogleAuth = async () => {
+  // Get real client IP
+  let clientIp = null;
+  try {
+    clientIp = await getUserIp();
+   
+
+    // Save IP in localStorage
+    if (clientIp) {
+      localStorage.setItem("oauth_client_ip", clientIp);
+  
+    }
+  } catch (error) {
+    console.error("[GoogleAuth] Failed to get IP:", error);
+  }
+
+  // Redirect to Google OAuth
+  const authUrl = `${import.meta.env.VITE_AUTH_URL || "http://localhost:3001"}/api/auth/google`;
+  window.location.href = authUrl;
 };
 
 export default function Login() {
