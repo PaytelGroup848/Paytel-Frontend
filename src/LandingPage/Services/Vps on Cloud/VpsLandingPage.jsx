@@ -15,8 +15,8 @@ export default function VpsLandingpage(){
    
         <Navbar/>
         <Banner/>
-        <Features/>
         <VpsPlans/>
+        <Features/>
         <VpsMarketing/>
         <VpsFaq/>
         <Footer/>

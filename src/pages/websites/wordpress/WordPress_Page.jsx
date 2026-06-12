@@ -14,17 +14,52 @@ import {
   Check,
   ArrowRight,
   Server,
+  Star,
 } from "lucide-react";
-import Plans from "../../plans/Plan"; 
+import Plans from "../../plans/Plan";
+
+/* ---------- Google Review Card Component ---------- */
+const googleReviews = [
+  {
+    name: "Ananya Gupta",
+    rating: 5,
+    text: "Moved our blog to their WordPress hosting and saw a 3x speed boost. The support team is simply outstanding.",
+    avatarUrl: "https://i.pravatar.cc/40?img=47",
+  },
+  {
+    name: "Rohit Mehta",
+    rating: 5,
+    text: "One‑click install and LiteSpeed caching makes our site fly. Absolutely recommended for serious bloggers.",
+    avatarUrl: "https://i.pravatar.cc/40?img=12",
+  },
+  {
+    name: "Sneha Iyer",
+    rating: 5,
+    text: "Their managed WordPress service saved me hours of maintenance. Now I focus only on content.",
+    avatarUrl: "https://i.pravatar.cc/40?img=23",
+  },
+  {
+    name: "Vikram Das",
+    rating: 5,
+    text: "NVMe SSDs make a noticeable difference in dashboard speed. Plus, daily backups give peace of mind.",
+    avatarUrl: "https://i.pravatar.cc/40?img=60",
+  },
+  {
+    name: "Kavya Rao",
+    rating: 5,
+    text: "Switched from shared hosting and never looked back. Our e‑commerce site handles traffic spikes effortlessly.",
+    avatarUrl: "https://i.pravatar.cc/40?img=36",
+  },
+];
 
 export default function Wordpress_Page() {
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
+    visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
   };
   const itemVariants = {
     hidden: { y: 40, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100, damping: 15 } }
+    visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100, damping: 15 } },
   };
 
   return (
@@ -36,13 +71,12 @@ export default function Wordpress_Page() {
         <div className="absolute top-1/3 left-0 w-72 h-72 bg-cyan-100/20 rounded-full blur-3xl animate-float-slowest" />
       </div>
 
-      {/* Reduced top/bottom padding for tighter layout */}
-      <main className="relative z-10 pt-16 pb-20">
+      <main className="relative z-10 pt-1 pb-20">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20"
+          className="w-[85vw] mx-auto px-4 sm:px-6 lg:px-8 space-y-20"
         >
           {/* HERO SECTION */}
           <motion.section variants={itemVariants} className="text-center max-w-4xl mx-auto">
@@ -131,7 +165,7 @@ export default function Wordpress_Page() {
             </div>
           </motion.section>
 
-          {/* STATS – subtle hover scale + shadow */}
+          {/* STATS */}
           <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
               { icon: Globe, value: "10M+", label: "Websites", color: "bg-indigo-100 text-indigo-600" },
@@ -153,7 +187,7 @@ export default function Wordpress_Page() {
             ))}
           </motion.div>
 
-        
+          {/* FEATURES */}
           <motion.div id="features" variants={itemVariants} className="grid md:grid-cols-3 gap-6">
             {[
               {
@@ -186,7 +220,6 @@ export default function Wordpress_Page() {
                     alt={feature.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
-                  {/* Gradient overlay on hover */}
                   <div className="absolute inset-0 bg-gradient-to-t from-white/60 via-white/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </div>
                 <div className="p-7">
@@ -200,7 +233,7 @@ export default function Wordpress_Page() {
             ))}
           </motion.div>
 
-          {/* PRICING – pulled up with negative margin for tighter fit */}
+          {/* PRICING */}
           <motion.section
             id="pricing-section"
             variants={itemVariants}
@@ -211,15 +244,13 @@ export default function Wordpress_Page() {
             </div>
           </motion.section>
 
-
-          {/* STEPS – added subtle connector line on desktop */}
+          {/* STEPS */}
           <motion.section variants={itemVariants} className="bg-white rounded-[3rem] p-10 md:p-14 border border-slate-200 shadow-sm relative">
             <div className="text-center mb-14">
               <h3 className="text-3xl font-extrabold text-slate-900">Three steps to launch</h3>
               <p className="text-slate-500 mt-2 font-medium">From zero to live website in under 60 seconds.</p>
             </div>
             <div className="grid md:grid-cols-3 gap-8 relative">
-              {/* Connector line (hidden on mobile) */}
               <div className="hidden md:block absolute top-16 left-[12%] right-[12%] h-0.5 bg-slate-200 -z-10" />
               {[
                 { step: "1", icon: Cpu, title: "Choose a Plan", desc: "Select the WordPress plan that fits your needs and budget." },
@@ -241,6 +272,78 @@ export default function Wordpress_Page() {
                   <p className="text-sm text-slate-500 max-w-[200px] mx-auto">{s.desc}</p>
                 </motion.div>
               ))}
+            </div>
+          </motion.section>
+
+          {/* ---------- TRUSTED BY 5K+ USERS WITH GOOGLE REVIEW CARDS ---------- */}
+          <motion.section
+            variants={itemVariants}
+            className="space-y-8"
+          >
+            <div className="text-center">
+              <div className="inline-flex items-center gap-2 mb-4 bg-amber-50 border border-amber-200 rounded-full px-4 py-1.5 text-sm font-semibold text-amber-800 shadow-sm">
+                <Star size={16} className="fill-amber-400 text-amber-400" />
+                Excellent rating on Google
+              </div>
+              <h3 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
+                Trusted by 5k+ Users
+              </h3>
+              <p className="text-slate-500 mt-2 font-medium">
+                See why businesses love our managed WordPress hosting.
+              </p>
+            </div>
+
+            {/* Auto‑scrolling review carousel */}
+            <div className="relative w-full overflow-hidden">
+              <motion.div
+                className="flex w-max gap-4 py-2"
+                animate={{ x: ['0%', '-50%'] }}
+                transition={{
+                  repeat: Infinity,
+                  repeatType: 'loop',
+                  duration: 25,
+                  ease: 'linear',
+                }}
+              >
+                {[...googleReviews, ...googleReviews].map((review, idx) => (
+                  <div
+                    key={idx}
+                    className="flex-shrink-0 w-72 sm:w-80 lg:w-96 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-lg transition-shadow"
+                  >
+                    {/* Star rating */}
+                    <div className="flex items-center gap-1 mb-3">
+                      {Array.from({ length: review.rating }).map((_, i) => (
+                        <Star key={i} size={16} className="fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
+
+                    {/* Review text */}
+                    <p className="text-sm text-slate-600 leading-6">
+                      “{review.text}”
+                    </p>
+
+                    {/* Real avatar + name + Google badge */}
+                    <div className="mt-4 flex items-center gap-3">
+                      <img
+                        src={review.avatarUrl}
+                        alt={review.name}
+                        className="h-9 w-9 rounded-full object-cover"
+                      />
+                      <div>
+                        <span className="text-sm font-semibold text-slate-800 block">
+                          {review.name}
+                        </span>
+                        <span className="flex items-center gap-1 text-xs text-slate-400">
+                          <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-white text-[10px] font-bold">
+                            G
+                          </span>
+                          Reviewed on Google
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
             </div>
           </motion.section>
         </motion.div>

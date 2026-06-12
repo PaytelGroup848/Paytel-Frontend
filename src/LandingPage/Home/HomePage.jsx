@@ -22,15 +22,16 @@ export default function HomePage() {
         className="relative z-0"
       >
         {/*  Wrap Banner with the ID that the Navbar observer expects */}
-        <div id="hero-banner">
+        <div   id="hero-banner">
           <Banner />
-        </div>
+        </div> 
 
         <PlansCard />
+        <PlansAndPricing />
         <Review />
         <BusinessCard />
         <Services />
-        <PlansAndPricing />
+        
         <ContactCard />
       </motion.main>
 

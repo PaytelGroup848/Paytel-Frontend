@@ -23,7 +23,7 @@ export default function PlansCard() {
         <div className="absolute bottom-0 right-0 w-80 h-80 bg-cyan-200/20 blur-3xl rounded-full" />
       </div>
 
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
           {/* ================= LEFT CARD – FLEXIBLE PLANS ================= */}
           <motion.div

@@ -86,6 +86,7 @@ import ForwardersPage from "./pages/Emails/EmailForward";
 import AliasesPage from "./pages/Emails/EmailAlias";
 import AutoReplyPage from "./pages/Emails/EmailAutoReply";
 import EmailConnect from "./pages/Emails/EmailConnect";
+import EmailPlanPage from './pages/Emails/EmailPlan';
 import EmailLogsPage from "./pages/Emails/EmailLogsPage";
 import DkimPage from "./pages/Emails/EmailDkim";
 import Docker from "./pages/vps/Docker";
@@ -97,6 +98,8 @@ import PaymentHistoryPage from "./pages/billing/paymentHistory";
 import ComingSoon from "./utils/ComingSoon";
 import BlogDetail from "./LandingPage/Blog/blogDetail";
 import VpsLandingpage from "./LandingPage/Services/Vps on Cloud/VpsLandingPage";
+import PhpLandingPage from './LandingPage/php/PhpLandingpage';
+import EmailLandingPage from './LandingPage/email/EmailLandingPage';
 
 // Protected Route wrapper
 const ProtectedRoute = () => {
@@ -211,10 +214,10 @@ export default function App() {
           }
         />
         <Route
-          path="/email/plan"
+          path="/emails/plan"
           element={
             <PublicRoute>
-              <EmailPlansPage />
+              <EmailLandingPage />
             </PublicRoute>
           }
         />
@@ -222,7 +225,7 @@ export default function App() {
           path="/wordpress-hosting"
           element={
             <PublicRoute>
-              <Wordpress_Page />
+              <LandingWordpress />
             </PublicRoute>
           }
         />
@@ -230,7 +233,7 @@ export default function App() {
           path="/php-hosting"
           element={
             <PublicRoute>
-              <PhpPlans />
+              <PhpLandingPage />
             </PublicRoute>
           }
         />
@@ -330,6 +333,7 @@ export default function App() {
             <Route path="/emails/aliases" element={<AliasesPage />} />
             <Route path="/emails/autoreply" element={<AutoReplyPage />} />
             <Route path="/emails/logs" element={<EmailLogsPage />} />
+            <Route path="/email/plan" element={<EmailPlanPage/>} />
             <Route path="emails/dkim" element={<DkimPage />} />
             <Route path="/emails/connect" element={<EmailConnect />} />
 

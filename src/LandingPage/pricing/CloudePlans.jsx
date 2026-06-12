@@ -13,7 +13,6 @@ const pricingData = {
       { name: "Starter", vCPU: 2, ram: 4, storage: 60, monthly: 899, yearly: 8988, twoYearly: 14376, threeYearly: 19764 },
       { name: "Business", vCPU: 4, ram: 8, storage: 100, monthly: 1299, yearly: 12996, twoYearly: 19992, threeYearly: 32364 },
       { name: "Pro", vCPU: 6, ram: 16, storage: 200, monthly: 2999, yearly: 26388, twoYearly: 45600, threeYearly: 64764 },
-      { name: "Enterprise", vCPU: 8, ram: 32, storage: 300, monthly: 3999, yearly: 45588, twoYearly: 71976, threeYearly: 97164 },
       { name: "Ultra", vCPU: 12, ram: 64, storage: 500, monthly: 7999, yearly: 81588, twoYearly: 119976, threeYearly: 161964 },
     ],
     formatPrice: (price) => `₹${price.toLocaleString()}/mo`,

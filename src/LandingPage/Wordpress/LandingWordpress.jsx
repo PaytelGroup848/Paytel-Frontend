@@ -6,7 +6,6 @@ export default function LandingWordpress() {
   return (
     <>
       <Navbar />
-    
       <div className="pt-16 md:pt-20">
         <Wordpress_Page />
       </div>

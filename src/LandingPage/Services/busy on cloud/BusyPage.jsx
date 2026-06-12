@@ -17,9 +17,10 @@ export default function BusyPage() {
     <div>
         <Navbar/>
       <Banner />
+       <BusyPlans />
       <Features />
       <BusyFaq />
-      <BusyPlans />
+     
       <Review />
       <Footer />
     </div>

@@ -135,7 +135,7 @@ export default function Banner() {
       {/* Top gradient hairline border */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-300 to-transparent" />
 
-      <div className="relative mx-auto grid min-h-[680px] w-full max-w-7xl items-center gap-8 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-20">
+      <div className="relative mx-auto grid min-h-[680px] w-full max-w-9xl  items-center gap-8 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-20">
         {/* Left content – unchanged */}
         <div className="min-w-0 text-slate-800">
           <div className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-indigo-200 bg-white/80 px-3 py-1.5 text-xs font-bold uppercase text-indigo-600 shadow-sm backdrop-blur">
@@ -338,24 +338,6 @@ export default function Banner() {
               ))}
             </div>
           </form>
-        </div>
-      </div>
-
-      {/* Bottom feature ribbon (unchanged) */}
-      <div className="relative border-t border-slate-200 bg-white/80 backdrop-blur">
-        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-3 px-4 py-4 text-sm font-semibold text-slate-700 sm:grid-cols-3 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2">
-            <Server size={17} className="text-indigo-600" />
-            Instant provisioning
-          </div>
-          <div className="flex items-center gap-2">
-            <Zap size={17} className="text-indigo-600" />
-            KVM virtualization
-          </div>
-          <div className="flex items-center gap-2">
-            <ShieldCheck size={17} className="text-indigo-600" />
-            DDoS protection included
-          </div>
         </div>
       </div>
     </section>

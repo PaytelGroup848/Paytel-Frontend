@@ -1,7 +1,7 @@
-
 import { useEffect, useState, useCallback, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import axios from "axios";
+import clsx from "clsx"; // <-- NEW: clean conditional classes
 import {
   UserCircle,
   AtSign,
@@ -14,7 +14,6 @@ import {
   Globe,
   Lock,
   TrendingUp,
-  Sparkles,
 } from "lucide-react";
 import Navbar from "../Navbar";
 
@@ -319,15 +318,13 @@ function LeadCaptureCard() {
       initial={{ opacity: 0, x: 40, scale: 0.96 }}
       animate={{ opacity: 1, x: 0, scale: 1 }}
       transition={{ delay: 0.25, duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-      className="relative w-full"
-      style={{ maxWidth: "520px" }}
+      className="relative w-full max-w-[520px]" // replaced style with class
     >
-      {/* ── Traveling beam border ── */}
+      {/* Traveling beam border */}
       <div
         className="absolute -inset-[1.5px] rounded-[24px] z-0 overflow-hidden"
         style={{ background: "rgba(255,255,255,0.055)" }}
       >
-        {/* Beam 1 — cyan/violet L→R */}
         <motion.div
           className="absolute top-0 bottom-0 w-[140px]"
           style={{
@@ -343,7 +340,6 @@ function LeadCaptureCard() {
             repeatDelay: 1.4,
           }}
         />
-        {/* Beam 2 — emerald/indigo, delayed */}
         <motion.div
           className="absolute top-0 bottom-0 w-[90px]"
           style={{
@@ -362,7 +358,7 @@ function LeadCaptureCard() {
         />
       </div>
 
-      {/* ── Mouse glare ── */}
+      {/* Mouse glare */}
       <div
         className="absolute inset-0 rounded-[23px] z-0 pointer-events-none overflow-hidden"
         style={{
@@ -370,7 +366,7 @@ function LeadCaptureCard() {
         }}
       />
 
-      {/* ── Card body ── */}
+      {/* Card body */}
       <div
         className="relative z-10 rounded-[23px] overflow-hidden"
         style={{
@@ -411,15 +407,11 @@ function LeadCaptureCard() {
         />
 
         <div className="px-8 py-8 sm:px-9 sm:py-9">
-          {/* Card header */}
           <div className="mb-7">
             <div className="flex items-center gap-2 mb-3.5"></div>
             <h3
               className="text-[22px] sm:text-[24px] text-white font-medium leading-tight"
-              style={{
-                fontFamily: "'Outfit', sans-serif",
-                letterSpacing: "-0.015em",
-              }}
+              style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: "-0.015em" }}
             >
               Get a Live Demo
             </h3>
@@ -431,7 +423,6 @@ function LeadCaptureCard() {
             </p>
           </div>
 
-          {/* Alerts */}
           <AnimatePresence>
             {success && (
               <motion.div
@@ -455,9 +446,7 @@ function LeadCaptureCard() {
             )}
           </AnimatePresence>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-3.5">
-            {/* Name */}
             <div className="relative">
               <UserCircle size={15} className={iconCls} />
               <input
@@ -471,8 +460,6 @@ function LeadCaptureCard() {
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}
               />
             </div>
-
-            {/* Email */}
             <div className="relative">
               <AtSign size={15} className={iconCls} />
               <input
@@ -486,8 +473,6 @@ function LeadCaptureCard() {
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}
               />
             </div>
-
-            {/* Phone */}
             <div className="relative">
               <Smartphone size={15} className={iconCls} />
               <input
@@ -502,19 +487,18 @@ function LeadCaptureCard() {
               />
             </div>
 
-            {/* Dropdown */}
             <div className="relative" ref={dropRef}>
               <Package size={15} className={iconCls + " z-10"} />
               <button
                 type="button"
                 onClick={() => setOpen((v) => !v)}
-                className={
-                  "w-full pl-10 pr-9 py-[11px] rounded-xl text-[13.5px] text-left transition-all duration-200 " +
-                  "bg-white/[0.05] border border-white/[0.09] " +
-                  (open ? "border-cyan-400/40 bg-white/[0.08] " : "") +
-                  (formData.product ? "text-white" : "text-slate-500") +
-                  " font-light"
-                }
+                className={clsx(
+                  "w-full pl-10 pr-9 py-[11px] rounded-xl text-[13.5px] text-left transition-all duration-200",
+                  "bg-white/[0.05] border border-white/[0.09]",
+                  open && "border-cyan-400/40 bg-white/[0.08]",
+                  formData.product ? "text-white" : "text-slate-500",
+                  "font-light"
+                )}
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}
               >
                 {formData.product || "Select Service"}
@@ -543,15 +527,13 @@ function LeadCaptureCard() {
                           <button
                             type="button"
                             onClick={() => handleSelect(p)}
-                            className={
-                              "w-full text-left px-3.5 py-2.5 rounded-xl text-[13px] transition-all duration-150 font-light " +
-                              (formData.product === p
+                            className={clsx(
+                              "w-full text-left px-3.5 py-2.5 rounded-xl text-[13px] transition-all duration-150 font-light",
+                              formData.product === p
                                 ? "text-cyan-400 bg-cyan-500/10"
-                                : "text-slate-300 hover:text-white hover:bg-white/[0.06]")
-                            }
-                            style={{
-                              fontFamily: "'Space Grotesk', sans-serif",
-                            }}
+                                : "text-slate-300 hover:text-white hover:bg-white/[0.06]"
+                            )}
+                            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                           >
                             {p}
                           </button>
@@ -563,13 +545,15 @@ function LeadCaptureCard() {
               </AnimatePresence>
             </div>
 
-            {/* Submit button — reverse sheen (right → left) */}
             <motion.button
               type="submit"
               disabled={loading}
               whileHover={{ scale: 1.012 }}
               whileTap={{ scale: 0.988 }}
-              className="relative w-full py-3.5 mt-1 rounded-xl text-[13.5px] font-medium text-white overflow-hidden disabled:opacity-60 disabled:cursor-not-allowed"
+              className={clsx(
+                "relative w-full py-3.5 mt-1 rounded-xl text-[13.5px] font-medium text-white overflow-hidden",
+                "disabled:opacity-60 disabled:cursor-not-allowed"
+              )}
               style={{
                 fontFamily: "'Outfit', sans-serif",
                 background:
@@ -595,7 +579,6 @@ function LeadCaptureCard() {
                   </>
                 )}
               </span>
-              {/* Reverse sheen — right to left */}
               {!loading && (
                 <span
                   className="absolute inset-0 rounded-xl pointer-events-none"
@@ -609,19 +592,17 @@ function LeadCaptureCard() {
             </motion.button>
           </form>
 
-          {/* Trust row */}
           <div className="flex items-center justify-center gap-2 mt-6">
             <ShieldCheck size={12} className="text-slate-600" />
             <span
               className="text-[11px] text-slate-600 font-light"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}
             >
-              Secure &amp; confidential · never spammed
+              Secure & confidential · never spammed
             </span>
           </div>
         </div>
 
-        {/* Bottom accent line */}
         <div
           className="h-px w-full"
           style={{
@@ -631,7 +612,6 @@ function LeadCaptureCard() {
         />
       </div>
 
-      {/* Keyframes */}
       <style>{`
         @keyframes btnFlow {
           0%   { background-position: 200% center }
@@ -653,24 +633,23 @@ function LeadCaptureCard() {
 export default function ProfessionalBanner() {
   return (
     <div
-      className="relative min-h-svh overflow-hidden"
+      className="relative min-h-screen overflow-y-auto"
       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
     >
       <SceneBg />
       <Navbar />
 
-      {/* Hero — absolute so it takes zero extra space */}
-      <section className="absolute inset-0 z-10 flex items-center">
-        <div className="w-full max-w-[1280px] mx-auto px-5 sm:px-8 lg:px-12 xl:px-16 pt-20 pb-10 sm:pt-24 sm:pb-14 lg:pt-0 lg:pb-0">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_500px] xl:grid-cols-[1fr_540px] gap-10 lg:gap-14 xl:gap-20 items-center">
-            {/* ── Left copy ── */}
+      {/* Hero section */}
+      <section className="relative z-10 pb-5">
+        <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-5 lg:px-6 xl:px-8 pt-2 pb-10 sm:pb-14 lg:pt-0 lg:pb-0">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_480px] xl:grid-cols-[1fr_520px] gap-10 lg:gap-14 xl:gap-20 items-center">
+            {/* Left copy */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.78, ease: [0.22, 1, 0.36, 1] }}
               className="flex flex-col"
             >
-              {/* Headline */}
               <h1
                 className="font-medium leading-[1.08] text-white"
                 style={{
@@ -696,7 +675,6 @@ export default function ProfessionalBanner() {
                 </span>
               </h1>
 
-              {/* Sub */}
               <p
                 className="mt-4 sm:mt-5 text-slate-400 font-light leading-relaxed"
                 style={{
@@ -708,8 +686,8 @@ export default function ProfessionalBanner() {
                 by 2,000+ businesses.
               </p>
 
-              {/* Badges 2×2 */}
-              <div className="mt-8 sm:mt-9 grid grid-cols-2 gap-2.5 max-w-[360px] sm:max-w-[400px]">
+              {/* Badges – hidden on mobile */}
+              <div className="mt-8 sm:mt-9 hidden sm:grid grid-cols-2 gap-2.5 max-w-[360px] sm:max-w-[400px]">
                 {BADGES.map(({ icon: Icon, text }, i) => (
                   <motion.div
                     key={text}
@@ -774,15 +752,14 @@ export default function ProfessionalBanner() {
               </motion.div>
             </motion.div>
 
-            {/* ── Right: card ── */}
-            <div className="flex justify-center lg:justify-end w-full">
+            {/* Right: card – shifted slightly right on desktop */}
+            <div className="flex justify-center lg:justify-end w-full lg:pr-4 xl:pr-6">
               <LeadCaptureCard />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Global keyframes */}
       <style>{`
         @keyframes gradFlow {
           0%   { background-position: 0%   center }

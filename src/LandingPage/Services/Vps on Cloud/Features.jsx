@@ -82,7 +82,7 @@ const statsRow = [
 export default function Features() {
   return (
     <section className="w-full overflow-hidden bg-[linear-gradient(180deg,#f0f4ff_0%,#eef7f2_45%,#f9f6f0_100%)] py-12 sm:py-16 lg:py-20">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-9xl px-4 sm:px-6 lg:px-8">
         <div className="rounded-[28px] border border-slate-200/90 bg-white/80 p-4 shadow-[0_30px_90px_rgba(15,23,42,0.13)] backdrop-blur sm:p-6 lg:p-8">
           {/* Header block */}
           <div className="grid items-end gap-6 lg:grid-cols-[1fr_0.9fr]">
@@ -168,44 +168,6 @@ export default function Features() {
                 </article>
               );
             })}
-          </div>
-
-          {/* Bottom CTA banner – dark variant */}
-          <div className="mt-12 grid gap-4 rounded-2xl border border-slate-800 bg-[linear-gradient(135deg,#0f172a_0%,#1e293b_62%,#134e4a_100%)] p-5 text-white shadow-[0_24px_68px_rgba(15,23,42,0.22)] sm:p-6 lg:grid-cols-[1fr_auto] lg:items-center lg:p-8">
-            <div className="min-w-0">
-              <div className="flex flex-wrap gap-2">
-                {[
-                  { icon: ShieldCheck, text: 'DDoS Protection' },
-                  { icon: Headphones, text: '24/7 Support' },
-                  { icon: LockKeyhole, text: 'Encrypted Access' },
-                  { icon: Globe, text: 'Global Data Centers' },
-                ].map(({ icon: Icon, text }) => (
-                  <span
-                    key={text}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-semibold text-slate-100"
-                  >
-                    <Icon size={14} />
-                    {text}
-                  </span>
-                ))}
-              </div>
-
-              <h3 className="mt-5 text-2xl font-extrabold leading-tight sm:text-3xl">
-                Ready to deploy your perfect VPS?
-              </h3>
-              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
-                Get a custom quote based on your workload, OS preferences, and expected
-                traffic. Our experts will help you choose the right specs.
-              </p>
-            </div>
-
-            <a
-              href="#pricing"
-              className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-white px-5 text-sm font-extrabold text-slate-950 shadow-lg shadow-slate-950/20 transition hover:bg-slate-100 sm:w-auto"
-            >
-              Get a Free Quote
-              <ArrowRight size={17} />
-            </a>
           </div>
         </div>
       </div>
