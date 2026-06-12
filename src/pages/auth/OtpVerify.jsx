@@ -5,7 +5,7 @@ import { Mail, ArrowLeft, RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
 import { useVerifyOtp, useResendOtp } from "../../hooks/useAuth";
 import { useAuthStore } from "../../store/authStore";
-import { RegisterBanner } from "./Register";
+
 import { usePendingOrderRestore } from "../../hooks/usePendingOrderRestore";
 
 export default function OtpVerify() {
@@ -114,11 +114,6 @@ export default function OtpVerify() {
         className="w-full max-w-4xl"
       >
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col lg:flex-row">
-          {/* Left Banner */}
-          <div className="hidden lg:block lg:w-[38%] min-h-[480px]">
-            <RegisterBanner />
-          </div>
-
           {/* Right: OTP Form */}
           <div className="flex-1 flex flex-col justify-center px-6 py-10 sm:px-10">
             <div className="w-full max-w-sm mx-auto">

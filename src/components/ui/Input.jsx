@@ -16,8 +16,7 @@ export default function Input({
 
   const isPassword = type === "password";
 
-  const inputType =
-    isPassword && showPassword ? "text" : type;
+  const inputType = isPassword && showPassword ? "text" : type;
 
   return (
     <div className="w-full">
@@ -33,10 +32,10 @@ export default function Input({
 
       {/* Input Wrapper */}
       <div className="relative">
-
         {/* LEFT ICON (FIXED) */}
         {Icon && (
-          <span className="
+          <span
+            className="
             absolute
             left-3
             top-1/2
@@ -44,7 +43,8 @@ export default function Input({
             text-textMuted
             pointer-events-none
             z-10
-          ">
+          "
+          >
             <Icon size={18} />
           </span>
         )}
@@ -84,9 +84,7 @@ export default function Input({
         {isPassword && (
           <button
             type="button"
-            onClick={() =>
-              setShowPassword(!showPassword)
-            }
+            onClick={() => setShowPassword(!showPassword)}
             className="
               absolute
               right-3
@@ -98,22 +96,13 @@ export default function Input({
               z-10
             "
           >
-            {showPassword ? (
-              <EyeOff size={18} />
-            ) : (
-              <Eye size={18} />
-            )}
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
         )}
-
       </div>
 
       {/* ERROR */}
-      {error && (
-        <p className="mt-2 text-sm text-danger">
-          {error}
-        </p>
-      )}
+      {error && <p className="mt-2 text-sm text-danger">{error}</p>}
     </div>
   );
 }

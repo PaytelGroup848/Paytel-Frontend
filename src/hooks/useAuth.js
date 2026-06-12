@@ -15,7 +15,7 @@ export const useLogin = () =>
     onSuccess: (data) => {
       useAuthStore
         .getState()
-        .setAuth({ user: data.user, accessToken: data.accessToken });
+        .setAuth({ user: data.user, accessToken: data.accessToken, refreshToken: data.refreshToken });
       queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
       toast.success("Logged in successfully");
     },

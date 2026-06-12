@@ -36,6 +36,7 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import OtpVerify from "./pages/auth/OtpVerify";
 import ForgotPassword from "./pages/auth/ForgotPassword";
+import GoogleAuthSuccess from "./pages/auth/GoogleAuthSuccess";
 import HomePage from "./LandingPage/Home/HomePage";
 import ManageHosting from "./pages/hosting/ManageHosting";
 import HostingPlans from "./pages/hosting/HostingPlans";
@@ -263,6 +264,7 @@ export default function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/verify-otp" element={<OtpVerify />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/auth/google/success" element={<GoogleAuthSuccess />} />
         </Route>
         {/* Protected routes */}
         <Route element={<ProtectedRoute />}>
