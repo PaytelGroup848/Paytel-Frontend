@@ -240,8 +240,8 @@ export default function PhpPlans() {
               },
               {
                 icon: Server,
-                title: "WordOps Powered",
-                desc: "Optimized enterprise-grade server stack calibrated for extreme loading speeds.",
+                title: "Cloudedata Infrastructure",
+                desc: "Powerful cloud infrastructure designed for demanding applications and growing businesses.",
               },
             ].map((f, i) => (
               <div

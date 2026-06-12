@@ -1,10 +1,17 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { NavLink, Route, Routes, useLocation, Navigate, useNavigate } from 'react-router-dom';
-import { Home, ChevronRight, Settings as SettingsIcon } from 'lucide-react';
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  NavLink,
+  Route,
+  Routes,
+  useLocation,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
+import { Home, ChevronRight, Settings as SettingsIcon } from "lucide-react";
 
-import Profile from './Profile';
-import Security from './Security';
-import { fadeIn } from '../../animations/variants';
+import Profile from "./Profile";
+import Security from "./Security";
+import { fadeIn } from "../../animations/variants";
 
 const TabLink = ({ to, label }) => (
   <NavLink
@@ -12,11 +19,11 @@ const TabLink = ({ to, label }) => (
     end
     className={({ isActive }) =>
       [
-        'relative px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300',
+        "relative px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300",
         isActive
-          ? 'text-white bg-[#17a0fe] shadow-md shadow-[#17a0fe]/25'
-          : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100',
-      ].join(' ')
+          ? "text-white bg-[#5c56fe] shadow-md shadow-[#17a0fe]/25"
+          : "text-slate-500 hover:text-slate-800 hover:bg-slate-100",
+      ].join(" ")
     }
   >
     {label}
@@ -32,8 +39,8 @@ export default function Settings() {
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-slate-500 mb-6">
         <button
-          onClick={() => navigate('/')}
-          className="hover:text-[#17a0fe] transition flex items-center gap-1 font-medium"
+          onClick={() => navigate("/home")}
+          className="hover:text-[#5c56fe] cursor-pointer transition flex items-center gap-1 font-medium"
         >
           <Home size={16} />
           <span>Dashboard</span>
@@ -44,7 +51,9 @@ export default function Settings() {
 
       {/* Page Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-black text-slate-800 tracking-tight">Settings</h1>
+        <h1 className="text-3xl font-black text-slate-800 tracking-tight">
+          Settings
+        </h1>
         <p className="text-slate-500 mt-1 text-sm">
           Manage your profile and security preferences.
         </p>

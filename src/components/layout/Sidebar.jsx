@@ -309,9 +309,9 @@ export default function Sidebar({
           <button
             onClick={() => logout.mutate()}
             disabled={logout.isPending}
-            className={`w-full flex items-center gap-3 rounded-xl transition-all duration-300 group
+            className={`w-full flex items-center cursor-pointer gap-3 rounded-xl transition-all duration-300 group
               ${!isExpanded ? "p-2 justify-center" : "px-4 py-3"}
-              bg-gradient-to-r from-slate-800 to-slate-900 hover:from-red-600 hover:to-red-700 shadow-lg
+              bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 shadow-lg
             `}
           >
             <div className="shrink-0 w-7 h-7 rounded-lg bg-white/10 group-hover:bg-white/20 flex items-center justify-center">
