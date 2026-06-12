@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { getPendingOrder } from "../../utils/pendingOrder";
+import { api } from "../../services/api";
 import toast from "react-hot-toast";
 
 export default function GoogleAuthSuccess() {
@@ -12,42 +13,52 @@ export default function GoogleAuthSuccess() {
   useEffect(() => {
     const accessToken = searchParams.get("accessToken");
     const userStr = searchParams.get("user");
+    const redirectUrl = searchParams.get("redirect") || "/home";
 
-    console.log("=== GoogleAuthSuccess Debug ===");
-    console.log(
-      "accessToken:",
-      accessToken ? `${accessToken.substring(0, 20)}...` : "MISSING",
-    );
-    console.log("userStr:", userStr ? "PRESENT" : "MISSING");
+    
 
     if (!accessToken || !userStr) {
-      console.error("Missing accessToken or userStr");
       toast.error("Google sign-in failed. Please try again.");
       navigate("/login");
       return;
     }
 
-    try {
-      const user = JSON.parse(decodeURIComponent(userStr));
-      console.log("User parsed:", user.email);
+    const user = JSON.parse(decodeURIComponent(userStr));
+  
 
-      setAuth({
-        user,
-        accessToken,
-        refreshToken: null,
-      });
-      toast.success(`Welcome, to Cloudedata ${user.name || user.email}! `);
+    // Get IP from localStorage
+    const clientIp = localStorage.getItem("oauth_client_ip");
+ 
 
-      const pending = getPendingOrder();
-      if (pending?.returnPath) {
-        navigate(pending.returnPath, { replace: true });
-      } else {
-        navigate("/home", { replace: true });
-      }
-    } catch (e) {
-      console.error("GoogleAuthSuccess error:", e);
-      toast.error("Something went wrong. Please try again.");
-      navigate("/login");
+    // First, update the user's IP in database via API call
+    if (clientIp && user.id) {
+      
+      api
+        .patch(`/auth/users/${user.id}/ip`, { clientIp })
+        .then(() => {
+        
+        })
+        .catch((err) => {
+          console.error("Failed to update IP:", err);
+        });
+
+      // Clear localStorage
+      localStorage.removeItem("oauth_client_ip");
+    }
+
+    setAuth({
+      user,
+      accessToken,
+      refreshToken: null,
+    });
+
+    toast.success(`Welcome, ${user.name || user.email}! `);
+
+    const pending = getPendingOrder();
+    if (pending?.returnPath) {
+      navigate(pending.returnPath, { replace: true });
+    } else {
+      navigate(redirectUrl, { replace: true });
     }
   }, [searchParams, navigate, setAuth]);
 

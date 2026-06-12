@@ -25,25 +25,40 @@ export const useLogin = () =>
     },
   });
 
-export const useRegister = () =>
-  useMutation({
-    mutationFn: async (payload) => {
-      const res = await api.post("/auth/register", payload);
-      return res.data?.data; // returns { userId, email }
-    },
-    onError: (error) => {
-      const errors = error?.response?.data?.errors;
+// export const useRegister = () =>
+//   useMutation({
+//     mutationFn: async (payload) => {
+//       const res = await api.post("/auth/register", payload);
+//       return res.data?.data; // returns { userId, email }
+//     },
+//     onError: (error) => {
+//       const errors = error?.response?.data?.errors;
 
-      if (Array.isArray(errors) && errors.length) {
-        errors.forEach((err) => {
-          toast.error(err.message.replace(/^"body\.[^"]+"\s*/, ""));
-        });
-        return;
-      }
+//       if (Array.isArray(errors) && errors.length) {
+//         errors.forEach((err) => {
+//           toast.error(err.message.replace(/^"body\.[^"]+"\s*/, ""));
+//         });
+//         return;
+//       }
 
-      toast.error(error?.response?.data?.message || "Validation Error");
-    },
-  });
+//       toast.error(error?.response?.data?.message || "Validation Error");
+//     },
+//   });
+
+  export const useRegister = () =>
+    useMutation({
+      mutationFn: async ({ email, password, clientIp }) => {
+        const payload = { email, password };
+        if (clientIp) {
+          payload.clientIp = clientIp;
+        }
+        const response = await api.post("/auth/register", payload);
+        return response.data?.data;
+      },
+      onError: (err) => {
+        toast.error(err?.response?.data?.message || "Registration failed");
+      },
+    });
 
 export const useVerifyOtp = () =>
   useMutation({
