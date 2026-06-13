@@ -27,11 +27,11 @@ const ReplyBubble = ({ reply }) => {
         className={`max-w-[80%] rounded-2xl px-4 py-3 ${
           isUser
             ? "bg-indigo-600 text-white rounded-br-sm"
-            : "bg-slate-700 text-slate-100 rounded-bl-sm"
+            : "bg-slate-100 text-slate-800 rounded-bl-sm border border-slate-200"
         }`}
       >
         <p
-          className={`text-xs font-semibold mb-1 ${isUser ? "text-indigo-300" : "text-slate-400"}`}
+          className={`text-xs font-semibold mb-1 ${isUser ? "text-indigo-200" : "text-slate-500"}`}
         >
           {reply.senderName || (isUser ? "User" : "Support")}
         </p>
@@ -43,14 +43,14 @@ const ReplyBubble = ({ reply }) => {
             href={reply.attachment.url}
             target="_blank"
             rel="noreferrer"
-            className={`flex items-center gap-1 text-xs underline mt-2 ${isUser ? "text-indigo-300" : "text-blue-400"}`}
+            className={`flex items-center gap-1 text-xs underline mt-2 ${isUser ? "text-indigo-200" : "text-indigo-500"}`}
           >
             <Paperclip size={11} />
             {reply.attachment.name || "Attachment"}
           </a>
         )}
         <span
-          className={`text-[10px] block mt-1.5 ${isUser ? "text-indigo-400" : "text-slate-500"}`}
+          className={`text-[10px] block mt-1.5 ${isUser ? "text-indigo-300" : "text-slate-400"}`}
         >
           {new Date(reply.timestamp).toLocaleString()}
         </span>
@@ -60,9 +60,9 @@ const ReplyBubble = ({ reply }) => {
 };
 
 const statusBadge = {
-  Open: "bg-red-500/10 text-red-400 border border-red-500/20",
-  Pending: "bg-amber-500/10 text-amber-400 border border-amber-500/20",
-  Closed: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
+  Open: "bg-rose-50    text-rose-700    border border-rose-200",
+  Pending: "bg-amber-50   text-amber-700   border border-amber-200",
+  Closed: "bg-emerald-50 text-emerald-700 border border-emerald-200",
 };
 
 export default function AdminReplyModal({ ticketId, isOpen, onClose }) {
@@ -152,40 +152,40 @@ export default function AdminReplyModal({ ticketId, isOpen, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="bg-slate-900 border border-white/10 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden"
+        className="bg-white border border-slate-200 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-indigo-500/10 rounded-xl flex items-center justify-center">
-              <MessageSquareReply size={17} className="text-indigo-400" />
+            <div className="w-9 h-9 bg-indigo-50 rounded-xl flex items-center justify-center">
+              <MessageSquareReply size={17} className="text-indigo-500" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base font-semibold text-white">
+                <h2 className="text-base font-semibold text-slate-900">
                   {ticket?.subject || ticketId}
                 </h2>
                 {status && (
                   <span
-                    className={`px-2 py-0.5 rounded-lg text-xs font-semibold ${statusBadge[status] || "bg-slate-500/10 text-slate-400"}`}
+                    className={`px-2 py-0.5 rounded-lg text-xs font-semibold ${statusBadge[status] || "bg-slate-100 text-slate-600"}`}
                   >
                     {status}
                   </span>
                 )}
               </div>
-              <p className="text-xs font-mono text-slate-500 mt-0.5">
+              <p className="text-xs font-mono text-slate-400 mt-0.5">
                 #{ticketId}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-colors"
+            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-700 transition-colors"
           >
             <X size={16} />
           </button>
@@ -194,57 +194,57 @@ export default function AdminReplyModal({ ticketId, isOpen, onClose }) {
         {/* Body */}
         <div className="flex flex-1 min-h-0 flex-col md:flex-row overflow-hidden">
           {/* Sidebar */}
-          <aside className="md:w-64 shrink-0 border-b md:border-b-0 md:border-r border-white/10 p-4 space-y-4 overflow-y-auto scrollbar-hide">
+          <aside className="md:w-64 scrollbar-hide shrink-0 border-b md:border-b-0 md:border-r border-slate-100 p-4 space-y-4 overflow-y-auto bg-slate-50/60">
             {ticket ? (
               <>
                 {/* User */}
-                <div className="bg-white/5 rounded-xl p-3 space-y-1">
+                <div className="bg-white border border-slate-100 rounded-xl p-3 space-y-1">
                   <div className="flex items-center gap-1.5 mb-2">
-                    <User size={12} className="text-slate-500" />
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                    <User size={12} className="text-slate-400" />
+                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
                       User
                     </p>
                   </div>
-                  <p className="text-sm font-semibold text-white">
+                  <p className="text-sm font-semibold text-slate-900">
                     {ticket.userName}
                   </p>
-                  <p className="text-xs text-slate-400">{ticket.userEmail}</p>
+                  <p className="text-xs text-slate-500">{ticket.userEmail}</p>
                 </div>
 
                 {/* Meta */}
                 <div className="space-y-3">
                   <div>
                     <div className="flex items-center gap-1.5 mb-1">
-                      <Building2 size={11} className="text-slate-500" />
-                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                      <Building2 size={11} className="text-slate-400" />
+                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
                         Department
                       </p>
                     </div>
-                    <span className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-xs text-slate-300">
+                    <span className="px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs text-slate-700">
                       {ticket.department}
                     </span>
                   </div>
 
                   <div>
                     <div className="flex items-center gap-1.5 mb-1">
-                      <AlertCircle size={11} className="text-slate-500" />
-                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                      <AlertCircle size={11} className="text-slate-400" />
+                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
                         Priority
                       </p>
                     </div>
-                    <span className="text-sm text-white font-medium">
+                    <span className="text-sm font-medium text-slate-800">
                       {ticket.priority}
                     </span>
                   </div>
 
                   <div>
                     <div className="flex items-center gap-1.5 mb-1">
-                      <Calendar size={11} className="text-slate-500" />
-                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                      <Calendar size={11} className="text-slate-400" />
+                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
                         Created
                       </p>
                     </div>
-                    <p className="text-xs text-slate-300">
+                    <p className="text-xs text-slate-600">
                       {new Date(ticket.createdAt).toLocaleString()}
                     </p>
                   </div>
@@ -252,7 +252,7 @@ export default function AdminReplyModal({ ticketId, isOpen, onClose }) {
 
                 {/* Status */}
                 <div>
-                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">
                     Change Status
                   </p>
                   <div className="relative">
@@ -260,7 +260,7 @@ export default function AdminReplyModal({ ticketId, isOpen, onClose }) {
                       value={status}
                       onChange={handleStatusChange}
                       disabled={updateStatus.isPending}
-                      className="w-full bg-slate-800 border border-white/10 rounded-xl px-3 py-2 text-sm text-white appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition cursor-pointer"
                     >
                       <option>Open</option>
                       <option>Pending</option>
@@ -268,17 +268,17 @@ export default function AdminReplyModal({ ticketId, isOpen, onClose }) {
                     </select>
                     <ChevronDown
                       size={13}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
                     />
                   </div>
                 </div>
 
                 {/* Original Message */}
-                <div className="bg-white/5 border border-white/5 rounded-xl p-3">
-                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+                <div className="bg-white border border-slate-100 rounded-xl p-3">
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">
                     Message
                   </p>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-slate-600 leading-relaxed">
                     {ticket.message}
                   </p>
                   {ticket?.attachment?.url && (
@@ -286,7 +286,7 @@ export default function AdminReplyModal({ ticketId, isOpen, onClose }) {
                       href={ticket.attachment.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-blue-400 hover:text-blue-300 hover:bg-white/10 transition-all"
+                      className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 transition-all"
                     >
                       <Paperclip size={11} />
                       <span className="truncate max-w-[140px]">
@@ -297,8 +297,8 @@ export default function AdminReplyModal({ ticketId, isOpen, onClose }) {
                 </div>
               </>
             ) : (
-              <div className="flex items-center gap-2 text-slate-500 text-sm">
-                <div className="w-4 h-4 border-2 border-slate-600 border-t-transparent rounded-full animate-spin" />
+              <div className="flex items-center gap-2 text-slate-400 text-sm">
+                <div className="w-4 h-4 border-2 border-slate-200 border-t-indigo-500 rounded-full animate-spin" />
                 Loading...
               </div>
             )}
@@ -309,14 +309,14 @@ export default function AdminReplyModal({ ticketId, isOpen, onClose }) {
             {/* Messages */}
             <div
               ref={scrollRef}
-              className="flex-1 overflow-y-auto scrollbar-hide px-5 py-4"
+              className="flex-1 overflow-y-auto px-5 py-4 scrollbar-hide"
             >
               {mergedReplies.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full py-10 gap-2">
-                  <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center">
-                    <MessageSquareReply size={18} className="text-slate-600" />
+                  <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center">
+                    <MessageSquareReply size={18} className="text-slate-400" />
                   </div>
-                  <p className="text-sm text-slate-500">No replies yet</p>
+                  <p className="text-sm text-slate-400">No replies yet</p>
                 </div>
               ) : (
                 mergedReplies.map((rep, idx) => (
@@ -329,7 +329,7 @@ export default function AdminReplyModal({ ticketId, isOpen, onClose }) {
             </div>
 
             {/* Reply Form */}
-            <div className="px-5 pb-5 pt-3 border-t border-white/10 shrink-0">
+            <div className="px-5 pb-5 pt-3 border-t border-slate-100 shrink-0">
               {status !== "Closed" ? (
                 <form onSubmit={handleSubmit} className="space-y-3">
                   <textarea
@@ -337,15 +337,15 @@ export default function AdminReplyModal({ ticketId, isOpen, onClose }) {
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
                     placeholder="Type your support reply..."
-                    className="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all resize-none scrollbar-hide"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition resize-none"
                   />
 
-                  <label className="flex items-center gap-3 w-full border border-dashed border-white/10 hover:border-indigo-500/40 hover:bg-indigo-500/5 rounded-xl px-4 py-2.5 cursor-pointer transition-all group">
+                  <label className="flex items-center gap-3 w-full border border-dashed border-slate-300 hover:border-indigo-400 hover:bg-indigo-50/50 rounded-xl px-4 py-2.5 cursor-pointer transition-all group">
                     <Paperclip
                       size={14}
-                      className="text-slate-500 group-hover:text-indigo-400 flex-shrink-0 transition-colors"
+                      className="text-slate-400 group-hover:text-indigo-500 flex-shrink-0 transition-colors"
                     />
-                    <span className="text-xs text-slate-500 group-hover:text-indigo-400 transition-colors truncate">
+                    <span className="text-xs text-slate-400 group-hover:text-indigo-500 transition-colors truncate">
                       {filePreview || "Attach a file (image or PDF)"}
                     </span>
                     <input
@@ -364,7 +364,7 @@ export default function AdminReplyModal({ ticketId, isOpen, onClose }) {
                     <button
                       type="submit"
                       disabled={replyMutation.isPending || !replyText.trim()}
-                      className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-all shadow-sm"
+                      className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition shadow-sm"
                     >
                       {replyMutation.isPending ? (
                         <>
@@ -380,8 +380,8 @@ export default function AdminReplyModal({ ticketId, isOpen, onClose }) {
                   </div>
                 </form>
               ) : (
-                <div className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-xl">
-                  <LockKeyhole size={14} className="text-slate-500" />
+                <div className="flex items-center justify-center gap-2 py-3 bg-slate-50 border border-slate-200 rounded-xl">
+                  <LockKeyhole size={14} className="text-slate-400" />
                   <p className="text-sm text-slate-500">
                     This ticket is closed.
                   </p>

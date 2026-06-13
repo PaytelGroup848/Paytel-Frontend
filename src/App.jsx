@@ -86,7 +86,7 @@ import ForwardersPage from "./pages/Emails/EmailForward";
 import AliasesPage from "./pages/Emails/EmailAlias";
 import AutoReplyPage from "./pages/Emails/EmailAutoReply";
 import EmailConnect from "./pages/Emails/EmailConnect";
-import EmailPlanPage from './pages/Emails/EmailPlan';
+import EmailPlanPage from "./pages/Emails/EmailPlan";
 import EmailLogsPage from "./pages/Emails/EmailLogsPage";
 import DkimPage from "./pages/Emails/EmailDkim";
 import Docker from "./pages/vps/Docker";
@@ -98,8 +98,10 @@ import PaymentHistoryPage from "./pages/billing/paymentHistory";
 import ComingSoon from "./utils/ComingSoon";
 import BlogDetail from "./LandingPage/Blog/blogDetail";
 import VpsLandingpage from "./LandingPage/Services/Vps on Cloud/VpsLandingPage";
-import PhpLandingPage from './LandingPage/php/PhpLandingpage';
-import EmailLandingPage from './LandingPage/email/EmailLandingPage';
+import PhpLandingPage from "./LandingPage/php/PhpLandingpage";
+import EmailLandingPage from "./LandingPage/email/EmailLandingPage";
+import PublicSupportPage from "./pages/support/PublicSupportPage";
+import PublicTicketDetail from "./pages/support/PublicTicketDetail";
 
 // Protected Route wrapper
 const ProtectedRoute = () => {
@@ -121,7 +123,6 @@ const ProtectedRoute = () => {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   return <Outlet />;
 };
-
 
 // Layout for auth pages
 const AuthRoutes = () => (
@@ -187,6 +188,11 @@ export default function App() {
       <Routes>
         {/* Public redirect */}
         <Route path="/" element={<HomePage />} />
+        <Route path="/public-support" element={<PublicSupportPage />} />
+        <Route
+          path="/public-support/tickets/:ticketId"
+          element={<PublicTicketDetail />}
+        />
         <Route
           path="/cloud-hosting-blog"
           element={
@@ -259,7 +265,10 @@ export default function App() {
         <Route path="/refund-policy-cloude " element={<RefundPolicy />} />
         <Route path="/term-and-conditions" element={<TermsOfService />} />
         <Route path="/vps" element={<VpsPlans />} />
-        <Route path="/vps/configure/:planType/:planId" element={<VpsConfigurePage />} />
+        <Route
+          path="/vps/configure/:planType/:planId"
+          element={<VpsConfigurePage />}
+        />
 
         {/* Auth routes (no layout needed) */}
         <Route element={<AuthRoutes />}>
@@ -314,7 +323,7 @@ export default function App() {
             />
             <Route path="/websites/nodejs" element={<NodeJS_Page />} />
             {/* <Route path="/vps" element={<VpsPlans/>} /> */}
-              <Route path="/vps/paid" element={<VPSDashboard />} />
+            <Route path="/vps/paid" element={<VPSDashboard />} />
             <Route path="/vps/paid/:id" element={<VpsDashboard />} />
             <Route path="/vps/support/docs" element={<VPSDocumentation />} />
             <Route path="/vps/backup" element={<BackupManager />} />
@@ -333,7 +342,7 @@ export default function App() {
             <Route path="/emails/aliases" element={<AliasesPage />} />
             <Route path="/emails/autoreply" element={<AutoReplyPage />} />
             <Route path="/emails/logs" element={<EmailLogsPage />} />
-            <Route path="/email/plan" element={<EmailPlanPage/>} />
+            <Route path="/email/plan" element={<EmailPlanPage />} />
             <Route path="emails/dkim" element={<DkimPage />} />
             <Route path="/emails/connect" element={<EmailConnect />} />
 

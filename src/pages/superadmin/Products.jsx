@@ -5,7 +5,7 @@ import { useEmailPlans, useUpdateEmailPlan } from "../../hooks/useEmailHosting";
 import { useUpdateWpPlan } from "../../hooks/useWordPress";
 import { api } from "../../services/api";
 import { useQuery } from "@tanstack/react-query";
-import Modal from "../../components/ui/Modal"; // your custom Modal
+import Modal from "./Modal"; 
 import { Edit2, Cloud, Globe, Mail, Code } from "lucide-react";
 
 export default function Products() {

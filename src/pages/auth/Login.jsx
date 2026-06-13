@@ -16,12 +16,10 @@ const handleGoogleAuth = async () => {
   let clientIp = null;
   try {
     clientIp = await getUserIp();
-   
 
     // Save IP in localStorage
     if (clientIp) {
       localStorage.setItem("oauth_client_ip", clientIp);
-  
     }
   } catch (error) {
     console.error("[GoogleAuth] Failed to get IP:", error);
@@ -82,6 +80,14 @@ export default function Login() {
       }
     } catch (err) {
       const response = err?.response?.data;
+
+      // Handle terminated account
+      if (response?.code === "ACCOUNT_TERMINATED") {
+        // Redirect to support page
+        navigate("/public-support");
+        return;
+      }
+
       if (response?.code === "USE_GOOGLE_AUTH") {
         toast.error(
           "This account uses Google Sign-In. Please click 'Continue with Google' below.",
