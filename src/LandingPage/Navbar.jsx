@@ -455,7 +455,7 @@ export default function Navbar({ logoImg = "/Cloudedata.svg", phoneNumber = "931
                 {isAuthenticated ? (
                   <>
                     <div className="text-center text-sm text-slate-500 font-medium">
-                      👋 {user?.name || user?.email || "User"}
+                       {user?.name || user?.email || "User"}
                     </div>
                     <button
                       onClick={() => { handleDashboard(); setMobileOpen(false); }}
