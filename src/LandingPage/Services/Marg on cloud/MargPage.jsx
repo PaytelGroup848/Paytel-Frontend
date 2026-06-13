@@ -9,10 +9,9 @@ export default function Margpage(){
     return(
         <div>
             <Navbar/>
-            <MargPlans/>
             <Banner/>
+            <MargPlans/>
             <Feature/>
-            
             <MargSecurity/>
             <Footer/>
         </div>

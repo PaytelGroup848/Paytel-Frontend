@@ -19,6 +19,7 @@ import {
   Info,
   GraduationCap,
   ChevronRight,
+  CloudLightning,
 } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
 
@@ -63,6 +64,27 @@ const megaMenuSections = [
         label: "Node.js Hosting",
         href: "#",
         description: "High‑performance Node.js hosting with PM2 and auto‑scaling.",
+      },
+    ],
+  },
+  {
+    title: "Cloud ERP",
+    icon: CloudLightning,
+    items: [
+      {
+        label: "Busy on Cloud",
+        href: "/busy-on-cloud",
+        description: "Run Busy accounting software on high-performance cloud servers.",
+      },
+      {
+        label: "Marg on Cloud",
+        href: "/marg-on-cloud",
+        description: "Secure Marg ERP access from anywhere with multi-user support.",
+      },
+      {
+        label: "Tally on Cloud",
+        href: "/tally-on-cloud",
+        description: "TallyPrime on cloud with auto backup & bank-grade security.",
       },
     ],
   },
@@ -306,7 +328,7 @@ export default function Navbar({ logoImg = "/Cloudedata.svg", phoneNumber = "931
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mt-6">
                 {megaMenuSections.map((section, idx) => (
                   <div key={idx} className="space-y-4">
                     <div className="flex items-center gap-2 text-indigo-600 font-semibold pb-3 border-b border-indigo-100">

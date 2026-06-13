@@ -83,7 +83,7 @@ const fadeUp = (delay = 0) => ({
 
 /* ─── Sub-components ─────────────────────────────────────────────────── */
 const SectionHeading = ({ children }) => (
-  <h3 className="text-[11px] font-bold tracking-[0.18em] text-slate-300 uppercase mb-5 flex items-center gap-2">
+  <h3 className="text-[11px] font-bold tracking-[0.18em] text-slate-300 uppercase mb-4 sm:mb-5 flex items-center gap-2">
     <span className="inline-block w-3 h-px bg-blue-500" />
     {children}
   </h3>
@@ -93,7 +93,7 @@ const FooterLink = ({ label, badge, href }) => (
   <li>
     <Link
       to={href}
-      className="group flex items-center justify-between text-[13px] text-slate-400 hover:text-white transition-colors duration-200 py-[3px]"
+      className="group flex items-center justify-between text-[13px] text-slate-400 hover:text-white transition-colors duration-200 py-[4px]"
     >
       <span className="flex items-center gap-1.5">
         <ChevronRight
@@ -136,15 +136,15 @@ export default function Footer({ logoImg = "/Cloudedata.svg" }) {
       </div>
 
       {/* Top accent line */}
-      <div className="relative h-px w-full bg-gradient-to-r from-transparent via-blue-500/60 to-transparent" />
+      <div className="relative h-px w-[90vw] mx-auto bg-gradient-to-r from-transparent via-blue-500/60 to-transparent" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-0">
+      <div className="relative w-[90vw] max-w-7xl mx-auto px-0 pt-10 sm:pt-14 pb-0">
         {/* Trust badges */}
-        <motion.div {...fadeUp(0)} className="flex flex-wrap gap-2 mb-12">
+        <motion.div {...fadeUp(0)} className="flex flex-wrap justify-center sm:justify-start gap-1.5 sm:gap-2 mb-8 sm:mb-12">
           {trustBadges.map((b) => (
             <span
               key={b.label}
-              className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-300 border border-slate-700/70 rounded-full px-3.5 py-1.5 bg-slate-800/40"
+              className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-medium text-slate-300 border border-slate-700/70 rounded-full px-2.5 sm:px-3.5 py-1 sm:py-1.5 bg-slate-800/40"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
               {b.label}
@@ -153,28 +153,28 @@ export default function Footer({ logoImg = "/Cloudedata.svg" }) {
         </motion.div>
 
         {/* Main grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 pb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 pb-10 sm:pb-12">
           {/* Brand column */}
-          <motion.div {...fadeUp(0.05)} className="lg:col-span-4 flex flex-col gap-6">
+          <motion.div {...fadeUp(0.05)} className="lg:col-span-4 flex flex-col gap-5 sm:gap-6">
             <Link to="/" className="inline-block w-fit group">
               <img
                 src={logoImg}
                 alt="CloudData"
-                className="h-16 w-auto max-w-[240px] md:h-[70px] sm:h-14 object-contain brightness-120 group-hover:brightness-150 transition-all duration-300"
+                className="h-12 sm:h-14 md:h-[70px] w-auto max-w-[200px] sm:max-w-[220px] md:max-w-[240px] object-contain brightness-120 group-hover:brightness-150 transition-all duration-300"
                 onError={(e) => {
                   e.target.style.display = "none";
                   e.target.parentElement.innerHTML =
-                    '<span class="text-3xl font-black tracking-tight text-white transition-colors duration-300">Cloud<span class="text-blue-500">Data</span></span>';
+                    '<span class="text-2xl sm:text-3xl font-black tracking-tight text-white transition-colors duration-300">Cloud<span class="text-blue-500">Data</span></span>';
                 }}
               />
             </Link>
 
-            <p className="text-[13px] leading-relaxed text-slate-400 max-w-xs">
+            <p className="text-[12px] sm:text-[13px] leading-relaxed text-slate-400 max-w-xs">
               Enterprise-grade cloud infrastructure powering thousands of Indian businesses — from VPS hosting to ERP on cloud.
             </p>
 
             {/* Social icons */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
               {socialLinks.map(({ icon, label, href, color }) => (
                 <a
                   key={label}
@@ -182,7 +182,7 @@ export default function Footer({ logoImg = "/Cloudedata.svg" }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className={`w-9 h-9 flex items-center justify-center rounded-xl border border-slate-700/60 bg-slate-800/50 text-slate-400 transition-all duration-250 ${color}`}
+                  className={`w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-lg sm:rounded-xl border border-slate-700/60 bg-slate-800/50 text-slate-400 transition-all duration-250 ${color}`}
                 >
                   {icon}
                 </a>
@@ -190,31 +190,30 @@ export default function Footer({ logoImg = "/Cloudedata.svg" }) {
             </div>
 
             {/* Contact block */}
-            <div className="flex flex-col gap-3 pt-1 border-t border-slate-800">
+            <div className="flex flex-col gap-2.5 sm:gap-3 pt-1 border-t border-slate-800">
               <a
                 href={`tel:${contactDetails.phone.replace(/\D/g, "")}`}
-                className="group flex items-center gap-3 text-[13px] text-slate-400 hover:text-white transition-colors"
+                className="group flex items-center gap-2.5 sm:gap-3 text-[12px] sm:text-[13px] text-slate-400 hover:text-white transition-colors"
               >
-                <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 shrink-0">
-                  <Phone size={14} />
+                <span className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 shrink-0">
+                  <Phone size={13} />
                 </span>
-                <span>{contactDetails.phone}</span>
+                <span className="font-medium">{contactDetails.phone}</span>
               </a>
-
-
 
               <a
                 href={`mailto:${contactDetails.email}`}
-                className="group flex items-center gap-3 text-[13px] text-slate-400 hover:text-white transition-colors"
+                className="group flex items-center gap-2.5 sm:gap-3 text-[12px] sm:text-[13px] text-slate-400 hover:text-white transition-colors"
               >
-                <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 shrink-0">
-                  <Mail size={14} />
+                <span className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 shrink-0">
+                  <Mail size={13} />
                 </span>
-                <span>{contactDetails.email}</span>
+                <span className="font-medium break-all">{contactDetails.email}</span>
               </a>
-              <div className="flex items-start gap-3 text-[13px] text-slate-400">
-                <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 shrink-0 mt-0.5">
-                  <MapPin size={14} />
+
+              <div className="flex items-start gap-2.5 sm:gap-3 text-[12px] sm:text-[13px] text-slate-400">
+                <span className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 shrink-0 mt-0.5">
+                  <MapPin size={13} />
                 </span>
                 <span className="leading-relaxed">{contactDetails.address}</span>
               </div>
@@ -244,10 +243,10 @@ export default function Footer({ logoImg = "/Cloudedata.svg" }) {
         {/* Bottom bar */}
         <motion.div
           {...fadeUp(0.35)}
-          className="border-t border-slate-800/70 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[12px] text-slate-500"
+          className="border-t border-slate-800/70 py-5 sm:py-6 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-[11px] sm:text-[12px] text-slate-500"
         >
-          <p>© {new Date().getFullYear()} Paytel Terminal Pvt. Ltd. All rights reserved.</p>
-          <div className="flex items-center gap-1">
+          <p className="text-center sm:text-left">© {new Date().getFullYear()} Paytel Terminal Pvt. Ltd. All rights reserved.</p>
+          <div className="flex items-center gap-1 flex-wrap justify-center">
             {legalLinks.map((link, i, arr) => (
               <span key={link.label} className="flex items-center gap-1">
                 <Link to={link.path} className="hover:text-blue-400 transition-colors duration-200 px-1 py-0.5">
