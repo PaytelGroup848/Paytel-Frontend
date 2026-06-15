@@ -60,7 +60,7 @@ export default function Sidebar({
       label: "Websites",
       icon: Globe,
       children: [
-        { label: "Buy WordPress", to: "/wordpress-hosting" },
+        { label: "Buy WordPress", to: "/wordpress-hostings" },
         ...(hasWordPress
           ? [{ label: "WordPress Dashboard", to: "/websites/wordpress/paid" }]
           : []),
