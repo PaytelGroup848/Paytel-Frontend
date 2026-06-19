@@ -1,14 +1,24 @@
-import { useEffect, useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
-import { motion, AnimatePresence } from 'framer-motion';
-import { User, Save, MapPin, Mail, Phone, Check, AlertCircle } from 'lucide-react';
+import { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  User,
+  Save,
+  MapPin,
+  Mail,
+  Phone,
+  Check,
+  AlertCircle,
+} from "lucide-react";
 
-import Avatar from '../../components/ui/Avatar';
-import Button from '../../components/ui/Button';
-import Input from '../../components/ui/Input';
-import SkeletonCard from '../../components/ui/skeletons/SkeletonCard';
+import Avatar from "../../components/ui/Avatar";
+import Button from "../../components/ui/Button";
+import Input from "../../components/ui/Input";
+import SkeletonCard from "../../components/ui/skeletons/SkeletonCard";
 
-import { useProfile, useUpdateProfile } from '../../hooks/useProfile';
+import { useProfile, useUpdateProfile } from "../../hooks/useProfile";
+import { PhoneInput } from "react-international-phone";
+import "react-international-phone/style.css";
 
 export default function Profile() {
   const profile = useProfile();
@@ -17,23 +27,23 @@ export default function Profile() {
 
   const initial = useMemo(
     () => ({
-      firstName: profile.data?.firstName || '',
-      lastName: profile.data?.lastName || '',
-      phone: profile.data?.phone || '',
+      firstName: profile.data?.firstName || "",
+      lastName: profile.data?.lastName || "",
+      phone: profile.data?.phone || "",
       address: {
-        line1: profile.data?.address?.line1 || '',
-        line2: profile.data?.address?.line2 || '',
-        city: profile.data?.address?.city || '',
-        state: profile.data?.address?.state || '',
-        postalCode: profile.data?.address?.postalCode || '',
-        country: profile.data?.address?.country || '',
+        line1: profile.data?.address?.line1 || "",
+        line2: profile.data?.address?.line2 || "",
+        city: profile.data?.address?.city || "",
+        state: profile.data?.address?.state || "",
+        postalCode: profile.data?.address?.postalCode || "",
+        country: profile.data?.address?.country || "",
       },
     }),
-    [profile.data]
+    [profile.data],
   );
 
   const [form, setForm] = useState(initial);
-  
+
   useEffect(() => {
     setForm(initial);
     setHasChanges(false);
@@ -49,7 +59,7 @@ export default function Profile() {
   const onSave = async () => {
     try {
       await update.mutateAsync(form);
-      toast.success('Profile updated successfully');
+      toast.success("Profile updated successfully");
       setHasChanges(false);
     } catch (_) {
       // toast handled in hook
@@ -61,8 +71,8 @@ export default function Profile() {
     setHasChanges(false);
   };
 
-  const fullName = `${form.firstName} ${form.lastName}`.trim() || 'User';
-  const userEmail = profile?.data?.email || '';
+  const fullName = `${form.firstName} ${form.lastName}`.trim() || "User";
+  const userEmail = profile?.data?.email || "";
 
   const updateField = (field, value) => {
     setForm((s) => ({ ...s, [field]: value }));
@@ -91,8 +101,12 @@ export default function Profile() {
                     <AlertCircle size={20} className="text-amber-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-slate-900">Unsaved Changes</p>
-                    <p className="text-xs text-slate-500">You have unsaved modifications</p>
+                    <p className="text-sm font-semibold text-slate-900">
+                      Unsaved Changes
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      You have unsaved modifications
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -115,7 +129,7 @@ export default function Profile() {
                       ) : (
                         <Check size={16} />
                       )}
-                      {update.isPending ? 'Saving...' : 'Save Changes'}
+                      {update.isPending ? "Saving..." : "Save Changes"}
                     </div>
                   </button>
                 </div>
@@ -140,7 +154,6 @@ export default function Profile() {
               {/* Avatar with Status */}
               <div className="relative group">
                 <div className="absolute -inset-2 bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 rounded-full opacity-0 group-hover:opacity-20 blur-2xl transition-opacity duration-500" />
-                
               </div>
 
               {/* User Info */}
@@ -149,10 +162,9 @@ export default function Profile() {
                   <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-1">
                     {fullName}
                   </h2>
-                  <div className="flex flex-wrap items-center gap-3">                    
-                  </div>
+                  <div className="flex flex-wrap items-center gap-3"></div>
                 </div>
-                
+
                 {/* Contact Quick Info */}
                 <div className="flex flex-wrap gap-4 text-sm">
                   {userEmail && (
@@ -194,8 +206,12 @@ export default function Profile() {
                     <User size={18} className="text-purple-700" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900">Personal Details</h3>
-                    <p className="text-xs text-slate-500 mt-0.5">Basic information</p>
+                    <h3 className="text-lg font-bold text-slate-900">
+                      Personal Details
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Basic information
+                    </p>
                   </div>
                 </div>
               </div>
@@ -209,7 +225,7 @@ export default function Profile() {
                   <Input
                     name="firstName"
                     value={form.firstName}
-                    onChange={(e) => updateField('firstName', e.target.value)}
+                    onChange={(e) => updateField("firstName", e.target.value)}
                     placeholder="Enter first name"
                     className="w-full"
                   />
@@ -222,23 +238,37 @@ export default function Profile() {
                   <Input
                     name="lastName"
                     value={form.lastName}
-                    onChange={(e) => updateField('lastName', e.target.value)}
+                    onChange={(e) => updateField("lastName", e.target.value)}
                     placeholder="Enter last name"
                     className="w-full"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    Phone Number
-                  </label>
-                  <Input
-                    name="phone"
-                    value={form.phone}
-                    onChange={(e) => updateField('phone', e.target.value)}
-                    placeholder="+91 98765 43210"
-                    className="w-full"
-                  />
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                      Phone Number
+                    </label>
+
+                    <PhoneInput
+                      defaultCountry="in"
+                      forceDialCode
+                      value={form.phone}
+                      onChange={(phone) => updateField("phone", phone)}
+                      style={{
+                        "--react-international-phone-border-radius": "0.75rem",
+                        "--react-international-phone-border-color": "#e2e8f0",
+                        "--react-international-phone-background-color":
+                          "#ffffff",
+                        "--react-international-phone-text-color": "#1e293b",
+                        "--react-international-phone-selected-dropdown-item-background-color":
+                          "#eef2ff",
+                        "--react-international-phone-font-size": "14px",
+                        "--react-international-phone-height": "44px",
+                        width: "100%",
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -259,8 +289,12 @@ export default function Profile() {
                     <MapPin size={18} className="text-purple-700" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900">Address Information</h3>
-                    <p className="text-xs text-slate-500 mt-0.5">Location and mailing details</p>
+                    <h3 className="text-lg font-bold text-slate-900">
+                      Address Information
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Location and mailing details
+                    </p>
                   </div>
                 </div>
               </div>
@@ -276,7 +310,7 @@ export default function Profile() {
                     <Input
                       name="line1"
                       value={form.address.line1}
-                      onChange={(e) => updateAddress('line1', e.target.value)}
+                      onChange={(e) => updateAddress("line1", e.target.value)}
                       placeholder="House/Building number and street name"
                       className="w-full"
                     />
@@ -285,12 +319,15 @@ export default function Profile() {
                   {/* Address Line 2 */}
                   <div className="sm:col-span-2">
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      Address Line 2 <span className="text-slate-400 font-normal">(Optional)</span>
+                      Address Line 2{" "}
+                      <span className="text-slate-400 font-normal">
+                        (Optional)
+                      </span>
                     </label>
                     <Input
                       name="line2"
                       value={form.address.line2}
-                      onChange={(e) => updateAddress('line2', e.target.value)}
+                      onChange={(e) => updateAddress("line2", e.target.value)}
                       placeholder="Apartment, suite, unit, floor, etc."
                       className="w-full"
                     />
@@ -304,7 +341,7 @@ export default function Profile() {
                     <Input
                       name="city"
                       value={form.address.city}
-                      onChange={(e) => updateAddress('city', e.target.value)}
+                      onChange={(e) => updateAddress("city", e.target.value)}
                       placeholder="New Delhi"
                       className="w-full"
                     />
@@ -318,7 +355,7 @@ export default function Profile() {
                     <Input
                       name="state"
                       value={form.address.state}
-                      onChange={(e) => updateAddress('state', e.target.value)}
+                      onChange={(e) => updateAddress("state", e.target.value)}
                       placeholder="Delhi"
                       className="w-full"
                     />
@@ -332,7 +369,9 @@ export default function Profile() {
                     <Input
                       name="postalCode"
                       value={form.address.postalCode}
-                      onChange={(e) => updateAddress('postalCode', e.target.value)}
+                      onChange={(e) =>
+                        updateAddress("postalCode", e.target.value)
+                      }
                       placeholder="110020"
                       className="w-full"
                     />
@@ -346,7 +385,7 @@ export default function Profile() {
                     <Input
                       name="country"
                       value={form.address.country}
-                      onChange={(e) => updateAddress('country', e.target.value)}
+                      onChange={(e) => updateAddress("country", e.target.value)}
                       placeholder="India"
                       className="w-full"
                     />
@@ -370,8 +409,12 @@ export default function Profile() {
                 <Check size={20} className="text-purple-700" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-900">All changes saved</p>
-                <p className="text-xs text-slate-500">Your profile is up to date</p>
+                <p className="text-sm font-semibold text-slate-900">
+                  All changes saved
+                </p>
+                <p className="text-xs text-slate-500">
+                  Your profile is up to date
+                </p>
               </div>
             </div>
             <div className="text-xs text-slate-400">
@@ -409,7 +452,7 @@ export default function Profile() {
                 ) : (
                   <Save size={16} />
                 )}
-                {update.isPending ? 'Saving...' : 'Save Changes'}
+                {update.isPending ? "Saving..." : "Save Changes"}
               </div>
             </button>
           </div>

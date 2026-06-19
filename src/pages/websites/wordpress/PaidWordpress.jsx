@@ -37,7 +37,7 @@ export default function PaidWordpress() {
         (s) => s.type === "wordpress" && s.status === "Active",
       );
       if (!hasWordPress) {
-        navigate("/wordpress-hosting", { replace: true });
+        navigate("/wordpress-hostings", { replace: true });
       }
     }
   }, [subscriptions, loadingSubs, navigate]);
@@ -48,7 +48,7 @@ export default function PaidWordpress() {
   const wpSubscription = subs.find(
     (s) => s.type === "wordpress" && s.status === "Active",
   );
-const siteLimit = wpSubscription?.planDetails?.maxInstances ?? 1;
+  const siteLimit = wpSubscription?.planDetails?.maxInstances ?? 1;
   console.log("this is my sites", wpSubscription);
   const hasReachedLimit = websites.length >= siteLimit;
 
@@ -102,7 +102,7 @@ const siteLimit = wpSubscription?.planDetails?.maxInstances ?? 1;
                 {filter === "" &&
                   (hasReachedLimit ? (
                     <button
-                      onClick={() => navigate("/wordpress-hosting")}
+                      onClick={() => navigate("/wordpress-hostings")}
                       className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl transition-all active:scale-95 text-xs font-bold flex items-center gap-2 ml-1"
                     >
                       Buy WordPress

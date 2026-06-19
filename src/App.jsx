@@ -250,7 +250,6 @@ export default function App() {
           element={<EducationPage />}
         />
         <Route path="/restaurant-management-system" element={<RmsPage />} />
-        <Route path="/wordpress-hosting" element={<LandingWordpress />} />
         <Route path="/vps-cloud" element={<VpsLandingpage />} />
         <Route path="/busy-on-cloud" element={<BusyPage />} />
         <Route path="/tally-on-cloud" element={<TallyPage />} />
@@ -321,6 +320,7 @@ export default function App() {
               path="/php-hosting/dashboard/:instanceId"
               element={<PhpDashboard />}
             />
+            <Route path="/wordpress-hostings" element={<Wordpress_Page />} />
             <Route path="/websites/nodejs" element={<NodeJS_Page />} />
             {/* <Route path="/vps" element={<VpsPlans/>} /> */}
             <Route path="/vps/paid" element={<VPSDashboard />} />
