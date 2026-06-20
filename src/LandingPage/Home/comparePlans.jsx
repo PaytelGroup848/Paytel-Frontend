@@ -1,10 +1,8 @@
 import { motion } from "framer-motion";
-import { 
-  Check, 
-  X, 
-  Award,
+import {
+  Check,
+  X,
   TrendingUp,
-  Shield,
   Zap,
   Globe,
   ChevronRight,
@@ -12,7 +10,6 @@ import {
   Info,
   ArrowUp,
   Sparkles,
-  Cloud
 } from "lucide-react";
 
 const comparisonData = {
@@ -110,26 +107,24 @@ const comparisonData = {
 const FeatureIndicator = ({ status, highlight }) => {
   if (status === true) {
     return (
-      <div className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-200 ${
-        highlight 
-          ? 'bg-indigo-50 ring-1 ring-indigo-200' 
-          : 'bg-emerald-50 ring-1 ring-emerald-200'
-      }`}>
-        <Check size={14} className={highlight ? 'text-indigo-600' : 'text-emerald-600'} strokeWidth={2.5} />
+      <div
+        className={`w-6 h-6 rounded-lg flex items-center justify-center ${
+          highlight ? "bg-indigo-50 ring-1 ring-indigo-100" : "bg-emerald-50 ring-1 ring-emerald-100"
+        }`}
+      >
+        <Check size={12} className={highlight ? "text-indigo-500" : "text-emerald-500"} strokeWidth={2.5} />
       </div>
     );
   }
   if (status === false) {
     return (
-      <div className="w-7 h-7 rounded-lg bg-slate-100 ring-1 ring-slate-300 flex items-center justify-center">
-        <X size={14} className="text-slate-400" strokeWidth={2} />
+      <div className="w-6 h-6 rounded-lg bg-slate-50 ring-1 ring-slate-100 flex items-center justify-center">
+        <X size={12} className="text-slate-300" strokeWidth={2} />
       </div>
     );
   }
   return (
-    <span className={`text-sm font-medium tracking-tight ${
-      status === "Free" ? 'text-emerald-600' : 'text-amber-600'
-    }`}>
+    <span className={`text-[13px] font-semibold ${status === "Free" ? "text-emerald-600" : "text-amber-600"}`}>
       {status}
     </span>
   );
@@ -137,296 +132,318 @@ const FeatureIndicator = ({ status, highlight }) => {
 
 export default function ComparisonTable() {
   return (
-    <section className="relative w-full bg-gradient-to-br from-blue-50 via-indigo-50/30 to-purple-50/40 py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      
-      {/* Purple shiny background effects */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-300/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-300/20 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-violet-200/20 rounded-full blur-3xl" />
-        <div className="absolute top-0 right-1/4 w-48 h-48 bg-purple-400/10 rounded-full blur-2xl" />
-        <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-indigo-400/10 rounded-full blur-2xl" />
-      </div>
+    <section className="w-full bg-gradient-to-b from-slate-50/40 via-white to-slate-50/40 py-5 md:py-10 px-4 sm:px-2 lg:px-6">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter:wght@400;500;600;700&display=swap');
+      `}</style>
 
-      <div className="relative max-w-7xl mx-auto z-10">
-        
-        {/* Header Section */}
+      <div className="max-w-5xl mx-auto" style={{ fontFamily: "'Inter', sans-serif" }}>
+
+        {/* Header Section – reduced margins & font sizes */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
           viewport={{ once: true }}
-          className="text-center max-w-4xl mx-auto mb-14 md:mb-20"
+          className="text-center max-w-2xl mx-auto mb-8 md:mb-12"
         >
-          <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-purple-200 text-purple-700 text-xs font-medium px-4 py-1.5 rounded-full mb-6 tracking-wide shadow-lg shadow-purple-100/50">
-            <TrendingUp size={13} className="text-purple-500" />
-            Compare & Save
+          <div className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-600 text-[10px] font-semibold px-3 py-1 rounded-full mb-4 tracking-[0.1em] uppercase shadow-sm">
+            <TrendingUp size={12} className="text-indigo-400" strokeWidth={2} />
+            Compare &amp; Save
           </div>
-          
-          <h2 className="text-3xl md:text-5xl lg:text-6xl text-slate-900 mb-5 tracking-tight leading-[1.15] font-medium">
+
+          <h2
+            className="text-[1.6rem] sm:text-3xl md:text-[2.25rem] text-slate-900 mb-3 leading-[1.12]"
+            style={{ fontFamily: "'Fraunces', serif", fontWeight: 560, letterSpacing: "-0.015em" }}
+          >
             See why{" "}
             <span className="relative inline-block">
-              <span className="relative z-10 bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              <span className="relative z-10 italic bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
                 Cloudedata
               </span>
-              <span className="absolute bottom-1 left-0 w-full h-2 bg-purple-200/60 -z-0 rounded-full" />
+              <span className="absolute bottom-1 left-0 w-full h-2 bg-indigo-100/60 -z-0 rounded-full" />
             </span>{" "}
             stands out
           </h2>
-          
-          <p className="text-lg text-slate-600 leading-relaxed font-normal max-w-2xl mx-auto">
-            We've compared Cloudedata with leading hosting providers to help you 
-            make the smarter, more informed choice for your business.
+
+          <p className="text-[13px] md:text-[15px] text-slate-500 leading-relaxed font-normal max-w-lg mx-auto">
+            A side-by-side look at Cloudedata against leading hosting providers, so you can
+            make a smarter, more informed choice.
           </p>
         </motion.div>
 
-        {/* Desktop Comparison Table */}
+        {/* Desktop Comparison Table – compact padding & min‑width */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+          transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
           viewport={{ once: true }}
-          className="hidden lg:block bg-white/90 backdrop-blur-sm rounded-[2rem] shadow-2xl shadow-purple-200/30 border-2 border-slate-300 overflow-hidden"
+          className="hidden lg:block relative rounded-[1.25rem] p-[1px] overflow-hidden"
+          style={{
+            background:
+              "linear-gradient(155deg, #e7e8ee 0%, #ffffff 30%, #f1f2f6 55%, #ffffff 80%, #e7e8ee 100%)",
+            boxShadow: "0 24px 60px -18px rgba(30,32,46,0.18), 0 4px 14px -4px rgba(30,32,46,0.08)",
+          }}
         >
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              
-              {/* Table Header */}
-              <thead>
-                <tr className="border-b-2 border-slate-400">
-                  <th className="p-7 md:p-9 text-left w-[280px] align-bottom bg-slate-50/50">
-                    <span className="text-xs font-semibold text-slate-700 uppercase tracking-[0.2em]">
-                      Features compared
-                    </span>
-                  </th>
-                  
-                  {comparisonData.companies.map((company, idx) => (
-                    <th key={idx} className={`p-7 md:p-9 text-center align-top transition-colors duration-300 border-l-2 border-slate-300 ${
-                      company.highlight ? 'bg-purple-50/30' : 'bg-slate-50/30'
-                    }`}>
-                      <div className="flex flex-col items-center">
-                        {/* Best Value Badge */}
-                        {company.highlight && (
-                          <div className="inline-flex items-center gap-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[10px] font-semibold px-3.5 py-1 rounded-full mb-4 shadow-lg shadow-purple-300/40">
-                            <Sparkles size={11} />
-                            RECOMMENDED
-                          </div>
-                        )}
-                        
-                        {/* Logo */}
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-lg font-semibold tracking-tight mb-3 transition-all ${
-                          company.highlight 
-                            ? 'bg-gradient-to-br from-purple-500 to-indigo-500 text-white shadow-lg shadow-purple-300/30' 
-                            : 'bg-slate-200 text-slate-700'
-                        }`}>
-                          {company.logo}
-                        </div>
-                        
-                        {/* Company Name */}
-                        <h3 className={`text-lg tracking-tight mb-1 ${
-                          company.highlight ? 'text-purple-700 font-semibold' : 'text-slate-800 font-medium'
-                        }`}>
-                          {company.name}
-                        </h3>
-                        
-                        {/* Tagline */}
-                        <p className="text-xs text-slate-500 font-normal mb-3">
-                          {company.tagline}
-                        </p>
-                        
-                        {/* Origin */}
-                        <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                          <Globe size={11} />
-                          <span>{company.origin}</span>
-                        </div>
-                      </div>
+          <div className="bg-white rounded-[1.2rem] overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full" style={{ minWidth: "620px" }}>
+
+                {/* Table Header – smaller padding & font */}
+                <thead>
+                  <tr className="border-b border-slate-100">
+                    <th className="p-4 md:p-5 text-left w-[200px] align-bottom">
+                      <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.18em]">
+                        Features compared
+                      </span>
                     </th>
-                  ))}
-                </tr>
-              </thead>
 
-              <tbody>
-                {/* Pricing Section Header */}
-                <tr className="border-b-2 border-slate-400 bg-slate-100/80">
-                  <td colSpan={4} className="px-9 py-4">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center ring-1 ring-amber-300">
-                        <span className="text-amber-700 text-xs font-semibold">₹</span>
-                      </div>
-                      <span className="text-xs font-semibold text-slate-700 uppercase tracking-[0.15em]">
-                        Pricing Details
-                      </span>
-                    </div>
-                  </td>
-                </tr>
+                    {comparisonData.companies.map((company, idx) => (
+                      <th
+                        key={idx}
+                        className={`p-4 md:p-5 text-center align-top border-l border-slate-100 transition-colors duration-300 ${
+                          company.highlight ? "bg-indigo-50/25" : ""
+                        }`}
+                      >
+                        <div className="flex flex-col items-center">
+                          {company.highlight && (
+                            <div className="inline-flex items-center gap-1.5 bg-slate-900 text-white text-[9px] font-semibold px-3 py-[4px] rounded-full mb-2.5 tracking-[0.06em] shadow-md shadow-slate-900/20">
+                              <Sparkles size={10} />
+                              RECOMMENDED
+                            </div>
+                          )}
 
-                {/* Offer Price Row */}
-                <tr className="border-b-2 border-slate-300 hover:bg-slate-50/50 transition-colors">
-                  <td className="px-9 py-5 border-r-2 border-slate-200">
-                    <span className="text-sm text-slate-700 font-medium">Introductory price</span>
-                  </td>
-                  {comparisonData.companies.map((company, idx) => (
-                    <td key={idx} className={`px-9 py-5 text-center border-l-2 border-slate-200 ${company.highlight ? 'bg-purple-50/20' : ''}`}>
-                      <span className={`text-xl tracking-tight ${
-                        company.highlight ? 'text-purple-700 font-semibold' : 'text-slate-800 font-medium'
-                      }`}>
-                        {company.price.offer}
-                      </span>
-                    </td>
-                  ))}
-                </tr>
+                          <div
+                            className={`w-9 h-9 rounded-xl flex items-center justify-center text-[14px] tracking-tight mb-2 ${
+                              company.highlight
+                                ? "bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-md shadow-indigo-200"
+                                : "bg-slate-100 text-slate-600"
+                            }`}
+                            style={{ fontFamily: "'Fraunces', serif", fontWeight: 560 }}
+                          >
+                            {company.logo}
+                          </div>
 
-                {/* Renewal Price Row */}
-                <tr className="border-b-2 border-slate-400 hover:bg-slate-50/50 transition-colors">
-                  <td className="px-9 py-5 border-r-2 border-slate-200">
-                    <span className="text-sm text-slate-700 font-medium">Renewal price</span>
-                  </td>
-                  {comparisonData.companies.map((company, idx) => (
-                    <td key={idx} className={`px-9 py-5 text-center border-l-2 border-slate-200 ${company.highlight ? 'bg-purple-50/20' : ''}`}>
-                      <div className="flex flex-col items-center gap-1">
-                        <span className={`text-base tracking-tight ${
-                          company.highlight 
-                            ? 'text-purple-700 font-semibold' 
-                            : company.price.increase ? 'text-red-600 font-semibold' : 'text-slate-800 font-medium'
-                        }`}>
-                          {company.price.renewal}
+                          <h3
+                            className={`text-[14px] tracking-tight mb-0.5 ${
+                              company.highlight ? "text-indigo-600" : "text-slate-800"
+                            }`}
+                            style={{ fontFamily: "'Fraunces', serif", fontWeight: 560 }}
+                          >
+                            {company.name}
+                          </h3>
+
+                          <p className="text-[10.5px] text-slate-500 font-normal mb-2">{company.tagline}</p>
+
+                          <div className="flex items-center gap-1 text-[10px] text-slate-500">
+                            <Globe size={10} />
+                            <span>{company.origin}</span>
+                          </div>
+                        </div>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {/* Pricing Section Header – compact */}
+                  <tr className="border-b border-slate-200 bg-slate-50/80">
+                    <td colSpan={4} className="px-5 py-2.5">
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 rounded-md bg-amber-50 flex items-center justify-center ring-1 ring-amber-100">
+                          <span className="text-amber-500 text-[9px] font-semibold">₹</span>
+                        </div>
+                        <span className="text-[9.5px] font-semibold text-slate-500 uppercase tracking-[0.14em]">
+                          Pricing Details
                         </span>
-                        {company.price.renewalNote && (
-                          <span className={`text-[11px] font-semibold flex items-center gap-1 ${
-                            company.price.increase ? 'text-red-500' : 'text-emerald-600'
-                          }`}>
-                            {company.price.increase ? (
-                              <ArrowUp size={10} />
-                            ) : (
-                              <Check size={10} strokeWidth={3} />
-                            )}
-                            {company.price.renewalNote}
-                          </span>
-                        )}
                       </div>
                     </td>
-                  ))}
-                </tr>
+                  </tr>
 
-                {/* Features Section Header */}
-                <tr className="border-b-2 border-slate-400 bg-slate-100/80">
-                  <td colSpan={4} className="px-9 py-4">
-                    <div className="flex items-center gap-2.5">
-                      <Zap size={14} className="text-purple-600" />
-                      <span className="text-xs font-semibold text-slate-700 uppercase tracking-[0.15em]">
-                        Feature Comparison
-                      </span>
-                    </div>
-                  </td>
-                </tr>
-
-                {/* Feature Rows */}
-                {Object.entries(comparisonData.featureLabels).map(([key, label], idx) => (
-                  <tr 
-                    key={key} 
-                    className={`border-b-2 border-slate-200 transition-colors duration-200 hover:bg-slate-50/70 ${
-                      idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'
-                    }`}
-                  >
-                    <td className="px-9 py-4 border-r-2 border-slate-200">
-                      <span className="text-sm text-slate-700 font-medium">{label}</span>
+                  {/* Offer Price Row – smaller text */}
+                  <tr className="border-b border-slate-50 hover:bg-slate-50/30 transition-colors">
+                    <td className="px-5 py-3">
+                      <span className="text-[13px] text-slate-700 font-medium">Introductory price</span>
                     </td>
-                    {comparisonData.companies.map((company, cIdx) => (
-                      <td key={cIdx} className={`px-9 py-4 text-center border-l-2 border-slate-200 ${company.highlight ? 'bg-purple-50/20' : ''}`}>
-                        <div className="flex justify-center">
-                          <FeatureIndicator 
-                            status={company.features[key]} 
-                            highlight={company.highlight}
-                          />
+                    {comparisonData.companies.map((company, idx) => (
+                      <td key={idx} className={`px-5 py-3 text-center border-l border-slate-100 ${company.highlight ? "bg-indigo-50/15" : ""}`}>
+                        <span
+                          className={`text-[16px] tracking-tight ${
+                            company.highlight ? "text-indigo-600 font-semibold" : "text-slate-900 font-semibold"
+                          }`}
+                        >
+                          {company.price.offer}
+                        </span>
+                      </td>
+                    ))}
+                  </tr>
+
+                  {/* Renewal Price Row */}
+                  <tr className="border-b border-slate-200 hover:bg-slate-50/30 transition-colors">
+                    <td className="px-5 py-3">
+                      <span className="text-[13px] text-slate-700 font-medium">Renewal price</span>
+                    </td>
+                    {comparisonData.companies.map((company, idx) => (
+                      <td key={idx} className={`px-5 py-3 text-center border-l border-slate-100 ${company.highlight ? "bg-indigo-50/15" : ""}`}>
+                        <div className="flex flex-col items-center gap-0.5">
+                          <span
+                            className={`text-[14px] tracking-tight ${
+                              company.highlight
+                                ? "text-indigo-600 font-semibold"
+                                : company.price.increase
+                                ? "text-red-600 font-semibold"
+                                : "text-slate-800 font-semibold"
+                            }`}
+                          >
+                            {company.price.renewal}
+                          </span>
+                          {company.price.renewalNote && (
+                            <span
+                              className={`text-[9.5px] font-medium flex items-center gap-1 ${
+                                company.price.increase ? "text-red-500" : "text-emerald-600"
+                              }`}
+                            >
+                              {company.price.increase ? <ArrowUp size={9} /> : <Check size={9} strokeWidth={3} />}
+                              {company.price.renewalNote}
+                            </span>
+                          )}
                         </div>
                       </td>
                     ))}
                   </tr>
-                ))}
 
-                {/* CTA Row */}
-                <tr>
-                  <td className="px-9 py-6 border-r-2 border-slate-200"></td>
-                  {comparisonData.companies.map((company, idx) => (
-                    <td key={idx} className={`px-9 py-6 text-center border-l-2 border-slate-200 ${company.highlight ? 'bg-purple-50/20' : ''}`}>
-                      <button
-                        onClick={() => window.location.href = "/pricing"}
-                        className={`inline-flex items-center gap-2 px-7 py-3 rounded-xl text-sm font-semibold tracking-tight transition-all duration-300 hover:-translate-y-0.5 ${
-                          company.highlight
-                            ? 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg shadow-purple-300/40 hover:shadow-xl hover:shadow-purple-300/50'
-                            : 'bg-slate-200 hover:bg-slate-300 text-slate-700 hover:text-slate-900 shadow-sm'
-                        }`}
-                      >
-                        Get started
-                        <ChevronRight size={15} />
-                      </button>
+                  {/* Features Section Header – compact */}
+                  <tr className="border-b border-slate-200 bg-slate-50/80">
+                    <td colSpan={4} className="px-5 py-2.5">
+                      <div className="flex items-center gap-2">
+                        <Zap size={12} className="text-indigo-400" />
+                        <span className="text-[9.5px] font-semibold text-slate-500 uppercase tracking-[0.14em]">
+                          Feature Comparison
+                        </span>
+                      </div>
                     </td>
+                  </tr>
+
+                  {/* Feature Rows – reduced padding */}
+                  {Object.entries(comparisonData.featureLabels).map(([key, label], idx) => (
+                    <tr
+                      key={key}
+                      className={`border-b border-slate-50 transition-colors duration-200 hover:bg-slate-50/40 ${
+                        idx % 2 === 0 ? "bg-white" : "bg-slate-50/20"
+                      }`}
+                    >
+                      <td className="px-5 py-2.5">
+                        <span className="text-[12.5px] text-slate-700 font-medium">{label}</span>
+                      </td>
+                      {comparisonData.companies.map((company, cIdx) => (
+                        <td key={cIdx} className={`px-5 py-2.5 text-center border-l border-slate-100 ${company.highlight ? "bg-indigo-50/15" : ""}`}>
+                          <div className="flex justify-center">
+                            <FeatureIndicator status={company.features[key]} highlight={company.highlight} />
+                          </div>
+                        </td>
+                      ))}
+                    </tr>
                   ))}
-                </tr>
-              </tbody>
-            </table>
+
+                  {/* CTA Row – smaller button */}
+                  <tr>
+                    <td className="px-5 py-4"></td>
+                    {comparisonData.companies.map((company, idx) => (
+                      <td key={idx} className={`px-5 py-4 text-center border-l border-slate-100 ${company.highlight ? "bg-indigo-50/15" : ""}`}>
+                        <button
+                          onClick={() => (window.location.href = "/pricing")}
+                          className={`inline-flex items-center gap-1 px-4 py-2 rounded-xl text-[11.5px] font-medium tracking-tight transition-all duration-300 hover:-translate-y-0.5 ${
+                            company.highlight
+                              ? "bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-900/20 hover:shadow-xl"
+                              : "bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800"
+                          }`}
+                        >
+                          Get started
+                          <ChevronRight size={13} />
+                        </button>
+                      </td>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </motion.div>
 
-        {/* Mobile Cards */}
-        <div className="lg:hidden space-y-6">
+        {/* Mobile / Tablet Cards – more compact spacing */}
+        <div className="lg:hidden space-y-4">
           {comparisonData.companies.map((company, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 25 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.12, duration: 0.5, ease: "easeOut" }}
+              transition={{ delay: idx * 0.1, duration: 0.5, ease: "easeOut" }}
               viewport={{ once: true }}
-              className={`bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border-2 overflow-hidden transition-all ${
-                company.highlight 
-                  ? 'border-purple-300 shadow-purple-200/30 ring-1 ring-purple-200' 
-                  : 'border-slate-300'
+              className={`rounded-2xl overflow-hidden ${
+                company.highlight ? "shadow-xl shadow-indigo-100/40" : "shadow-md shadow-slate-200/40"
               }`}
+              style={{
+                border: company.highlight ? "1px solid rgba(99,102,241,0.25)" : "1px solid rgba(226,232,240,1)",
+              }}
             >
-              {/* Company Header */}
-              <div className={`p-5 flex items-center justify-between ${
-                company.highlight ? 'bg-gradient-to-r from-purple-50 to-indigo-50' : 'bg-slate-50'
-              }`}>
+              {/* Company Header – smaller */}
+              <div
+                className={`px-4 py-3 flex items-center justify-between ${
+                  company.highlight ? "bg-gradient-to-r from-slate-900 to-indigo-900" : "bg-slate-50"
+                }`}
+              >
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-base font-semibold ${
-                    company.highlight ? 'bg-gradient-to-br from-purple-500 to-indigo-500 text-white' : 'bg-slate-200 text-slate-700'
-                  }`}>
+                  <div
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center text-[13px] ${
+                      company.highlight ? "bg-white/15 text-white" : "bg-white text-slate-600"
+                    }`}
+                    style={{ fontFamily: "'Fraunces', serif", fontWeight: 560 }}
+                  >
                     {company.logo}
                   </div>
                   <div>
-                    <h3 className={`text-base tracking-tight ${
-                      company.highlight ? 'text-purple-700 font-semibold' : 'text-slate-800 font-medium'
-                    }`}>
+                    <h3
+                      className={`text-[13.5px] tracking-tight ${company.highlight ? "text-white" : "text-slate-800"}`}
+                      style={{ fontFamily: "'Fraunces', serif", fontWeight: 560 }}
+                    >
                       {company.name}
                     </h3>
-                    <p className="text-xs text-slate-500">
+                    <p className={`text-[10px] ${company.highlight ? "text-indigo-200" : "text-slate-400"}`}>
                       {company.tagline} · {company.origin}
                     </p>
                   </div>
                 </div>
                 {company.highlight && (
-                  <div className="bg-purple-100 rounded-full p-1.5">
-                    <Star size={16} className="text-purple-600" fill="currentColor" />
+                  <div className="bg-white/15 rounded-full p-1">
+                    <Star size={14} className="text-white" fill="white" />
                   </div>
                 )}
               </div>
 
-              {/* Pricing */}
-              <div className="p-5 border-b-2 border-slate-300">
-                <div className="grid grid-cols-2 gap-4">
+              {/* Pricing – compact grid */}
+              <div className="px-4 py-3 bg-white border-b border-slate-100">
+                <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <p className="text-xs text-slate-600 font-medium mb-1">Intro price</p>
-                    <p className={`text-lg tracking-tight ${company.highlight ? 'text-purple-700 font-semibold' : 'text-slate-800 font-medium'}`}>
+                    <p className="text-[10px] text-slate-400 mb-0.5 uppercase tracking-wide">Intro price</p>
+                    <p
+                      className={`text-[15px] tracking-tight ${
+                        company.highlight ? "text-indigo-600 font-semibold" : "text-slate-800 font-medium"
+                      }`}
+                    >
                       {company.price.offer}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-600 font-medium mb-1">Renewal</p>
-                    <p className={`text-lg tracking-tight ${company.price.increase ? 'text-red-600 font-semibold' : 'text-emerald-600 font-semibold'}`}>
+                    <p className="text-[10px] text-slate-400 mb-0.5 uppercase tracking-wide">Renewal</p>
+                    <p
+                      className={`text-[15px] tracking-tight ${
+                        company.price.increase ? "text-red-500 font-medium" : "text-emerald-600 font-medium"
+                      }`}
+                    >
                       {company.price.renewal}
                     </p>
                     {company.price.renewalNote && (
-                      <p className={`text-[11px] mt-0.5 font-semibold ${company.price.increase ? 'text-red-500' : 'text-emerald-600'}`}>
+                      <p className={`text-[9px] mt-0.5 ${company.price.increase ? "text-red-400" : "text-emerald-500"}`}>
                         {company.price.renewalNote}
                       </p>
                     )}
@@ -434,24 +451,24 @@ export default function ComparisonTable() {
                 </div>
               </div>
 
-              {/* Features */}
-              <div className="p-5 space-y-3">
+              {/* Features – tighter spacing */}
+              <div className="px-4 py-3 space-y-1.5 bg-white">
                 {Object.entries(comparisonData.featureLabels).map(([key, label]) => (
-                  <div key={key} className="flex items-center justify-between py-2 border-b-2 border-slate-200 last:border-0">
-                    <span className="text-sm text-slate-700 font-medium">{label}</span>
+                  <div key={key} className="flex items-center justify-between py-1 border-b border-slate-50 last:border-0">
+                    <span className="text-[12.5px] text-slate-700 font-medium">{label}</span>
                     <FeatureIndicator status={company.features[key]} highlight={company.highlight} />
                   </div>
                 ))}
               </div>
 
-              {/* CTA */}
-              <div className="p-5 pt-0">
+              {/* CTA – smaller */}
+              <div className="px-4 pb-4 pt-1 bg-white">
                 <button
-                  onClick={() => window.location.href = "/pricing"}
-                  className={`w-full py-3 rounded-xl text-sm font-semibold tracking-tight transition-all ${
+                  onClick={() => (window.location.href = "/pricing")}
+                  className={`w-full py-2.5 rounded-xl text-[12.5px] font-medium tracking-tight transition-all ${
                     company.highlight
-                      ? 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg shadow-purple-300/30'
-                      : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
+                      ? "bg-slate-900 hover:bg-slate-800 text-white shadow-md"
+                      : "bg-slate-100 hover:bg-slate-200 text-slate-600"
                   }`}
                 >
                   Get started with {company.name}
@@ -461,23 +478,23 @@ export default function ComparisonTable() {
           ))}
         </div>
 
-        {/* Footer Disclaimer */}
+        {/* Footer Disclaimer – compact */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
           viewport={{ once: true }}
-          className="mt-14 text-center max-w-3xl mx-auto"
+          className="mt-8 text-center max-w-2xl mx-auto"
         >
-          <div className="inline-flex items-start gap-2.5 bg-white/80 backdrop-blur-sm border-2 border-amber-300 rounded-xl px-5 py-3.5 shadow-lg shadow-amber-100/30">
-            <Info size={16} className="text-amber-600 shrink-0 mt-0.5" />
-            <p className="text-xs text-amber-800 text-left leading-relaxed font-medium">
-              Prices are indicative and based on publicly available information at the time of comparison. 
+          <div className="inline-flex items-start gap-2 bg-amber-50/70 border border-amber-100 rounded-xl px-3 py-2.5">
+            <Info size={14} className="text-amber-400 shrink-0 mt-0.5" />
+            <p className="text-[11px] text-amber-700 text-left leading-relaxed font-normal">
+              Prices are indicative and based on publicly available information at the time of comparison.
               Actual prices may vary depending on plan duration, offers, region, and applicable taxes.
             </p>
           </div>
         </motion.div>
-        
+
       </div>
     </section>
   );
