@@ -18,4 +18,4 @@ const SuccessBanner = ({ imageSrc, altText = "Success Stories" }) => {
   );
 };
 
-export default SuccessBanner;
+export default SuccessBanner; 
