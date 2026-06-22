@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import Navbar from "../navbar";
 import Banner from "./DemoBanner";
-// import PlansCard from "./PlansCard";
 import Review from "./Review";
+import moneyBack from "../../components/moneyback"
 import BusinessCard from "./businessCard";
 import Services from "./Services";
 import PlansAndPricing from "./PlansAndPricing";
@@ -10,6 +10,7 @@ import ContactCard from "./ContactCard";
 import ComparisonTable from './comparePlans';
 import Footer from "../Footer";
 import SuccessBanner from "./successStories";
+
 
 export default function HomePage() {
   return (
@@ -28,6 +29,7 @@ export default function HomePage() {
 
         {/* <PlansCard /> */}
         <PlansAndPricing />
+        <moneyBack/>
         <Review />
         <ComparisonTable/>
         <Services />
