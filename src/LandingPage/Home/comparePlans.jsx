@@ -137,7 +137,7 @@ export default function ComparisonTable() {
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter:wght@400;500;600;700&display=swap');
       `}</style>
 
-      <div className="max-w-5xl mx-auto" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <div className="max-w-6xl mx-auto" style={{ fontFamily: "'Inter', sans-serif" }}>
 
         {/* Header Section – reduced margins & font sizes */}
         <motion.div
@@ -147,7 +147,7 @@ export default function ComparisonTable() {
           viewport={{ once: true }}
           className="text-center max-w-2xl mx-auto mb-8 md:mb-12"
         >
-          <div className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-600 text-[10px] font-semibold px-3 py-1 rounded-full mb-4 tracking-[0.1em] uppercase shadow-sm">
+          <div className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-600 text-[10px] font-semibold px-3 py-1 rounded-full  tracking-[0.1em] uppercase shadow-sm">
             <TrendingUp size={12} className="text-indigo-400" strokeWidth={2} />
             Compare &amp; Save
           </div>
@@ -208,7 +208,7 @@ export default function ComparisonTable() {
                         <div className="flex flex-col items-center">
                           {company.highlight && (
                             <div className="inline-flex items-center gap-1.5 bg-slate-900 text-white text-[9px] font-semibold px-3 py-[4px] rounded-full mb-2.5 tracking-[0.06em] shadow-md shadow-slate-900/20">
-                              <Sparkles size={10} />
+                        
                               RECOMMENDED
                             </div>
                           )}

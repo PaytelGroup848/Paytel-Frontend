@@ -242,7 +242,7 @@ export default function Reviews() {
   return (
     <section
       ref={sectionRef}
-      className="w-full overflow-hidden relative bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 py-16 md:py-24"
+      className="w-full overflow-hidden relative bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 py-10 md:py-10"
     >
       {/* Background effects */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">

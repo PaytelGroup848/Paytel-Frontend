@@ -25,7 +25,7 @@ function SceneBg() {
       {/* base surface */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#fafafc] via-[#f6f6fa] to-[#f9f9fb]" />
 
-      {/* slow-drifting ambient glows — gives the scene a living, breathing feel */}
+      {/* slow-drifting ambient glows */}
       <motion.div
         className="absolute -top-36 -left-28 w-[52vw] h-[52vw] max-w-[640px] max-h-[640px] rounded-full bg-gradient-radial from-indigo-200/30 via-indigo-100/10 to-transparent blur-3xl"
         animate={{
@@ -53,7 +53,7 @@ function SceneBg() {
         transition={{ duration: 30, repeat: Infinity, ease: "easeInOut", delay: 4 }}
       />
 
-      {/* fine engineering grid, masked toward the center */}
+      {/* fine engineering grid */}
       <div
         className="absolute inset-0 opacity-[0.5]"
         style={{
@@ -65,7 +65,7 @@ function SceneBg() {
         }}
       />
 
-      {/* subtle dot accent layer for depth */}
+      {/* subtle dot accent */}
       <div
         className="absolute inset-0 opacity-[0.3]"
         style={{
@@ -76,7 +76,7 @@ function SceneBg() {
         }}
       />
 
-      {/* slow traveling light sweep across the whole scene */}
+      {/* slow traveling light sweep */}
       <motion.div
         className="absolute inset-y-0 w-[40%]"
         style={{
@@ -94,7 +94,7 @@ function SceneBg() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// HeroImage – refined card chrome, calmer accent colors
+// HeroImage – refined card chrome
 // ─────────────────────────────────────────────────────────────────────────────
 function HeroImage() {
   return (
@@ -214,8 +214,8 @@ export default function ProfessionalBanner() {
 
   const cardVisible = scrollProgress > 0.05;
 
-  // Shared content (left text + right column with HeroImage & DemoCard)
-  const HeroContent = () => (
+  // ── Shared content (left text + right column) ──
+  const HeroContent = ({ isLargeScreen }) => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 xl:gap-20 items-center">
       {/* ── LEFT CONTENT ── */}
       <motion.div
@@ -232,7 +232,7 @@ export default function ProfessionalBanner() {
           </span>
         </div>
 
-        {/* Heading — editorial serif for character, set wide and confident */}
+        {/* Heading */}
         <h1
           className="text-slate-800 leading-[1.08]"
           style={{
@@ -346,34 +346,45 @@ export default function ProfessionalBanner() {
         </div>
       </motion.div>
 
-      {/* ── RIGHT COLUMN – HeroImage & DemoCard (scroll transition) ── */}
-      <div className="relative flex justify-center lg:justify-end w-full min-h-[320px] sm:min-h-[400px] lg:min-h-[550px]">
-        {/* HeroImage – fades out and moves left as you scroll */}
-        <div
-          className="absolute inset-0 flex items-center justify-center lg:justify-end transition-all duration-300 ease-out"
-          style={{
-            opacity: Math.max(0, 1 - scrollProgress * 1.6),
-            transform: `scale(${1 - scrollProgress * 0.08}) translateX(${-scrollProgress * 40}px)`,
-            filter: `blur(${scrollProgress * 6}px)`,
-            pointerEvents: scrollProgress > 0.2 ? "none" : "auto",
-          }}
-        >
-          <HeroImage />
-        </div>
+      {/* ── RIGHT COLUMN – HeroImage & DemoCard ── */}
+      {isLargeScreen ? (
+        /* Desktop: scroll‑driven transition */
+        <div className="relative flex justify-center lg:justify-end w-full min-h-[320px] sm:min-h-[400px] lg:min-h-[550px]">
+          {/* HeroImage – fades out and moves left */}
+          <div
+            className="absolute inset-0 flex items-center justify-center lg:justify-end transition-all duration-300 ease-out"
+            style={{
+              opacity: Math.max(0, 1 - scrollProgress * 1.6),
+              transform: `scale(${1 - scrollProgress * 0.08}) translateX(${-scrollProgress * 40}px)`,
+              filter: `blur(${scrollProgress * 6}px)`,
+              pointerEvents: scrollProgress > 0.2 ? "none" : "auto",
+            }}
+          >
+            <HeroImage />
+          </div>
 
-        {/* DemoCard – slides in from the right, settles further left and slightly larger */}
-        <div
-          className="absolute inset-0 flex items-center justify-center lg:justify-end transition-all duration-300 ease-out"
-          style={{
-            opacity: scrollProgress,
-            transform: `translateX(${(1 - scrollProgress) * 140 - scrollProgress * 56}px) scale(${0.92 + scrollProgress * 0.16})`,
-            pointerEvents: cardVisible ? "auto" : "none",
-            visibility: cardVisible ? "visible" : "hidden",
-          }}
-        >
-          <DemoCard />
+          {/* DemoCard – slides in */}
+          <div
+            className="absolute inset-0 flex items-center justify-center lg:justify-end transition-all duration-300 ease-out"
+            style={{
+              opacity: scrollProgress,
+              transform: `translateX(${(1 - scrollProgress) * 140 - scrollProgress * 56}px) scale(${0.92 + scrollProgress * 0.16})`,
+              pointerEvents: cardVisible ? "auto" : "none",
+              visibility: cardVisible ? "visible" : "hidden",
+            }}
+          >
+            <DemoCard />
+          </div>
         </div>
-      </div>
+      ) : (
+        /* Mobile / tablet: static stacked layout – both visible */
+        <div className="flex flex-col items-center gap-8 w-full">
+          <HeroImage />
+          <div className="w-full max-w-[400px]">
+            <DemoCard />
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -391,7 +402,7 @@ export default function ProfessionalBanner() {
             <SceneBg />
             <section className="relative z-10 h-full flex items-center">
               <div className="w-full max-w-[92vw] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
-                <HeroContent />
+                <HeroContent isLargeScreen={true} />
               </div>
             </section>
 
@@ -418,7 +429,7 @@ export default function ProfessionalBanner() {
           <SceneBg />
           <section className="relative z-10 pt-8 pb-16 sm:pt-12 sm:pb-20 px-4 sm:px-6">
             <div className="max-w-[92vw] mx-auto">
-              <HeroContent />
+              <HeroContent isLargeScreen={false} />
             </div>
           </section>
         </div>

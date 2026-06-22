@@ -9,7 +9,6 @@ import { queryClient } from "./services/queryClient";
 import App from "./App.jsx";
 import "./index.css";
 import Analytics from "./components/Analytics.jsx";
-import WhatsappIcon from './LandingPage/whatssapp icon/WhatsappIcon.jsx'
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -41,6 +40,6 @@ createRoot(document.getElementById("root")).render(
         />
       </BrowserRouter>
     </QueryClientProvider>
-    <WhatsappIcon/>
+  
   </StrictMode>,
 );

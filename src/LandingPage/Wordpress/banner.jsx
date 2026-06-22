@@ -79,7 +79,7 @@ export default function WordPressBanner() {
             >
               Build faster with
               <br />
-              <span style={{ color: "#2271b1" }}>WordPress</span>
+              <span style={{ color: "#0a304e" }}>WordPress</span>
             </h1>
 
             {/* Sub-headline */}
@@ -131,7 +131,7 @@ export default function WordPressBanner() {
                   fontFamily: FONT_HEADING,
                   fontWeight: 400,
                   fontSize: "clamp(2.8rem, 5.8vw, 4.2rem)",
-                  color: "#1a4a72",
+                  color: "#051b2e",
                   lineHeight: 1,
                   letterSpacing: "-0.02em",
                 }}
@@ -164,10 +164,10 @@ export default function WordPressBanner() {
             </div>
 
             {/* CTAs */}
-            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row md:items-start">
+            <div className=" flex flex-col items-center gap-2 sm:flex-row md:items-start">
               <button
                 onClick={scrollToPlans}
-                className="group inline-flex min-h-[52px] items-center gap-2.5 rounded-xl px-8 text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-2xl active:translate-y-0 active:scale-[0.98]"
+                className="mt-5 group inline-flex min-h-[52px] items-center gap-2.5 rounded-xl px-8 text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-2xl active:translate-y-0 active:scale-[0.98]"
                 style={{
                   fontWeight: 600,
                   fontSize: "clamp(0.88rem, 1.5vw, 0.95rem)",
@@ -182,43 +182,6 @@ export default function WordPressBanner() {
                   className="transition-transform duration-200 group-hover:translate-x-1"
                 />
               </button>
-
-              <button
-                onClick={scrollToPlans}
-                className="inline-flex min-h-[52px] items-center gap-2 rounded-xl border px-7 font-semibold transition-all duration-200 hover:bg-white/60 active:scale-[0.98]"
-                style={{
-                  fontSize: "clamp(0.88rem, 1.5vw, 0.95rem)",
-                  color: "#1a4a72",
-                  borderColor: "rgba(34,113,177,0.30)",
-                  background: "rgba(255,255,255,0.35)",
-                  backdropFilter: "blur(8px)",
-                }}
-              >
-                Learn More
-              </button>
-            </div>
-
-            {/* Trust strip */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3 md:justify-start">
-              {floatingBadges.map(({ icon: Icon, label, color }) => (
-                <div
-                  key={label}
-                  className="flex items-center gap-1.5 rounded-full px-3 py-1.5"
-                  style={{
-                    background: "rgba(255,255,255,0.42)",
-                    border: "1px solid rgba(255,255,255,0.65)",
-                    backdropFilter: "blur(6px)",
-                  }}
-                >
-                  <Icon size={13} style={{ color }} />
-                  <span
-                    className="font-semibold"
-                    style={{ fontSize: "11px", color: "#1a4a72" }}
-                  >
-                    {label}
-                  </span>
-                </div>
-              ))}
             </div>
           </div>
 
@@ -228,7 +191,7 @@ export default function WordPressBanner() {
 
             {/* Image */}
             <img
-              src="/wordpressimage.webp"
+              src="/wordpressimage.jpg"
               alt="WordPress hosting illustration"
               style={{
                 width: "100%",

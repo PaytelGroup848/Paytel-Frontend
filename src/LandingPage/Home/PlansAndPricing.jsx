@@ -39,22 +39,23 @@ const plans = [
     cta: "Get Started",
   },
   {
-    id: "tally",
-    name: "Tally Cloud",
-    price: "₹299",
+    id: "linux-vps",
+    name: "Linux VPS",
+    price: "₹549",
     period: "/mo",
-    desc: "Secure Tally ERP hosting with multi-user access and auto backups.",
+    desc: "High-performance Linux server with root access and NVMe storage.",
     features: [
-      { text: "Manage Server", icon: Server },
-      { text: "Auto Backup", icon: Database },
-      { text: "High Security", icon: Lock },
-      { text: "Unlimited Cos.", icon: Infinity },
-      { text: "Multi-User", icon: Users },
+      { text: "2 vCPU", icon: Server },
+      { text: "4 GB RAM", icon: Database },
+      { text: "60 GB SSD", icon: HardDrive },
       { text: "99.9% Uptime", icon: Shield },
+      { text: "Root Access", icon: Lock },
+      { text: "NVMe SSD", icon: Zap },
     ],
     popular: false,
-    cta: "Choose Tally",
+    cta: "Choose Linux",
   },
+
   {
     id: "win-vps",
     name: "Windows VPS",
@@ -72,23 +73,25 @@ const plans = [
     popular: true,
     cta: "Choose Windows",
   },
-  {
-    id: "linux-vps",
-    name: "Linux VPS",
-    price: "₹549",
+  
+ {
+    id: "tally",
+    name: "Tally Cloud",
+    price: "₹299",
     period: "/mo",
-    desc: "High-performance Linux server with root access and NVMe storage.",
+    desc: "Secure Tally ERP hosting with multi-user access and auto backups.",
     features: [
-      { text: "2 vCPU", icon: Server },
-      { text: "4 GB RAM", icon: Database },
-      { text: "60 GB SSD", icon: HardDrive },
+      { text: "Manage Server", icon: Server },
+      { text: "Auto Backup", icon: Database },
+      { text: "High Security", icon: Lock },
+      { text: "Unlimited Cos.", icon: Infinity },
+      { text: "Multi-User", icon: Users },
       { text: "99.9% Uptime", icon: Shield },
-      { text: "Root Access", icon: Lock },
-      { text: "NVMe SSD", icon: Zap },
     ],
     popular: false,
-    cta: "Choose Linux",
+    cta: "Choose Tally",
   },
+
 ];
 
 // Common features list

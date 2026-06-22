@@ -35,21 +35,10 @@ const serviceOptions = [
 // Scrolling images shown behind the card
 const scrollImages = [
   {
-    src: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=900&q=80",
+    src: "/vpsWEB.jpg",
     alt: "Global data center server racks with blue lighting",
   },
-  {
-    src: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=900&q=80",
-    alt: "Cloud network infrastructure overhead view",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=900&q=80",
-    alt: "Dark server room with glowing cables",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1620714223084-8fcacc2dbed5?w=900&q=80",
-    alt: "Abstract digital network connections",
-  },
+
 ];
 
 // Floating trust badges that overlay the image
@@ -77,7 +66,7 @@ function ScrollingImageStack({ activeIdx }) {
             opacity: i === activeIdx ? 1 : 0,
             scale: i === activeIdx ? 1 : 1.04,
           }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
+          transition={{ duration: 1.0 , ease: "easeInOut" }}
         >
           <img
             src={img.src}

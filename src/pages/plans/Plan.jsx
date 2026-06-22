@@ -310,7 +310,6 @@ export default function Plans() {
         name: "Pro",
         monthly: 399,
         features: ["10 Domain Instances", "High-Speed Network", "Daily Snapshots", "Priority Support", "Auto-Scaling"],
-        popular: true,
       },
       {
         id: "661d4a8e2f3a1c001f8e4a03",
@@ -364,7 +363,8 @@ export default function Plans() {
         {/* ── Plans grid — full width, 90vw-ish via max-w-[1400px] ── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 xl:gap-6">
           {plans.map((plan, index) => {
-            const isPopular = plan.popular;
+            // --- changed: "Standard" plan is now highlighted as most popular ---
+            const isPopular = plan.name === "Standard";
             const monthlyPrice = (plan.monthly || plan.price / 100);
             const discountLabel = discountLabels[index] || "20% off";
 
