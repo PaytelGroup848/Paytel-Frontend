@@ -9,15 +9,16 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useSubscription } from "../../hooks/useBilling";
+import RenewModal from "../../components/RenewModal";
 
 /* ─── Helpers ────────────────────────────────────────────── */
 const typeIcons = { hosting: Globe, vps: Server, email: Mail, domain: Globe, php: Server };
 const getIcon = (type) => typeIcons[type] || CreditCard;
 
 /* ─── Subscription Card (mobile) ─────────────────────────── */
-const SubscriptionCard = ({ subscription, onOpenDetail, index }) => {
+const SubscriptionCard = ({ subscription, onOpenDetail, onRenew, index }) => {
   const Icon = getIcon(subscription.type);
-  const isExpired = subscription.status === 'Expired';
+  const isExpired = subscription.status === 'Expired' || subscription.status === 'suspended';
   const isActive = subscription.status === 'Active';
 
   return (
@@ -56,7 +57,7 @@ const SubscriptionCard = ({ subscription, onOpenDetail, index }) => {
       <div className="flex items-center justify-between text-xs text-slate-600 mb-3">
         <div className="flex items-center gap-1">
           <Calendar size={12} className="text-slate-400" />
-          <span>{new Date(subscription.expirationDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+          <span>{new Date(subscription.expiresAt || subscription.expirationDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
         </div>
         {subscription.price && (
           <span className="font-bold text-slate-800">{subscription.currency} {subscription.price}</span>
@@ -65,7 +66,7 @@ const SubscriptionCard = ({ subscription, onOpenDetail, index }) => {
 
       <div className="flex gap-2">
         <button
-          onClick={(e) => { e.stopPropagation(); toast.success(isExpired ? 'Reactivation initiated!' : 'Renewal initiated!'); }}
+          onClick={(e) => { e.stopPropagation(); onRenew(subscription); }}
           className={`flex-1 py-2 text-xs font-bold rounded-xl transition ${
             isExpired
               ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
@@ -86,9 +87,9 @@ const SubscriptionCard = ({ subscription, onOpenDetail, index }) => {
 };
 
 /* ─── Subscription Row (table, unchanged) ────────────────── */
-const SubscriptionRow = ({ subscription, onOpenDetail, index }) => {
+const SubscriptionRow = ({ subscription, onOpenDetail, onRenew, index }) => {
   const Icon = getIcon(subscription.type);
-  const isExpired = subscription.status === 'Expired';
+  const isExpired = subscription.status === 'Expired' || subscription.status === 'suspended';
   const isActive = subscription.status === 'Active';
 
   return (
@@ -132,7 +133,7 @@ const SubscriptionRow = ({ subscription, onOpenDetail, index }) => {
       </td>
       <td className="py-5 px-3 text-sm text-slate-700 whitespace-nowrap">
         <Calendar size={14} className="inline text-slate-400 mr-1.5" />
-        {new Date(subscription.expirationDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+        {new Date(subscription.expiresAt || subscription.expirationDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
       </td>
       <td className="py-5 px-3 text-right whitespace-nowrap">
         {subscription.price ? (
@@ -146,7 +147,7 @@ const SubscriptionRow = ({ subscription, onOpenDetail, index }) => {
       <td className="py-5 px-3 text-right">
         <div className="flex items-center justify-end gap-2">
           <button
-            onClick={(e) => { e.stopPropagation(); toast.success(isExpired ? 'Reactivation initiated!' : 'Renewal initiated!'); }}
+            onClick={(e) => { e.stopPropagation(); onRenew(subscription); }}
             className={`px-4 py-2.5 text-xs font-bold rounded-xl transition-all duration-300 shadow-sm whitespace-nowrap ${
               isExpired
                 ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 shadow-amber-200'
@@ -169,12 +170,12 @@ const SubscriptionRow = ({ subscription, onOpenDetail, index }) => {
 };
 
 /* ─── Detail Modal (scrollbar hidden, modern) ────────────── */
-const SubscriptionDetailModal = ({ subscription, onClose }) => {
+const SubscriptionDetailModal = ({ subscription, onClose, onRenew }) => {
   const [autoRenew, setAutoRenew] = useState(subscription?.autoRenewal);
   if (!subscription) return null;
 
   const Icon = getIcon(subscription.type);
-  const isExpired = subscription.status === 'Expired';
+  const isExpired = subscription.status === 'Expired' || subscription.status === 'suspended';
 
   const handleToggleAutoRenew = () => {
     const next = !autoRenew;
@@ -208,7 +209,7 @@ const SubscriptionDetailModal = ({ subscription, onClose }) => {
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-slate-50 rounded-2xl p-4">
               <div className="flex items-center gap-2 text-slate-500 text-xs uppercase font-bold mb-1.5"><Clock size={14} /> Expiration</div>
-              <p className="text-base font-bold text-slate-800">{new Date(subscription.expirationDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+              <p className="text-base font-bold text-slate-800">{new Date(subscription.expiresAt || subscription.expirationDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
             </div>
             <div className="bg-slate-50 rounded-2xl p-4">
               <div className="flex items-center gap-2 text-slate-500 text-xs uppercase font-bold mb-1.5"><CreditCard size={14} /> Payment</div>
@@ -261,7 +262,7 @@ const SubscriptionDetailModal = ({ subscription, onClose }) => {
         {/* Footer */}
         <div className="px-6 pb-6 space-y-2">
           {subscription.price && (
-            <button onClick={() => toast.success(isExpired ? 'Reactivation started' : 'Renewal started')} className={`w-full py-3.5 font-bold rounded-xl transition shadow-md text-white ${isExpired ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600' : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700'}`}>
+            <button onClick={() => { onClose(); onRenew(subscription); }} className={`w-full py-3.5 font-bold rounded-xl transition shadow-md text-white ${isExpired ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600' : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700'}`}>
               {isExpired ? 'Reactivate now' : 'Renew now'}
             </button>
           )}
@@ -295,6 +296,7 @@ export default function SubscriptionsPage() {
   const navigate = useNavigate();
   const { data: subscriptions, isLoading } = useSubscription();
   const [selectedSubscription, setSelectedSubscription] = useState(null);
+  const [renewingSubscription, setRenewingSubscription] = useState(null);
 
   const summary = {
     total: subscriptions?.length || 0,
@@ -364,6 +366,7 @@ export default function SubscriptionsPage() {
                 key={sub.id}
                 subscription={sub}
                 onOpenDetail={setSelectedSubscription}
+                onRenew={setRenewingSubscription}
                 index={idx}
               />
             ))}
@@ -388,6 +391,7 @@ export default function SubscriptionsPage() {
                       key={sub.id}
                       subscription={sub}
                       onOpenDetail={setSelectedSubscription}
+                      onRenew={setRenewingSubscription}
                       index={idx}
                     />
                   ))}
@@ -403,6 +407,15 @@ export default function SubscriptionsPage() {
         <SubscriptionDetailModal
           subscription={selectedSubscription}
           onClose={() => setSelectedSubscription(null)}
+          onRenew={setRenewingSubscription}
+        />
+      )}
+
+      {/* Renew Modal */}
+      {renewingSubscription && (
+        <RenewModal
+          subscription={renewingSubscription}
+          onClose={() => setRenewingSubscription(null)}
         />
       )}
     </div>
