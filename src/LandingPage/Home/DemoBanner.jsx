@@ -232,31 +232,17 @@ export default function ProfessionalBanner() {
           </span>
         </div>
 
-        {/* Heading */}
+        {/* Heading – reduced weight */}
         <h1
-          className="text-slate-800 leading-[1.08]"
+          className="mt-20 text-slate-800 leading-[1.08]"
           style={{
-            fontFamily: "'Fraunces', 'Times New Roman', serif",
-            fontWeight: 560,
+            fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif",
+            fontWeight: 600,               // was 700, now slightly lighter
             fontSize: "clamp(2.2rem, 5.4vw, 3.85rem)",
             letterSpacing: "-0.02em",
           }}
         >
-          Cloud Infrastructure{" "}
-          <span className="relative inline-block">
-            <span
-              className="relative z-10 italic bg-gradient-to-r from-indigo-600 via-violet-600 to-slate-900 bg-clip-text text-transparent"
-              style={{ fontWeight: 540 }}
-            >
-              Built to Scale
-            </span>
-            <motion.span
-              className="absolute -bottom-1 left-0 right-0 h-[3px] rounded-full opacity-50 bg-gradient-to-r from-indigo-600 via-slate-600 to-slate-900"
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 0.6, duration: 0.6 }}
-            />
-          </span>
+          Build Your Website with Ease
         </h1>
 
         {/* Description */}
@@ -264,23 +250,19 @@ export default function ProfessionalBanner() {
           className="mt-4 text-slate-500 leading-relaxed max-w-md text-sm sm:text-base font-normal"
           style={{ fontFamily: "'Inter', sans-serif" }}
         >
-          Enterprise-grade hosting, cloud applications &amp; fully managed services trusted by{" "}
-          <span className="text-slate-700 font-medium">2,000+ businesses</span> worldwide. Deploy,
-          scale, and monitor with confidence.
+          <span className="text-slate-700 font-medium">
+            Get 80% Off Hosting with Free Domain
+          </span>
         </p>
 
-        {/* Pricing */}
-        <div className="mt-7 flex items-baseline gap-2">
-          <span className="text-slate-500 text-sm font-normal">Starting at</span>
-          <span className="flex items-baseline gap-1">
-            <IndianRupee size={17} className="text-slate-700" strokeWidth={2} />
-            <span
-              className="text-slate-800 font-semibold text-3xl sm:text-4xl"
-              style={{ fontFamily: "'Fraunces', serif", fontWeight: 560, letterSpacing: "-0.01em" }}
-            >
-              61
-            </span>
-            <span className="text-slate-500 text-sm">/month</span>
+        {/* Highlighted sub-headline */}
+        <div className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-100/60 w-fit">
+          <Zap size={14} className="text-indigo-500" />
+          <span
+            className="text-sm sm:text-base font-semibold text-indigo-700"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            Launch your website in minutes
           </span>
         </div>
 
@@ -312,6 +294,34 @@ export default function ProfessionalBanner() {
           ))}
         </div>
 
+        {/* Pricing & CTA – stacked, with larger price number */}
+        <div className="mt-7 space-y-4">
+          <div className="flex items-baseline gap-2">
+            <span className="text-slate-500 text-sm font-normal">Starting at</span>
+            <span className="flex items-baseline gap-1">
+              <IndianRupee size={22} className="text-slate-700" strokeWidth={2} />
+              <span
+                className="text-slate-800 font-semibold tracking-tight"
+                style={{
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontWeight: 600,
+                  fontSize: "clamp(2.5rem, 7vw, 4.5rem)",   // bigger price
+                  lineHeight: 1,
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                61
+              </span>
+              <span className="text-slate-500 text-sm">/month</span>
+            </span>
+          </div>
+
+          <button className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl font-semibold text-sm shadow-lg shadow-indigo-200/40 hover:shadow-xl hover:from-indigo-700 hover:to-blue-700 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] transition-all duration-200">
+            Buy Now
+            <ArrowRight size={15} />
+          </button>
+        </div>
+
         {/* Trust stats */}
         <div className="mt-10 flex flex-wrap items-center gap-6 sm:gap-10">
           {[
@@ -325,7 +335,7 @@ export default function ProfessionalBanner() {
               )}
               <span
                 className="text-slate-800 font-semibold block text-xl sm:text-2xl"
-                style={{ fontFamily: "'Fraunces', serif", fontWeight: 560, letterSpacing: "-0.01em" }}
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600, letterSpacing: "-0.01em" }}
               >
                 {val}
               </span>
