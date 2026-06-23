@@ -24,23 +24,21 @@ const row2Images = [
 const r1 = [...row1Images, ...row1Images, ...row1Images];
 const r2 = [...row2Images, ...row2Images, ...row2Images];
 
-const CARD_W = 340;
-const CARD_H = 220;
-const GAP    = 20;
-const SPEED  = 38;
+const SPEED = 38;
 
 const marqueeKeyframes = `
 @keyframes marquee-rtl {
   0%   { transform: translateX(0); }
-  100% { transform: translateX(calc(-${CARD_W + GAP}px * ${row1Images.length})); }
+  100% { transform: translateX(calc(-1 * (var(--card-w) + var(--gap)) * var(--item-count))); }
 }
+
 @keyframes marquee-ltr {
-  0%   { transform: translateX(calc(-${CARD_W + GAP}px * ${row2Images.length})); }
+  0%   { transform: translateX(calc(-1 * (var(--card-w) + var(--gap)) * var(--item-count))); }
   100% { transform: translateX(0); }
 }
 `;
 
-function MarqueeRow({ images, direction = "rtl", zIndex = 10 }) {
+function MarqueeRow({ images, itemCount, direction = "rtl", zIndex = 10, speed = SPEED }) {
   const animName = direction === "rtl" ? "marquee-rtl" : "marquee-ltr";
 
   return (
@@ -48,23 +46,27 @@ function MarqueeRow({ images, direction = "rtl", zIndex = 10 }) {
       <div
         className="flex"
         style={{
-          gap: `${GAP}px`,
+          gap: "var(--gap)",
           width: "max-content",
-          animation: `${animName} ${SPEED}s linear infinite`,
+          animation: `${animName} ${speed}s linear infinite`,
           willChange: "transform",
         }}
       >
         {images.map((src, i) => (
           <div
-            key={i}
-            className="group shrink-0 overflow-hidden rounded-2xl shadow-md ring-1 ring-slate-200/80 transition-all duration-300 hover:shadow-xl hover:ring-indigo-200 hover:scale-[1.02]"
-            style={{ width: CARD_W, height: CARD_H }}
+            key={`${src}-${i}`}
+            className="group shrink-0 overflow-hidden rounded-xl sm:rounded-2xl shadow-md ring-1 ring-slate-200/80 transition-all duration-300 hover:shadow-xl hover:ring-indigo-200 hover:scale-[1.02]"
+            style={{
+              width: "var(--card-w)",
+              height: "var(--card-h)",
+            }}
           >
             <img
               src={src}
-              alt={`slide-${i}`}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              alt={`Website showcase ${i + 1}`}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               draggable={false}
+              loading="lazy"
             />
           </div>
         ))}
@@ -76,46 +78,60 @@ function MarqueeRow({ images, direction = "rtl", zIndex = 10 }) {
 export default function MarqueeGallery() {
   return (
     <section
-      className="w-full overflow-hidden py-16 sm:py-24"
+      className="relative w-full overflow-hidden py-10 sm:py-16 lg:py-24"
       style={{
+        "--card-w": "clamp(210px, 72vw, 340px)",
+        "--card-h": "clamp(136px, 46vw, 220px)",
+        "--gap": "clamp(12px, 3vw, 20px)",
+        "--item-count": row1Images.length,
         background: "linear-gradient(180deg, #f8fafc 0%, #ffffff 50%, #f8fafc 100%)",
         fontFamily: "'Plus Jakarta Sans','Inter',system-ui,sans-serif",
       }}
     >
       <style>{marqueeKeyframes}</style>
 
-      {/* ── Heading ── */}
-      <div className="text-center mb-12 px-4">
-        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-[11px] font-bold text-indigo-600 uppercase tracking-[0.13em] mb-4">
-          ✦ Live Showcase
+      <div className="mb-8 px-4 text-center sm:mb-12">
+        <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.13em] text-indigo-600 sm:mb-4 sm:px-4 sm:text-[11px]">
+          Live Showcase
         </span>
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight">
+
+        <h2 className="mx-auto max-w-3xl text-2xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
           Trusted by creators{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-500">
+          <span className="bg-gradient-to-r from-indigo-600 to-violet-500 bg-clip-text text-transparent">
             worldwide
           </span>
         </h2>
-        <p className="mt-3 text-slate-500 text-sm sm:text-base font-normal max-w-md mx-auto">
+
+        <p className="mx-auto mt-3 max-w-md text-sm font-normal text-slate-500 sm:text-base">
           Real sites built and running on our platform every day.
         </p>
       </div>
 
-      {/* ── Rows wrapper — gap between rows ── */}
-      <div className="flex flex-col gap-5">
-        {/* Row 1 — right to left, sits on top */}
-        <MarqueeRow images={r1} direction="rtl" zIndex={20} />
+      <div className="flex flex-col gap-3 sm:gap-5">
+        <MarqueeRow
+          images={r1}
+          itemCount={row1Images.length}
+          direction="rtl"
+          zIndex={20}
+          speed={38}
+        />
 
-        {/* Row 2 — left to right, sits below */}
-        <MarqueeRow images={r2} direction="ltr" zIndex={10} />
+        <MarqueeRow
+          images={r2}
+          itemCount={row2Images.length}
+          direction="ltr"
+          zIndex={10}
+          speed={42}
+        />
       </div>
 
-      {/* ── Edge fade masks ── */}
       <div
-        className="pointer-events-none absolute inset-y-0 left-0 w-24 sm:w-40"
+        className="pointer-events-none absolute inset-y-0 left-0 w-10 sm:w-24 lg:w-40"
         style={{ background: "linear-gradient(to right, #f8fafc, transparent)" }}
       />
+
       <div
-        className="pointer-events-none absolute inset-y-0 right-0 w-24 sm:w-40"
+        className="pointer-events-none absolute inset-y-0 right-0 w-10 sm:w-24 lg:w-40"
         style={{ background: "linear-gradient(to left, #f8fafc, transparent)" }}
       />
     </section>

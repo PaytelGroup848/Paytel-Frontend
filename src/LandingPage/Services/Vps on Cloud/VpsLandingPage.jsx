@@ -7,6 +7,8 @@ import VpsMarketing from "./VpsMarketing";
 import VpsFaq from "./VpsFaq";
 import VpsComparison from "./comparePlans";
 import SuccessBanner from "../../Home/successStories"
+import  Moneyback from "../../../components/moneyback";
+import OfferBanner from "../../../components/banneroff";
  
 
 
@@ -18,10 +20,13 @@ export default function VpsLandingpage(){
         <Navbar/>
         <Banner/>
         <VpsPlans/>
+        <Moneyback/>
         <Features/>
-        <SuccessBanner/>
-        <VpsMarketing/>
         <VpsComparison/>
+    <SuccessBanner/>
+        <VpsMarketing/>
+        <OfferBanner/>
+        
         <VpsFaq/>
         <Footer/>
 

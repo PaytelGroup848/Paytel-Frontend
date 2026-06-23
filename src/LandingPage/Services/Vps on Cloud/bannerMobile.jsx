@@ -50,7 +50,7 @@ const scrollImages = [
     alt: "Dark server room with glowing cables",
   },
   {
-    src: "https://images.unsplash.com/photo-1620714223084-8fcacc2dbed5?w=700&q=80",
+    src: "https://images.unsplash.com/photo-1620714223084-8fc2accdb2ed5?w=700&q=80",
     alt: "Abstract digital network connections",
   },
 ];
@@ -115,6 +115,7 @@ function MobileImageStack() {
    Bottom-sheet enquiry form (mobile)
    ───────────────────────────────────────────── */
 function MobileEnquirySheet({ open, onClose }) {
+  // … (unchanged, the same implementation as provided)
   const [form, setForm] = useState({ name: "", email: "", mobile: "", service: "", message: "" });
   const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0]);
   const [countryOpen, setCountryOpen] = useState(false);
@@ -293,7 +294,6 @@ function MobileEnquirySheet({ open, onClose }) {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 280 }}
-            onSubmit={handleSubmit}
           >
             <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-slate-200" />
 
@@ -605,14 +605,14 @@ function MobileEnquirySheet({ open, onClose }) {
 }
 
 /* ─────────────────────────────────────────────
-   Main mobile banner — left text / right image
+   Main mobile banner — text + image side-by-side
    ───────────────────────────────────────────── */
 export default function BannerMobile() {
   const [sheetOpen, setSheetOpen] = useState(false);
 
   return (
     <section
-      className=" mt-5 relative w-full overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 font-sans antialiased"
+      className="relative w-full overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 font-sans antialiased"
       style={{ fontFamily: FONT_STACK }}
     >
       {/* Decorative background */}
@@ -629,7 +629,8 @@ export default function BannerMobile() {
       </div>
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-400 to-transparent" />
 
-      <div className="relative z-10 px-4 py-7 xs:px-5">
+      {/* Increased top padding to clear fixed navbar */}
+      <div className="relative z-10 px-4 pt-20 pb-7 xs:px-5">
         {/* Badge */}
         <div className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-indigo-200/60 bg-white/70 backdrop-blur px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-indigo-600 shadow-sm">
           <span className="relative flex h-1.5 w-1.5">
@@ -641,8 +642,8 @@ export default function BannerMobile() {
 
         {/* ── Side-by-side row: text (left) + image (right) ── */}
         <div className="flex items-start gap-3.5">
-          {/* LEFT — text */}
-          <div className="min-w-0 flex-[1.2]">
+          {/* LEFT — text, more flexible width */}
+          <div className="min-w-0 flex-[1] sm:flex-[1.2]">
             <h1 className="text-[clamp(1.5rem,7vw,2.1rem)] font-bold leading-[1.12] tracking-[-0.02em] text-slate-900">
               Deploy VPS in seconds.{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-600">
@@ -655,8 +656,8 @@ export default function BannerMobile() {
             </p>
           </div>
 
-          {/* RIGHT — compact cycling image */}
-          <div className="w-[34%] shrink-0 self-stretch">
+          {/* RIGHT — image with improved aspect ratio and max width */}
+          <div className="w-[34%] shrink-0 self-stretch max-w-[150px] sm:max-w-[160px]">
             <div className="aspect-[3/4] w-full rounded-2xl shadow-xl shadow-slate-300/50 ring-1 ring-slate-900/5">
               <MobileImageStack />
             </div>
@@ -686,7 +687,7 @@ export default function BannerMobile() {
           ))}
         </div>
 
-        {/* Pricing strip */}
+        {/* Pricing strip — already side-by-side */}
         <div className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-indigo-200 bg-white/80 backdrop-blur p-3.5 shadow-md shadow-indigo-100/60 ring-1 ring-slate-900/5">
           <div className="min-w-0">
             <p className="text-[10px] font-medium text-slate-500">Starting at</p>

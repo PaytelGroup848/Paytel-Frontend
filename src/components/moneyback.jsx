@@ -1,15 +1,11 @@
 export default function MoneyBack() {
   return (
-    <div className="w-full flex justify-center px-4 py-6 sm:py-8">
-      <div
-        className="w-full overflow-hidden rounded-2xl shadow-lg"
-        style={{ maxWidth: "72vw" }}
-      >
+    <div className="w-full flex justify-center px-4 py-5 sm:py-8">
+      <div className="w-full max-w-[1100px] overflow-hidden rounded-2xl shadow-lg">
         <img
           src="/moneyback.png"
           alt="Money back guarantee"
-          className="w-full object-cover block"
-          style={{ height: "clamp(180px, 66vh, 340px)" }}
+          className="block w-full h-auto object-contain"
         />
       </div>
     </div>

@@ -167,7 +167,7 @@ const PlanModal = ({ plan, onClose }) => {
   const grandTotal = subtotal + taxes;
 
   return (
-    <div className="fixed inset-0 z-[999] flex items-start justify-center pt-16 sm:pt-20 p-4 bg-slate-900/50 backdrop-blur-md">
+    <div className="fixed inset-0 z-[999] flex items-start justify-center pt-12 sm:pt-16 p-4 bg-slate-900/50 backdrop-blur-md">
       <motion.div
         initial={{ opacity: 0, scale: 0.96, y: 24 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}

@@ -397,7 +397,7 @@ export default function ProfessionalBanner() {
 
       {/* Desktop: scroll‑pinned */}
       {isLargeScreen ? (
-        <div ref={pinWrapRef} className="relative" style={{ height: "180vh" }}>
+        <div ref={pinWrapRef} className="relative" style={{ height: "100vh" }}>
           <div className="sticky top-0 h-screen overflow-hidden">
             <SceneBg />
             <section className="relative z-10 h-full flex items-center">
