@@ -168,13 +168,6 @@ export default function VpsMarketing() {
                 applications, and uninterrupted uptime.
               </p>
             </div>
-            <a
-              href="#vps-plans"
-              className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-white px-5 text-sm font-extrabold text-slate-950 shadow-lg shadow-slate-950/20 transition hover:bg-slate-100 sm:w-auto"
-            >
-              View VPS Plans
-              <ArrowRight size={17} />
-            </a>
           </div>
 
           {/* ---------- TRUSTED REVIEWS SECTION (REALISTIC & WIDER) ---------- */}

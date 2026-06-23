@@ -296,9 +296,6 @@ export default function Navbar({ logoImg = "/Cloudedata.svg", phoneNumber = "931
         </div>
       </nav>
 
-      {/* Spacer – ensures content (banner etc.) starts after navbar */}
-      <div className="h-20" />
-
       {/* ========== DESKTOP MEGA MENU OVERLAY ========== */}
       <AnimatePresence>
         {megaMenuOpen && (

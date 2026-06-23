@@ -239,7 +239,7 @@ export default function VpsFaq() {
               </p>
             </div>
             <a
-              href="#contact"
+              href="/contact"
               className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-extrabold text-white shadow-md hover:bg-indigo-700 transition"
             >
               Contact Support

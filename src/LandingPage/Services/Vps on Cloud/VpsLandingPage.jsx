@@ -5,7 +5,9 @@ import Features from "./Features";
 import VpsPlans from "./VpsPlans";
 import VpsMarketing from "./VpsMarketing";
 import VpsFaq from "./VpsFaq";
-
+import VpsComparison from "./comparePlans";
+import SuccessBanner from "../../Home/successStories"
+ 
 
 
 
@@ -17,7 +19,9 @@ export default function VpsLandingpage(){
         <Banner/>
         <VpsPlans/>
         <Features/>
+        <SuccessBanner/>
         <VpsMarketing/>
+        <VpsComparison/>
         <VpsFaq/>
         <Footer/>
 
