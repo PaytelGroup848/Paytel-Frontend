@@ -20,6 +20,70 @@ export const useSubscription = () =>
     staleTime: 0,
   });
 
+  export const useRenewalDetails = (subscriptionId) =>
+  useQuery({
+    queryKey: ['billing', 'renewal', subscriptionId],
+    queryFn: () => api.get(`/billing/subscriptions/${subscriptionId}/renewal-details`)
+      .then(r => r.data?.data),
+    enabled: !!subscriptionId,
+    staleTime: 0,
+  });
+
+export const useCreateRenewalOrder = () =>
+  useMutation({
+    mutationFn: ({ subscriptionId, tenureMonths, selectedPeriod }) =>
+      api
+        .post(`/billing/subscriptions/${subscriptionId}/renew`, {
+          tenureMonths,
+          selectedPeriod,
+        })
+        .then((r) => r.data?.data),
+    onError: (error) => {
+      console.error("Renewal order error:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to create renewal order",
+      );
+    },
+  });
+
+  // ✅ NEW: Verify renewal payment
+export const useVerifyRenewalPayment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      subscriptionId,
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      tenureMonths,
+    }) =>
+      api
+        .post(`/billing/subscriptions/${subscriptionId}/verify-renewal`, {
+          razorpay_order_id,
+          razorpay_payment_id,
+          razorpay_signature,
+          tenureMonths,
+        })
+        .then((r) => r.data?.data),
+    onSuccess: async (data) => {
+      toast.success("Renewal successful! Your subscription has been extended.");
+      await queryClient.invalidateQueries({
+        queryKey: ["billing", "subscriptions"],
+      });
+      await queryClient.refetchQueries({
+        queryKey: ["billing", "subscriptions"],
+      });
+    },
+    onError: (error) => {
+      console.error("Renewal verification error:", error);
+      toast.error(
+        error.response?.data?.message || "Renewal verification failed",
+      );
+    },
+  });
+};
+
+
 // Get payment history (both VPS and WordPress)
 export const usePaymentsHistory = () =>
   useQuery({
@@ -52,10 +116,20 @@ export const useDashboardData = () =>
     staleTime: 1000 * 30, // 30 seconds
   });
 
-// CREATE ORDER - Supports both VPS and WordPress
+// CREATE ORDER - Supports both VPS and WordPress, plus renewals
 export const useCreateOrder = () =>
   useMutation({
     mutationFn: (data) => {
+      // Renewal order (RenewModal)
+      if (data.subscriptionId) {
+        return api.post('/billing/create-order', {
+          subscriptionId: data.subscriptionId,
+          tenureMonths: data.tenureMonths,
+          planId: data.planId,
+          planType: data.planType
+        }).then(r => r.data?.data);
+      }
+      
       // WordPress order (PlanModal)
       if (data.planId && data.duration) {
         return api.post('/billing/create-order', {
@@ -117,3 +191,6 @@ export const useVerifyPayment = () => {
     }
   });
 };
+
+
+
