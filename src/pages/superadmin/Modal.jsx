@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-
 export default function Modal({
   isOpen,
   onClose,

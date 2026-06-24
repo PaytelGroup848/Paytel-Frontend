@@ -15,8 +15,8 @@ export default function CreateUserModal({
     password: "",
     role: "user",
   });
- const [errors, setErrors] = useState({});
- const createMutation = useCreateAdminUser();
+  const [errors, setErrors] = useState({});
+  const createMutation = useCreateAdminUser();
   const [showPassword, setShowPassword] = useState(false);
 
   const isDark = theme === "dark";

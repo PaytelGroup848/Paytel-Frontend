@@ -18,7 +18,11 @@ export default function SuperAdminSidebar() {
       ? [{ to: "/superadmin/support", label: "Support", icon: Headphones }]
       : [
           { to: "/superadmin/servers", label: "Servers", icon: Server },
-          { to: "/superadmin/instances", label: "Instances", icon: LayoutList },
+          {
+            to: "/superadmin/instances",
+            label: "Wordpress",
+            icon: LayoutList,
+          },
           { to: "/superadmin/support", label: "Support", icon: Headphones },
           { to: "/superadmin/users", label: "Users", icon: Users },
           { to: "/superadmin/products", label: "Products", icon: Package },
