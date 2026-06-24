@@ -100,14 +100,14 @@ function validateField(name, value, country) {
   }
 }
 
-// ── Image view ────────────────────────────────────────────────────────
+// ── Image view – now ultra clean ──────────────────────────────────────
 function ImageView({ onShowForm }) {
   return (
     <button
       type="button"
       aria-label="Open quote form"
       onClick={onShowForm}
-      className=" absolute inset-0 block h-full w-full cursor-pointer overflow-hidden border-0 bg-transparent p-0 text-left rounded-2xl"
+      className="h-full w-full block focus:outline-none"
     >
       <img
         src="/vpsWEB.jpg"
@@ -115,17 +115,13 @@ function ImageView({ onShowForm }) {
         className="h-full w-full object-cover"
         loading="eager"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+      {/* No overlay – just the image */}
     </button>
   );
 }
 
-// ── Form card ─────────────────────────────────────────────────────────
+// ── Form card (unchanged) ────────────────────────────────────────────
 function FormCard({ onShowImage, onInteract }) {
-  // ... (identical to the provided implementation, no changes needed)
-  // The full FormCard component is kept exactly as you posted;
-  // only minor style adjustments for better responsiveness have been applied.
-  // We include the complete code below for completeness.
   const [form, setForm] = useState({ name: "", email: "", mobile: "", service: "", message: "" });
   const [country, setCountry] = useState(COUNTRIES[0]);
   const [countryOpen, setCountryOpen] = useState(false);
@@ -595,7 +591,7 @@ function FormCard({ onShowImage, onInteract }) {
   );
 }
 
-// ── Main export ───────────────────────────────────────────────────────
+// ── Main export – container now clean with subtle border ─────────────
 export default function BannerCard() {
   const [view, setView] = useState("image");
   const [userActive, setUserActive] = useState(false);
@@ -633,7 +629,7 @@ export default function BannerCard() {
 
   return (
     <div
-      className="relative w-full max-w-[500px] mx-auto h-[540px] sm:h-[600px] rounded-2xl overflow-hidden shadow-2xl shadow-slate-300/40 ring-1 ring-slate-900/6 bg-white"
+      className="relative w-full max-w-[500px] mx-auto h-[540px] sm:h-[600px] rounded-2xl overflow-hidden border border-white/40 bg-white shadow-sm"
       style={{ fontFamily: FONT }}
     >
       <AnimatePresence mode="wait" initial={false}>

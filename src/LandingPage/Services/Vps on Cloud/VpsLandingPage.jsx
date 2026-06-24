@@ -9,6 +9,7 @@ import VpsComparison from "./comparePlans";
 import SuccessBanner from "../../Home/successStories"
 import  Moneyback from "../../../components/moneyback";
 import OfferBanner from "../../../components/banneroff";
+import TrustBadge from "../../Home/Trusted";
  
 
 
@@ -19,6 +20,9 @@ export default function VpsLandingpage(){
    
         <Navbar/>
         <Banner/>
+           <div className="mt-5 p-0">
+                     <TrustBadge/>
+              </div>
         <VpsPlans/>
         <Moneyback/>
         <Features/>
