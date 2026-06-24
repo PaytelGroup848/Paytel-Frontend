@@ -9,6 +9,8 @@ import { queryClient } from "./services/queryClient";
 import App from "./App.jsx";
 import "./index.css";
 import Analytics from "./components/Analytics.jsx";
+import WhatsappIcon from "./components/whatappIcon.jsx";
+import EnquiryFloatingButton from "./components/enquiryIcon.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -40,6 +42,8 @@ createRoot(document.getElementById("root")).render(
         />
       </BrowserRouter>
     </QueryClientProvider>
+    <EnquiryFloatingButton/>
+    <WhatsappIcon/>
   
   </StrictMode>,
 );
