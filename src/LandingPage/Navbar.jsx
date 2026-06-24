@@ -40,7 +40,8 @@ const megaMenuSections = [
       {
         label: "Managed WordPress Hosting",
         href: "/wordpress-hosting",
-        description: "Fully managed, speed-optimized WordPress hosting with daily backups.",
+        description:
+          "Fully managed, speed-optimized WordPress hosting with daily backups.",
       },
       {
         label: "Migrate a Website",
@@ -71,7 +72,8 @@ const megaMenuSections = [
       {
         label: "Node.js Hosting",
         href: "#",
-        description: "High-performance Node.js hosting with PM2 and auto-scaling.",
+        description:
+          "High-performance Node.js hosting with PM2 and auto-scaling.",
       },
     ],
   },
@@ -82,17 +84,20 @@ const megaMenuSections = [
       {
         label: "Busy on Cloud",
         href: "/busy-on-cloud",
-        description: "Run Busy accounting software on high-performance cloud servers.",
+        description:
+          "Run Busy accounting software on high-performance cloud servers.",
       },
       {
         label: "Marg on Cloud",
         href: "/marg-on-cloud",
-        description: "Secure Marg ERP access from anywhere with multi-user support.",
+        description:
+          "Secure Marg ERP access from anywhere with multi-user support.",
       },
       {
         label: "Tally on Cloud",
         href: "/tally-on-cloud",
-        description: "TallyPrime on cloud with auto backup and bank-grade security.",
+        description:
+          "TallyPrime on cloud with auto backup and bank-grade security.",
       },
     ],
   },
@@ -152,7 +157,10 @@ function LogoImage({ logoImg = LOGO_FALLBACKS[0], className = "" }) {
   );
 }
 
-export default function Navbar({ logoImg = "/Cloudedata.svg", phoneNumber = "9311472357" }) {
+export default function Navbar({
+  logoImg = "/Cloudedata.svg",
+  phoneNumber = "9311472357",
+}) {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, user, clearAuth } = useAuthStore();
@@ -198,7 +206,9 @@ export default function Navbar({ logoImg = "/Cloudedata.svg", phoneNumber = "931
       }`}
     >
       <Phone size={18} />
-      <span className={`${forceShow ? "inline" : "hidden sm:inline"}`}>{phoneNumber}</span>
+      <span className={`${forceShow ? "inline" : "hidden sm:inline"}`}>
+        {phoneNumber}
+      </span>
     </a>
   );
 
@@ -229,17 +239,24 @@ export default function Navbar({ logoImg = "/Cloudedata.svg", phoneNumber = "931
                 <Link
                   to="/pricing"
                   className={`group relative rounded-3xl px-6 py-2.5 text-sm font-medium transition-all ${
-                    isActive("/pricing") ? "text-indigo-600" : "text-slate-700 hover:text-slate-900"
+                    isActive("/pricing")
+                      ? "text-indigo-600"
+                      : "text-slate-700 hover:text-slate-900"
                   }`}
                 >
                   <span>Pricing</span>
                   <div className="absolute bottom-0 left-1/2 h-0.5 w-0 -translate-x-1/2 bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-300 group-hover:w-4/5" />
                 </Link>
 
-                <div className="services-button relative" onMouseEnter={() => setMegaMenuOpen(true)}>
+                <div
+                  className="services-button relative"
+                  onMouseEnter={() => setMegaMenuOpen(true)}
+                >
                   <button
                     className={`flex items-center gap-1 rounded-3xl px-6 py-2.5 text-sm font-medium transition-all ${
-                      megaMenuOpen ? "text-indigo-600" : "text-slate-700 hover:text-slate-900"
+                      megaMenuOpen
+                        ? "text-indigo-600"
+                        : "text-slate-700 hover:text-slate-900"
                     }`}
                   >
                     Services
@@ -257,7 +274,9 @@ export default function Navbar({ logoImg = "/Cloudedata.svg", phoneNumber = "931
                       key={link.label}
                       to={link.href}
                       className={`group relative flex items-center gap-1.5 rounded-3xl px-6 py-2.5 text-sm font-medium transition-all ${
-                        isActive(link.href) ? "text-indigo-600" : "text-slate-700 hover:text-slate-900"
+                        isActive(link.href)
+                          ? "text-indigo-600"
+                          : "text-slate-700 hover:text-slate-900"
                       }`}
                     >
                       <Icon size={17} />
@@ -363,8 +382,12 @@ export default function Navbar({ logoImg = "/Cloudedata.svg", phoneNumber = "931
                             type="button"
                             className="block w-full rounded-2xl p-3 text-left transition-all hover:bg-indigo-50/70"
                           >
-                            <div className="font-medium text-slate-800">{item.label}</div>
-                            <div className="mt-1 text-sm text-slate-500">{item.description}</div>
+                            <div className="font-medium text-slate-800">
+                              {item.label}
+                            </div>
+                            <div className="mt-1 text-sm text-slate-500">
+                              {item.description}
+                            </div>
                           </button>
                         ) : (
                           <Link
@@ -376,9 +399,11 @@ export default function Navbar({ logoImg = "/Cloudedata.svg", phoneNumber = "931
                             <div className="font-medium text-slate-800 group-hover:text-indigo-700">
                               {item.label}
                             </div>
-                            <div className="mt-1 text-sm text-slate-500">{item.description}</div>
+                            <div className="mt-1 text-sm text-slate-500">
+                              {item.description}
+                            </div>
                           </Link>
-                        )
+                        ),
                       )}
                     </div>
                   </div>
@@ -410,7 +435,10 @@ export default function Navbar({ logoImg = "/Cloudedata.svg", phoneNumber = "931
             >
               {/* Header with logo and close button – extra right margin for X */}
               <div className="flex items-center justify-between border-b border-slate-100 bg-gradient-to-r from-indigo-50 to-white px-5 py-4 pr-3">
-                <LogoImage logoImg={logoImg} className="block h-9 w-auto max-w-[75%] object-contain" />
+                <LogoImage
+                  logoImg={logoImg}
+                  className="block h-9 w-auto max-w-[75%] object-contain"
+                />
                 <button
                   onClick={() => setMobileOpen(false)}
                   className="rounded-full bg-white/80 p-2 text-slate-500 shadow-sm transition-all hover:bg-indigo-50 hover:text-indigo-600 active:scale-95 ml-2 mr-1"
@@ -440,7 +468,9 @@ export default function Navbar({ logoImg = "/Cloudedata.svg", phoneNumber = "931
                     <div key={section.title}>
                       <div className="mb-3 flex items-center gap-2.5 px-1 font-semibold text-indigo-600">
                         <section.icon size={18} />
-                        <span className="text-sm uppercase tracking-wider">{section.title}</span>
+                        <span className="text-sm uppercase tracking-wider">
+                          {section.title}
+                        </span>
                       </div>
                       <div className="space-y-1.5">
                         {section.items.map((item) =>
@@ -454,7 +484,9 @@ export default function Navbar({ logoImg = "/Cloudedata.svg", phoneNumber = "931
                                 <p className="truncate text-base font-semibold text-slate-800 group-hover:text-indigo-700">
                                   {item.label}
                                 </p>
-                                <p className="mt-0.5 line-clamp-1 text-xs text-slate-400">{item.description}</p>
+                                <p className="mt-0.5 line-clamp-1 text-xs text-slate-400">
+                                  {item.description}
+                                </p>
                               </div>
                               <ChevronRight
                                 size={18}
@@ -472,14 +504,16 @@ export default function Navbar({ logoImg = "/Cloudedata.svg", phoneNumber = "931
                                 <p className="truncate text-base font-semibold text-slate-800 group-hover:text-indigo-700">
                                   {item.label}
                                 </p>
-                                <p className="mt-0.5 line-clamp-1 text-xs text-slate-400">{item.description}</p>
+                                <p className="mt-0.5 line-clamp-1 text-xs text-slate-400">
+                                  {item.description}
+                                </p>
                               </div>
                               <ChevronRight
                                 size={18}
                                 className="flex-shrink-0 text-slate-300 transition-transform group-hover:translate-x-1 group-hover:text-indigo-500"
                               />
                             </Link>
-                          )
+                          ),
                         )}
                       </div>
                     </div>

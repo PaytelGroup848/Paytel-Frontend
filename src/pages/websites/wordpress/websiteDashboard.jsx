@@ -33,6 +33,7 @@ import {
 } from "../../../hooks/useWordPress";
 import CorePerformance from "./CorePerformance";
 import { SslCard } from "./SslCard";
+import DomainExpiryCard from "./DomainExpiryCard";
 
 function ConfigureModal({ instanceId, isOpen, onClose }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -411,6 +412,22 @@ export default function WebsiteDashboard() {
                   {siteData.createdDate}
                 </p>
               </div>
+
+              <DomainExpiryCard siteData={siteData} />
+              {/* <div className="px-4 py-2 bg-slate-50 rounded-xl border border-slate-100 min-w-[120px]">
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">
+                  Domain Expiry
+                  {console.log("this is my sites data", siteData)}
+                </p>
+                <div className="flex justify-between text-center">
+                  <p className="text-xs font-bold text-slate-800">
+                    {siteData.createdDate}{" "}
+                    <button className="cursor-pointer">
+                      <RotateCcw size={16} />
+                    </button>
+                  </p>
+                </div>
+              </div> */}
             </div>
           </div>
         </section>
