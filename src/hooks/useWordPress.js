@@ -575,3 +575,18 @@ export const useUnsuspendInstance = () =>
       );
     },
   });
+
+//For domain expiry check
+
+export const useDomainExpiry = (instanceId) =>
+  useQuery({
+    queryKey: ["wordpress", "domain-expiry", instanceId],
+    queryFn: async () => {
+      const res = await api.get(`/wordpress/${instanceId}/domain-expiry`);
+      return res.data.data;
+    },
+    enabled: !!instanceId,
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
