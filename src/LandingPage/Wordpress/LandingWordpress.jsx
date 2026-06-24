@@ -10,7 +10,7 @@ import WordPressFeatures from "./featurWordpress";
 import Reviews from "../Home/Review";
 import WordPressFAQ from "./wordpressFaq";
 import TrustBadge from "../Home/Trusted";
-
+import ImageOnly from "../../components/dashboardImage";
 export default function LandingWordpress() {
   return (
     <>
@@ -26,6 +26,7 @@ export default function LandingWordpress() {
       <SuccessBanner/>
       <WordPressFeatures/>
       <Reviews/>
+                <ImageOnly/>
       <Banneroff/>
       <WordPressFAQ/>
       <Footer />

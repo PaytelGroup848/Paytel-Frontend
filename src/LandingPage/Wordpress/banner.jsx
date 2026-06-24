@@ -260,7 +260,7 @@ export default function WordPressBanner() {
               {/* RIGHT – Image */}
               <div className="">
                 <img
-                  src="/wordpressimage.png"
+                  src="/wordpressimage.jpg"
                   alt="WordPress hosting illustration"
                   style={{
                     width: "100%",

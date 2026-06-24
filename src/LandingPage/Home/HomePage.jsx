@@ -13,6 +13,7 @@ import SuccessBanner from "./successStories";
 import MoneyBack from "../../components/moneyback";
 import OfferBanner from "../../components/banneroff";
 import TrustBadge from "./Trusted";
+import ImageOnly from "../../components/dashboardImage";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Smooth scroll progress bar at the top
@@ -237,8 +238,12 @@ export default function HomePage() {
         <SectionReveal variant="fadeIn" duration={0.8} delay={0.05}>
           <ComparisonTable />
         </SectionReveal>
-
         <SectionDivider />
+
+
+        <SectionReveal variant="fadeUp" delay={0.05}>
+          <ImageOnly/>
+       </SectionReveal>
 
         {/* Services */}
         <SectionReveal variant="slideLeft" delay={0.05}>
@@ -256,6 +261,9 @@ export default function HomePage() {
 
         <SectionDivider />
 
+        
+
+
         {/* Business Card */}
         <SectionReveal variant="scaleUp" delay={0.05} duration={0.65}>
           <BusinessCard />
@@ -267,8 +275,8 @@ export default function HomePage() {
       <SectionReveal variant="fadeUp" delay={0.05}>
         <ContactCard />
       </SectionReveal>
+
        <SectionReveal variant="fadeUp" delay={0.05}>
-       
           <OfferBanner/>
        </SectionReveal>
 
