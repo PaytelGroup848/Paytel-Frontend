@@ -167,7 +167,7 @@ const PlanModal = ({ plan, onClose }) => {
   const grandTotal = subtotal + taxes;
 
   return (
-    <div className="fixed inset-0 z-[999] flex items-start justify-center pt-12 sm:pt-16 p-4 bg-slate-900/50 backdrop-blur-md">
+    <div className="fixed inset-0 z-[999] flex items-start justify-center pt-9 sm:pt-16 p-4 bg-slate-900/50 backdrop-blur-md">
       <motion.div
         initial={{ opacity: 0, scale: 0.96, y: 24 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -346,9 +346,6 @@ export default function Plans() {
           transition={{ duration: 0.55 }}
           className="text-center mb-14"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-[11px] font-bold text-indigo-600 uppercase tracking-[0.14em] mb-5">
-            WordPress Hosting Plans
-          </span>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 leading-[1.06] mb-4">
             Pick the plan that fits{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-500">

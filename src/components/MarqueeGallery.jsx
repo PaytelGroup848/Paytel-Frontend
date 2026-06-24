@@ -1,3 +1,5 @@
+import React from "react";
+
 const row1Images = [
   "/web/Screenshot_26.png",
   "/web/Screenshot_18.png",
@@ -21,10 +23,9 @@ const row2Images = [
   "/web/Screenshot_31.png",
 ];
 
+// Repeating images to ensure a smooth infinite loop
 const r1 = [...row1Images, ...row1Images, ...row1Images];
 const r2 = [...row2Images, ...row2Images, ...row2Images];
-
-const SPEED = 38;
 
 const marqueeKeyframes = `
 @keyframes marquee-rtl {
@@ -36,15 +37,20 @@ const marqueeKeyframes = `
   0%   { transform: translateX(calc(-1 * (var(--card-w) + var(--gap)) * var(--item-count))); }
   100% { transform: translateX(0); }
 }
+
+/* Pause animation on hover for better user experience */
+.pause-on-hover:hover > div {
+  animation-play-state: paused !important;
+}
 `;
 
-function MarqueeRow({ images, itemCount, direction = "rtl", zIndex = 10, speed = SPEED }) {
+function MarqueeRow({ images, direction = "rtl", zIndex = 10, speed = 40 }) {
   const animName = direction === "rtl" ? "marquee-rtl" : "marquee-ltr";
 
   return (
-    <div className="relative w-full overflow-hidden" style={{ zIndex }}>
+    <div className="relative w-full overflow-hidden pause-on-hover py-4" style={{ zIndex }}>
       <div
-        className="flex"
+        className="flex items-center"
         style={{
           gap: "var(--gap)",
           width: "max-content",
@@ -55,16 +61,19 @@ function MarqueeRow({ images, itemCount, direction = "rtl", zIndex = 10, speed =
         {images.map((src, i) => (
           <div
             key={`${src}-${i}`}
-            className="group shrink-0 overflow-hidden rounded-xl sm:rounded-2xl shadow-md ring-1 ring-slate-200/80 transition-all duration-300 hover:shadow-xl hover:ring-indigo-200 hover:scale-[1.02]"
+            className="group relative shrink-0 overflow-hidden rounded-2xl sm:rounded-[2rem] bg-white shadow-lg ring-1 ring-slate-900/5 transition-all duration-500 ease-out hover:z-50 hover:-translate-y-2 hover:shadow-2xl hover:shadow-indigo-500/20 hover:ring-indigo-500/40"
             style={{
               width: "var(--card-w)",
               height: "var(--card-h)",
             }}
           >
+            {/* Subtle overlay gradient on hover for a premium look */}
+            <div className="absolute inset-0 z-10 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            
             <img
               src={src}
               alt={`Website showcase ${i + 1}`}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
               draggable={false}
               loading="lazy"
             />
@@ -78,62 +87,52 @@ function MarqueeRow({ images, itemCount, direction = "rtl", zIndex = 10, speed =
 export default function MarqueeGallery() {
   return (
     <section
-      className="relative w-full overflow-hidden py-10 sm:py-16 lg:py-24"
+      className="relative w-full overflow-hidden py-16 sm:py-24 lg:py-32"
       style={{
-        "--card-w": "clamp(210px, 72vw, 340px)",
-        "--card-h": "clamp(136px, 46vw, 220px)",
-        "--gap": "clamp(12px, 3vw, 20px)",
+        // Upgraded width and height for larger cards
+        "--card-w": "clamp(260px, 60vw, 440px)",
+        "--card-h": "clamp(160px, 40vw, 280px)",
+        // Increased gap between individual cards
+        "--gap": "clamp(16px, 4vw, 32px)",
         "--item-count": row1Images.length,
-        background: "linear-gradient(180deg, #f8fafc 0%, #ffffff 50%, #f8fafc 100%)",
-        fontFamily: "'Plus Jakarta Sans','Inter',system-ui,sans-serif",
+        // Premium radial gradient background
+        background: "radial-gradient(ellipse at top, #ffffff 0%, #f1f5f9 100%)",
+        fontFamily: "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif",
       }}
     >
       <style>{marqueeKeyframes}</style>
 
-      <div className="mb-8 px-4 text-center sm:mb-12">
-        <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.13em] text-indigo-600 sm:mb-4 sm:px-4 sm:text-[11px]">
-          Live Showcase
-        </span>
+      <div className="mb-8 px-4 text-center sm:mb-18 relative z-20">
 
-        <h2 className="mx-auto max-w-3xl text-2xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
+        <h2 className="mx-auto max-w-4xl text-3xl font-black leading-tight tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
           Trusted by creators{" "}
-          <span className="bg-gradient-to-r from-indigo-600 to-violet-500 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
             worldwide
           </span>
         </h2>
 
-        <p className="mx-auto mt-3 max-w-md text-sm font-normal text-slate-500 sm:text-base">
-          Real sites built and running on our platform every day.
+        <p className="mx-auto mt-5 max-w-lg text-base font-medium text-slate-500 sm:text-lg">
+          Real sites built, launched, and thriving on our platform every single day.
         </p>
       </div>
 
-      <div className="flex flex-col gap-3 sm:gap-5">
+      {/* Increased the gap between the two rows here (gap-6 sm:gap-10) */}
+      <div className="flex flex-col gap-6 sm:gap-10">
         <MarqueeRow
           images={r1}
-          itemCount={row1Images.length}
           direction="rtl"
           zIndex={20}
-          speed={38}
+          speed={45} // Slightly slower so larger cards are easier to look at
         />
 
         <MarqueeRow
           images={r2}
-          itemCount={row2Images.length}
           direction="ltr"
           zIndex={10}
-          speed={42}
+          speed={50}
         />
       </div>
 
-      <div
-        className="pointer-events-none absolute inset-y-0 left-0 w-10 sm:w-24 lg:w-40"
-        style={{ background: "linear-gradient(to right, #f8fafc, transparent)" }}
-      />
-
-      <div
-        className="pointer-events-none absolute inset-y-0 right-0 w-10 sm:w-24 lg:w-40"
-        style={{ background: "linear-gradient(to left, #f8fafc, transparent)" }}
-      />
     </section>
   );
 }

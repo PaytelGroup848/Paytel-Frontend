@@ -9,12 +9,17 @@ import Banneroff from "../../components/banneroff";
 import WordPressFeatures from "./featurWordpress";
 import Reviews from "../Home/Review";
 import WordPressFAQ from "./wordpressFaq";
+import TrustBadge from "../Home/Trusted";
 
 export default function LandingWordpress() {
   return (
     <>
       <Navbar />
       <WordPressBanner/>
+      <div className="mt-5 p-0">
+             <TrustBadge/>
+      </div>
+ 
       <Plans/>
       <MoneyBack/>
          <MarqueeGallery/>

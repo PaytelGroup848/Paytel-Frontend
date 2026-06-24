@@ -19,12 +19,13 @@ import {
   CreditCard,
 } from "lucide-react";
 
-// Your exact plan data
+// ── Updated plan data with original prices ──
 const plans = [
   {
     id: "wordpress",
     name: "WordPress",
     price: "₹61",
+    originalPrice: "₹305",
     period: "/mo",
     desc: "Easy one-click WordPress installation for blogs and small business websites.",
     features: [
@@ -42,6 +43,7 @@ const plans = [
     id: "linux-vps",
     name: "Linux VPS",
     price: "₹549",
+    originalPrice: "₹2,745",
     period: "/mo",
     desc: "High-performance Linux server with root access and NVMe storage.",
     features: [
@@ -55,11 +57,11 @@ const plans = [
     popular: false,
     cta: "Choose Linux",
   },
-
   {
     id: "win-vps",
     name: "Windows VPS",
     price: "₹2,000",
+    originalPrice: "₹10,000",
     period: "/mo",
     desc: "Dedicated resources with full admin control and 100% uptime guarantee.",
     features: [
@@ -73,11 +75,11 @@ const plans = [
     popular: true,
     cta: "Choose Windows",
   },
-  
- {
+  {
     id: "tally",
     name: "Tally Cloud",
     price: "₹299",
+    originalPrice: "₹1,495",
     period: "/mo",
     desc: "Secure Tally ERP hosting with multi-user access and auto backups.",
     features: [
@@ -91,7 +93,6 @@ const plans = [
     popular: false,
     cta: "Choose Tally",
   },
-
 ];
 
 // Common features list
@@ -128,12 +129,18 @@ const PlanCard = ({ plan, index }) => {
         boxShadow: "0 20px 40px -12px rgba(0,0,0,0.08)",
         transition: { duration: 0.25 },
       }}
-      className={`relative flex flex-col bg-white rounded-2xl border border-slate-200/80 border-t-[3px] transition-all duration-300 ${
-        plan.popular
-          ? "border-t-blue-500 shadow-[0_8px_25px_rgba(59,130,246,0.1)] scale-[1.02] z-10"
-          : "border-t-blue-400 shadow-sm"
-      }`}
+      className={`relative flex flex-col bg-white rounded-2xl border border-slate-200/80 border-t-[3px] transition-all duration-300 ${plan.popular
+        ? "border-t-blue-500 shadow-[0_8px_25px_rgba(59,130,246,0.1)] scale-[1.02] z-10"
+        : "border-t-blue-400 shadow-sm"
+        }`}
     >
+      {/* 80% OFF badge – top right corner */}
+<div className="absolute top-0 right-0 z-20">
+  <span className="me-3 text-green-600 text-[16px] font-bold tracking-wide">
+    80% OFF
+  </span>
+</div>
+
       {plan.popular && (
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20">
           <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-[11px] font-semibold px-5 py-1.5 rounded-full shadow-lg shadow-blue-500/30 border-2 border-white tracking-wide">
@@ -142,7 +149,7 @@ const PlanCard = ({ plan, index }) => {
         </div>
       )}
 
-      <div className="p-7 sm:p-8 flex flex-col flex-1">
+      <div className="p-5 sm:p-6 flex flex-col flex-1">
         <div className="mb-5">
           <h3 className="text-xl font-bold text-slate-800 tracking-tight mb-2">
             {plan.name}
@@ -152,20 +159,31 @@ const PlanCard = ({ plan, index }) => {
           </p>
         </div>
 
+
+        {/* Pricing with original and discounted */}
         <div className="mb-5">
           <div className="flex items-baseline gap-1.5 mb-4">
             <span className="text-5xl font-bold text-slate-800 tracking-tight">
               {plan.price}
             </span>
-            <span className="text-sm text-slate-400 font-normal">{plan.period}</span>
+            <span className="text-2x1  text-slate-950 font-normal">{plan.period}</span>
           </div>
+          {/* Original price struck through */}
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-lg text-slate-900 line-through">
+              {plan.originalPrice}
+            </span>
+            <span className="text-sm font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+              Save 80%
+            </span>
+          </div>
+
           <button
             onClick={() => (window.location.href = "/pricing")}
-            className={`w-full py-3.5 rounded-xl text-sm font-semibold tracking-wide transition-all duration-300 flex items-center justify-center gap-2 group ${
-              plan.popular
-                ? "bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-700 hover:to-blue-600 shadow-md shadow-blue-500/20"
-                : "bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200 hover:border-slate-300"
-            }`}
+            className={`w-full py-3.5 rounded-xl text-sm font-semibold tracking-wide transition-all duration-300 flex items-center justify-center gap-2 group ${plan.popular
+              ? "bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-700 hover:to-blue-600 shadow-md shadow-blue-500/20"
+              : "bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200 hover:border-slate-300"
+              }`}
           >
             {plan.cta}
             <ArrowUpRight
@@ -177,13 +195,13 @@ const PlanCard = ({ plan, index }) => {
 
         <div className="border-t border-slate-100 mb-4" />
 
-        <ul className="space-y-3 flex-1">
+        <ul className="  space-y-3 flex-1">
           {plan.features.map((feature, idx) => (
             <li key={idx} className="flex items-center gap-3">
               <div className="w-5 h-5 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
                 <Check size={12} className="text-blue-600" strokeWidth={3} />
               </div>
-              <span className="text-sm text-slate-600 font-normal">
+              <span className="text-lg text-slate-700 font-bold">
                 {feature.text}
               </span>
             </li>
@@ -198,7 +216,7 @@ export default function PlansPricing() {
   const featureColumns = chunkArray(commonFeaturesList, 3);
 
   return (
-    <section className="relative w-full bg-[#fafbfc] py-15 md:py-20 overflow-hidden">
+    <section className="relative w-full bg-[#fafbfc] py-10 md:py-10 overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.03)_0%,transparent_70%),radial-gradient(circle_at_80%_80%,rgba(99,102,241,0.02)_0%,transparent_50%)] pointer-events-none" />
 
       <div className="relative mx-auto" style={{ width: "93%", maxWidth: "none" }}>
