@@ -328,7 +328,7 @@ export default function ProfessionalBanner() {
       </motion.div>
 
       {/* RIGHT – HeroImage always visible */}
-      <div className="relative flex justify-center lg:justify-end w-full min-h-[480px] lg:min-h-[580px]">
+      <div className="relative flex justify-center lg:justify-end w-full min-h-[200px] lg:min-h-[400px]">
         <div className="w-full max-w-[720px] pl-4">
           <HeroImage />
         </div>
