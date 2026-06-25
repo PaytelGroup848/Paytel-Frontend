@@ -844,7 +844,7 @@ export default function ProfessionalBanner() {
             onClick={() => setEnquiryOpen(true)}
             className="inline-flex items-center gap-2 px-5 py-3.5 bg-yellow-400 hover:bg-yellow-500 text-slate-900 text-sm font-semibold rounded-xl shadow-md shadow-yellow-200 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-200"
           >
-            Get Enquiry
+             Enquiry Now
             <ArrowRight size={15} />
           </button>
         </motion.div>
