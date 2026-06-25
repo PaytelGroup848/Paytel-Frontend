@@ -32,7 +32,6 @@ const LOGO_FALLBACKS = [
   "/logo.png",
 ];
 
-// Sections with badge property added to specific items
 const megaMenuSections = [
   {
     title: "Create a Website",
@@ -43,7 +42,6 @@ const megaMenuSections = [
         href: "/wordpress-hosting",
         description:
           "Fully managed, speed-optimized WordPress hosting with daily backups.",
-        badge: "Top Pick",
       },
       {
         label: "Migrate a Website",
@@ -60,7 +58,6 @@ const megaMenuSections = [
         label: "cPanel Hosting",
         href: "/c-panel",
         description: "User-friendly control panel with one-click installs.",
-        badge: "Popular",
       },
       {
         label: "PHP Hosting",
@@ -71,7 +68,6 @@ const megaMenuSections = [
         label: "VPS Hosting",
         href: "/vps-cloud",
         description: "Scalable virtual private servers with root access.",
-        badge: "Scalable",
       },
       {
         label: "Node.js Hosting",
@@ -102,7 +98,6 @@ const megaMenuSections = [
         href: "/tally-on-cloud",
         description:
           "TallyPrime on cloud with auto backup and bank-grade security.",
-        badge: "Hot",
       },
     ],
   },
@@ -114,7 +109,6 @@ const megaMenuSections = [
         label: "Business Email",
         href: "/emails/plan",
         description: "Professional email hosting with collaboration tools.",
-        badge: "Deal of the Day",
       },
       {
         label: "Self Hosted",
@@ -136,36 +130,10 @@ const megaMenuSections = [
         label: "Restaurant Management",
         href: "/restaurant-management-system",
         description: "All-in-one restaurant POS and management system.",
-        badge: "New",
       },
     ],
   },
 ];
-
-// Tiny badge component with different styles per label
-function Badge({ text }) {
-  const getBadgeStyle = (badge) => {
-    switch (badge) {
-      case "Hot":
-        return "bg-gradient-to-r from-red-500 to-orange-500 text-white animate-pulse";
-      case "Deal of the Day":
-        return "bg-gradient-to-r from-green-400 to-emerald-500 text-white";
-      case "Top Pick":
-      case "Popular":
-        return "bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900";
-      default:
-        return "bg-indigo-100 text-indigo-700";
-    }
-  };
-
-  return (
-    <span
-      className={`ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold shadow-sm ${getBadgeStyle(text)}`}
-    >
-      {text}
-    </span>
-  );
-}
 
 const NAV_LINKS = [
   { label: "About Us", href: "/about-us", icon: Info },
@@ -369,7 +337,7 @@ export default function Navbar({
         </div>
       </nav>
 
-      {/* Mega Menu (Desktop) – added hover animations and badges */}
+      {/* Mega Menu (Desktop) */}
       <AnimatePresence>
         {megaMenuOpen && (
           <>
@@ -412,11 +380,10 @@ export default function Navbar({
                           <button
                             key={item.label}
                             type="button"
-                            className="group block w-full rounded-2xl p-3 text-left transition-all hover:bg-indigo-50/70 hover:scale-[1.02] hover:shadow-md"
+                            className="block w-full rounded-2xl p-3 text-left transition-all hover:bg-indigo-50/70"
                           >
-                            <div className="flex items-center font-medium text-slate-800">
+                            <div className="font-medium text-slate-800">
                               {item.label}
-                              {item.badge && <Badge text={item.badge} />}
                             </div>
                             <div className="mt-1 text-sm text-slate-500">
                               {item.description}
@@ -427,21 +394,13 @@ export default function Navbar({
                             key={item.label}
                             to={item.href}
                             onClick={() => setMegaMenuOpen(false)}
-                            className="group block rounded-2xl p-3 transition-all hover:bg-indigo-50/70 hover:scale-[1.02] hover:shadow-md"
+                            className="group block rounded-2xl p-3 transition-all hover:bg-indigo-50/70"
                           >
-                            <div className="flex items-center font-medium text-slate-800 group-hover:text-indigo-700">
+                            <div className="font-medium text-slate-800 group-hover:text-indigo-700">
                               {item.label}
-                              {item.badge && <Badge text={item.badge} />}
                             </div>
                             <div className="mt-1 text-sm text-slate-500">
                               {item.description}
-                            </div>
-                            {/* subtle arrow animation on hover */}
-                            <div className="mt-1 flex justify-end opacity-0 transition-all group-hover:opacity-100">
-                              <ChevronRight
-                                size={16}
-                                className="text-indigo-400 transition-transform group-hover:translate-x-1"
-                              />
                             </div>
                           </Link>
                         ),
@@ -455,7 +414,7 @@ export default function Navbar({
         )}
       </AnimatePresence>
 
-      {/* Mobile Sidebar – completely unchanged */}
+      {/* Mobile Sidebar – with better spacing for the X button */}
       <AnimatePresence>
         {mobileOpen && (
           <div className="fixed inset-0 z-[100] lg:hidden">
@@ -480,7 +439,7 @@ export default function Navbar({
                   src="/Cloudedata.svg"
                   alt="CloudeData"
                   className="h-8 w-auto max-w-[130px] object-contain flex-shrink-0"
-                  style={{ maxHeight: "32px" }}
+                  style={{ maxHeight: "32px" }} // hard cap
                 />
                 <button
                   onClick={() => setMobileOpen(false)}
