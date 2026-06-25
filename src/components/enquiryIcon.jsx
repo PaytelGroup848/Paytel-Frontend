@@ -134,10 +134,10 @@ transition={isOpen
           padding: "10px 14px",
           background: `
             repeating-linear-gradient(88deg, transparent, transparent 2px, rgba(0,0,0,0.025) 2px, rgba(0,0,0,0.025) 3px),
-            linear-gradient(155deg, #fde68a 0%, #fbbf24 30%, #f59e0b 55%, #fbbf24 75%, #fde68a 100%)
+            linear-gradient(155deg, #8afd99 0%, #66f308 30%, #32f50b 55%, #24fb2f 75%, #8afd90 100%)
           `,
           boxShadow: `
-            0 8px 24px rgba(245,158,11,0.5),
+            0 8px 24px rgba(11, 245, 23, 0.5),
             0 2px 6px rgba(0,0,0,0.2),
             inset 0 1px 0 rgba(255,255,255,0.5),
             inset 0 -2px 4px rgba(0,0,0,0.1)
@@ -147,14 +147,14 @@ transition={isOpen
       >
         {/* Top label */}
         <span className="block text-center font-bold tracking-widest"
-          style={{ fontSize: "15px", color: "#92400e", letterSpacing: "0.18em", fontFamily: "Georgia, serif" }}>
+          style={{ fontSize: "8px", color: "#92400e", letterSpacing: "0.18em", fontFamily: "Georgia, serif" }}>
           ✦ ENQUIRY ✦
         </span>
 
         {/* NOW — big */}
         <span className="block text-center font-black tracking-wider mt-0.5"
           style={{
-            fontSize: "18px",
+            fontSize: "13px",
             color: "#7c2d12",
             textShadow: "0 1px 0 rgba(255,255,255,0.4), 0 -1px 0 rgba(0,0,0,0.15)",
             letterSpacing: "0.08em",
@@ -316,7 +316,7 @@ export default function EnquiryFloatingButton() {
             boxShadow: "0 2px 4px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.3)",
           }}
         />
-        <RopeSVG height={25} />
+        <RopeSVG height={20} />
         <HookRing />
         <WoodenBadge onClick={() => setOpen((p) => !p)} isOpen={open} />
       </div>
