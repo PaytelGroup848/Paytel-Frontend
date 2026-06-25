@@ -921,7 +921,6 @@ function EnquiryFormModal({ open, onClose }) {
 // Main Banner with enquiry modal
 // ─────────────────────────────────────────────────────────────────────────────
 export default function ProfessionalBanner() {
-  const [enquiryOpen, setEnquiryOpen] = useState(false);
   const navigate = useNavigate();
 
   const HeroContent = () => (
@@ -1153,21 +1152,6 @@ export default function ProfessionalBanner() {
           </div>
         </section>
       </div>
-
-      {/* Floating enquiry icon (optional, keep if you like) */}
-      <button
-        onClick={() => setEnquiryOpen(true)}
-        className="fixed top-32 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-300/50 hover:bg-indigo-700 hover:scale-105 active:scale-95 transition-all"
-        aria-label="Open enquiry form"
-      >
-        <MessageCircle size={22} />
-      </button>
-
-      {/* Enquiry Form Modal */}
-      <EnquiryFormModal
-        open={enquiryOpen}
-        onClose={() => setEnquiryOpen(false)}
-      />
     </div>
   );
 }
