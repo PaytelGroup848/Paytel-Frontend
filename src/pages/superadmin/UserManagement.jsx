@@ -8,7 +8,7 @@ import {
 } from "../../hooks/useAdminUsers";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
-import Modal from "../../components/ui/Modal";
+import Modal from "./Modal";
 import Badge from "../../components/ui/Badge";
 import Card from "../../components/ui/Card";
 import Spinner from "../../components/ui/Spinner";
@@ -340,7 +340,7 @@ function CreateUserModal({ isOpen, onClose }) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {field("Phone Number", "phone", { placeholder: "+1 555 000 0000" })}
+          {field("Phone Number", "phone", { placeholder: "+91 9953791400" })}
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">

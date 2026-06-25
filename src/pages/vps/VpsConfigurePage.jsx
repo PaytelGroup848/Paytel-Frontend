@@ -187,8 +187,7 @@ export default function VpsConfigurePage() {
 
   const { width } = useWindowSize();
   const isMobile = width < 640;
-  const isTablet = width >= 640 && width < 900;
-  const isSmall = isMobile || isTablet;
+  const isDesktop = width >= 900;
 
   const OS_OPTIONS = planType === "windows" ? WINDOWS_OS : LINUX_OS;
 
@@ -330,10 +329,6 @@ export default function VpsConfigurePage() {
         description: `${plan.name} — ${selectedOs.name}`,
         order_id: orderData.orderId,
         handler: async (response) => {
-          console.log("Razorpay response:", response);
-          console.log("Payment ID:", response.razorpay_payment_id);
-          console.log("Order ID:", response.razorpay_order_id);
-          console.log("Signature:", response.razorpay_signature);
           try {
             await verifyPayment.mutateAsync({
               instanceId: orderData.instanceId,
@@ -369,11 +364,12 @@ export default function VpsConfigurePage() {
   const strengthLabels = ["", "Weak", "Weak", "Fair", "Good", "Strong"];
   const isFormValid = hostname.trim() && rootPassword && passwordStrength >= 3;
 
+  /* ── Loading ── */
   if (plansLoading) {
     return (
       <div
         style={{
-          height: "100vh",
+          minHeight: "100vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -390,11 +386,12 @@ export default function VpsConfigurePage() {
     );
   }
 
+  /* ── Not found ── */
   if (!plan) {
     return (
       <div
         style={{
-          height: "100vh",
+          minHeight: "100vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -423,18 +420,14 @@ export default function VpsConfigurePage() {
     );
   }
 
-  /* ── padding values ── */
-  const lp = isMobile ? 12 : 16;
-
   return (
     <div
       style={{
-        height: "100vh",
-        overflow: "hidden",
+        minHeight: "100vh",
         background: "#F8FAFC",
         display: "flex",
         flexDirection: "column",
-        padding: isMobile ? "8px 8px" : "12px 16px",
+        padding: isMobile ? "10px 10px 24px" : "14px 16px 24px",
         boxSizing: "border-box",
         fontFamily: "'DM Sans','Segoe UI',sans-serif",
       }}
@@ -454,10 +447,11 @@ export default function VpsConfigurePage() {
           fontSize: 12,
           fontWeight: 600,
           cursor: "pointer",
-          marginBottom: 8,
+          marginBottom: 10,
           alignSelf: "flex-start",
           transition: "all .15s",
           fontFamily: "inherit",
+          flexShrink: 0,
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.borderColor = "#6C63FF";
@@ -477,10 +471,8 @@ export default function VpsConfigurePage() {
       {/* ── Shell ── */}
       <div
         style={{
-          flex: 1,
-          minHeight: 0,
           background: "#fff",
-          borderRadius: 16,
+          borderRadius: isMobile ? 14 : 16,
           boxShadow: "0 4px 24px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.05)",
           display: "flex",
           flexDirection: "column",
@@ -490,15 +482,16 @@ export default function VpsConfigurePage() {
           alignSelf: "center",
           marginLeft: "auto",
           marginRight: "auto",
+          flex: 1,
         }}
       >
-        {/* Header */}
+        {/* ── Header ── */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
             gap: 10,
-            padding: `10px ${isMobile ? 12 : 20}px`,
+            padding: isMobile ? "10px 12px" : "10px 20px",
             borderBottom: "1px solid #F1F5F9",
             flexShrink: 0,
           }}
@@ -517,12 +510,15 @@ export default function VpsConfigurePage() {
           >
             <Server size={17} color="white" />
           </div>
-          <div>
+          <div style={{ minWidth: 0 }}>
             <div
               style={{
                 fontSize: isMobile ? 14 : 16,
                 fontWeight: 700,
                 color: "#0F172A",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
             >
               Configure {plan.name}
@@ -533,45 +529,30 @@ export default function VpsConfigurePage() {
           </div>
         </div>
 
-        {/* Body */}
+        {/* ── Body ── */}
         <div
           style={{
-            flex: 1,
-            minHeight: 0,
             display: "flex",
-            flexDirection: isSmall ? "column" : "row",
-            overflow: isSmall ? "auto" : "hidden",
+            flexDirection: isDesktop ? "row" : "column",
+            flex: 1,
           }}
         >
-          {/* LEFT */}
+          {/* ──────────── LEFT PANEL ──────────── */}
           <div
             style={{
               flex: 1,
               minWidth: 0,
-              minHeight: 0,
-              padding: lp,
-              borderRight: isSmall ? "none" : "1px solid #F1F5F9",
-              borderBottom: isSmall ? "1px solid #F1F5F9" : "none",
-              overflowY: isSmall ? "visible" : "auto",
+              padding: isMobile ? 12 : 16,
+              borderRight: isDesktop ? "1px solid #F1F5F9" : "none",
+              borderBottom: isDesktop ? "none" : "1px solid #F1F5F9",
               display: "flex",
               flexDirection: "column",
-              gap: 14,
+              gap: 16,
             }}
           >
-            {/* OS */}
+            {/* OS Grid */}
             <div>
-              <div
-                style={{
-                  fontSize: 9,
-                  fontWeight: 700,
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  color: "#94A3B8",
-                  marginBottom: 6,
-                }}
-              >
-                Operating System
-              </div>
+              <div style={labelStyle}>Operating System</div>
               <div
                 style={{
                   display: "grid",
@@ -588,7 +569,7 @@ export default function VpsConfigurePage() {
                       key={os.template}
                       onClick={() => setSelectedOs(os)}
                       style={{
-                        padding: "8px",
+                        padding: isMobile ? "7px 6px" : "8px",
                         borderRadius: 10,
                         border: `1.5px solid ${active ? "#6C63FF" : "#E2E8F0"}`,
                         background: active
@@ -597,18 +578,22 @@ export default function VpsConfigurePage() {
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
-                        gap: 7,
+                        gap: isMobile ? 5 : 7,
                         textAlign: "left",
+                        minWidth: 0,
                       }}
                     >
-                      <OsIcon name={os.icon} size={22} />
-                      <div>
+                      <OsIcon name={os.icon} size={isMobile ? 18 : 22} />
+                      <div style={{ minWidth: 0 }}>
                         <div
                           style={{
-                            fontSize: 12,
+                            fontSize: isMobile ? 10 : 12,
                             fontWeight: active ? 700 : 500,
                             color: active ? "#4F46E5" : "#374151",
                             lineHeight: 1.3,
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
                           }}
                         >
                           {os.name}
@@ -616,7 +601,7 @@ export default function VpsConfigurePage() {
                         {os.tag && (
                           <div
                             style={{
-                              fontSize: 8,
+                              fontSize: 7,
                               fontWeight: 700,
                               padding: "1px 4px",
                               borderRadius: 4,
@@ -638,18 +623,7 @@ export default function VpsConfigurePage() {
 
             {/* Hostname */}
             <div>
-              <div
-                style={{
-                  fontSize: 9,
-                  fontWeight: 700,
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  color: "#94A3B8",
-                  marginBottom: 6,
-                }}
-              >
-                Hostname
-              </div>
+              <div style={labelStyle}>Hostname</div>
               <input
                 type="text"
                 value={hostname}
@@ -660,8 +634,8 @@ export default function VpsConfigurePage() {
                   background: "#F8FAFC",
                   border: "1.5px solid #E2E8F0",
                   borderRadius: 10,
-                  padding: "9px 11px",
-                  fontSize: 13,
+                  padding: isMobile ? "10px 11px" : "9px 11px",
+                  fontSize: isMobile ? 14 : 13,
                   outline: "none",
                   boxSizing: "border-box",
                   fontFamily: "inherit",
@@ -671,18 +645,7 @@ export default function VpsConfigurePage() {
 
             {/* Password */}
             <div>
-              <div
-                style={{
-                  fontSize: 9,
-                  fontWeight: 700,
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  color: "#94A3B8",
-                  marginBottom: 6,
-                }}
-              >
-                Root Password
-              </div>
+              <div style={labelStyle}>Root Password</div>
               <div style={{ position: "relative" }}>
                 <input
                   type={showPassword ? "text" : "password"}
@@ -694,8 +657,10 @@ export default function VpsConfigurePage() {
                     background: "#F8FAFC",
                     border: "1.5px solid #E2E8F0",
                     borderRadius: 10,
-                    padding: "9px 40px 9px 11px",
-                    fontSize: 13,
+                    padding: isMobile
+                      ? "10px 44px 10px 11px"
+                      : "9px 40px 9px 11px",
+                    fontSize: isMobile ? 14 : 13,
                     outline: "none",
                     boxSizing: "border-box",
                     fontFamily: '"SF Mono","Fira Code",monospace',
@@ -713,11 +678,13 @@ export default function VpsConfigurePage() {
                     cursor: "pointer",
                     color: "#94A3B8",
                     display: "flex",
+                    padding: 4,
                   }}
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
+
               {rootPassword && (
                 <div style={{ marginTop: 8 }}>
                   <div
@@ -725,7 +692,7 @@ export default function VpsConfigurePage() {
                       display: "flex",
                       alignItems: "center",
                       gap: 8,
-                      marginBottom: 5,
+                      marginBottom: 6,
                     }}
                   >
                     <div
@@ -753,6 +720,7 @@ export default function VpsConfigurePage() {
                         fontWeight: 700,
                         textTransform: "uppercase",
                         color: strengthColors[passwordStrength],
+                        minWidth: 32,
                       }}
                     >
                       {strengthLabels[passwordStrength]}
@@ -767,7 +735,7 @@ export default function VpsConfigurePage() {
                       <span
                         key={c.label}
                         style={{
-                          fontSize: 9,
+                          fontSize: 10,
                           fontWeight: 700,
                           color: c.ok ? "#10B981" : "#CBD5E1",
                           display: "flex",
@@ -784,34 +752,20 @@ export default function VpsConfigurePage() {
             </div>
           </div>
 
-          {/* RIGHT */}
+          {/* ──────────── RIGHT PANEL ──────────── */}
           <div
             style={{
-              width: isSmall ? "100%" : 280,
+              width: isDesktop ? 290 : "100%",
               flexShrink: 0,
-              padding: lp,
+              padding: isMobile ? 12 : 16,
               display: "flex",
               flexDirection: "column",
-              gap: 10,
-              overflowY: isSmall ? "visible" : "auto",
-              minHeight: 0,
+              gap: 12,
             }}
-            className="scrollbar-hide"
           >
             {/* Tenure */}
             <div>
-              <div
-                style={{
-                  fontSize: 9,
-                  fontWeight: 700,
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  color: "#94A3B8",
-                  marginBottom: 6,
-                }}
-              >
-                Billing Tenure
-              </div>
+              <div style={labelStyle}>Billing Tenure</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
                 {TENURES.map((tenure) => {
                   const active = selectedTenure.months === tenure.months;
@@ -823,7 +777,7 @@ export default function VpsConfigurePage() {
                       onClick={() => setSelectedTenure(tenure)}
                       style={{
                         width: "100%",
-                        padding: "9px 11px",
+                        padding: isMobile ? "10px 12px" : "9px 11px",
                         borderRadius: 10,
                         border: `1.5px solid ${active ? "#6C63FF" : "#E2E8F0"}`,
                         background: active
@@ -833,6 +787,7 @@ export default function VpsConfigurePage() {
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
+                        boxSizing: "border-box",
                       }}
                     >
                       <div style={{ textAlign: "left" }}>
@@ -877,7 +832,7 @@ export default function VpsConfigurePage() {
               </div>
             </div>
 
-            {/* Summary */}
+            {/* Order Summary */}
             <div
               style={{
                 borderRadius: 12,
@@ -940,7 +895,11 @@ export default function VpsConfigurePage() {
                   Total Due
                 </span>
                 <span
-                  style={{ fontSize: 18, fontWeight: 800, color: "#3e38ad" }}
+                  style={{
+                    fontSize: isMobile ? 20 : 18,
+                    fontWeight: 800,
+                    color: "#3e38ad",
+                  }}
                 >
                   {formatINR(total)}
                 </span>
@@ -953,7 +912,7 @@ export default function VpsConfigurePage() {
               disabled={!isFormValid || createOrder.isPending}
               style={{
                 width: "100%",
-                padding: "11px",
+                padding: isMobile ? "13px" : "11px",
                 borderRadius: 11,
                 border: "none",
                 cursor: isFormValid ? "pointer" : "not-allowed",
@@ -961,13 +920,15 @@ export default function VpsConfigurePage() {
                   ? "linear-gradient(135deg,#1a11ce,#292079)"
                   : "#E2E8F0",
                 color: isFormValid ? "#fff" : "#94A3B8",
-                fontSize: 13,
+                fontSize: isMobile ? 14 : 13,
                 fontWeight: 700,
                 textTransform: "uppercase",
+                letterSpacing: "0.04em",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 gap: 6,
+                boxSizing: "border-box",
               }}
             >
               {createOrder.isPending ? (
@@ -1007,3 +968,13 @@ export default function VpsConfigurePage() {
     </div>
   );
 }
+
+/* shared label style */
+const labelStyle = {
+  fontSize: 9,
+  fontWeight: 700,
+  letterSpacing: "0.1em",
+  textTransform: "uppercase",
+  color: "#94A3B8",
+  marginBottom: 6,
+};
