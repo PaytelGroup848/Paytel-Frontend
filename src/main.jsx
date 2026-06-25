@@ -40,10 +40,11 @@ createRoot(document.getElementById("root")).render(
           }}
           containerStyle={{ zIndex: 99999 }}
         />
+        <EnquiryFloatingButton/>
+    <WhatsappIcon/>
       </BrowserRouter>
     </QueryClientProvider>
-    <EnquiryFloatingButton/>
-    <WhatsappIcon/>
+    
   
   </StrictMode>,
 );
