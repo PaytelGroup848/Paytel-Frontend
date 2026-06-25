@@ -37,7 +37,7 @@ export default function PaidWordpress() {
         (s) => s.type === "wordpress" && s.status === "Active",
       );
       if (!hasWordPress) {
-        navigate("/wordpress-hostings", { replace: true });
+        navigate("/wordpress", { replace: true });
       }
     }
   }, [subscriptions, loadingSubs, navigate]);
@@ -102,7 +102,7 @@ export default function PaidWordpress() {
                 {filter === "" &&
                   (hasReachedLimit ? (
                     <button
-                      onClick={() => navigate("/wordpress-hostings")}
+                      onClick={() => navigate("/wordpress")}
                       className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl transition-all active:scale-95 text-xs font-bold flex items-center gap-2 ml-1"
                     >
                       Buy WordPress

@@ -69,7 +69,7 @@ export default function WordpressConfigurePage() {
   const grandTotal = subtotal + taxes;
 
   const handleBack = () =>
-    navigate(isAuthenticated ? "/wordpress-hostings" : "/wordpress-hosting");
+    navigate(isAuthenticated ? "/wordpress" : "/wordpress-hosting");
 
   const handleCheckout = async () => {
     if (!isAuthenticated) {

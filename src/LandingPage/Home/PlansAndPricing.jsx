@@ -307,10 +307,8 @@ export default function PlansAndPricing() {
   const cards = [wpCard, linuxCard, winCard, TALLY_PLAN].filter(Boolean);
 
   const handleCta = (plan) => {
-    {
-      console.log("this is my plan====", plan);
-    }
-    if (plan.type === "wordpress") navigate(`/wordpress/configure/${plan.id}`);
+    if (plan.type === "wordpress")
+      navigate(`/wordpress/configure/${plan.id || plan._id}`);
     else if (plan.type === "linux" || plan.type === "windows")
       navigate(`/vps/configure/${plan.type}/${plan.planId}`);
     else navigate(plan.route || "/");
