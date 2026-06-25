@@ -103,6 +103,7 @@ import PhpLandingPage from "./LandingPage/php/PhpLandingpage";
 import EmailLandingPage from "./LandingPage/email/EmailLandingPage";
 import PublicSupportPage from "./pages/support/PublicSupportPage";
 import PublicTicketDetail from "./pages/support/PublicTicketDetail";
+import WordpressConfigurePage from "./pages/plans/WordpressConfigurePage";
 
 // Protected Route wrapper
 const ProtectedRoute = () => {
@@ -232,8 +233,8 @@ export default function App() {
           path="/wordpress-hosting"
           element={
             // <PublicRoute>
-              <LandingWordpress />
-              
+            <LandingWordpress />
+
             // </PublicRoute>
           }
         />
@@ -269,6 +270,10 @@ export default function App() {
         <Route
           path="/vps/configure/:planType/:planId"
           element={<VpsConfigurePage />}
+        />
+        <Route
+          path="/wordpress/configure/:planId"
+          element={<WordpressConfigurePage />}
         />
 
         {/* Auth routes (no layout needed) */}

@@ -116,7 +116,9 @@ const PlanCard = ({ plan, index, onCta }) => {
             <span className="text-5xl font-bold text-slate-800 tracking-tight">
               {plan.price}
             </span>
-            <span className="text-2xl text-slate-950 font-normal">{plan.period}</span>
+            <span className="text-2xl text-slate-950 font-normal">
+              {plan.period}
+            </span>
           </div>
           {/* Original price struck through */}
           <div className="flex items-center gap-2 mb-4">
@@ -195,21 +197,27 @@ export default function PlansAndPricing() {
 
   const cheapestWp = useMemo(() => {
     if (!wpPlans?.length) return null;
-    return [...wpPlans].sort((a, b) => wpPrice(a.monthly) - wpPrice(b.monthly))[0];
+    return [...wpPlans].sort(
+      (a, b) => wpPrice(a.monthly) - wpPrice(b.monthly),
+    )[0];
   }, [wpPlans]);
 
   // Linux VPS — sabse sasta
   const { data: linuxPlans, isLoading: linuxLoading } = useVpsPlans("linux");
   const cheapestLinux = useMemo(() => {
     if (!linuxPlans?.length) return null;
-    return [...linuxPlans].sort((a, b) => vpsPrice(a.priceMonthly) - vpsPrice(b.priceMonthly))[0];
+    return [...linuxPlans].sort(
+      (a, b) => vpsPrice(a.priceMonthly) - vpsPrice(b.priceMonthly),
+    )[0];
   }, [linuxPlans]);
 
   // Windows VPS — id: "windows-small"
   const { data: winPlans, isLoading: winLoading } = useVpsPlans("windows");
   const windowsSmall = useMemo(() => {
     if (!winPlans?.length) return null;
-    return winPlans.find((p) => (p.id || p._id) === "windows-small") || winPlans[0];
+    return (
+      winPlans.find((p) => (p.id || p._id) === "windows-small") || winPlans[0]
+    );
   }, [winPlans]);
 
   const isLoading = wpLoading || linuxLoading || winLoading;
@@ -218,21 +226,24 @@ export default function PlansAndPricing() {
   const wpCard = cheapestWp
     ? {
         id: cheapestWp.id || cheapestWp._id,
-        name: "WordPress",   // ← custom heading
+        name: "WordPress", // ← custom heading
         price: fmtINR(wpPrice(cheapestWp.price)),
         originalPrice: fmtINR(Math.round(wpPrice(cheapestWp.price) / 0.2)),
         period: "/mo",
         desc: "Easy one-click WordPress installation for blogs and small business websites.",
-        features: Array.isArray(cheapestWp.features) && cheapestWp.features.length
-          ? cheapestWp.features.slice(0, 6).map((f) => ({ text: f, icon: Check }))
-          : [
-              { text: "1 Website", icon: Globe },
-              { text: "10 GB SSD", icon: HardDrive },
-              { text: "Free SSL", icon: Shield },
-              { text: "Unmetered BW", icon: InfinityIcon },
-              { text: "24/7 Support", icon: Headphones },
-              { text: "1-Click WP", icon: RefreshCw },
-            ],
+        features:
+          Array.isArray(cheapestWp.features) && cheapestWp.features.length
+            ? cheapestWp.features
+                .slice(0, 6)
+                .map((f) => ({ text: f, icon: Check }))
+            : [
+                { text: "1 Website", icon: Globe },
+                { text: "10 GB SSD", icon: HardDrive },
+                { text: "Free SSL", icon: Shield },
+                { text: "Unmetered BW", icon: InfinityIcon },
+                { text: "24/7 Support", icon: Headphones },
+                { text: "1-Click WP", icon: RefreshCw },
+              ],
         popular: false,
         cta: "Get Started",
         type: "wordpress",
@@ -244,9 +255,11 @@ export default function PlansAndPricing() {
   const linuxCard = cheapestLinux
     ? {
         id: cheapestLinux.id || cheapestLinux._id,
-        name: "Linux VPS",   // ← custom heading
+        name: "Linux VPS", // ← custom heading
         price: fmtINR(vpsPrice(cheapestLinux.priceMonthly)),
-        originalPrice: fmtINR(Math.round(vpsPrice(cheapestLinux.priceMonthly) / 0.2)),
+        originalPrice: fmtINR(
+          Math.round(vpsPrice(cheapestLinux.priceMonthly) / 0.2),
+        ),
         period: "/mo",
         desc: "High-performance Linux server with root access and NVMe storage.",
         features: [
@@ -268,9 +281,11 @@ export default function PlansAndPricing() {
   const winCard = windowsSmall
     ? {
         id: windowsSmall.id || windowsSmall._id,
-        name: "Windows VPS",   // ← custom heading
+        name: "Windows VPS", // ← custom heading
         price: fmtINR(vpsPrice(windowsSmall.priceMonthly)),
-        originalPrice: fmtINR(Math.round(vpsPrice(windowsSmall.priceMonthly) / 0.2)),
+        originalPrice: fmtINR(
+          Math.round(vpsPrice(windowsSmall.priceMonthly) / 0.2),
+        ),
         period: "/mo",
         desc: "Dedicated Windows server with full admin control and 100% uptime guarantee.",
         features: [
@@ -281,7 +296,7 @@ export default function PlansAndPricing() {
           { text: "Admin Access", icon: Lock },
           { text: "DDoS Protected", icon: Shield },
         ],
-        popular: true,   // ← windows-small = MOST POPULAR
+        popular: true, // ← windows-small = MOST POPULAR
         cta: "Choose Windows",
         type: "windows",
         route: "/vps-hosting",
@@ -292,7 +307,10 @@ export default function PlansAndPricing() {
   const cards = [wpCard, linuxCard, winCard, TALLY_PLAN].filter(Boolean);
 
   const handleCta = (plan) => {
-    if (plan.type === "wordpress") navigate("/wordpress-hosting");
+    {
+      console.log("this is my plan====", plan);
+    }
+    if (plan.type === "wordpress") navigate(`/wordpress/configure/${plan.id}`);
     else if (plan.type === "linux" || plan.type === "windows")
       navigate(`/vps/configure/${plan.type}/${plan.planId}`);
     else navigate(plan.route || "/");
@@ -302,7 +320,10 @@ export default function PlansAndPricing() {
     <section className="relative w-full bg-[#fafbfc] py-10 md:py-10 overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.03)_0%,transparent_70%),radial-gradient(circle_at_80%_80%,rgba(99,102,241,0.02)_0%,transparent_50%)] pointer-events-none" />
 
-      <div className="relative mx-auto" style={{ width: "93%", maxWidth: "none" }}>
+      <div
+        className="relative mx-auto"
+        style={{ width: "93%", maxWidth: "none" }}
+      >
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -322,12 +343,19 @@ export default function PlansAndPricing() {
         {/* Cards grid */}
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-16">
-            {[1, 2, 3, 4].map((i) => <CardSkeleton key={i} />)}
+            {[1, 2, 3, 4].map((i) => (
+              <CardSkeleton key={i} />
+            ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-16">
             {cards.map((plan, idx) => (
-              <PlanCard key={plan.id} plan={plan} index={idx} onCta={handleCta} />
+              <PlanCard
+                key={plan.id}
+                plan={plan}
+                index={idx}
+                onCta={handleCta}
+              />
             ))}
           </div>
         )}
@@ -345,7 +373,10 @@ export default function PlansAndPricing() {
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-slate-800 to-slate-700 text-white text-sm font-semibold rounded-xl hover:from-blue-600 hover:to-blue-500 transition-all duration-300 group shadow-lg shadow-slate-200"
           >
             Compare all plans
-            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            <ArrowRight
+              size={16}
+              className="group-hover:translate-x-1 transition-transform"
+            />
           </a>
           <p className="text-xs text-slate-400 mt-4 font-normal">
             * Prices exclude applicable taxes. Total calculated at checkout.
