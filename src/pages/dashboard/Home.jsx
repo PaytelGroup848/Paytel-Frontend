@@ -169,7 +169,7 @@ const Dashboard = () => {
   ], []);
 
   return (
-    /* ⬇️ CHANGED: h-screen + overflow-hidden to lock the viewport */
+    /* ⬇ CHANGED: h-screen + overflow-hidden to lock the viewport */
     <div className="flex h-screen bg-[#F4F5F9] font-sans overflow-hidden">
       {/* Sidebar – now part of the fixed-height flex row, will not scroll */}
       <Sidebar mobileOpen={sidebarOpen} onMobileClose={() => setSidebarOpen(false)} />
@@ -182,7 +182,7 @@ const Dashboard = () => {
           onMenuClick={() => setSidebarOpen(prev => !prev)}
         />
 
-        {/* ⬇️ CHANGED: main is now scrollable, everything else stays fixed */}
+        {/* ⬇ CHANGED: main is now scrollable, everything else stays fixed */}
         <main className="flex-1 relative overflow-y-auto">
           {/* Ambient blobs (inside scrollable area) */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">

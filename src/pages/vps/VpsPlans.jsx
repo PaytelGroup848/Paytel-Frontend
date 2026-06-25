@@ -256,10 +256,7 @@ export default function VpsPlans() {
         {/* Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-white shadow-sm border border-slate-100 px-6 py-2 rounded-full mb-6">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-            <span className="uppercase text-xs font-bold tracking-[2px] text-slate-500">
-              Premium Cloud Infrastructure
-            </span>
+         
           </div>
           <h1 className="text-5xl md:text-6xl font-bold tracking-tighter text-slate-900 mb-4">
             Choose Your{" "}
