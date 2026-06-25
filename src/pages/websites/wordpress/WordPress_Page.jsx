@@ -147,7 +147,7 @@ export default function Wordpress_Page() {
               <div className="flex-1 w-full max-w-lg relative">
                 <div className="relative rounded-3xl overflow-hidden shadow-[0_35px_60px_-15px_rgba(0,0,0,0.4)] transform rotate-1 hover:rotate-0 transition-all duration-700">
                   <img
-                    src="/wordpress.jpg"
+                    src="/wordpressimage.png"
                     alt="WordPress dashboard"
                     className="w-full aspect-[4/3] object-cover"
                   />
