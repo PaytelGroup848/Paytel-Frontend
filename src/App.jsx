@@ -91,6 +91,7 @@ import EmailLogsPage from "./pages/Emails/EmailLogsPage";
 import DkimPage from "./pages/Emails/EmailDkim";
 import Docker from "./pages/vps/Docker";
 import { setNavigator } from "./utils/navigation";
+
 // import LoadingScreen from './pages/loading';
 
 import SubscriptionsPage from "./pages/billing/Subscription";
@@ -230,9 +231,10 @@ export default function App() {
         <Route
           path="/wordpress-hosting"
           element={
-            <PublicRoute>
+            // <PublicRoute>
               <LandingWordpress />
-            </PublicRoute>
+              
+            // </PublicRoute>
           }
         />
         <Route
@@ -320,7 +322,7 @@ export default function App() {
               path="/php-hosting/dashboard/:instanceId"
               element={<PhpDashboard />}
             />
-            <Route path="/wordpress-hostings" element={<Wordpress_Page />} />
+            <Route path="/wordpress" element={<Wordpress_Page />} />
             <Route path="/websites/nodejs" element={<NodeJS_Page />} />
             {/* <Route path="/vps" element={<VpsPlans/>} /> */}
             <Route path="/vps/paid" element={<VPSDashboard />} />

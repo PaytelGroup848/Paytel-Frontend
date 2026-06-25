@@ -167,7 +167,7 @@ const PlanModal = ({ plan, onClose }) => {
   const grandTotal = subtotal + taxes;
 
   return (
-    <div className="fixed inset-0 z-[999] flex items-start justify-center pt-9 sm:pt-16 p-4 bg-slate-900/50 backdrop-blur-md">
+    <div className=" mt-5 fixed inset-0 z-[999] flex items-start justify-center pt-9 sm:pt-16 p-4 bg-slate-900/50 backdrop-blur-md">
       <motion.div
         initial={{ opacity: 0, scale: 0.96, y: 24 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -176,7 +176,7 @@ const PlanModal = ({ plan, onClose }) => {
         className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col"
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-indigo-50/60 to-white">
+        <div className=" mt-5  px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-indigo-50/60 to-white">
           <div>
             <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-[0.18em] mb-0.5">
               Billing Configuration
@@ -281,7 +281,7 @@ const PlanModal = ({ plan, onClose }) => {
             )}
           </motion.button>
           <p className="text-center text-[10px] text-slate-400 mt-2 font-medium">
-            🔒 Secured by Razorpay · 256-bit SSL encryption
+             Secured by Razorpay · 256-bit SSL encryption
           </p>
         </div>
       </motion.div>

@@ -194,7 +194,7 @@ export default function VpsConfigurePage() {
 
   const navigate = useNavigate();
   const [selectedOs, setSelectedOs] = useState(OS_OPTIONS[0]);
-  const [selectedTenure, setSelectedTenure] = useState(TENURES[1]);
+  const [selectedTenure, setSelectedTenure] = useState(TENURES[4]);
   const [hostname, setHostname] = useState("");
   const [rootPassword, setRootPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);

@@ -1,4 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from "react";
+import { useNavigate } from 'react-router-dom';
+
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import clsx from "clsx";
@@ -741,6 +743,7 @@ function EnquiryFormModal({ open, onClose }) {
 // ─────────────────────────────────────────────────────────────────────────────
 export default function ProfessionalBanner() {
   const [enquiryOpen, setEnquiryOpen] = useState(false);
+  const navigate = useNavigate();
 
   const HeroContent = () => (
     <div className="mt-15 pt-5 grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-10 lg:gap-8 xl:gap-12 items-center">
@@ -825,10 +828,15 @@ export default function ProfessionalBanner() {
           transition={{ duration: 0.5, delay: 0.75 }}
           className="mt-5 flex flex-wrap items-center gap-3"
         >
-          <button className="inline-flex items-center gap-2.5 px-7 py-3.5 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl font-semibold text-sm shadow-lg shadow-indigo-300/40 hover:shadow-xl hover:from-indigo-700 hover:to-blue-700 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200">
+          <button
+            onClick={() => navigate("/wordpress-hosting")}
+            className="inline-flex items-center gap-2.5 px-7 py-3.5 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl font-semibold text-sm shadow-lg shadow-indigo-300/40 hover:shadow-xl hover:from-indigo-700 hover:to-blue-700 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200">
             Buy Now <ArrowRight size={15} strokeWidth={2.5} />
           </button>
-          <button className="inline-flex items-center gap-2 px-5 py-3.5 text-slate-600 text-sm font-medium rounded-xl border border-slate-200 bg-white/70 hover:bg-white hover:border-slate-300 hover:-translate-y-0.5 transition-all duration-200 shadow-sm">
+
+          <button
+            onClick={() => navigate("/wordpress-hosting", { state: { scrollToPlans: true } })}
+            className="inline-flex items-center gap-2 px-5 py-3.5 text-slate-600 text-sm font-medium rounded-xl border border-slate-200 bg-white/70 hover:bg-white hover:border-slate-300 hover:-translate-y-0.5 transition-all duration-200 shadow-sm">
             View Plans
           </button>
           {/* Yellow button to open enquiry form */}
@@ -836,7 +844,7 @@ export default function ProfessionalBanner() {
             onClick={() => setEnquiryOpen(true)}
             className="inline-flex items-center gap-2 px-5 py-3.5 bg-yellow-400 hover:bg-yellow-500 text-slate-900 text-sm font-semibold rounded-xl shadow-md shadow-yellow-200 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-200"
           >
-            Get Free Quote
+            Get Enquiry
             <ArrowRight size={15} />
           </button>
         </motion.div>
