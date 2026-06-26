@@ -10,9 +10,11 @@ import {
 } from "lucide-react";
 
 function FlagEmoji({ code = "IN" }) {
-  const emoji = code.toUpperCase().split("").map((c) =>
-    String.fromCodePoint(0x1f1e6 + c.charCodeAt(0) - 65)
-  ).join("");
+  const emoji = code
+    .toUpperCase()
+    .split("")
+    .map((c) => String.fromCodePoint(0x1f1e6 + c.charCodeAt(0) - 65))
+    .join("");
   return <span style={{ fontSize: 14, lineHeight: 1 }}>{emoji}</span>;
 }
 
@@ -71,7 +73,7 @@ function validateField(name, value, country) {
   }
 }
 
-// ── Rope ────────────────────────────────────────────────────────────────
+/* ── Rope (unchanged) ──────────────────────────────────────────────── */
 function RopeSVG({ height = 56 }) {
   return (
     <svg width="14" height={height} viewBox={`0 0 14 ${height}`} fill="none" className="block">
@@ -98,21 +100,22 @@ function RopeSVG({ height = 56 }) {
   );
 }
 
-// ── Yellow Wooden Badge ──────────────────────────────────────────────────
+/* ── Wooden Badge (now responsive) ─────────────────────────────────── */
 function WoodenBadge({ onClick, isOpen }) {
   return (
     <motion.button
       onClick={onClick}
-     animate={{ rotate: isOpen ? 0 : [0, -25, 20, -15, 10, -6, 3, 0] }}
-transition={isOpen
-  ? { duration: 0.15 }
-  : {
-      duration: 3.5,
-      repeat: Infinity,
-      ease: "easeOut",
-      repeatDelay: 1.5,
-    }
-}
+      animate={{ rotate: isOpen ? 0 : [0, -25, 20, -15, 10, -6, 3, 0] }}
+      transition={
+        isOpen
+          ? { duration: 0.15 }
+          : {
+              duration: 3.5,
+              repeat: Infinity,
+              ease: "easeOut",
+              repeatDelay: 1.5,
+            }
+      }
       style={{ transformOrigin: "top center" }}
       whileHover={{ scale: 1.07 }}
       whileTap={{ scale: 0.95 }}
@@ -120,18 +123,20 @@ transition={isOpen
       aria-label="Open enquiry"
     >
       {/* Nail hole */}
-      <div className="mx-auto mb-0.5 h-2.5 w-2.5 rounded-full relative z-10"
+      <div
+        className="mx-auto mb-0.5 rounded-full relative z-10 h-2.5 w-2.5 sm:h-2.5 sm:w-2.5"
         style={{
           background: "radial-gradient(circle at 38% 32%, #e5e7eb, #6b7280)",
           boxShadow: "inset 0 1px 2px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.3)",
         }}
       />
 
-      {/* Badge */}
-      <div className="relative rounded-xl select-none overflow-hidden"
+      {/* Badge body */}
+      <div
+        className="relative rounded-xl select-none overflow-hidden transition-all duration-200"
         style={{
-          minWidth: "96px",
-          padding: "10px 14px",
+          minWidth: "clamp(72px, 12vw, 96px)",
+          padding: "clamp(6px, 1vw, 10px) clamp(10px, 2vw, 14px)",
           background: `
             repeating-linear-gradient(88deg, transparent, transparent 2px, rgba(0,0,0,0.025) 2px, rgba(0,0,0,0.025) 3px),
             linear-gradient(155deg, #8afd99 0%, #66f308 30%, #32f50b 55%, #24fb2f 75%, #8afd90 100%)
@@ -146,21 +151,30 @@ transition={isOpen
         }}
       >
         {/* Top label */}
-        <span className="block text-center font-bold tracking-widest"
-          style={{ fontSize: "8px", color: "#92400e", letterSpacing: "0.18em", fontFamily: "Georgia, serif" }}>
+        <span
+          className="block text-center font-bold tracking-widest"
+          style={{
+            fontSize: "clamp(6px, 1.2vw, 8px)",
+            color: "#92400e",
+            letterSpacing: "0.18em",
+            fontFamily: "Georgia, serif",
+          }}
+        >
           ✦ ENQUIRY ✦
         </span>
 
-        {/* NOW — big */}
-        <span className="block text-center font-black tracking-wider mt-0.5"
+        {/* NOW */}
+        <span
+          className="block text-center font-black tracking-wider mt-0.5"
           style={{
-            fontSize: "13px",
+            fontSize: "clamp(10px, 2vw, 13px)",
             color: "#7c2d12",
             textShadow: "0 1px 0 rgba(255,255,255,0.4), 0 -1px 0 rgba(0,0,0,0.15)",
             letterSpacing: "0.08em",
             fontFamily: "Georgia, serif",
             lineHeight: 1.1,
-          }}>
+          }}
+        >
           NOW
         </span>
 
@@ -176,8 +190,13 @@ transition={isOpen
 
         {/* Screws */}
         {["top-1 left-1", "top-1 right-1", "bottom-1 left-1", "bottom-1 right-1"].map((pos, i) => (
-          <div key={i} className={`absolute ${pos} h-1.5 w-1.5 rounded-full`}
-            style={{ background: "radial-gradient(circle at 35% 30%, #d1d5db, #6b7280)", boxShadow: "inset 0 0.5px 1px rgba(0,0,0,0.4)" }}
+          <div
+            key={i}
+            className={`absolute ${pos} h-1 w-1 sm:h-1.5 sm:w-1.5 rounded-full`}
+            style={{
+              background: "radial-gradient(circle at 35% 30%, #d1d5db, #6b7280)",
+              boxShadow: "inset 0 0.5px 1px rgba(0,0,0,0.4)",
+            }}
           />
         ))}
       </div>
@@ -185,10 +204,11 @@ transition={isOpen
   );
 }
 
-// ── Hook ring ─────────────────────────────────────────────────────────────
+/* ── Hook ring ─────────────────────────────────────────────────────── */
 function HookRing() {
   return (
-    <div className="mx-auto h-4 w-4 rounded-full"
+    <div
+      className="mx-auto rounded-full h-3 w-3 sm:h-4 sm:w-4"
       style={{
         background: "radial-gradient(circle at 38% 28%, #e5e7eb, #9ca3af)",
         boxShadow: "inset 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.25)",
@@ -198,8 +218,8 @@ function HookRing() {
   );
 }
 
-// ── Main ─────────────────────────────────────────────────────────────────
-export default function EnquiryFloatingButton() {
+/* ── Main Component (now accepts `hidden` prop) ────────────────────── */
+export default function EnquiryFloatingButton({ hidden = false }) {
   const location = useLocation();
 
   const allowedRoutes = [
@@ -218,7 +238,8 @@ export default function EnquiryFloatingButton() {
     "/cloud-hosting-blog",
     "/contact",
   ];
-   if (!allowedRoutes.includes(location.pathname)) {
+
+  if (!allowedRoutes.includes(location.pathname)) {
     return null;
   }
 
@@ -240,7 +261,8 @@ export default function EnquiryFloatingButton() {
   useEffect(() => {
     const h = (e) => {
       if (countryDropRef.current && !countryDropRef.current.contains(e.target)) {
-        setCountryOpen(false); setCountrySearch("");
+        setCountryOpen(false);
+        setCountrySearch("");
       }
     };
     document.addEventListener("mousedown", h);
@@ -249,8 +271,13 @@ export default function EnquiryFloatingButton() {
 
   useEffect(() => {
     const h = (e) => {
-      if (open && cardRef.current && !cardRef.current.contains(e.target) &&
-        wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+      if (
+        open &&
+        cardRef.current &&
+        !cardRef.current.contains(e.target) &&
+        wrapperRef.current &&
+        !wrapperRef.current.contains(e.target)
+      ) {
         setOpen(false);
       }
     };
@@ -258,70 +285,110 @@ export default function EnquiryFloatingButton() {
     return () => document.removeEventListener("mousedown", h);
   }, [open]);
 
+  // Close popup when hidden (e.g. mega menu opened)
+  useEffect(() => {
+    if (hidden) setOpen(false);
+  }, [hidden]);
+
   const filteredCountries = COUNTRIES.filter((c) =>
     c.name.toLowerCase().includes(countrySearch.toLowerCase()) || c.code.includes(countrySearch)
   );
 
-  const handleChange = useCallback((e) => {
-    const { name, value } = e.target;
-    let val = value;
-    if (name === "phone") val = value.replace(/\D/g, "").slice(0, selectedCountry.length);
-    setForm((p) => ({ ...p, [name]: val }));
-    setSuccess(""); setApiError("");
-    setTouched((p) => ({ ...p, [name]: true }));
-    setErrors((p) => ({ ...p, [name]: validateField(name, val, selectedCountry) }));
-  }, [selectedCountry]);
+  const handleChange = useCallback(
+    (e) => {
+      const { name, value } = e.target;
+      let val = value;
+      if (name === "phone") val = value.replace(/\D/g, "").slice(0, selectedCountry.length);
+      setForm((p) => ({ ...p, [name]: val }));
+      setSuccess("");
+      setApiError("");
+      setTouched((p) => ({ ...p, [name]: true }));
+      setErrors((p) => ({ ...p, [name]: validateField(name, val, selectedCountry) }));
+    },
+    [selectedCountry]
+  );
 
-  const handleBlur = useCallback((e) => {
-    const { name, value } = e.target;
-    setTouched((p) => ({ ...p, [name]: true }));
-    setErrors((p) => ({ ...p, [name]: validateField(name, value, selectedCountry) }));
-  }, [selectedCountry]);
+  const handleBlur = useCallback(
+    (e) => {
+      const { name, value } = e.target;
+      setTouched((p) => ({ ...p, [name]: true }));
+      setErrors((p) => ({ ...p, [name]: validateField(name, value, selectedCountry) }));
+    },
+    [selectedCountry]
+  );
 
   const handleCountrySelect = useCallback((c) => {
-    setSelectedCountry(c); setCountryOpen(false); setCountrySearch("");
-    setForm((p) => ({ ...p, phone: "" })); setErrors((p) => ({ ...p, phone: "" }));
+    setSelectedCountry(c);
+    setCountryOpen(false);
+    setCountrySearch("");
+    setForm((p) => ({ ...p, phone: "" }));
+    setErrors((p) => ({ ...p, phone: "" }));
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const fields = ["name", "email", "phone", "plan"];
-    const newE = {}, newT = {};
-    fields.forEach((k) => { newT[k] = true; const err = validateField(k, form[k], selectedCountry); if (err) newE[k] = err; });
-    setErrors(newE); setTouched(newT);
+    const newE = {},
+      newT = {};
+    fields.forEach((k) => {
+      newT[k] = true;
+      const err = validateField(k, form[k], selectedCountry);
+      if (err) newE[k] = err;
+    });
+    setErrors(newE);
+    setTouched(newT);
     if (Object.keys(newE).length > 0) return;
     setLoading(true);
     try {
       const res = await axios.post("https://api.marketing.cloudedata.com/api/public/submit", {
-        name: form.name, email: form.email,
+        name: form.name,
+        email: form.email,
         phone: `${selectedCountry.code}${form.phone}`,
-        product: form.plan, message: form.message || "No message", country: selectedCountry.name,
+        product: form.plan,
+        message: form.message || "No message",
+        country: selectedCountry.name,
       });
       if (res.data.success) {
         setSuccess("Thank you! We'll reach you within 1 hour.");
-        setForm({ name: "", email: "", phone: "", plan: "", message: "" }); setErrors({}); setTouched({});
-      } else { setApiError("Submission failed. Please try again."); }
-    } catch { setApiError("Network error. Please retry."); }
-    finally { setLoading(false); }
+        setForm({ name: "", email: "", phone: "", plan: "", message: "" });
+        setErrors({});
+        setTouched({});
+      } else {
+        setApiError("Submission failed. Please try again.");
+      }
+    } catch {
+      setApiError("Network error. Please retry.");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // Entire component hidden when `hidden` prop is true
+  if (hidden) return null;
 
   return (
     <>
-      {/* ── Hanger ── */}
-      <div ref={wrapperRef} className="fixed top-[72px] right-10 z-50 flex flex-col items-center" style={{ gap: 0 }}>
+      {/* ── Hanger (responsive size) ── */}
+      <div
+        ref={wrapperRef}
+        className="fixed top-[60px] right-3 sm:top-[72px] sm:right-10 z-50 flex flex-col items-center"
+        style={{ gap: 0 }}
+      >
         {/* Nail */}
-        <div className="h-2.5 w-2.5 rounded-full"
+        <div
+          className="rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5"
           style={{
             background: "radial-gradient(circle at 35% 28%, #e5e7eb, #6b7280)",
             boxShadow: "0 2px 4px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.3)",
           }}
         />
-        <RopeSVG height={20} />
+        <RopeSVG height={16} className="sm:hidden" />
+        <RopeSVG height={20} className="hidden sm:block" />
         <HookRing />
         <WoodenBadge onClick={() => setOpen((p) => !p)} isOpen={open} />
       </div>
 
-      {/* ── Popup ── */}
+      {/* ── Popup (responsive) ── */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -332,9 +399,9 @@ export default function EnquiryFloatingButton() {
             transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
             className="fixed z-[60] bg-white rounded-2xl border border-slate-100 overflow-hidden"
             style={{
-              top: "230px",
-              right: "40px",
-              width: "min(88vw, 340px)",
+              top: "clamp(180px, 25vh, 230px)",
+              right: "clamp(8px, 5vw, 40px)",
+              width: "min(90vw, 340px)",
               boxShadow: "0 24px 48px -8px rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.05)",
             }}
             onClick={(e) => e.stopPropagation()}
@@ -342,130 +409,214 @@ export default function EnquiryFloatingButton() {
             {/* Amber top bar */}
             <div className="h-1 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500" />
 
-            <div className="p-4">
+            <div className="p-3 sm:p-4">
               {/* Header */}
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
                 <div className="flex items-center gap-2">
                   <div>
-                    <h3 className="text-sm font-extrabold text-slate-900 leading-tight">Get Free Demo</h3>
-                    <p className="text-[10px] text-slate-400 font-medium">Reply within <span className="text-amber-500 font-bold">1 hour</span></p>
+                    <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-tight">
+                      Get Free Demo
+                    </h3>
+                    <p className="text-[9px] sm:text-[10px] text-slate-400 font-medium">
+                      Reply within <span className="text-amber-500 font-bold">1 hour</span>
+                    </p>
                   </div>
                 </div>
-                <button onClick={() => setOpen(false)}
-                  className="w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-700 transition-all">
-                  <X size={12} />
+                <button
+                  onClick={() => setOpen(false)}
+                  className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-700 transition-all"
+                >
+                  <X size={11} className="sm:hidden" />
+                  <X size={12} className="hidden sm:block" />
                 </button>
               </div>
 
-              {/* Alerts */}
+              {/* Alerts (slightly smaller) */}
               <AnimatePresence>
                 {success && (
-                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
-                    className="mb-3 flex items-start gap-2 rounded-xl bg-emerald-50 border border-emerald-200 p-2.5 text-[11px] text-emerald-800">
-                    <Check size={12} className="shrink-0 mt-0.5 text-emerald-600" />
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mb-2 sm:mb-3 flex items-start gap-2 rounded-xl bg-emerald-50 border border-emerald-200 p-2 sm:p-2.5 text-[10px] sm:text-[11px] text-emerald-800"
+                  >
+                    <Check size={11} className="shrink-0 mt-0.5 text-emerald-600" />
                     <span className="font-semibold">{success}</span>
                   </motion.div>
                 )}
                 {apiError && (
-                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
-                    className="mb-3 flex items-start gap-2 rounded-xl bg-red-50 border border-red-200 p-2.5 text-[11px] text-red-800">
-                    <AlertCircle size={12} className="shrink-0 mt-0.5" />
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mb-2 sm:mb-3 flex items-start gap-2 rounded-xl bg-red-50 border border-red-200 p-2 sm:p-2.5 text-[10px] sm:text-[11px] text-red-800"
+                  >
+                    <AlertCircle size={11} className="shrink-0 mt-0.5" />
                     <span className="font-semibold">{apiError}</span>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              <form onSubmit={handleSubmit} className="space-y-2.5" noValidate>
-
+              <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-2.5" noValidate>
                 {/* Name */}
                 <div>
-                  <label className="text-[15px] font-bold uppercase text-slate-800 flex items-center gap-1 mb-1 tracking-widest">
-                    <User size={9} /> Name *
+                  <label className="text-[10px] sm:text-[15px] font-bold uppercase text-slate-800 flex items-center gap-1 mb-1 tracking-widest">
+                    <User size={8} className="sm:hidden" />
+                    <User size={9} className="hidden sm:block" />
+                    Name *
                   </label>
                   <div className="relative">
-                    <input type="text" name="name" value={form.name}
-                      onChange={handleChange} onBlur={handleBlur} placeholder="John Doe"
-                      className={clsx(inputClass, getBorderClass("name", errors, touched, form), "pr-7")}
-                      autoComplete="name" />
-                    {touched.name && !errors.name && form.name && <Check size={11} className="absolute right-2 top-1/2 -translate-y-1/2 text-emerald-500" />}
-                    {errors.name && touched.name && <AlertCircle size={11} className="absolute right-2 top-1/2 -translate-y-1/2 text-red-400" />}
+                    <input
+                      type="text"
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      placeholder="John Doe"
+                      className={clsx(
+                        "w-full py-1.5 sm:py-2 px-2 sm:px-2.5 rounded-lg text-xs text-slate-900 bg-white border outline-none transition focus:ring-2 pr-7",
+                        getBorderClass("name", errors, touched, form)
+                      )}
+                      autoComplete="name"
+                    />
+                    {touched.name && !errors.name && form.name && (
+                      <Check size={10} className="absolute right-2 top-1/2 -translate-y-1/2 text-emerald-500" />
+                    )}
+                    {errors.name && touched.name && (
+                      <AlertCircle size={10} className="absolute right-2 top-1/2 -translate-y-1/2 text-red-400" />
+                    )}
                   </div>
                   <AnimatePresence>
                     {errors.name && touched.name && (
-                      <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
-                        className="text-[9px] text-red-500 mt-0.5 ml-0.5 font-medium">{errors.name}</motion.p>
+                      <motion.p
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="text-[8px] sm:text-[9px] text-red-500 mt-0.5 ml-0.5 font-medium"
+                      >
+                        {errors.name}
+                      </motion.p>
                     )}
                   </AnimatePresence>
                 </div>
 
                 {/* Email */}
                 <div>
-                  <label className="text-[15px] font-bold uppercase text-slate-800 flex items-center gap-1 mb-1 tracking-widest">
-                    <Mail size={9} /> Email *
+                  <label className="text-[10px] sm:text-[15px] font-bold uppercase text-slate-800 flex items-center gap-1 mb-1 tracking-widest">
+                    <Mail size={8} className="sm:hidden" />
+                    <Mail size={9} className="hidden sm:block" />
+                    Email *
                   </label>
                   <div className="relative">
-                    <input type="email" name="email" value={form.email}
-                      onChange={handleChange} onBlur={handleBlur} placeholder="john@company.com"
-                      className={clsx(inputClass, getBorderClass("email", errors, touched, form), "pr-7")}
-                      autoComplete="email" />
-                    {touched.email && !errors.email && form.email && <Check size={11} className="absolute right-2 top-1/2 -translate-y-1/2 text-emerald-500" />}
-                    {errors.email && touched.email && <AlertCircle size={11} className="absolute right-2 top-1/2 -translate-y-1/2 text-red-400" />}
+                    <input
+                      type="email"
+                      name="email"
+                      value={form.email}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      placeholder="john@company.com"
+                      className={clsx(
+                        "w-full py-1.5 sm:py-2 px-2 sm:px-2.5 rounded-lg text-xs text-slate-900 bg-white border outline-none transition focus:ring-2 pr-7",
+                        getBorderClass("email", errors, touched, form)
+                      )}
+                      autoComplete="email"
+                    />
+                    {touched.email && !errors.email && form.email && (
+                      <Check size={10} className="absolute right-2 top-1/2 -translate-y-1/2 text-emerald-500" />
+                    )}
+                    {errors.email && touched.email && (
+                      <AlertCircle size={10} className="absolute right-2 top-1/2 -translate-y-1/2 text-red-400" />
+                    )}
                   </div>
                   <AnimatePresence>
                     {errors.email && touched.email && (
-                      <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
-                        className="text-[9px] text-red-500 mt-0.5 ml-0.5 font-medium">{errors.email}</motion.p>
+                      <motion.p
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="text-[8px] sm:text-[9px] text-red-500 mt-0.5 ml-0.5 font-medium"
+                      >
+                        {errors.email}
+                      </motion.p>
                     )}
                   </AnimatePresence>
                 </div>
 
                 {/* Phone */}
                 <div>
-                  <label className="text-[15px] font-bold uppercase text-slate-800 flex items-center gap-1 mb-1 tracking-widest">
-                    <Phone size={9} /> Phone *
+                  <label className="text-[10px] sm:text-[15px] font-bold uppercase text-slate-800 flex items-center gap-1 mb-1 tracking-widest">
+                    <Phone size={8} className="sm:hidden" />
+                    <Phone size={9} className="hidden sm:block" />
+                    Phone *
                   </label>
-                  <div className="flex gap-1.5">
+                  <div className="flex gap-1 sm:gap-1.5">
                     <div className="relative flex-shrink-0" ref={countryDropRef}>
-                      <button type="button"
-                        onClick={() => { setCountryOpen(!countryOpen); setCountrySearch(""); }}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCountryOpen(!countryOpen);
+                          setCountrySearch("");
+                        }}
                         className={clsx(
-                          "h-8 px-1.5 rounded-lg text-[10px] font-medium flex items-center gap-1 transition-all bg-white border flex-shrink-0",
-                          countryOpen ? "border-amber-400 ring-2 ring-amber-100" : "border-slate-200 hover:border-slate-300"
+                          "h-7 sm:h-8 px-1 sm:px-1.5 rounded-lg text-[9px] sm:text-[10px] font-medium flex items-center gap-1 transition-all bg-white border flex-shrink-0",
+                          countryOpen
+                            ? "border-amber-400 ring-2 ring-amber-100"
+                            : "border-slate-200 hover:border-slate-300"
                         )}
-                        style={{ minWidth: "68px" }}>
+                        style={{ minWidth: "60px" }}
+                      >
                         <FlagEmoji code={selectedCountry.countryCode} />
-                        <span className="text-slate-600 text-[9px]">{selectedCountry.code}</span>
-                        <ChevronDown size={8} className={clsx("text-slate-400 transition-transform", countryOpen && "rotate-180")} />
+                        <span className="text-slate-600 text-[8px] sm:text-[9px]">{selectedCountry.code}</span>
+                        <ChevronDown
+                          size={7}
+                          className={clsx("text-slate-400 transition-transform", countryOpen && "rotate-180")}
+                        />
                       </button>
                       <AnimatePresence>
                         {countryOpen && (
-                          <motion.div initial={{ opacity: 0, y: -4, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: -4, scale: 0.97 }} transition={{ duration: 0.12 }}
-                            className="absolute z-50 left-0 mt-1 w-48 rounded-xl overflow-hidden border border-slate-200 shadow-2xl bg-white">
-                            <div className="p-1.5 border-b border-slate-100">
+                          <motion.div
+                            initial={{ opacity: 0, y: -4, scale: 0.97 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -4, scale: 0.97 }}
+                            transition={{ duration: 0.12 }}
+                            className="absolute z-50 left-0 mt-1 w-40 sm:w-48 rounded-xl overflow-hidden border border-slate-200 shadow-2xl bg-white"
+                          >
+                            <div className="p-1 sm:p-1.5 border-b border-slate-100">
                               <div className="relative">
-                                <Search size={10} className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400" />
-                                <input type="text" value={countrySearch} onChange={(e) => setCountrySearch(e.target.value)}
-                                  placeholder="Search..." autoFocus
-                                  className="w-full pl-6 pr-2 py-1 rounded-lg text-[10px] text-slate-700 bg-slate-50 border border-slate-200 focus:outline-none focus:border-amber-300" />
+                                <Search size={9} className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400" />
+                                <input
+                                  type="text"
+                                  value={countrySearch}
+                                  onChange={(e) => setCountrySearch(e.target.value)}
+                                  placeholder="Search..."
+                                  autoFocus
+                                  className="w-full pl-5 sm:pl-6 pr-2 py-1 rounded-lg text-[9px] sm:text-[10px] text-slate-700 bg-slate-50 border border-slate-200 focus:outline-none focus:border-amber-300"
+                                />
                               </div>
                             </div>
-                            <div className="p-1 max-h-40 overflow-y-auto">
+                            <div className="p-1 max-h-36 sm:max-h-40 overflow-y-auto">
                               {filteredCountries.map((country) => (
-                                <button key={`${country.code}-${country.name}`} type="button"
+                                <button
+                                  key={`${country.code}-${country.name}`}
+                                  type="button"
                                   onClick={() => handleCountrySelect(country)}
                                   className={clsx(
-                                    "w-full text-left px-2 py-1.5 rounded-lg text-[10px] font-medium flex items-center gap-2 transition-all",
-                                    selectedCountry.name === country.name ? "bg-amber-50 text-amber-700" : "text-slate-600 hover:bg-slate-50"
-                                  )}>
+                                    "w-full text-left px-2 py-1 sm:py-1.5 rounded-lg text-[9px] sm:text-[10px] font-medium flex items-center gap-2 transition-all",
+                                    selectedCountry.name === country.name
+                                      ? "bg-amber-50 text-amber-700"
+                                      : "text-slate-600 hover:bg-slate-50"
+                                  )}
+                                >
                                   <FlagEmoji code={country.countryCode} />
                                   <span className="flex-1 truncate">{country.name}</span>
-                                  <span className="text-slate-400 font-mono text-[9px]">{country.code}</span>
-                                  {selectedCountry.name === country.name && <Check size={10} className="text-amber-600 flex-shrink-0" />}
+                                  <span className="text-slate-400 font-mono text-[8px] sm:text-[9px]">{country.code}</span>
+                                  {selectedCountry.name === country.name && (
+                                    <Check size={9} className="text-amber-600 flex-shrink-0" />
+                                  )}
                                 </button>
                               ))}
                               {filteredCountries.length === 0 && (
-                                <div className="py-3 text-center text-slate-400 text-[10px]">No results</div>
+                                <div className="py-3 text-center text-slate-400 text-[9px]">No results</div>
                               )}
                             </div>
                           </motion.div>
@@ -473,78 +624,149 @@ export default function EnquiryFloatingButton() {
                       </AnimatePresence>
                     </div>
                     <div className="relative flex-1">
-                      <input type="tel" name="phone" value={form.phone}
-                        onChange={handleChange} onBlur={handleBlur}
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={form.phone}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
                         placeholder={`${selectedCountry.length} digits`}
-                        className={clsx("w-full py-2 pr-7 rounded-lg text-xs text-slate-900 bg-white border outline-none transition focus:ring-2",
-                          getBorderClass("phone", errors, touched, form))}
-                        maxLength={selectedCountry.length} />
-                      {touched.phone && !errors.phone && form.phone && <Check size={11} className="absolute right-2 top-1/2 -translate-y-1/2 text-emerald-500" />}
-                      {errors.phone && touched.phone && <AlertCircle size={11} className="absolute right-2 top-1/2 -translate-y-1/2 text-red-400" />}
+                        className={clsx(
+                          "w-full py-1.5 sm:py-2 pr-7 rounded-lg text-xs text-slate-900 bg-white border outline-none transition focus:ring-2",
+                          getBorderClass("phone", errors, touched, form)
+                        )}
+                        maxLength={selectedCountry.length}
+                      />
+                      {touched.phone && !errors.phone && form.phone && (
+                        <Check size={10} className="absolute right-2 top-1/2 -translate-y-1/2 text-emerald-500" />
+                      )}
+                      {errors.phone && touched.phone && (
+                        <AlertCircle size={10} className="absolute right-2 top-1/2 -translate-y-1/2 text-red-400" />
+                      )}
                     </div>
                   </div>
                   <AnimatePresence>
                     {errors.phone && touched.phone && (
-                      <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
-                        className="text-[9px] text-red-500 mt-0.5 ml-0.5 font-medium">{errors.phone}</motion.p>
+                      <motion.p
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="text-[8px] sm:text-[9px] text-red-500 mt-0.5 ml-0.5 font-medium"
+                      >
+                        {errors.phone}
+                      </motion.p>
                     )}
                   </AnimatePresence>
                 </div>
 
                 {/* Service */}
                 <div>
-                  <label className="text-[15px] font-bold uppercase text-slate-800 flex items-center gap-1 mb-1 tracking-widest">
-                    <Package size={9} /> Service *
+                  <label className="text-[10px] sm:text-[15px] font-bold uppercase text-slate-800 flex items-center gap-1 mb-1 tracking-widest">
+                    <Package size={8} className="sm:hidden" />
+                    <Package size={9} className="hidden sm:block" />
+                    Service *
                   </label>
                   <div className="relative">
-                    <select name="plan" value={form.plan} onChange={handleChange} onBlur={handleBlur}
-                      className={clsx("w-full px-2.5 py-2 rounded-lg text-md bg-white border outline-none transition appearance-none focus:ring-2",
-                        getBorderClass("plan", errors, touched, form), form.plan ? "text-slate-900" : "text-slate-800")}>
-                      <option value="" disabled>Choose a service</option>
-                      {HOSTING_PLANS.map((p) => <option key={p} value={p}>{p}</option>)}
+                    <select
+                      name="plan"
+                      value={form.plan}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      className={clsx(
+                        "w-full px-2 sm:px-2.5 py-1.5 sm:py-2 rounded-lg text-xs bg-white border outline-none transition appearance-none focus:ring-2",
+                        getBorderClass("plan", errors, touched, form),
+                        form.plan ? "text-slate-900" : "text-slate-800"
+                      )}
+                    >
+                      <option value="" disabled>
+                        Choose a service
+                      </option>
+                      {HOSTING_PLANS.map((p) => (
+                        <option key={p} value={p}>
+                          {p}
+                        </option>
+                      ))}
                     </select>
-                    <ChevronDown size={11} className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                    {touched.plan && !errors.plan && form.plan && <Check size={11} className="absolute right-6 top-1/2 -translate-y-1/2 text-emerald-500" />}
+                    <ChevronDown
+                      size={10}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                    />
+                    {touched.plan && !errors.plan && form.plan && (
+                      <Check size={10} className="absolute right-6 top-1/2 -translate-y-1/2 text-emerald-500" />
+                    )}
                   </div>
                   <AnimatePresence>
                     {errors.plan && touched.plan && (
-                      <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
-                        className="text-[9px] text-red-500 mt-0.5 ml-0.5 font-medium">{errors.plan}</motion.p>
+                      <motion.p
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="text-[8px] sm:text-[9px] text-red-500 mt-0.5 ml-0.5 font-medium"
+                      >
+                        {errors.plan}
+                      </motion.p>
                     )}
                   </AnimatePresence>
                 </div>
 
                 {/* Message */}
                 <div>
-                  <label className="text-[15px] font-bold uppercase text-slate-800 flex items-center gap-1 mb-1 tracking-widest">
-                    <MessageSquare size={9} /> Message
+                  <label className="text-[10px] sm:text-[15px] font-bold uppercase text-slate-800 flex items-center gap-1 mb-1 tracking-widest">
+                    <MessageSquare size={8} className="sm:hidden" />
+                    <MessageSquare size={9} className="hidden sm:block" />
+                    Message
                   </label>
-                  <textarea name="message" value={form.message} onChange={handleChange} rows={2}
+                  <textarea
+                    name="message"
+                    value={form.message}
+                    onChange={handleChange}
+                    rows={2}
                     placeholder="Your requirements..."
-                    className="w-full resize-none rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs text-slate-900 outline-none transition focus:border-amber-400 focus:ring-2 focus:ring-amber-100" />
+                    className="w-full resize-none rounded-lg border border-slate-200 bg-white px-2 sm:px-2.5 py-1.5 sm:py-2 text-xs text-slate-900 outline-none transition focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
+                  />
                 </div>
 
                 {/* Submit */}
-                <motion.button type="submit" disabled={loading} whileTap={{ scale: 0.98 }}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-xs font-bold text-white shadow-md transition-all disabled:opacity-60"
-                  style={{ background: "linear-gradient(135deg,#fbbf24 0%,#f59e0b 40%,#d97706 100%)", boxShadow: "0 4px 12px rgba(245,158,11,0.4)", color: "#7c2d12" }}>
-                  {loading
-                    ? <motion.span animate={{ opacity: [1, 0.5, 1] }} transition={{ duration: 0.9, repeat: Infinity }}>Submitting...</motion.span>
-                    : <><span className="font-black">Request Demo</span><ArrowRight size={13} /></>
-                  }
+                <motion.button
+                  type="submit"
+                  disabled={loading}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl py-2 sm:py-2.5 text-xs font-bold text-white shadow-md transition-all disabled:opacity-60"
+                  style={{
+                    background: "linear-gradient(135deg,#fbbf24 0%,#f59e0b 40%,#d97706 100%)",
+                    boxShadow: "0 4px 12px rgba(245,158,11,0.4)",
+                    color: "#7c2d12",
+                  }}
+                >
+                  {loading ? (
+                    <motion.span
+                      animate={{ opacity: [1, 0.5, 1] }}
+                      transition={{ duration: 0.9, repeat: Infinity }}
+                    >
+                      Submitting...
+                    </motion.span>
+                  ) : (
+                    <>
+                      <span className="font-black">Request Demo</span>
+                      <ArrowRight size={12} />
+                    </>
+                  )}
                 </motion.button>
               </form>
 
               {/* Trust strip */}
-              <div className="mt-3 flex items-center justify-around border-t border-slate-100 pt-2.5">
+              <div className="mt-2 sm:mt-3 flex items-center justify-around border-t border-slate-100 pt-2 sm:pt-2.5">
                 {[
                   { icon: ShieldCheck, label: "SSL" },
                   { icon: Zap, label: "NVMe" },
                   { icon: Headphones, label: "24/7" },
                 ].map(({ icon: Icon, label }) => (
                   <div key={label} className="flex flex-col items-center gap-0.5">
-                    <Icon size={12} className="text-amber-500" />
-                    <span className="text-[8px] font-bold text-slate-400 tracking-widest uppercase">{label}</span>
+                    <Icon size={10} className="sm:hidden text-amber-500" />
+                    <Icon size={12} className="hidden sm:block text-amber-500" />
+                    <span className="text-[7px] sm:text-[8px] font-bold text-slate-400 tracking-widest uppercase">
+                      {label}
+                    </span>
                   </div>
                 ))}
               </div>
