@@ -53,7 +53,7 @@ export default function OfferBanner() {
           />
 
           {/* ----- RESPONSIVE CENTER BOTTOM BUTTON ----- */}
-          <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-20">
+          {/* <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-20">
             <motion.a
               href="/pricing"
               whileHover={{ scale: 1.05 }}
@@ -76,7 +76,7 @@ export default function OfferBanner() {
               Get Started Today
               <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 lg:h-6 lg:w-6" />
             </motion.a>
-          </div>
+          </div> */}
 
           {/* Bottom Shine */}
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-300/70 to-transparent" />
