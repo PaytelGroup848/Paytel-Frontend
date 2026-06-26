@@ -10,7 +10,7 @@ import Input from '../../components/ui/Input';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Spinner from '../../components/ui/Spinner';
-import Modal from '../../components/ui/Modal';
+import Modal from './Modal';
 import {
   Search,
   Plus,
