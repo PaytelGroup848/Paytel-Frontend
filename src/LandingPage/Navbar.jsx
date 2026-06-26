@@ -32,6 +32,23 @@ const LOGO_FALLBACKS = [
   "/logo.png",
 ];
 
+// Tag component — inline, does not affect layout
+const Tag = ({ label, color }) => {
+  const styles = {
+    new: "bg-green-100 text-green-700 border border-green-200",
+    hot: "bg-red-100 text-red-600 border border-red-200",
+    popular: "bg-blue-100 text-blue-700 border border-blue-200",
+    sale: "bg-orange-100 text-orange-600 border border-orange-200",
+  };
+  return (
+    <span
+      className={`ml-1.5 inline-block rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none tracking-wide ${styles[color] || styles.new}`}
+    >
+      {label}
+    </span>
+  );
+};
+
 const megaMenuSections = [
   {
     title: "Create a Website",
@@ -42,6 +59,7 @@ const megaMenuSections = [
         href: "/wordpress-hosting",
         description:
           "Fully managed, speed-optimized WordPress hosting with daily backups.",
+        tag: { label: "NEW", color: "new" },
       },
       {
         label: "Migrate a Website",
@@ -58,6 +76,7 @@ const megaMenuSections = [
         label: "cPanel Hosting",
         href: "/c-panel",
         description: "User-friendly control panel with one-click installs.",
+        tag: { label: "POPULAR", color: "popular" },
       },
       {
         label: "PHP Hosting",
@@ -68,6 +87,7 @@ const megaMenuSections = [
         label: "VPS Hosting",
         href: "/vps-cloud",
         description: "Scalable virtual private servers with root access.",
+        tag: { label: "NEW", color: "new" },
       },
       {
         label: "Node.js Hosting",
@@ -98,6 +118,7 @@ const megaMenuSections = [
         href: "/tally-on-cloud",
         description:
           "TallyPrime on cloud with auto backup and bank-grade security.",
+        tag: { label: "HOT", color: "hot" },
       },
     ],
   },
@@ -109,6 +130,7 @@ const megaMenuSections = [
         label: "Business Email",
         href: "/emails/plan",
         description: "Professional email hosting with collaboration tools.",
+        tag: { label: "SALE", color: "sale" },
       },
       {
         label: "Self Hosted",
@@ -130,6 +152,7 @@ const megaMenuSections = [
         label: "Restaurant Management",
         href: "/restaurant-management-system",
         description: "All-in-one restaurant POS and management system.",
+        tag: { label: "NEW", color: "new" },
       },
     ],
   },
@@ -348,7 +371,7 @@ export default function Navbar({
               initial={{ opacity: 0, scale: 0.96, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: 20 }}
-              className="fixed left-1/2 top-1/2 z-50 max-h-[85vh] w-[95vw] max-w-6xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl border border-white/60 bg-white/95 p-6 shadow-2xl backdrop-blur-2xl md:p-8"
+              className="fixed left-1/2 top-1/2 z-70 max-h-[85vh] w-[95vw] max-w-6xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl border border-white/60 bg-white/95 p-6 shadow-2xl backdrop-blur-2xl md:p-8"
               onMouseLeave={() => setMegaMenuOpen(false)}
               onClick={(e) => e.stopPropagation()}
             >
@@ -379,6 +402,7 @@ export default function Navbar({
                           >
                             <div className="font-medium text-slate-800">
                               {item.label}
+                              {item.tag && <Tag label={item.tag.label} color={item.tag.color} />}
                             </div>
                             <div className="mt-1 text-sm text-slate-500">
                               {item.description}
@@ -393,6 +417,7 @@ export default function Navbar({
                           >
                             <div className="font-medium text-slate-800 group-hover:text-indigo-700">
                               {item.label}
+                              {item.tag && <Tag label={item.tag.label} color={item.tag.color} />}
                             </div>
                             <div className="mt-1 text-sm text-slate-500">
                               {item.description}
@@ -434,7 +459,7 @@ export default function Navbar({
                   src="/Cloudedata.svg"
                   alt="CloudeData"
                   className="h-8 w-auto max-w-[130px] object-contain flex-shrink-0"
-                  style={{ maxHeight: "32px" }}  // hard cap
+                  style={{ maxHeight: "32px" }}
                 />
                 <button
                   onClick={() => setMobileOpen(false)}
@@ -479,6 +504,7 @@ export default function Navbar({
                               <div className="min-w-0">
                                 <p className="truncate text-base font-semibold text-slate-800 group-hover:text-indigo-700">
                                   {item.label}
+                                  {item.tag && <Tag label={item.tag.label} color={item.tag.color} />}
                                 </p>
                                 <p className="mt-0.5 line-clamp-1 text-xs text-slate-400">
                                   {item.description}
@@ -499,6 +525,7 @@ export default function Navbar({
                               <div className="min-w-0">
                                 <p className="truncate text-base font-semibold text-slate-800 group-hover:text-indigo-700">
                                   {item.label}
+                                  {item.tag && <Tag label={item.tag.label} color={item.tag.color} />}
                                 </p>
                                 <p className="mt-0.5 line-clamp-1 text-xs text-slate-400">
                                   {item.description}

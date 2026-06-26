@@ -6,9 +6,10 @@ import clsx from "clsx";
 import {
   X, Check, AlertCircle, User, Mail, Phone, Package,
   MessageSquare, Search, ChevronDown, ArrowRight,
-  ShieldCheck, Zap, Headphones, Sparkles,
+  ShieldCheck, Zap, Headphones,
 } from "lucide-react";
 
+// ── FlagEmoji ────────────────────────────────────────
 function FlagEmoji({ code = "IN" }) {
   const emoji = code
     .toUpperCase()
@@ -18,6 +19,7 @@ function FlagEmoji({ code = "IN" }) {
   return <span style={{ fontSize: 14, lineHeight: 1 }}>{emoji}</span>;
 }
 
+// ── Constants ────────────────────────────────────────
 const COUNTRIES = [
   { name: "India", code: "+91", countryCode: "IN", length: 10, pattern: /^[6-9]/ },
   { name: "USA", code: "+1", countryCode: "US", length: 10, pattern: /^[2-9]/ },
@@ -45,6 +47,7 @@ const HOSTING_PLANS = [
 
 const inputClass = "w-full py-2 px-2.5 rounded-lg text-xs text-slate-900 bg-white border outline-none transition focus:ring-2";
 
+// ── Helper functions ─────────────────────────────────
 function getBorderClass(field, errors, touched, form) {
   if (errors[field] && touched[field]) return "border-red-400 focus:border-red-400 focus:ring-red-100";
   if (touched[field] && !errors[field] && form[field]) return "border-emerald-400 focus:border-emerald-400 focus:ring-emerald-100";
@@ -73,7 +76,7 @@ function validateField(name, value, country) {
   }
 }
 
-/* ── Rope (unchanged) ──────────────────────────────────────────────── */
+// ── Decorative components ─────────────────────────────
 function RopeSVG({ height = 56 }) {
   return (
     <svg width="14" height={height} viewBox={`0 0 14 ${height}`} fill="none" className="block">
@@ -100,7 +103,6 @@ function RopeSVG({ height = 56 }) {
   );
 }
 
-/* ── Wooden Badge (now responsive) ─────────────────────────────────── */
 function WoodenBadge({ onClick, isOpen }) {
   return (
     <motion.button
@@ -139,10 +141,10 @@ function WoodenBadge({ onClick, isOpen }) {
           padding: "clamp(6px, 1vw, 10px) clamp(10px, 2vw, 14px)",
           background: `
             repeating-linear-gradient(88deg, transparent, transparent 2px, rgba(0,0,0,0.025) 2px, rgba(0,0,0,0.025) 3px),
-            linear-gradient(155deg, #8afd99 0%, #66f308 30%, #32f50b 55%, #24fb2f 75%, #8afd90 100%)
+            linear-gradient(155deg, #fdde8a 0%, #f3b408 30%, #f5be0b 55%, #fbb724 75%, #f5fd8a 100%)
           `,
           boxShadow: `
-            0 8px 24px rgba(11, 245, 23, 0.5),
+            0 8px 24px rgba(241, 245, 11, 0.5),
             0 2px 6px rgba(0,0,0,0.2),
             inset 0 1px 0 rgba(255,255,255,0.5),
             inset 0 -2px 4px rgba(0,0,0,0.1)
@@ -150,25 +152,22 @@ function WoodenBadge({ onClick, isOpen }) {
           border: "1.5px solid rgba(180,83,9,0.35)",
         }}
       >
-        {/* Top label */}
         <span
           className="block text-center font-bold tracking-widest"
           style={{
-            fontSize: "clamp(6px, 1.2vw, 8px)",
-            color: "#92400e",
+            fontSize: "clamp(6px, 1.5vw, 10px)",
+            color: "#000000",
             letterSpacing: "0.18em",
             fontFamily: "Georgia, serif",
           }}
         >
           ✦ ENQUIRY ✦
         </span>
-
-        {/* NOW */}
         <span
           className="block text-center font-black tracking-wider mt-0.5"
           style={{
             fontSize: "clamp(10px, 2vw, 13px)",
-            color: "#7c2d12",
+            color: "#000000",
             textShadow: "0 1px 0 rgba(255,255,255,0.4), 0 -1px 0 rgba(0,0,0,0.15)",
             letterSpacing: "0.08em",
             fontFamily: "Georgia, serif",
@@ -177,8 +176,6 @@ function WoodenBadge({ onClick, isOpen }) {
         >
           NOW
         </span>
-
-        {/* Shimmer */}
         <motion.div className="pointer-events-none absolute inset-0 rounded-xl overflow-hidden">
           <motion.div
             className="absolute inset-y-0 w-8 skew-x-[-18deg]"
@@ -187,8 +184,6 @@ function WoodenBadge({ onClick, isOpen }) {
             transition={{ duration: 2, repeat: Infinity, repeatDelay: 2.5 }}
           />
         </motion.div>
-
-        {/* Screws */}
         {["top-1 left-1", "top-1 right-1", "bottom-1 left-1", "bottom-1 right-1"].map((pos, i) => (
           <div
             key={i}
@@ -204,7 +199,6 @@ function WoodenBadge({ onClick, isOpen }) {
   );
 }
 
-/* ── Hook ring ─────────────────────────────────────────────────────── */
 function HookRing() {
   return (
     <div
@@ -218,10 +212,13 @@ function HookRing() {
   );
 }
 
-/* ── Main Component (now accepts `hidden` prop) ────────────────────── */
-export default function EnquiryFloatingButton({ hidden = false }) {
+// ── Main Component ───────────────────────────────────
+export default function EnquiryFloatingButton({
+  hidden = false,
+  externalOpen,
+  onExternalClose
+}) {
   const location = useLocation();
-
   const allowedRoutes = [
     "/",
     "/pricing",
@@ -239,11 +236,24 @@ export default function EnquiryFloatingButton({ hidden = false }) {
     "/contact",
   ];
 
-  if (!allowedRoutes.includes(location.pathname)) {
-    return null;
-  }
+  const isControlled = externalOpen !== undefined;
 
-  const [open, setOpen] = useState(false);
+  // ── State: ALL hooks called unconditionally ──
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = isControlled ? externalOpen : internalOpen;
+
+  const setOpen = useCallback(
+    (val) => {
+      if (isControlled) {
+        if (!val) onExternalClose?.();
+      } else {
+        setInternalOpen(val);
+      }
+    },
+    [isControlled, onExternalClose]
+  );
+
+  // Form state
   const [form, setForm] = useState({ name: "", email: "", phone: "", plan: "", message: "" });
   const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0]);
   const [countryOpen, setCountryOpen] = useState(false);
@@ -258,6 +268,7 @@ export default function EnquiryFloatingButton({ hidden = false }) {
   const cardRef = useRef(null);
   const wrapperRef = useRef(null);
 
+  // ── Effects ──────────────────────────────────────────
   useEffect(() => {
     const h = (e) => {
       if (countryDropRef.current && !countryDropRef.current.contains(e.target)) {
@@ -271,29 +282,30 @@ export default function EnquiryFloatingButton({ hidden = false }) {
 
   useEffect(() => {
     const h = (e) => {
-      if (
-        open &&
-        cardRef.current &&
-        !cardRef.current.contains(e.target) &&
-        wrapperRef.current &&
-        !wrapperRef.current.contains(e.target)
-      ) {
+      if (!open) return;
+      if (cardRef.current && cardRef.current.contains(e.target)) return;
+
+      if (isControlled) {
+        setOpen(false);
+      } else {
+        if (wrapperRef.current && wrapperRef.current.contains(e.target)) return;
         setOpen(false);
       }
     };
     document.addEventListener("mousedown", h);
     return () => document.removeEventListener("mousedown", h);
-  }, [open]);
+  }, [open, setOpen, isControlled]);
 
-  // Close popup when hidden (e.g. mega menu opened)
   useEffect(() => {
     if (hidden) setOpen(false);
-  }, [hidden]);
+  }, [hidden, setOpen]);
 
+  // ── Derived data ─────────────────────────────────────
   const filteredCountries = COUNTRIES.filter((c) =>
     c.name.toLowerCase().includes(countrySearch.toLowerCase()) || c.code.includes(countrySearch)
   );
 
+  // ── Handlers ────────────────────────────────────────
   const handleChange = useCallback(
     (e) => {
       const { name, value } = e.target;
@@ -363,32 +375,37 @@ export default function EnquiryFloatingButton({ hidden = false }) {
     }
   };
 
-  // Entire component hidden when `hidden` prop is true
-  if (hidden) return null;
+  // ── Render condition after ALL hooks (fixes the hook order error) ──
+  if (hidden || (!isControlled && !allowedRoutes.includes(location.pathname))) {
+    return null;
+  }
 
+  // ── JSX ──────────────────────────────────────────────
   return (
     <>
-      {/* ── Hanger (responsive size) ── */}
-      <div
-        ref={wrapperRef}
-        className="fixed top-[60px] right-3 sm:top-[72px] sm:right-10 z-50 flex flex-col items-center"
-        style={{ gap: 0 }}
-      >
-        {/* Nail */}
+      {/* Hanger (wooden badge) - only when NOT externally controlled */}
+      {!isControlled && (
         <div
-          className="rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5"
-          style={{
-            background: "radial-gradient(circle at 35% 28%, #e5e7eb, #6b7280)",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.3)",
-          }}
-        />
-        <RopeSVG height={16} className="sm:hidden" />
-        <RopeSVG height={20} className="hidden sm:block" />
-        <HookRing />
-        <WoodenBadge onClick={() => setOpen((p) => !p)} isOpen={open} />
-      </div>
+          ref={wrapperRef}
+          className="fixed top-[60px] right-3 sm:top-[72px] sm:right-10 z-50 flex flex-col items-center"
+          style={{ gap: 0 }}
+        >
+          {/* Nail */}
+          <div
+            className="rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5"
+            style={{
+              background: "radial-gradient(circle at 35% 28%, #e5e7eb, #6b7280)",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.3)",
+            }}
+          />
+          <RopeSVG height={16} className="sm:hidden" />
+          <RopeSVG height={20} className="hidden sm:block" />
+          <HookRing />
+          <WoodenBadge onClick={() => setOpen((p) => !p)} isOpen={open} />
+        </div>
+      )}
 
-      {/* ── Popup (responsive) ── */}
+      {/* Modal */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -431,7 +448,7 @@ export default function EnquiryFloatingButton({ hidden = false }) {
                 </button>
               </div>
 
-              {/* Alerts (slightly smaller) */}
+              {/* Alerts */}
               <AnimatePresence>
                 {success && (
                   <motion.div
@@ -457,6 +474,7 @@ export default function EnquiryFloatingButton({ hidden = false }) {
                 )}
               </AnimatePresence>
 
+              {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-2.5" noValidate>
                 {/* Name */}
                 <div>

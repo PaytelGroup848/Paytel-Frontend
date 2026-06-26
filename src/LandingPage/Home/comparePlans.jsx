@@ -143,25 +143,15 @@ export default function ComparisonTable() {
           viewport={{ once: true }}
           className="text-center max-w-2xl mx-auto mb-3 md:mb-4"
         >
-          <div className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-600 text-[11px] font-semibold px-3 py-1 rounded-full tracking-[0.1em] uppercase shadow-sm">
-            <TrendingUp size={12} className="text-indigo-400" strokeWidth={2} />
-            Compare &amp; Save
-          </div>
 
           <h2
-            className="text-[1.5rem] sm:text-3xl md:text-[2.25rem] text-slate-900 mb-1.5 leading-tight"
+            className=" max-w-7x1 mx-auto text-[3rem] sm:text-3xl md:text-[1.8rem] text-slate-900 mb-1.5 leading-tight"
             style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, letterSpacing: "-0.015em" }}
           >
-            See why{" "}
-            <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
-              Cloudedata
-            </span>{" "}
-            stands out
+           Cloudedata vs Others: Who delivers more value?{" "}
           </h2>
-
-          <p className="text-[14px] md:text-[16px] text-slate-500 leading-relaxed font-normal max-w-lg mx-auto">
-            A side-by-side look at Cloudedata against leading hosting providers, so you can make a smarter, more informed choice.
-          </p>
+          <p className="text-[14px] md:text-[16px] text-slate-700 leading-relaxed font-normal max-w-2x1 mx-auto">
+         We’ve compared MilesWeb with leading web hosting providers to help you make the smarter choice. </p>
         </motion.div>
 
         {/* Table */}
@@ -304,7 +294,7 @@ export default function ComparisonTable() {
                               company.highlight
                                 ? "text-indigo-600"
                                 : company.price.increase
-                                ? "text-red-600"
+                                ? "text-slate-600"
                                 : "text-slate-800"
                             }`}
                           >
@@ -313,7 +303,7 @@ export default function ComparisonTable() {
                           {company.price.renewalNote && (
                             <span
                               className={`text-[11px] font-medium flex items-center gap-1 ${
-                                company.price.increase ? "text-red-500" : "text-emerald-600"
+                                company.price.increase ? "text-slate-900" : "text-emerald-600"
                               }`}
                             >
                               {company.price.increase ? <ArrowUp size={9} /> : <Check size={9} strokeWidth={3} />}

@@ -52,13 +52,12 @@ export default function ProfessionalHero() {
             </svg>
           </button>
         </div>
-
         {/* RIGHT – Smaller image, right aligned */}
         <div className="flex-1 flex justify-center md:justify-end">
           <img
             src="/dashboard.png"
             alt="Dashboard illustration"
-            className="w-full max-w-xs sm:max-w-lg md:max-w-3x1 h-auto object-contain"
+            className="w-full max-w-7x1 sm:max-w-3x1 md:max-w-5x1 h-auto object-contain"
           />
         </div>
       </div>

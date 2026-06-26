@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Star, Award, TrendingUp, Zap } from "lucide-react";
 
@@ -77,7 +77,6 @@ const reviews = [
   },
 ];
 
-/* StarRating component */
 const StarRating = ({ rating }) => (
   <div className="flex gap-0.5">
     {[...Array(5)].map((_, i) => (
@@ -99,28 +98,27 @@ const StarRating = ({ rating }) => (
   </div>
 );
 
-/* Individual review card */
 const ReviewCard = ({ review, index }) => (
   <motion.div
     initial={{ opacity: 0, scale: 0.9 }}
     whileInView={{ opacity: 1, scale: 1 }}
-    transition={{ delay: index * 0.05, duration: 0.3 }}
+    transition={{ delay: index * 0.03, duration: 0.3 }}
     viewport={{ once: true }}
-    whileHover={{ 
+    whileHover={{
       y: -8,
       scale: 1.02,
-      transition: { duration: 0.3 }
+      transition: { duration: 0.3 },
     }}
-    className="flex-shrink-0 w-[340px] sm:w-[380px] relative rounded-2xl p-[1.5px] bg-gradient-to-br from-indigo-400/60 via-purple-400/60 to-cyan-400/60 transition-all duration-300 hover:shadow-2xl"
+    className="flex-shrink-0 w-[340px] sm:w-[400px] relative rounded-3xl p-[2px] bg-gradient-to-br from-indigo-400/90 via-purple-400/90 to-cyan-400/90 transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-200/40 group"
   >
-    {/* Inner glass card */}
-    <div className="relative h-full rounded-2xl p-6 flex flex-col gap-4 bg-gradient-to-br from-white/95 via-white/90 to-blue-50/95 backdrop-blur-xl">
-      {/* Decorative quote */}
-      <div className="absolute top-2 right-4 text-7xl font-serif text-indigo-200/30 select-none pointer-events-none leading-none">
-        "
+    {/* Animated glow on hover */}
+    <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-indigo-400/0 via-purple-400/0 to-cyan-400/0 opacity-0 group-hover:opacity-20 blur-md transition-opacity duration-500" />
+
+    <div className="relative h-full rounded-3xl p-6 flex flex-col gap-4 bg-gradient-to-br from-white/95 via-white/90 to-blue-50/95 backdrop-blur-xl">
+      <div className="absolute top-2 right-4 text-8xl font-serif text-indigo-200/20 select-none pointer-events-none leading-none">
+        &ldquo;
       </div>
 
-      {/* Header with avatar and info */}
       <div className="flex items-start gap-3">
         <div className="relative">
           <img
@@ -139,10 +137,10 @@ const ReviewCard = ({ review, index }) => (
           <div className="flex items-center gap-2 mt-1.5">
             <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-600 bg-slate-100/80 rounded-full px-2.5 py-0.5 border border-slate-200/50">
               <svg viewBox="0 0 24 24" className="w-3 h-3" fill="currentColor">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
               </svg>
               Google
             </span>
@@ -152,12 +150,10 @@ const ReviewCard = ({ review, index }) => (
         <StarRating rating={review.rating} />
       </div>
 
-      {/* Review text */}
       <p className="text-sm text-slate-600 leading-relaxed flex-1 relative z-10 italic">
-        "{review.text}"
+        &ldquo;{review.text}&rdquo;
       </p>
 
-      {/* Verified badge */}
       <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
         <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center">
           <svg className="w-3 h-3 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
@@ -170,14 +166,25 @@ const ReviewCard = ({ review, index }) => (
   </motion.div>
 );
 
-/* Main Reviews component */
 export default function Reviews() {
   const scrollRef1 = useRef(null);
   const scrollRef2 = useRef(null);
-  const animationRef1 = useRef(null);
-  const animationRef2 = useRef(null);
+  const animationRef = useRef(null);
   const isVisible = useRef(false);
   const sectionRef = useRef(null);
+
+  // Duplicate reviews for infinite scroll
+  const duplicatedReviews = [...reviews, ...reviews];
+
+  // Set initial scroll positions for a dynamic start
+  useEffect(() => {
+    const container1 = scrollRef1.current;
+    const container2 = scrollRef2.current;
+    if (container1 && container2) {
+      container1.scrollLeft = container1.scrollWidth * 0.2;
+      container2.scrollLeft = container2.scrollWidth * 0.7;
+    }
+  }, []);
 
   // Intersection Observer
   useEffect(() => {
@@ -187,77 +194,73 @@ export default function Reviews() {
       },
       { threshold: 0.15 }
     );
-
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => {
       if (sectionRef.current) observer.unobserve(sectionRef.current);
     };
   }, []);
 
-  // Smooth scroll animation
+  // Smooth scroll animation for both rows
   useEffect(() => {
     const container1 = scrollRef1.current;
     const container2 = scrollRef2.current;
     if (!container1 || !container2) return;
 
     let lastTimestamp = 0;
-    const speed = 0.6; // pixels per frame
+    const speed1 = 0.6; // row 1 speed
+    const speed2 = 0.4; // row 2 speed (slower for parallax effect)
 
     const scroll = (timestamp) => {
       if (isVisible.current) {
         if (lastTimestamp) {
           const delta = timestamp - lastTimestamp;
-          const moveAmount = (delta * speed) / 16;
+          const move1 = (delta * speed1) / 16;
+          const move2 = (delta * speed2) / 16;
 
-          // Row 1: Left to right
-          container1.scrollLeft += moveAmount;
-          const halfway1 = container1.scrollWidth / 2;
-          if (container1.scrollLeft >= halfway1) {
-            container1.scrollLeft -= halfway1;
+          // Row 1: scroll left-to-right
+          container1.scrollLeft += move1;
+          const half1 = container1.scrollWidth / 2;
+          if (container1.scrollLeft >= half1) {
+            container1.scrollLeft -= half1;
           }
 
-          // Row 2: Right to left
-          container2.scrollLeft -= moveAmount;
-          if (container2.scrollLeft <= 0) {
-            container2.scrollLeft += container2.scrollWidth / 2;
+          // Row 2: also scroll left-to-right (different speed)
+          container2.scrollLeft += move2;
+          const half2 = container2.scrollWidth / 2;
+          if (container2.scrollLeft >= half2) {
+            container2.scrollLeft -= half2;
           }
         }
         lastTimestamp = timestamp;
       } else {
         lastTimestamp = 0;
       }
-      animationRef1.current = requestAnimationFrame(scroll);
+      animationRef.current = requestAnimationFrame(scroll);
     };
 
-    animationRef1.current = requestAnimationFrame(scroll);
-
+    animationRef.current = requestAnimationFrame(scroll);
     return () => {
-      if (animationRef1.current) cancelAnimationFrame(animationRef1.current);
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
   }, []);
-
-  // Duplicate reviews for seamless loop
-  const duplicatedReviews = [...reviews, ...reviews];
 
   return (
     <section
       ref={sectionRef}
-      className="w-full overflow-hidden relative bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 py-10 md:py-10"
+      className="w-full overflow-hidden relative bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 py-16 md:py-24"
     >
-      {/* Background effects */}
+      {/* Background decorations */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <motion.div
-          animate={{ x: [0, 50, 0], y: [0, 30, 0] }}
+          animate={{ x: [0, 70, 0], y: [0, 40, 0] }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute top-20 left-10 w-96 h-96 bg-indigo-300/15 rounded-full blur-3xl"
+          className="absolute top-20 left-10 w-96 h-96 bg-indigo-300/10 rounded-full blur-3xl"
         />
         <motion.div
-          animate={{ x: [0, -50, 0], y: [0, -30, 0] }}
+          animate={{ x: [0, -70, 0], y: [0, -40, 0] }}
           transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-20 right-10 w-96 h-96 bg-purple-300/15 rounded-full blur-3xl"
+          className="absolute bottom-20 right-10 w-96 h-96 bg-purple-300/10 rounded-full blur-3xl"
         />
-        
-        {/* Grid pattern */}
         <div
           className="absolute inset-0 opacity-[0.02]"
           style={{
@@ -267,13 +270,13 @@ export default function Reviews() {
         />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="w-[90vw] mx-auto px-0 relative z-10">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-14"
+          className="text-center mb-16"
         >
           <motion.span
             initial={{ scale: 0 }}
@@ -283,7 +286,7 @@ export default function Reviews() {
             className="inline-flex items-center gap-2 px-5 py-2 bg-white/80 backdrop-blur-sm border border-indigo-200/60 text-indigo-700 rounded-full text-[11px] font-bold tracking-[0.2em] uppercase shadow-lg shadow-indigo-100/30"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-indigo-500">
-              <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"/>
+              <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z" />
             </svg>
             Client Testimonials
           </motion.span>
@@ -294,12 +297,11 @@ export default function Reviews() {
               across India
             </span>
           </h1>
-          
+
           <p className="mt-4 text-slate-500 text-lg max-w-2xl mx-auto font-normal">
             Join thousands of satisfied customers who trust CloudeData for their cloud hosting needs
           </p>
 
-          {/* Stats */}
           <div className="flex flex-wrap items-center justify-center gap-8 mt-8">
             {[
               { icon: Star, label: "4.9/5 Rating", value: "2,500+ Reviews" },
@@ -326,15 +328,14 @@ export default function Reviews() {
           </div>
         </motion.div>
 
-        {/* Row 1: Left to Right */}
-        <div className="relative mb-8">
-          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-slate-50 via-blue-50/30 to-transparent pointer-events-none z-10" />
-          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-indigo-50/20 via-blue-50/30 to-transparent pointer-events-none z-10" />
-          
+        {/* Row 1 */}
+        <div className="relative mb-10">
+          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-slate-50 via-slate-50/80 to-transparent pointer-events-none z-10" />
+          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-slate-50 via-slate-50/80 to-transparent pointer-events-none z-10" />
+
           <div
             ref={scrollRef1}
             className="flex gap-6 overflow-x-auto py-4 no-scrollbar"
-            style={{ scrollBehavior: "auto" }}
           >
             {duplicatedReviews.map((review, idx) => (
               <ReviewCard key={`row1-${review.id}-${idx}`} review={review} index={idx} />
@@ -342,20 +343,17 @@ export default function Reviews() {
           </div>
         </div>
 
-        {/* Row 2: Right to Left */}
+        {/* Row 2 (scrolls slower) */}
         <div className="relative">
-          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-slate-50 via-blue-50/30 to-transparent pointer-events-none z-10" />
-          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-indigo-50/20 via-blue-50/30 to-transparent pointer-events-none z-10" />
-          
+          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-slate-50 via-slate-50/80 to-transparent pointer-events-none z-10" />
+          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-slate-50 via-slate-50/80 to-transparent pointer-events-none z-10" />
+
           <div
             ref={scrollRef2}
             className="flex gap-6 overflow-x-auto py-4 no-scrollbar"
-            style={{ scrollBehavior: "auto", direction: "rtl" }}
           >
             {duplicatedReviews.map((review, idx) => (
-              <div key={`row2-${review.id}-${idx}`} style={{ direction: "ltr" }}>
-                <ReviewCard review={review} index={idx} />
-              </div>
+              <ReviewCard key={`row2-${review.id}-${idx}`} review={review} index={idx} />
             ))}
           </div>
         </div>

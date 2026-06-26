@@ -14,6 +14,7 @@ import MoneyBack from "../../components/moneyback";
 import OfferBanner from "../../components/banneroff";
 import TrustBadge from "./Trusted";
 import ImageOnly from "../../components/dashboardImage";
+import   FAQ from "./Faq";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Smooth scroll progress bar at the top
@@ -279,8 +280,11 @@ export default function HomePage() {
        <SectionReveal variant="fadeUp" delay={0.05}>
           <OfferBanner/>
        </SectionReveal>
-
-
+   
+   <SectionReveal variant="fadeUp" delay={0.05}>
+            <FAQ/>
+   </SectionReveal>
+         
 
       <SectionReveal variant="fadeIn" duration={0.5}>
         <Footer />
