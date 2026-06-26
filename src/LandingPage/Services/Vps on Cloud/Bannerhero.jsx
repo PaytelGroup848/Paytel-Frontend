@@ -23,7 +23,7 @@ export default function BannerHero() {
         <div className="mb-6 h-1 w-16 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500" />
 
         {/* Headline – bold & commanding */}
-        <h1 className="max-w-5xl text-[clamp(2rem,5.5vw,3.8rem)] font-bold leading-[1.06] tracking-[-0.03em] text-slate-900">
+        <h1 className="max-w-7xl text-[clamp(2rem,5.5vw,3.8rem)] font-bold leading-[1.06] tracking-[-0.03em] text-slate-900">
           Deploy VPS
           <br />
           <span className="bg-gradient-to-r from-indigo-600 to-blue-500 bg-clip-text text-transparent">
@@ -37,24 +37,9 @@ export default function BannerHero() {
           apps, SaaS, and enterprise workloads.
         </p>
 
-        {/* Stats – crisp cards */}
-        <div className="mt-8 rounded-2xl border border-slate-200/70 bg-white/80 shadow-sm backdrop-blur-md">
-          <div className="grid grid-cols-1 divide-y divide-slate-200 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-            {vpsStats.map(({ value, label, icon: Icon }) => (
-              <div key={label} className="flex flex-col items-center gap-1 px-6 py-5 text-center">
-                <Icon size={18} className="text-indigo-500" />
-                <p className="text-[clamp(1.5rem,2.5vw,2rem)] font-semibold tracking-tight text-slate-900">
-                  {value}
-                </p>
-                <p className="text-[12px] font-semibold uppercase tracking-widest text-slate-400">
-                  {label}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Pricing strip – clean CTA */}
+
+          {/* Pricing strip – clean CTA */}
         <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-4 rounded-2xl border border-indigo-100 bg-gradient-to-r from-indigo-50/80 to-blue-50/60 p-5 shadow-sm max-w-lg">
           <div className="min-w-0 flex-1">
             <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">
@@ -78,6 +63,25 @@ export default function BannerHero() {
             <ArrowRight size={16} />
           </a>
         </div>
+
+        {/* Stats – crisp cards */}
+        <div className="mt-8 rounded-2xl border border-slate-200/70 bg-white/80 shadow-sm backdrop-blur-md">
+          <div className="grid grid-cols-1 divide-y divide-slate-200 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+            {vpsStats.map(({ value, label, icon: Icon }) => (
+              <div key={label} className="flex flex-col items-center gap-1 px-6 py-5 text-center">
+                <Icon size={18} className="text-indigo-500" />
+                <p className="text-[clamp(1.5rem,2.5vw,2rem)] font-semibold tracking-tight text-slate-900">
+                  {value}
+                </p>
+                <p className="text-[12px] font-semibold uppercase tracking-widest text-slate-400">
+                  {label}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      
       </div>
     </>
   );

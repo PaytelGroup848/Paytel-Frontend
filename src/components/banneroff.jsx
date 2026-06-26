@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 
 export default function OfferBanner() {
   return (
@@ -50,6 +51,32 @@ export default function OfferBanner() {
               select-none
             "
           />
+
+          {/* ----- RESPONSIVE CENTER BOTTOM BUTTON ----- */}
+          <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-20">
+            <motion.a
+              href="/pricing"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="
+                inline-flex items-center gap-1.5 md:gap-2
+                px-5 py-2.5 sm:px-6 sm:py-3 md:px-8 md:py-4
+                rounded-full
+                bg-gradient-to-r from-cyan-500 to-blue-600
+                text-white font-bold
+                text-xs sm:text-sm md:text-base lg:text-lg
+                shadow-lg shadow-cyan-500/30
+                hover:shadow-cyan-500/50
+                transition-all duration-300
+                backdrop-blur-md
+                border border-white/20
+                whitespace-nowrap
+              "
+            >
+              Get Started Today
+              <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 lg:h-6 lg:w-6" />
+            </motion.a>
+          </div>
 
           {/* Bottom Shine */}
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-300/70 to-transparent" />

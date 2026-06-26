@@ -68,13 +68,15 @@ export default function VpsLandingpage() {
         <Moneyback />
       </FadeUpSection>
 
+      
+      <FadeUpSection delay={0.3}>
+        <VpsComparison />
+      </FadeUpSection>
+
       <FadeUpSection delay={0.25}>
         <Features />
       </FadeUpSection>
 
-      <FadeUpSection delay={0.3}>
-        <VpsComparison />
-      </FadeUpSection>
 
       <FadeUpSection delay={0.35}>
         <SuccessBanner />
