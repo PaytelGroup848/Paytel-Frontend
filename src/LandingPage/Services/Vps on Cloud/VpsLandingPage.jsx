@@ -10,6 +10,7 @@ import SuccessBanner from "../../Home/successStories";
 import Moneyback from "../../../components/moneyback";
 import OfferBanner from "../../../components/banneroff";
 import TrustBadge from "../../Home/Trusted";
+import SupportSection from "../../../components/supportbanner";
 
 import { useEffect } from "react";
 import { motion } from "framer-motion";
@@ -72,6 +73,13 @@ export default function VpsLandingpage() {
       <FadeUpSection delay={0.3}>
         <VpsComparison />
       </FadeUpSection>
+
+            
+         <FadeUpSection delay={0.3}>
+        <SupportSection/>
+         </FadeUpSection>
+
+
 
       <FadeUpSection delay={0.25}>
         <Features />
