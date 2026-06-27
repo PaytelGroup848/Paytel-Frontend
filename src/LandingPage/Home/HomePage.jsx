@@ -15,6 +15,7 @@ import OfferBanner from "../../components/banneroff";
 import TrustBadge from "./Trusted";
 import ImageOnly from "../../components/dashboardImage";
 import   FAQ from "./Faq";
+import SupportSection from "../../components/supportbanner";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Smooth scroll progress bar at the top
@@ -262,13 +263,13 @@ export default function HomePage() {
 
         <SectionDivider />
 
-        
-
-
         {/* Business Card */}
         <SectionReveal variant="scaleUp" delay={0.05} duration={0.65}>
           <BusinessCard />
         </SectionReveal>
+
+
+        <SupportSection/>
 
       </motion.main>
 
