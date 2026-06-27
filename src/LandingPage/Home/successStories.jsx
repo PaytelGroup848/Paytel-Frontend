@@ -15,35 +15,36 @@ export default function SuccessBanner() {
     setCurrent((curr) => (curr === 0 ? images.length - 1 : curr - 1));
   }, []);
 
+  // Auto-play
   useEffect(() => {
     if (isHovered || images.length <= 1) return;
     const interval = setInterval(next, 4000);
     return () => clearInterval(interval);
   }, [next, isHovered]);
 
-  // ⌨️ Keyboard Arrow Navigation
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "ArrowLeft") prev();
       if (e.key === "ArrowRight") next();
     };
-
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [prev, next]);
 
   if (images.length === 0) return null;
 
-  // Single Image State (No shadows, no borders)
+  // Single image – no slider needed
   if (images.length <= 1) {
     return (
       <section className="w-full px-4 py-8 sm:py-12 md:py-16 bg-transparent select-none">
-        <div className="mx-auto w-full max-w-7xl overflow-hidden rounded-xl sm:rounded-2xl md:rounded-[2.5rem] bg-slate-950/40 border-none">
+        <div className="mx-auto w-full max-w-7xl overflow-hidden rounded-xl sm:rounded-2xl md:rounded-[2.5rem] bg-transparent">
           <div className="relative w-full aspect-[4/3] sm:aspect-[16/7] md:aspect-[16/5.5] lg:aspect-[16/4.5] xl:aspect-[16/4]">
             <img
               src={images[0]}
               alt="Success story"
-              className="block w-full h-full object-contain z-10 relative"
+              className="block w-full h-full relative z-10"
+              style={{ objectFit: "contain" }}
             />
           </div>
         </div>
@@ -53,25 +54,23 @@ export default function SuccessBanner() {
 
   return (
     <section className="w-full px-4 py-8 sm:py-12 md:py-16 bg-transparent select-none">
-      {/* ✅ New Heading — Simple, Big & Gradient Underline */}
+      {/* Heading */}
       <div className="max-w-7xl mx-auto mb-6 sm:mb-8 md:mb-10 text-center">
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-black tracking-tight">
           Success Stories
         </h1>
-        {/* Gradient outline (underline) */}
         <div className="mx-auto mt-3 h-1 w-20 rounded-full bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400" />
       </div>
 
-      {/* Slider Container – No borders, no shadows */}
+      {/* Slider Container – transparent, no overlay */}
       <div
-        className="group relative mx-auto w-full max-w-7xl overflow-hidden rounded-xl sm:rounded-2xl md:rounded-[2.5rem] bg-slate-950/60 border-none transition-all duration-500"
+        className="group relative mx-auto w-full max-w-7xl overflow-hidden rounded-xl sm:rounded-2xl md:rounded-[2.5rem] bg-transparent transition-all duration-500"
         role="region"
         aria-label="Success Stories Slider"
         tabIndex={0}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Slider Track */}
         <div className="relative w-full aspect-[4/3] sm:aspect-[16/7] md:aspect-[16/5.5] lg:aspect-[16/4.5] xl:aspect-[16/4] overflow-hidden">
           {images.map((src, index) => (
             <div
@@ -82,25 +81,22 @@ export default function SuccessBanner() {
                   : "opacity-0 scale-[1.02] pointer-events-none"
               }`}
             >
-              {/* Blur background for padding */}
-              <div
-                className="absolute inset-0 bg-cover bg-center blur-3xl opacity-30 scale-110 pointer-events-none"
-                style={{ backgroundImage: `url(${src})` }}
-              />
+              {/* ❌ Removed blur background */}
+              {/* ❌ Removed gradient fade overlay */}
               <img
                 src={src}
                 alt={`Success story ${index + 1}`}
-                className="relative z-10 h-full w-full object-contain"
+                className="relative z-10 h-full w-full"
+                style={{ objectFit: "contain" }}
                 draggable={false}
                 loading="lazy"
               />
             </div>
           ))}
-
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-slate-950/10 to-slate-950/40 z-20" />
+          {/* ❌ Removed gradient overlay from here */}
         </div>
 
-        {/* Previous Button – No shadow, no border */}
+        {/* Previous Button */}
         <button
           onClick={prev}
           aria-label="Previous image"
@@ -109,7 +105,7 @@ export default function SuccessBanner() {
           <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
 
-        {/* Next Button – No shadow, no border */}
+        {/* Next Button */}
         <button
           onClick={next}
           aria-label="Next image"

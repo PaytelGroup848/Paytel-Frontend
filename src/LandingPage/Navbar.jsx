@@ -363,7 +363,7 @@ export default function Navbar({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-black/30 backdrop-blur-md"
+              className="fixed inset-0 z-70 bg-black/30 backdrop-blur-md"
               onClick={() => setMegaMenuOpen(false)}
             />
             <motion.div
@@ -371,7 +371,7 @@ export default function Navbar({
               initial={{ opacity: 0, scale: 0.96, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: 20 }}
-              className="fixed left-1/2 top-1/2 z-70 max-h-[85vh] w-[95vw] max-w-6xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl border border-white/60 bg-white/95 p-6 shadow-2xl backdrop-blur-2xl md:p-8"
+              className="fixed left-1/2 top-1/2 z-100 max-h-[85vh] w-[95vw] max-w-6xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl border border-white/60 bg-white/95 p-6 shadow-2xl backdrop-blur-2xl md:p-8"
               onMouseLeave={() => setMegaMenuOpen(false)}
               onClick={(e) => e.stopPropagation()}
             >
