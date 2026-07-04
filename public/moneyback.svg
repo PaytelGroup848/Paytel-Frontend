@@ -1,0 +1,264 @@
+<svg width="960" height="304.89" viewBox="0 0 960 304.89" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="960" y2="304.89" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#071B49"/>
+      <stop offset="0.42" stop-color="#061331"/>
+      <stop offset="1" stop-color="#020814"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(728 142) rotate(90) scale(210 330)">
+      <stop stop-color="#1976FF" stop-opacity="0.52"/>
+      <stop offset="0.48" stop-color="#149AFF" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#149AFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(161 63) rotate(90) scale(150 265)">
+      <stop stop-color="#2CCBFF" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#2CCBFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="blueText" x1="36" y1="80" x2="468" y2="176" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7ADEFF"/>
+      <stop offset="0.45" stop-color="#1EA5FF"/>
+      <stop offset="1" stop-color="#3E74FF"/>
+    </linearGradient>
+    <linearGradient id="serverFace" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#263A72"/>
+      <stop offset="0.58" stop-color="#101D42"/>
+      <stop offset="1" stop-color="#081329"/>
+    </linearGradient>
+    <linearGradient id="serverSide" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#5D8CFF"/>
+      <stop offset="0.35" stop-color="#183878"/>
+      <stop offset="1" stop-color="#061532"/>
+    </linearGradient>
+    <linearGradient id="platform" x1="536" y1="246" x2="916" y2="300" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#114AAE"/>
+      <stop offset="0.45" stop-color="#0D2464"/>
+      <stop offset="1" stop-color="#071330"/>
+    </linearGradient>
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#000000" flood-opacity="0.35"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#00A7FF" flood-opacity="0.18"/>
+    </filter>
+    <filter id="blueGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#22C6FF" flood-opacity="0.75"/>
+    </filter>
+    <filter id="tinyGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#2AC7FF" flood-opacity="0.85"/>
+    </filter>
+    <pattern id="dots" width="18" height="18" patternUnits="userSpaceOnUse">
+      <circle cx="1.7" cy="1.7" r="1.15" fill="#38BDF8" opacity="0.18"/>
+    </pattern>
+    <clipPath id="rounded">
+      <rect width="960" height="304.89" rx="28" fill="white"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#rounded)">
+    <rect width="960" height="304.89" fill="url(#bg)"/>
+    <rect width="960" height="304.89" fill="url(#glow1)"/>
+    <rect width="960" height="304.89" fill="url(#glow2)"/>
+
+    <!-- background network -->
+    <path d="M448 69C521 20 607 30 684 70C753 106 822 83 907 39" stroke="#2AA8FF" stroke-opacity="0.22" stroke-width="1.4"/>
+    <path d="M460 189C535 124 626 134 709 183C779 225 842 204 929 153" stroke="#2AA8FF" stroke-opacity="0.18" stroke-width="1.4"/>
+    <path d="M0 250H960" stroke="#58D5FF" stroke-opacity="0.08"/>
+    <path d="M0 102H960" stroke="#58D5FF" stroke-opacity="0.06"/>
+    <circle cx="520" cy="81" r="3" fill="#52D7FF" filter="url(#tinyGlow)"/>
+    <circle cx="673" cy="69" r="2.5" fill="#52D7FF" filter="url(#tinyGlow)"/>
+    <circle cx="816" cy="92" r="2.8" fill="#52D7FF" filter="url(#tinyGlow)"/>
+    <circle cx="907" cy="39" r="2.8" fill="#52D7FF" filter="url(#tinyGlow)"/>
+    <circle cx="578" cy="177" r="2.5" fill="#52D7FF" filter="url(#tinyGlow)"/>
+    <circle cx="736" cy="202" r="3" fill="#52D7FF" filter="url(#tinyGlow)"/>
+
+    <!-- world map/dots -->
+    <g opacity="0.65">
+      <path d="M583 22C624 12 674 19 706 42C674 48 640 46 610 36C598 32 590 28 583 22Z" fill="url(#dots)" opacity="0.68"/>
+      <path d="M777 21C826 7 891 13 942 44C897 52 848 50 810 39C793 34 783 28 777 21Z" fill="url(#dots)" opacity="0.68"/>
+      <path d="M822 101C862 89 916 94 960 121V156C910 143 860 128 822 101Z" fill="url(#dots)" opacity="0.47"/>
+      <path d="M13 225C68 211 128 217 170 246C112 256 55 252 13 225Z" fill="url(#dots)" opacity="0.38"/>
+    </g>
+
+    <!-- top badge -->
+    <g transform="translate(36 24)">
+      <rect width="224" height="28" rx="14" fill="#061838" fill-opacity="0.72" stroke="#1DA7FF" stroke-opacity="0.55"/>
+      <path d="M17 8.5L25 5.5L33 8.5V15.5C33 21 29.4 24.3 25 26C20.6 24.3 17 21 17 15.5V8.5Z" stroke="#27C9FF" stroke-width="1.7" fill="none"/>
+      <path d="M21.3 15.2L24 17.9L29 12.5" stroke="#E8FBFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="47" y="18.8" fill="#F8FBFF" font-family="Inter, Arial, sans-serif" font-size="11" font-weight="800" letter-spacing="0.6">SECURE</text>
+      <circle cx="92" cy="14" r="1.7" fill="#24C8FF"/>
+      <text x="101" y="18.8" fill="#F8FBFF" font-family="Inter, Arial, sans-serif" font-size="11" font-weight="800" letter-spacing="0.6">RELIABLE</text>
+      <circle cx="158" cy="14" r="1.7" fill="#24C8FF"/>
+      <text x="167" y="18.8" fill="#F8FBFF" font-family="Inter, Arial, sans-serif" font-size="11" font-weight="800" letter-spacing="0.6">POWERFUL</text>
+    </g>
+
+    <!-- headings -->
+    <text x="36" y="105" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="43" font-weight="900" letter-spacing="-1.8">High Performance</text>
+    <text x="36" y="164" fill="url(#blueText)" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="950" letter-spacing="-2.2">VPS &amp; Servers</text>
+    <text x="36" y="203" fill="#C9D5EA" font-family="Inter, Arial, sans-serif" font-size="15.5" font-weight="500">Blazing fast SSD storage, enterprise hardware, and</text>
+    <text x="36" y="224" fill="#C9D5EA" font-family="Inter, Arial, sans-serif" font-size="15.5" font-weight="500"><tspan fill="#38CBFF" font-weight="900">99.99%</tspan> uptime to keep your business running.</text>
+
+    <!-- bottom features -->
+    <g transform="translate(36 255)">
+      <g>
+        <circle cx="19" cy="0" r="13.2" stroke="#1FB6FF" stroke-width="1.7" fill="#082353" fill-opacity="0.44"/>
+        <path d="M11 -1.5H19L25 -8" stroke="#42D8FF" stroke-width="1.7" stroke-linecap="round"/>
+        <path d="M19 -10V-5M9 0H14M19 10V5M29 0H24" stroke="#42D8FF" stroke-width="1.5" stroke-linecap="round"/>
+        <text x="0" y="31" fill="#F5F9FF" font-family="Inter, Arial, sans-serif" font-size="11.5" font-weight="760">High</text>
+        <text x="0" y="45" fill="#F5F9FF" font-family="Inter, Arial, sans-serif" font-size="11.5" font-weight="760">Performance</text>
+      </g>
+      <line x1="95" y1="-10" x2="95" y2="38" stroke="#4AA5FF" stroke-opacity="0.26"/>
+      <g transform="translate(118 0)">
+        <path d="M7 -10L19 -15L31 -10V0C31 11 23.4 16.5 19 18C14.6 16.5 7 11 7 0V-10Z" stroke="#29C4FF" stroke-width="1.8" fill="#082353" fill-opacity="0.42"/>
+        <path d="M14 -1L18 3L25 -5" stroke="#F4FFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="0" y="31" fill="#F5F9FF" font-family="Inter, Arial, sans-serif" font-size="11.5" font-weight="760">Enterprise</text>
+        <text x="0" y="45" fill="#F5F9FF" font-family="Inter, Arial, sans-serif" font-size="11.5" font-weight="760">Security</text>
+      </g>
+      <line x1="190" y1="-10" x2="190" y2="38" stroke="#4AA5FF" stroke-opacity="0.26"/>
+      <g transform="translate(212 0)">
+        <path d="M17 -9C8 -9 4 -3 5 3C-1 4-4 9 0 15H38C42 7 37 2 31 3C30 -4 25 -9 17 -9Z" stroke="#2BC7FF" stroke-width="1.7" fill="#082353" fill-opacity="0.42"/>
+        <path d="M19 15V5M13 10H25" stroke="#F4FFFF" stroke-width="1.8" stroke-linecap="round"/>
+        <text x="0" y="31" fill="#F5F9FF" font-family="Inter, Arial, sans-serif" font-size="11.5" font-weight="760">Scalable</text>
+        <text x="0" y="45" fill="#F5F9FF" font-family="Inter, Arial, sans-serif" font-size="11.5" font-weight="760">Resources</text>
+      </g>
+      <line x1="285" y1="-10" x2="285" y2="38" stroke="#4AA5FF" stroke-opacity="0.26"/>
+      <g transform="translate(307 0)">
+        <circle cx="20" cy="0" r="13.2" stroke="#1FB6FF" stroke-width="1.7" fill="#082353" fill-opacity="0.44"/>
+        <path d="M20 -8V1L27 5" stroke="#F4FFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M20 -15V-10M20 10V15M5 0H10M30 0H35" stroke="#42D8FF" stroke-width="1.4" stroke-linecap="round"/>
+        <text x="0" y="31" fill="#F5F9FF" font-family="Inter, Arial, sans-serif" font-size="11.5" font-weight="760">99.99%</text>
+        <text x="0" y="45" fill="#F5F9FF" font-family="Inter, Arial, sans-serif" font-size="11.5" font-weight="760">Uptime</text>
+      </g>
+    </g>
+
+    <!-- floating callout cards -->
+    <g filter="url(#softShadow)">
+      <g transform="translate(476 115)">
+        <rect width="92" height="34" rx="10" fill="#071A3D" fill-opacity="0.74" stroke="#62B7FF" stroke-opacity="0.44"/>
+        <rect x="12" y="9" width="17" height="16" rx="2" stroke="#39CFFF" stroke-width="1.4"/>
+        <text x="14" y="20" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="6" font-weight="900">SSD</text>
+        <text x="37" y="18" fill="#3CD6FF" font-family="Inter, Arial, sans-serif" font-size="9.5" font-weight="850">NVMe SSD</text>
+        <text x="37" y="29" fill="#EFF8FF" font-family="Inter, Arial, sans-serif" font-size="8.5" font-weight="700">Storage</text>
+      </g>
+      <g transform="translate(844 74)">
+        <rect width="88" height="44" rx="10" fill="#071A3D" fill-opacity="0.74" stroke="#62B7FF" stroke-opacity="0.44"/>
+        <path d="M14 12L25 8L36 12V22C36 30 30.5 34.5 25 36.5C19.5 34.5 14 30 14 22V12Z" stroke="#33CBFF" stroke-width="1.5" fill="none"/>
+        <path d="M20 22L24 26L31 18" stroke="#F4FFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="45" y="21" fill="#2ED0FF" font-family="Inter, Arial, sans-serif" font-size="10" font-weight="850">DDoS</text>
+        <text x="45" y="34" fill="#EFF8FF" font-family="Inter, Arial, sans-serif" font-size="8.7" font-weight="720">Protection</text>
+      </g>
+      <g transform="translate(831 211)">
+        <rect width="104" height="41" rx="10" fill="#071A3D" fill-opacity="0.74" stroke="#62B7FF" stroke-opacity="0.44"/>
+        <path d="M18 20C18 13 22.3 9 28 9C33.7 9 38 13 38 20" stroke="#35D1FF" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M18 20V28H22V20H18ZM34 20V28H38V20H34Z" fill="#34CFFF"/>
+        <path d="M38 27C38 32 34.5 34 29 34" stroke="#35D1FF" stroke-width="1.4" stroke-linecap="round"/>
+        <text x="48" y="20" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="880">24/7</text>
+        <text x="48" y="33" fill="#EFF8FF" font-family="Inter, Arial, sans-serif" font-size="8.5" font-weight="700">Expert Support</text>
+      </g>
+    </g>
+
+    <!-- cloud -->
+    <g transform="translate(773 88)" filter="url(#softShadow)">
+      <path d="M28 58C13 58 1 47 1 32C1 18 11 7 26 7C32 7 38 9 43 13C49 4 59 0 70 0C88 0 102 14 103 32C115 33 125 43 125 56C125 70 114 80 100 80H30C15 80 4 70 4 58H28Z" fill="#70B9FF" fill-opacity="0.75"/>
+      <path d="M29 55C16 55 6 46 6 33C6 20 16 12 29 12C35 12 41 14 45 18C50 9 59 5 70 5C86 5 98 18 99 34C111 35 119 44 119 56C119 67 109 75 98 75H31C19 75 10 67 10 56H29Z" fill="#D8F4FF" fill-opacity="0.58"/>
+      <rect x="16" y="70" width="98" height="24" rx="3" fill="#08275C"/>
+      <path d="M16 70H114" stroke="#31CFFF" stroke-opacity="0.55"/>
+    </g>
+
+    <!-- platform -->
+    <g filter="url(#softShadow)">
+      <path d="M520 258C529 247 559 243 588 243H848C877 243 918 249 928 261C935 269 918 282 886 286H558C528 284 511 268 520 258Z" fill="url(#platform)"/>
+      <path d="M532 255C547 249 568 248 592 248H846C872 248 899 252 916 260C907 266 884 270 858 271H581C557 270 541 265 532 255Z" fill="#173D86" fill-opacity="0.78"/>
+      <path d="M537 270H906" stroke="#20C7FF" stroke-width="2.4" stroke-linecap="round" filter="url(#blueGlow)"/>
+    </g>
+
+    <!-- servers -->
+    <g filter="url(#softShadow)">
+      <!-- back server left -->
+      <g transform="translate(595 72)">
+        <path d="M16 14L45 5L73 15V189L45 199L16 188V14Z" fill="url(#serverSide)" opacity="0.88"/>
+        <rect x="0" y="17" width="48" height="173" rx="8" fill="url(#serverFace)" stroke="#6EA7FF" stroke-opacity="0.35"/>
+        <rect x="6" y="27" width="36" height="12" rx="2" fill="#071227" stroke="#2B67CF" stroke-opacity="0.6"/>
+        <rect x="10" y="31" width="14" height="3" rx="1.5" fill="#32D8FF" filter="url(#tinyGlow)"/>
+        <circle cx="35" cy="33" r="2" fill="#1F9FFF" filter="url(#tinyGlow)"/>
+        <rect x="6" y="47" width="36" height="12" rx="2" fill="#071227" stroke="#2B67CF" stroke-opacity="0.6"/>
+        <rect x="10" y="51" width="20" height="3" rx="1.5" fill="#1BA4FF" filter="url(#tinyGlow)"/>
+        <circle cx="35" cy="53" r="2" fill="#1F9FFF" filter="url(#tinyGlow)"/>
+        <rect x="6" y="67" width="36" height="12" rx="2" fill="#071227" stroke="#2B67CF" stroke-opacity="0.6"/>
+        <rect x="10" y="71" width="12" height="3" rx="1.5" fill="#32D8FF" filter="url(#tinyGlow)"/>
+        <circle cx="35" cy="73" r="2" fill="#1F9FFF" filter="url(#tinyGlow)"/>
+        <rect x="6" y="87" width="36" height="12" rx="2" fill="#071227" stroke="#2B67CF" stroke-opacity="0.6"/>
+        <rect x="10" y="91" width="22" height="3" rx="1.5" fill="#32D8FF" filter="url(#tinyGlow)"/>
+        <circle cx="35" cy="93" r="2" fill="#1F9FFF" filter="url(#tinyGlow)"/>
+        <rect x="6" y="107" width="36" height="12" rx="2" fill="#071227" stroke="#2B67CF" stroke-opacity="0.6"/>
+        <rect x="10" y="111" width="16" height="3" rx="1.5" fill="#1BA4FF" filter="url(#tinyGlow)"/>
+        <circle cx="35" cy="113" r="2" fill="#1F9FFF" filter="url(#tinyGlow)"/>
+        <rect x="6" y="127" width="36" height="12" rx="2" fill="#071227" stroke="#2B67CF" stroke-opacity="0.6"/>
+        <rect x="10" y="131" width="26" height="3" rx="1.5" fill="#32D8FF" filter="url(#tinyGlow)"/>
+        <circle cx="35" cy="133" r="2" fill="#1F9FFF" filter="url(#tinyGlow)"/>
+        <rect x="6" y="147" width="36" height="28" rx="2" fill="#071227" stroke="#2B67CF" stroke-opacity="0.6"/>
+        <path d="M10 153H38M10 159H38M10 165H31" stroke="#234C97" stroke-width="1"/>
+      </g>
+
+      <!-- main server middle -->
+      <g transform="translate(660 55)">
+        <path d="M20 14L60 2L96 16V211L60 224L20 211V14Z" fill="url(#serverSide)"/>
+        <rect x="0" y="17" width="64" height="199" rx="9" fill="url(#serverFace)" stroke="#82AEFF" stroke-opacity="0.5"/>
+        <rect x="8" y="29" width="48" height="16" rx="2" fill="#071227" stroke="#2D70DC" stroke-opacity="0.72"/>
+        <rect x="13" y="34" width="27" height="4" rx="2" fill="#35D9FF" filter="url(#tinyGlow)"/>
+        <circle cx="49" cy="36" r="2.2" fill="#37D8FF" filter="url(#tinyGlow)"/>
+        <rect x="8" y="54" width="48" height="16" rx="2" fill="#071227" stroke="#2D70DC" stroke-opacity="0.72"/>
+        <rect x="13" y="59" width="22" height="4" rx="2" fill="#1A9EFF" filter="url(#tinyGlow)"/>
+        <circle cx="49" cy="61" r="2.2" fill="#37D8FF" filter="url(#tinyGlow)"/>
+        <rect x="8" y="79" width="48" height="16" rx="2" fill="#071227" stroke="#2D70DC" stroke-opacity="0.72"/>
+        <rect x="13" y="84" width="32" height="4" rx="2" fill="#35D9FF" filter="url(#tinyGlow)"/>
+        <circle cx="49" cy="86" r="2.2" fill="#37D8FF" filter="url(#tinyGlow)"/>
+        <rect x="8" y="104" width="48" height="16" rx="2" fill="#071227" stroke="#2D70DC" stroke-opacity="0.72"/>
+        <rect x="13" y="109" width="18" height="4" rx="2" fill="#1A9EFF" filter="url(#tinyGlow)"/>
+        <circle cx="49" cy="111" r="2.2" fill="#37D8FF" filter="url(#tinyGlow)"/>
+        <rect x="8" y="129" width="48" height="16" rx="2" fill="#071227" stroke="#2D70DC" stroke-opacity="0.72"/>
+        <rect x="13" y="134" width="36" height="4" rx="2" fill="#35D9FF" filter="url(#tinyGlow)"/>
+        <circle cx="49" cy="136" r="2.2" fill="#37D8FF" filter="url(#tinyGlow)"/>
+        <rect x="8" y="154" width="48" height="16" rx="2" fill="#071227" stroke="#2D70DC" stroke-opacity="0.72"/>
+        <rect x="13" y="159" width="25" height="4" rx="2" fill="#1A9EFF" filter="url(#tinyGlow)"/>
+        <circle cx="49" cy="161" r="2.2" fill="#37D8FF" filter="url(#tinyGlow)"/>
+        <rect x="8" y="181" width="48" height="20" rx="2" fill="#071227" stroke="#2D70DC" stroke-opacity="0.72"/>
+        <rect x="14" y="187" width="34" height="5" rx="2.5" fill="#6CE9FF" filter="url(#blueGlow)"/>
+      </g>
+
+      <!-- front server right -->
+      <g transform="translate(735 67)">
+        <path d="M19 12L58 0L92 14V199L58 211L19 199V12Z" fill="url(#serverSide)"/>
+        <rect x="0" y="15" width="62" height="190" rx="8" fill="url(#serverFace)" stroke="#82AEFF" stroke-opacity="0.43"/>
+        <rect x="8" y="28" width="46" height="15" rx="2" fill="#071227" stroke="#2D70DC" stroke-opacity="0.68"/>
+        <rect x="13" y="33" width="24" height="4" rx="2" fill="#31D3FF" filter="url(#tinyGlow)"/>
+        <circle cx="48" cy="35" r="2.1" fill="#37D8FF" filter="url(#tinyGlow)"/>
+        <rect x="8" y="52" width="46" height="15" rx="2" fill="#071227" stroke="#2D70DC" stroke-opacity="0.68"/>
+        <rect x="13" y="57" width="31" height="4" rx="2" fill="#1A9EFF" filter="url(#tinyGlow)"/>
+        <circle cx="48" cy="59" r="2.1" fill="#37D8FF" filter="url(#tinyGlow)"/>
+        <rect x="8" y="76" width="46" height="15" rx="2" fill="#071227" stroke="#2D70DC" stroke-opacity="0.68"/>
+        <rect x="13" y="81" width="18" height="4" rx="2" fill="#31D3FF" filter="url(#tinyGlow)"/>
+        <circle cx="48" cy="83" r="2.1" fill="#37D8FF" filter="url(#tinyGlow)"/>
+        <rect x="8" y="100" width="46" height="15" rx="2" fill="#071227" stroke="#2D70DC" stroke-opacity="0.68"/>
+        <rect x="13" y="105" width="29" height="4" rx="2" fill="#1A9EFF" filter="url(#tinyGlow)"/>
+        <circle cx="48" cy="107" r="2.1" fill="#37D8FF" filter="url(#tinyGlow)"/>
+        <rect x="8" y="124" width="46" height="15" rx="2" fill="#071227" stroke="#2D70DC" stroke-opacity="0.68"/>
+        <rect x="13" y="129" width="20" height="4" rx="2" fill="#31D3FF" filter="url(#tinyGlow)"/>
+        <circle cx="48" cy="131" r="2.1" fill="#37D8FF" filter="url(#tinyGlow)"/>
+        <rect x="8" y="148" width="46" height="15" rx="2" fill="#071227" stroke="#2D70DC" stroke-opacity="0.68"/>
+        <rect x="13" y="153" width="34" height="4" rx="2" fill="#31D3FF" filter="url(#tinyGlow)"/>
+        <circle cx="48" cy="155" r="2.1" fill="#37D8FF" filter="url(#tinyGlow)"/>
+        <rect x="8" y="174" width="46" height="17" rx="2" fill="#071227" stroke="#2D70DC" stroke-opacity="0.68"/>
+        <path d="M12 179H50M12 184H45" stroke="#2453A2" stroke-width="1"/>
+      </g>
+    </g>
+
+    <!-- shield front -->
+    <g transform="translate(554 158)" filter="url(#softShadow)">
+      <path d="M16 24L54 9L92 24V58C92 87 70 105 54 112C38 105 16 87 16 58V24Z" fill="#2C87FF" fill-opacity="0.76" stroke="#9FEAFF" stroke-width="2"/>
+      <path d="M29 33L54 23L79 33V57C79 78 64 91 54 97C44 91 29 78 29 57V33Z" fill="#0B2D6B" fill-opacity="0.54" stroke="#48D9FF" stroke-opacity="0.75"/>
+      <path d="M41 59L51 70L70 48" stroke="#F2FFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <!-- subtle corners -->
+    <path d="M1 28C1 13 13 1 28 1H932C947 1 959 13 959 28V276.89C959 291.89 947 303.89 932 303.89H28C13 303.89 1 291.89 1 276.89V28Z" stroke="white" stroke-opacity="0.06"/>
+    <path d="M0 304.89L960 0" stroke="#2AC7FF" stroke-opacity="0.05"/>
+  </g>
+</svg>
