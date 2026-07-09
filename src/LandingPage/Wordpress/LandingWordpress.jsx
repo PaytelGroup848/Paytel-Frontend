@@ -16,6 +16,7 @@ import { useLocation } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import Lenis from "@studio-freight/lenis";
+import { Helmet } from "react-helmet-async";
 
 // ─── Reusable fade‑up section wrapper ──────────────────────────────────
 const FadeUpSection = ({ children, className = "", delay = 0 }) => (
@@ -67,6 +68,16 @@ export default function LandingWordpress() {
 
   return (
     <>
+      <Helmet>
+        <title>
+          WordPress Hosting in India | Fast & Secure Hosting | Cloudedata
+        </title>
+        <meta
+          name="description"
+          content="Launch your website with Cloudedata WordPress Hosting—fast performance, free SSL, daily backups, 99.99% uptime & 24/7 support."
+        />
+        <link rel="canonical" href="https://cloudedata.com/wordpress-hosting" />
+      </Helmet>
       <Navbar />
 
       {/* Banner – already might have its own animations */}

@@ -1,29 +1,30 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import Navbar from '../../Navbar';
-import Footer from '../../Footer';
-import Banner from './Banner';
-import Feature from './Feature';
-import TallyPlans from './TallyPlans';
-import TallyFaq from './TallyFaq';
-import TallyReview from './TallyReview';
+import { useEffect, useMemo, useRef, useState } from "react";
+import Navbar from "../../Navbar";
+import Footer from "../../Footer";
+import Banner from "./Banner";
+import Feature from "./Feature";
+import TallyPlans from "./TallyPlans";
+import TallyFaq from "./TallyFaq";
+import TallyReview from "./TallyReview";
+import { Helmet } from "react-helmet-async";
 
 function usePrefersReducedMotion() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const handleChange = () => setPrefersReducedMotion(mediaQuery.matches);
 
     handleChange();
-    mediaQuery.addEventListener('change', handleChange);
+    mediaQuery.addEventListener("change", handleChange);
 
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
   return prefersReducedMotion;
 }
 
-function AnimatedSection({ id, children, className = '', delay = 0 }) {
+function AnimatedSection({ id, children, className = "", delay = 0 }) {
   const sectionRef = useRef(null);
   const prefersReducedMotion = usePrefersReducedMotion();
   const [isVisible, setIsVisible] = useState(false);
@@ -46,8 +47,8 @@ function AnimatedSection({ id, children, className = '', delay = 0 }) {
       },
       {
         threshold: 0.12,
-        rootMargin: '0px 0px -8% 0px',
-      }
+        rootMargin: "0px 0px -8% 0px",
+      },
     );
 
     observer.observe(section);
@@ -59,8 +60,8 @@ function AnimatedSection({ id, children, className = '', delay = 0 }) {
     <section
       ref={sectionRef}
       id={id}
-      style={{ transitionDelay: prefersReducedMotion ? '0ms' : `${delay}ms` }}
-      className={`tally-page-section ${isVisible ? 'tally-page-section-visible' : ''} ${className}`}
+      style={{ transitionDelay: prefersReducedMotion ? "0ms" : `${delay}ms` }}
+      className={`tally-page-section ${isVisible ? "tally-page-section-visible" : ""} ${className}`}
     >
       {children}
     </section>
@@ -71,33 +72,42 @@ export default function TallyPage() {
   const sections = useMemo(
     () => [
       {
-        id: 'features',
+        id: "features",
         component: <Feature />,
         delay: 80,
       },
       {
-        id: 'plans',
+        id: "plans",
         component: <TallyPlans />,
         delay: 120,
       },
       {
-        id: 'faq',
+        id: "faq",
         component: <TallyFaq />,
         delay: 120,
       },
       {
-        id: 'reviews',
+        id: "reviews",
         component: <TallyReview />,
         delay: 120,
       },
     ],
-    []
+    [],
   );
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-white text-slate-950 antialiased">
-      <style>
-        {`
+    <>
+      <Helmet>
+        <title>Tally on Cloud | Secure Tally Prime Hosting | Cloudedata</title>
+        <meta
+          name="description"
+          content="Access Tally Prime on Cloud anytime with secure hosting, automatic backups, high-speed performance, 99.99% uptime, and 24/7 expert support."
+        />
+        <link rel="canonical" href="https://cloudedata.com/tally-on-cloud" />
+      </Helmet>
+      <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-white text-slate-950 antialiased">
+        <style>
+          {`
           html {
             scroll-behavior: smooth;
           }
@@ -141,25 +151,30 @@ export default function TallyPage() {
             }
           }
         `}
-      </style>
+        </style>
 
-      <div className="tally-page-shell min-h-screen w-full max-w-full overflow-x-hidden">
-        <Navbar />
+        <div className="tally-page-shell min-h-screen w-full max-w-full overflow-x-hidden">
+          <Navbar />
 
-        <main className="w-full max-w-full overflow-x-hidden">
-          <div id="home">
-            <Banner />
-          </div>
+          <main className="w-full max-w-full overflow-x-hidden">
+            <div id="home">
+              <Banner />
+            </div>
 
-          {sections.map((section) => (
-            <AnimatedSection key={section.id} id={section.id} delay={section.delay}>
-              {section.component}
-            </AnimatedSection>
-          ))}
-        </main>
+            {sections.map((section) => (
+              <AnimatedSection
+                key={section.id}
+                id={section.id}
+                delay={section.delay}
+              >
+                {section.component}
+              </AnimatedSection>
+            ))}
+          </main>
 
-        <Footer />
+          <Footer />
+        </div>
       </div>
-    </div>
+    </>
   );
 }

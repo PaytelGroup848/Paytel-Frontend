@@ -224,8 +224,9 @@ export default function Navbar({
   const PhoneButton = ({ className = "", forceShow = false }) => (
     <a
       href={`tel:${phoneNumber}`}
-      className={`flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition-all hover:shadow-xl active:scale-95 ${className} ${forceShow ? "justify-center" : ""
-        }`}
+      className={`flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition-all hover:shadow-xl active:scale-95 ${className} ${
+        forceShow ? "justify-center" : ""
+      }`}
     >
       <Phone size={18} />
       <span className={`${forceShow ? "inline" : "hidden sm:inline"}`}>
@@ -238,8 +239,9 @@ export default function Navbar({
     <>
       {/* Top Navbar – hidden when mobile menu is open */}
       <nav
-        className={`fixed left-0 right-0 top-0 z-50 border-b border-blue-200/60 bg-white/70 shadow-sm backdrop-blur-2xl transition-all ${mobileOpen ? "hidden" : ""
-          }`}
+        className={`fixed left-0 right-0 top-0 z-50 border-b border-blue-200/60 bg-white/70 shadow-sm backdrop-blur-2xl transition-all ${
+          mobileOpen ? "hidden" : ""
+        }`}
       >
         <div className="mx-auto max-w-screen-2xl px-6 lg:px-12">
           <div className="flex h-20 items-center justify-between">
@@ -259,10 +261,11 @@ export default function Navbar({
               <div className="flex items-center rounded-3xl border border-white/70 bg-white/90 px-3 py-1.5 shadow backdrop-blur-md">
                 <Link
                   to="/pricing"
-                  className={`group relative rounded-3xl px-6 py-2.5 text-sm font-medium transition-all ${isActive("/pricing")
-                    ? "text-indigo-600"
-                    : "text-slate-700 hover:text-slate-900"
-                    }`}
+                  className={`group relative rounded-3xl px-6 py-2.5 text-sm font-medium transition-all ${
+                    isActive("/pricing")
+                      ? "text-indigo-600"
+                      : "text-slate-700 hover:text-slate-900"
+                  }`}
                 >
                   <span>Pricing</span>
                   <div className="absolute bottom-0 left-1/2 h-0.5 w-0 -translate-x-1/2 bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-300 group-hover:w-4/5" />
@@ -273,10 +276,11 @@ export default function Navbar({
                   onMouseEnter={() => setMegaMenuOpen(true)}
                 >
                   <button
-                    className={`flex items-center gap-1 rounded-3xl px-6 py-2.5 text-sm font-medium transition-all ${megaMenuOpen
-                      ? "text-indigo-600"
-                      : "text-slate-700 hover:text-slate-900"
-                      }`}
+                    className={`flex items-center gap-1 rounded-3xl px-6 py-2.5 text-sm font-medium transition-all ${
+                      megaMenuOpen
+                        ? "text-indigo-600"
+                        : "text-slate-700 hover:text-slate-900"
+                    }`}
                   >
                     Services
                     <ChevronDown
@@ -292,10 +296,11 @@ export default function Navbar({
                     <Link
                       key={link.label}
                       to={link.href}
-                      className={`group relative flex items-center gap-1.5 rounded-3xl px-6 py-2.5 text-sm font-medium transition-all ${isActive(link.href)
-                        ? "text-indigo-600"
-                        : "text-slate-700 hover:text-slate-900"
-                        }`}
+                      className={`group relative flex items-center gap-1.5 rounded-3xl px-6 py-2.5 text-sm font-medium transition-all ${
+                        isActive(link.href)
+                          ? "text-indigo-600"
+                          : "text-slate-700 hover:text-slate-900"
+                      }`}
                     >
                       <Icon size={17} />
                       {link.label}
@@ -358,12 +363,12 @@ export default function Navbar({
       {/* Mega Menu (Desktop) */}
       <AnimatePresence>
         {megaMenuOpen && (
-          <>
+          <div className="scrollbar-hide">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-70 bg-black/30 backdrop-blur-md"
+              className="fixed inset-0 z-70 bg-black/30 backdrop-blur-md scrollbar-hide"
               onClick={() => setMegaMenuOpen(false)}
             />
             <motion.div
@@ -402,7 +407,12 @@ export default function Navbar({
                           >
                             <div className="font-medium text-slate-800">
                               {item.label}
-                              {item.tag && <Tag label={item.tag.label} color={item.tag.color} />}
+                              {item.tag && (
+                                <Tag
+                                  label={item.tag.label}
+                                  color={item.tag.color}
+                                />
+                              )}
                             </div>
                             <div className="mt-1 text-sm text-slate-500">
                               {item.description}
@@ -417,7 +427,12 @@ export default function Navbar({
                           >
                             <div className="font-medium text-slate-800 group-hover:text-indigo-700">
                               {item.label}
-                              {item.tag && <Tag label={item.tag.label} color={item.tag.color} />}
+                              {item.tag && (
+                                <Tag
+                                  label={item.tag.label}
+                                  color={item.tag.color}
+                                />
+                              )}
                             </div>
                             <div className="mt-1 text-sm text-slate-500">
                               {item.description}
@@ -430,7 +445,7 @@ export default function Navbar({
                 ))}
               </div>
             </motion.div>
-          </>
+          </div>
         )}
       </AnimatePresence>
 
@@ -476,10 +491,11 @@ export default function Navbar({
                 <Link
                   to="/pricing"
                   onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-3 rounded-xl px-4 py-3 text-lg font-semibold transition-colors ${isActive("/pricing")
-                    ? "bg-indigo-50 text-indigo-600"
-                    : "text-slate-800 hover:bg-slate-50 hover:text-indigo-600"
-                    }`}
+                  className={`flex items-center gap-3 rounded-xl px-4 py-3 text-lg font-semibold transition-colors ${
+                    isActive("/pricing")
+                      ? "bg-indigo-50 text-indigo-600"
+                      : "text-slate-800 hover:bg-slate-50 hover:text-indigo-600"
+                  }`}
                 >
                   <IndianRupee size={22} /> Pricing
                 </Link>
@@ -504,7 +520,12 @@ export default function Navbar({
                               <div className="min-w-0">
                                 <p className="truncate text-base font-semibold text-slate-800 group-hover:text-indigo-700">
                                   {item.label}
-                                  {item.tag && <Tag label={item.tag.label} color={item.tag.color} />}
+                                  {item.tag && (
+                                    <Tag
+                                      label={item.tag.label}
+                                      color={item.tag.color}
+                                    />
+                                  )}
                                 </p>
                                 <p className="mt-0.5 line-clamp-1 text-xs text-slate-400">
                                   {item.description}
@@ -525,7 +546,12 @@ export default function Navbar({
                               <div className="min-w-0">
                                 <p className="truncate text-base font-semibold text-slate-800 group-hover:text-indigo-700">
                                   {item.label}
-                                  {item.tag && <Tag label={item.tag.label} color={item.tag.color} />}
+                                  {item.tag && (
+                                    <Tag
+                                      label={item.tag.label}
+                                      color={item.tag.color}
+                                    />
+                                  )}
                                 </p>
                                 <p className="mt-0.5 line-clamp-1 text-xs text-slate-400">
                                   {item.description}
@@ -551,10 +577,11 @@ export default function Navbar({
                         key={link.label}
                         to={link.href}
                         onClick={() => setMobileOpen(false)}
-                        className={`flex items-center gap-3 rounded-xl px-4 py-3.5 text-lg font-medium transition-all ${isActive(link.href)
-                          ? "bg-indigo-50 text-indigo-600"
-                          : "text-slate-800 hover:bg-slate-50 hover:text-indigo-600"
-                          }`}
+                        className={`flex items-center gap-3 rounded-xl px-4 py-3.5 text-lg font-medium transition-all ${
+                          isActive(link.href)
+                            ? "bg-indigo-50 text-indigo-600"
+                            : "text-slate-800 hover:bg-slate-50 hover:text-indigo-600"
+                        }`}
                       >
                         <Icon size={20} /> {link.label}
                       </Link>

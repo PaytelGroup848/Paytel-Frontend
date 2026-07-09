@@ -29,6 +29,7 @@ import Footer from "../Footer";
 import FlagIcon from "../FlagIcon";
 import { COUNTRIES } from "../countries";
 import { VALIDATION_RULES } from "../validationRules";
+import { Helmet } from "react-helmet-async";
 
 // ─── Static Data ──────────────────────────────────────────────────────────────
 
@@ -63,7 +64,10 @@ function ContactForm() {
   // Close country dropdown on outside click
   useEffect(() => {
     const close = (e) => {
-      if (countryDropRef.current && !countryDropRef.current.contains(e.target)) {
+      if (
+        countryDropRef.current &&
+        !countryDropRef.current.contains(e.target)
+      ) {
         setCountryOpen(false);
         setCountrySearch("");
       }
@@ -76,7 +80,7 @@ function ContactForm() {
   const filteredCountries = COUNTRIES.filter(
     (c) =>
       c.name.toLowerCase().includes(countrySearch.toLowerCase()) ||
-      c.code.includes(countrySearch)
+      c.code.includes(countrySearch),
   );
 
   // Validation function
@@ -101,7 +105,7 @@ function ContactForm() {
 
       return "";
     },
-    [selectedCountry]
+    [selectedCountry],
   );
 
   // Handle input changes with real-time validation
@@ -123,7 +127,10 @@ function ContactForm() {
 
       setTouched((prev) => {
         const newTouched = { ...prev, [name]: true };
-        const errorMsg = validateField(name, name === "phone" ? value.replace(/\D/g, "") : value);
+        const errorMsg = validateField(
+          name,
+          name === "phone" ? value.replace(/\D/g, "") : value,
+        );
         setErrors((prevErrors) => ({
           ...prevErrors,
           [name]: newTouched[name] ? errorMsg : prevErrors[name],
@@ -131,7 +138,7 @@ function ContactForm() {
         return newTouched;
       });
     },
-    [success, error, selectedCountry, validateField]
+    [success, error, selectedCountry, validateField],
   );
 
   // Validate on blur
@@ -142,7 +149,7 @@ function ContactForm() {
       const errorMsg = validateField(name, value);
       setErrors((prev) => ({ ...prev, [name]: errorMsg }));
     },
-    [validateField]
+    [validateField],
   );
 
   // Handle country selection
@@ -203,11 +210,13 @@ function ContactForm() {
           product: "Contact Inquiry",
           message: fullMessage,
           country: selectedCountry.name,
-        }
+        },
       );
 
       if (response.data.success) {
-        setSuccess("Thank you! Your inquiry has been submitted. Our team will respond within 1 business day.");
+        setSuccess(
+          "Thank you! Your inquiry has been submitted. Our team will respond within 1 business day.",
+        );
         setForm({
           name: "",
           email: "",
@@ -223,7 +232,9 @@ function ContactForm() {
       }
     } catch (err) {
       console.error(err);
-      setError("Network error. Please check your connection or try again later.");
+      setError(
+        "Network error. Please check your connection or try again later.",
+      );
     } finally {
       setLoading(false);
     }
@@ -240,7 +251,8 @@ function ContactForm() {
 
   const getBorderClass = (fieldName) => {
     if (errors[fieldName] && touched[fieldName]) return "border-red-400";
-    if (touched[fieldName] && !errors[fieldName] && form[fieldName]) return "border-emerald-400";
+    if (touched[fieldName] && !errors[fieldName] && form[fieldName])
+      return "border-emerald-400";
     return "border-gray-200";
   };
 
@@ -248,13 +260,15 @@ function ContactForm() {
     <div className="bg-white rounded-xl border border-gray-100 shadow-lg shadow-gray-100/50 p-6 sm:p-8">
       {/* Header */}
       <div className="flex items-center gap-3 mb-2">
-        
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Service Request Portal</h2>
-          
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+            Service Request Portal
+          </h2>
         </div>
       </div>
-      <p className="text-sm text-gray-500 mb-6">Fill in your details and our team will respond Shortly.</p>
+      <p className="text-sm text-gray-500 mb-6">
+        Fill in your details and our team will respond Shortly.
+      </p>
 
       {/* Success/Error Messages */}
       <AnimatePresence>
@@ -282,7 +296,11 @@ function ContactForm() {
         )}
       </AnimatePresence>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5" noValidate>
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-1 md:grid-cols-2 gap-5"
+        noValidate
+      >
         {/* Full Name */}
         <div>
           <label className="text-xs font-bold uppercase text-gray-500 flex items-center gap-2 mb-1.5">
@@ -300,10 +318,16 @@ function ContactForm() {
               autoComplete="name"
             />
             {touched.name && !errors.name && form.name && (
-              <Check size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-500" />
+              <Check
+                size={15}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-500"
+              />
             )}
             {errors.name && touched.name && (
-              <AlertCircle size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-red-400" />
+              <AlertCircle
+                size={15}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-red-400"
+              />
             )}
           </div>
           <AnimatePresence>
@@ -337,10 +361,16 @@ function ContactForm() {
               autoComplete="email"
             />
             {touched.email && !errors.email && form.email && (
-              <Check size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-500" />
+              <Check
+                size={15}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-500"
+              />
             )}
             {errors.email && touched.email && (
-              <AlertCircle size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-red-400" />
+              <AlertCircle
+                size={15}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-red-400"
+              />
             )}
           </div>
           <AnimatePresence>
@@ -376,15 +406,20 @@ function ContactForm() {
                   "bg-white border",
                   countryOpen
                     ? "border-blue-600 ring-2 ring-blue-100"
-                    : "border-gray-200 hover:border-gray-300"
+                    : "border-gray-200 hover:border-gray-300",
                 )}
                 style={{ minWidth: "90px" }}
               >
                 <FlagIcon countryCode={selectedCountry.countryCode} />
-                <span className="text-gray-700 text-xs hidden sm:inline">{selectedCountry.code}</span>
+                <span className="text-gray-700 text-xs hidden sm:inline">
+                  {selectedCountry.code}
+                </span>
                 <ChevronDown
                   size={12}
-                  className={clsx("text-gray-400 transition-transform duration-200", countryOpen && "rotate-180")}
+                  className={clsx(
+                    "text-gray-400 transition-transform duration-200",
+                    countryOpen && "rotate-180",
+                  )}
                 />
               </button>
 
@@ -399,7 +434,10 @@ function ContactForm() {
                   >
                     <div className="p-2 border-b border-gray-100">
                       <div className="relative">
-                        <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <Search
+                          size={12}
+                          className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400"
+                        />
                         <input
                           type="text"
                           value={countrySearch}
@@ -418,21 +456,32 @@ function ContactForm() {
                           onClick={() => handleCountrySelect(country)}
                           className={clsx(
                             "w-full text-left px-2.5 py-2 rounded-lg text-sm transition-all duration-150 font-medium flex items-center gap-2.5",
-                            selectedCountry.code === country.code && selectedCountry.name === country.name
+                            selectedCountry.code === country.code &&
+                              selectedCountry.name === country.name
                               ? "bg-blue-50 text-blue-700"
-                              : "text-gray-600 hover:bg-gray-50"
+                              : "text-gray-600 hover:bg-gray-50",
                           )}
                         >
                           <FlagIcon countryCode={country.countryCode} />
-                          <span className="flex-1 truncate">{country.name}</span>
-                          <span className="text-gray-400 text-xs font-mono">{country.code}</span>
-                          {selectedCountry.code === country.code && selectedCountry.name === country.name && (
-                            <Check size={13} className="text-blue-600 flex-shrink-0" />
-                          )}
+                          <span className="flex-1 truncate">
+                            {country.name}
+                          </span>
+                          <span className="text-gray-400 text-xs font-mono">
+                            {country.code}
+                          </span>
+                          {selectedCountry.code === country.code &&
+                            selectedCountry.name === country.name && (
+                              <Check
+                                size={13}
+                                className="text-blue-600 flex-shrink-0"
+                              />
+                            )}
                         </button>
                       ))}
                       {filteredCountries.length === 0 && (
-                        <div className="px-3 py-4 text-center text-gray-400 text-xs">No countries found</div>
+                        <div className="px-3 py-4 text-center text-gray-400 text-xs">
+                          No countries found
+                        </div>
                       )}
                     </div>
                   </motion.div>
@@ -449,15 +498,24 @@ function ContactForm() {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 placeholder={`${selectedCountry.length} digits`}
-                className={clsx("w-full py-3 pr-10 rounded-lg text-sm text-gray-800 placeholder:text-gray-400 bg-white border transition-all duration-200 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100", getBorderClass("phone"))}
+                className={clsx(
+                  "w-full py-3 pr-10 rounded-lg text-sm text-gray-800 placeholder:text-gray-400 bg-white border transition-all duration-200 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100",
+                  getBorderClass("phone"),
+                )}
                 autoComplete="tel"
                 maxLength={selectedCountry.length}
               />
               {touched.phone && !errors.phone && form.phone && (
-                <Check size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-500" />
+                <Check
+                  size={15}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-500"
+                />
               )}
               {errors.phone && touched.phone && (
-                <AlertCircle size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-red-400" />
+                <AlertCircle
+                  size={15}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-red-400"
+                />
               )}
             </div>
           </div>
@@ -521,17 +579,27 @@ function ContactForm() {
                 "w-full px-3 py-3 rounded-lg text-sm bg-white border transition-all duration-200 appearance-none",
                 "focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100",
                 getBorderClass("department"),
-                form.department ? "text-gray-800" : "text-gray-400"
+                form.department ? "text-gray-800" : "text-gray-400",
               )}
             >
-              <option value="" disabled>Select department</option>
+              <option value="" disabled>
+                Select department
+              </option>
               {DEPARTMENTS.map((dept) => (
-                <option key={dept} value={dept}>{dept}</option>
+                <option key={dept} value={dept}>
+                  {dept}
+                </option>
               ))}
             </select>
-            <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            <ChevronDown
+              size={16}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+            />
             {touched.department && !errors.department && form.department && (
-              <Check size={15} className="absolute right-10 top-1/2 -translate-y-1/2 text-emerald-500" />
+              <Check
+                size={15}
+                className="absolute right-10 top-1/2 -translate-y-1/2 text-emerald-500"
+              />
             )}
           </div>
           <AnimatePresence>
@@ -564,7 +632,7 @@ function ContactForm() {
               className={clsx(
                 "w-full px-3 py-3 rounded-lg text-sm text-gray-800 placeholder:text-gray-400 resize-none bg-white border transition-all duration-200",
                 "focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100",
-                getBorderClass("message")
+                getBorderClass("message"),
               )}
             />
             {form.message && (
@@ -598,7 +666,10 @@ function ContactForm() {
             className="w-full sm:w-auto bg-gray-900 text-white font-semibold py-3 px-8 rounded-lg text-sm hover:bg-blue-700 transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-gray-900/10"
           >
             {loading ? (
-              <motion.span animate={{ opacity: [1, 0.5, 1] }} transition={{ duration: 0.9, repeat: Infinity }}>
+              <motion.span
+                animate={{ opacity: [1, 0.5, 1] }}
+                transition={{ duration: 0.9, repeat: Infinity }}
+              >
                 Sending...
               </motion.span>
             ) : (
@@ -617,118 +688,152 @@ function ContactForm() {
 
 export default function ContactUs() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex flex-col font-sans">
-      <Navbar />
+    <>
+      <Helmet>
+        <title>Contact Cloudedata | Get Expert Cloud Hosting Support</title>
+        <meta
+          name="description"
+          content="Contact Cloudedata for cloud hosting, VPS, Tally on Cloud, ERP hosting, and business IT solutions. Get expert assistance and quick support today."
+        />
+        <link rel="canonical" href="https://cloudedata.com/contact" />
+      </Helmet>
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex flex-col font-sans">
+        <Navbar />
 
-      {/* Professional Banner Section */}
-      <section className="bg-gray-900 py-16 sm:py-20 px-6 text-center">
-        <div className="max-w-4xl mx-auto">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 sm:mb-6 tracking-tight"
-          >
-            How can we assist your business today?
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-base sm:text-lg text-gray-400 font-light max-w-2xl mx-auto"
-          >
-            Whether you're looking to scale your infrastructure or need technical support, our team is ready to provide enterprise-grade solutions.
-          </motion.p>
-        </div>
-      </section>
+        {/* Professional Banner Section */}
+        <section className="bg-gray-900 py-16 sm:py-20 px-6 text-center">
+          <div className="max-w-4xl mx-auto">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 sm:mb-6 tracking-tight"
+            >
+              How can we assist your business today?
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-base sm:text-lg text-gray-400 font-light max-w-2xl mx-auto"
+            >
+              Whether you're looking to scale your infrastructure or need
+              technical support, our team is ready to provide enterprise-grade
+              solutions.
+            </motion.p>
+          </div>
+        </section>
 
-      {/* Main Contact Page Layout */}
-      <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 w-full">
-        <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
-          {/* Left Column: Corporate & Department Data */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="lg:col-span-1 space-y-6 sm:space-y-8"
-          >
-            {/* Headquarters Card */}
-            <section className="bg-white p-5 sm:p-6 rounded-xl border border-gray-100 shadow-sm">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center">
-                  <Building className="w-4 h-4 text-blue-600" />
+        {/* Main Contact Page Layout */}
+        <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 w-full">
+          <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
+            {/* Left Column: Corporate & Department Data */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="lg:col-span-1 space-y-6 sm:space-y-8"
+            >
+              {/* Headquarters Card */}
+              <section className="bg-white p-5 sm:p-6 rounded-xl border border-gray-100 shadow-sm">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center">
+                    <Building className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <h2 className="text-xs font-bold uppercase tracking-widest text-gray-900">
+                    Corporate HQ
+                  </h2>
                 </div>
-                <h2 className="text-xs font-bold uppercase tracking-widest text-gray-900">Corporate HQ</h2>
-              </div>
-              <p className="text-sm text-gray-800 leading-relaxed font-semibold">
-                Paytel Terminal Pvt. Ltd.
-              </p>
-              <div className="flex items-start gap-2 mt-2">
-                <MapPin size={14} className="text-gray-400 mt-0.5 shrink-0" />
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  A 212, First Floor, Okhla Industrial Estate Phase-3, New Delhi, 110020, India
+                <p className="text-sm text-gray-800 leading-relaxed font-semibold">
+                  Paytel Terminal Pvt. Ltd.
                 </p>
-              </div>
-            </section>
-
-            {/* Departmental Routing */}
-            <div className="bg-white p-5 sm:p-6 rounded-xl border border-gray-100 shadow-sm space-y-5">
-              <h2 className="text-xs font-bold uppercase tracking-widest text-gray-500 border-b border-gray-100 pb-3">
-                Departmental Lines
-              </h2>
-              {[
-                { label: "Enterprise Sales", email: "sales@cloudedata.com" },
-                { label: "Technical Support", email: "support@cloudedata.com" },
-                { label: "Billing & Accounting", email: "billing@cloudedata.com" },
-                { label: "Corporate Inquiries", email: "info@cloudedata.com" },
-              ].map((dept, i) => (
-                <div key={i} className="flex flex-col">
-                  <p className="text-xs font-semibold text-gray-900">{dept.label}</p>
-                  <a
-                    href={`mailto:${dept.email}`}
-                    className="text-sm text-blue-600 hover:text-blue-700 hover:underline transition-colors"
-                  >
-                    {dept.email}
-                  </a>
+                <div className="flex items-start gap-2 mt-2">
+                  <MapPin size={14} className="text-gray-400 mt-0.5 shrink-0" />
+                  <p className="text-sm text-gray-500 leading-relaxed">
+                    A 212, First Floor, Okhla Industrial Estate Phase-3, New
+                    Delhi, 110020, India
+                  </p>
                 </div>
-              ))}
-              <div>
-                <p className="text-xs font-semibold text-gray-900">Direct Phone Line</p>
-                <div className="flex items-center gap-1.5">
-                  <Phone size={13} className="text-gray-400" />
-                  <p className="text-sm text-gray-700 font-medium">+91-9311472355</p>
+              </section>
+
+              {/* Departmental Routing */}
+              <div className="bg-white p-5 sm:p-6 rounded-xl border border-gray-100 shadow-sm space-y-5">
+                <h2 className="text-xs font-bold uppercase tracking-widest text-gray-500 border-b border-gray-100 pb-3">
+                  Departmental Lines
+                </h2>
+                {[
+                  { label: "Enterprise Sales", email: "sales@cloudedata.com" },
+                  {
+                    label: "Technical Support",
+                    email: "support@cloudedata.com",
+                  },
+                  {
+                    label: "Billing & Accounting",
+                    email: "billing@cloudedata.com",
+                  },
+                  {
+                    label: "Corporate Inquiries",
+                    email: "info@cloudedata.com",
+                  },
+                ].map((dept, i) => (
+                  <div key={i} className="flex flex-col">
+                    <p className="text-xs font-semibold text-gray-900">
+                      {dept.label}
+                    </p>
+                    <a
+                      href={`mailto:${dept.email}`}
+                      className="text-sm text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                    >
+                      {dept.email}
+                    </a>
+                  </div>
+                ))}
+                <div>
+                  <p className="text-xs font-semibold text-gray-900">
+                    Direct Phone Line
+                  </p>
+                  <div className="flex items-center gap-1.5">
+                    <Phone size={13} className="text-gray-400" />
+                    <p className="text-sm text-gray-700 font-medium">
+                      +91-9311472355
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Service Availability */}
-            <section className="bg-white p-5 sm:p-6 rounded-xl border border-gray-100 shadow-sm">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center">
-                  <Clock className="w-4 h-4 text-amber-600" />
+              {/* Service Availability */}
+              <section className="bg-white p-5 sm:p-6 rounded-xl border border-gray-100 shadow-sm">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center">
+                    <Clock className="w-4 h-4 text-amber-600" />
+                  </div>
+                  <h2 className="text-xs font-bold uppercase tracking-widest text-gray-900">
+                    Service Hours
+                  </h2>
                 </div>
-                <h2 className="text-xs font-bold uppercase tracking-widest text-gray-900">Service Hours</h2>
-              </div>
-              <div className="space-y-2 text-sm text-gray-600">
-                <p>Mon-Fri: 09:00 - 18:00 IST</p>
-                <p className="font-semibold text-gray-800">Technical Support: 24/7/365</p>
-              </div>
-            </section>
-          </motion.div>
+                <div className="space-y-2 text-sm text-gray-600">
+                  <p>Mon-Fri: 09:00 - 18:00 IST</p>
+                  <p className="font-semibold text-gray-800">
+                    Technical Support: 24/7/365
+                  </p>
+                </div>
+              </section>
+            </motion.div>
 
-          {/* Right Column: Contact Form */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="lg:col-span-2"
-          >
-            <ContactForm />
-          </motion.div>
-        </div>
-      </main>
+            {/* Right Column: Contact Form */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="lg:col-span-2"
+            >
+              <ContactForm />
+            </motion.div>
+          </div>
+        </main>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   );
 }

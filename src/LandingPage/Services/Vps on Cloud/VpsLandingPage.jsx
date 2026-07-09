@@ -15,6 +15,7 @@ import SupportSection from "../../../components/supportbanner";
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import Lenis from "@studio-freight/lenis";
+import { Helmet } from "react-helmet-async";
 
 // ─── Reusable fade‑up section wrapper ──────────────────────────────────
 const FadeUpSection = ({ children, className = "", delay = 0 }) => (
@@ -52,6 +53,16 @@ export default function VpsLandingpage() {
 
   return (
     <>
+      <Helmet>
+        <title>
+          VPS Cloud Hosting in India | High-Performance VPS | Cloudedata
+        </title>
+        <meta
+          name="description"
+          content="Power your business with Cloudedata VPS Cloud Hosting. Get high-speed SSD storage, scalable resources, 99.99% uptime, and 24/7 expert support."
+        />
+        <link rel="canonical" href="https://cloudedata.com/vps-cloud" />
+      </Helmet>
       <Navbar />
 
       {/* Banner – may have its own animations */}
@@ -69,22 +80,17 @@ export default function VpsLandingpage() {
         <Moneyback />
       </FadeUpSection>
 
-      
       <FadeUpSection delay={0.3}>
         <VpsComparison />
       </FadeUpSection>
 
-            
-         <FadeUpSection delay={0.3}>
-        <SupportSection/>
-         </FadeUpSection>
-
-
+      <FadeUpSection delay={0.3}>
+        <SupportSection />
+      </FadeUpSection>
 
       <FadeUpSection delay={0.25}>
         <Features />
       </FadeUpSection>
-
 
       <FadeUpSection delay={0.35}>
         <SuccessBanner />

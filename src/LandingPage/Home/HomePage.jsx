@@ -1,5 +1,12 @@
 import { useEffect, useRef, createContext, useContext } from "react";
-import { motion, useScroll, useSpring, useInView, useTransform, AnimatePresence } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useSpring,
+  useInView,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
 import Navbar from "../navbar";
 import Banner from "./DemoBanner";
 import Review from "./Review";
@@ -7,19 +14,17 @@ import BusinessCard from "./businessCard";
 import Services from "./Services";
 import PlansAndPricing from "./PlansAndPricing";
 import ContactCard from "./ContactCard";
-import ComparisonTable from './comparePlans';
+import ComparisonTable from "./comparePlans";
 import Footer from "../Footer";
 import SuccessBanner from "./successStories";
 import MoneyBack from "../../components/moneyback";
 import OfferBanner from "../../components/banneroff";
 import TrustBadge from "./Trusted";
 import ImageOnly from "../../components/dashboardImage";
-import   FAQ from "./Faq";
+import FAQ from "./Faq";
 import SupportSection from "../../components/supportbanner";
+import { Helmet } from "react-helmet-async";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Smooth scroll progress bar at the top
-// ─────────────────────────────────────────────────────────────────────────────
 function ScrollProgressBar() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -47,9 +52,6 @@ function ScrollProgressBar() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Section reveal wrapper — reusable, multiple animation variants
-// ─────────────────────────────────────────────────────────────────────────────
 const VARIANTS = {
   fadeUp: {
     hidden: { opacity: 0, y: 48 },
@@ -106,15 +108,15 @@ function SectionReveal({
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Divider — subtle animated line between sections
-// ─────────────────────────────────────────────────────────────────────────────
 function SectionDivider() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.5 });
 
   return (
-    <div ref={ref} className="flex items-center justify-center py-2 px-6 sm:px-12 overflow-hidden">
+    <div
+      ref={ref}
+      className="flex items-center justify-center py-2 px-6 sm:px-12 overflow-hidden"
+    >
       <motion.div
         initial={{ scaleX: 0, opacity: 0 }}
         animate={isInView ? { scaleX: 1, opacity: 1 } : {}}
@@ -129,9 +131,6 @@ function SectionDivider() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Scroll-parallax wrapper — subtle depth on scroll
-// ─────────────────────────────────────────────────────────────────────────────
 function ParallaxSection({ children, speed = 0.08, className = "" }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -148,9 +147,6 @@ function ParallaxSection({ children, speed = 0.08, className = "" }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Page entry transition
-// ─────────────────────────────────────────────────────────────────────────────
 const pageVariants = {
   initial: { opacity: 0 },
   animate: {
@@ -163,9 +159,6 @@ const pageVariants = {
   },
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// HomePage
-// ─────────────────────────────────────────────────────────────────────────────
 export default function HomePage() {
   useEffect(() => {
     const originalOverflow = document.documentElement.style.overflowX;
@@ -178,8 +171,17 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="w-full overflow-x-clip">
-      <style>{`
+    <>
+      <Helmet>
+        <title>Cloudedata | Secure Cloud Hosting & Business Solutions</title>
+        <meta
+          name="description"
+          content="Cloudedata provides secure cloud hosting, VPS, Tally on Cloud, ERP hosting, business email & 24/7 expert support across India."
+        />
+        <link rel="canonical" href="https://cloudedata.com/" />
+      </Helmet>
+      <div className="w-full overflow-x-clip">
+        <style>{`
         *, *::before, *::after { box-sizing: border-box; }
         html, body { max-width: 100vw; overflow-x: hidden; }
         img, video, iframe, table { max-width: 100%; height: auto; }
@@ -196,100 +198,96 @@ export default function HomePage() {
         }
       `}</style>
 
-      {/* Scroll progress bar */}
-      <ScrollProgressBar />
+        {/* Scroll progress bar */}
+        <ScrollProgressBar />
 
-      <Navbar />
+        <Navbar />
 
-      {/* ── Page entry ── */}
-      <motion.main
-        variants={pageVariants}
-        initial="initial"
-        animate="animate"
-        className="relative z-0 w-full overflow-x-hidden"
-      >
+        {/* ── Page entry ── */}
+        <motion.main
+          variants={pageVariants}
+          initial="initial"
+          animate="animate"
+          className="relative z-0 w-full overflow-x-hidden"
+        >
+          {/* Banner — no reveal, it's the hero, loads immediately */}
+          <Banner />
+          <TrustBadge />
 
-        {/* Banner — no reveal, it's the hero, loads immediately */}
-        <Banner />
-        <TrustBadge/>
+          <SectionDivider />
 
-        <SectionDivider />
-
-        {/* Plans & Pricing */}
-        <SectionReveal variant="fadeUp" delay={0.05}>
-          <PlansAndPricing />
-        </SectionReveal>
-
-        <SectionDivider />
-
-        {/* Money Back */}
-        <SectionReveal variant="scaleUp" delay={0.05} duration={0.65}>
-          <MoneyBack />
-        </SectionReveal>
-
-        <SectionDivider />
-
-        {/* Reviews */}
-        <SectionReveal variant="fadeUp" delay={0.05}>
-          <Review />
-        </SectionReveal>
-
-        <SectionDivider />
-
-        {/* Comparison Table */}
-        <SectionReveal variant="fadeIn" duration={0.8} delay={0.05}>
-          <ComparisonTable />
-        </SectionReveal>
-        <SectionDivider />
-
-
-        <SectionReveal variant="fadeUp" delay={0.05}>
-          <ImageOnly/>
-       </SectionReveal>
-
-        {/* Services */}
-        <SectionReveal variant="slideLeft" delay={0.05}>
-          <Services />
-        </SectionReveal>
-
-        <SectionDivider />
-
-        {/* Success Stories — subtle parallax depth */}
-        <ParallaxSection speed={0.04}>
+          {/* Plans & Pricing */}
           <SectionReveal variant="fadeUp" delay={0.05}>
-            <SuccessBanner />
+            <PlansAndPricing />
           </SectionReveal>
-        </ParallaxSection>
 
-        <SectionDivider />
+          <SectionDivider />
 
-        {/* Business Card */}
-        <SectionReveal variant="scaleUp" delay={0.05} duration={0.65}>
-          <BusinessCard />
+          {/* Money Back */}
+          <SectionReveal variant="scaleUp" delay={0.05} duration={0.65}>
+            <MoneyBack />
+          </SectionReveal>
+
+          <SectionDivider />
+
+          {/* Reviews */}
+          <SectionReveal variant="fadeUp" delay={0.05}>
+            <Review />
+          </SectionReveal>
+
+          <SectionDivider />
+
+          {/* Comparison Table */}
+          <SectionReveal variant="fadeIn" duration={0.8} delay={0.05}>
+            <ComparisonTable />
+          </SectionReveal>
+          <SectionDivider />
+
+          <SectionReveal variant="fadeUp" delay={0.05}>
+            <ImageOnly />
+          </SectionReveal>
+
+          {/* Services */}
+          <SectionReveal variant="slideLeft" delay={0.05}>
+            <Services />
+          </SectionReveal>
+
+          <SectionDivider />
+
+          {/* Success Stories — subtle parallax depth */}
+          <ParallaxSection speed={0.04}>
+            <SectionReveal variant="fadeUp" delay={0.05}>
+              <SuccessBanner />
+            </SectionReveal>
+          </ParallaxSection>
+
+          <SectionDivider />
+
+          {/* Business Card */}
+          <SectionReveal variant="scaleUp" delay={0.05} duration={0.65}>
+            <BusinessCard />
+          </SectionReveal>
+
+          <SupportSection />
+        </motion.main>
+
+        {/* Contact & Footer */}
+        <SectionReveal variant="fadeUp" delay={0.05}>
+          <ContactCard />
         </SectionReveal>
 
+        <SectionReveal variant="fadeUp" delay={0.05}>
+          <OfferBanner />
+        </SectionReveal>
 
-        <SupportSection/>
+        <SectionReveal variant="fadeUp" delay={0.05}>
+          <FAQ />
+        </SectionReveal>
 
-      </motion.main>
-
-      {/* Contact & Footer */}
-      <SectionReveal variant="fadeUp" delay={0.05}>
-        <ContactCard />
-      </SectionReveal>
-
-       <SectionReveal variant="fadeUp" delay={0.05}>
-          <OfferBanner/>
-       </SectionReveal>
-   
-   <SectionReveal variant="fadeUp" delay={0.05}>
-            <FAQ/>
-   </SectionReveal>
-         
-
-      <SectionReveal variant="fadeIn" duration={0.5}>
-        <Footer />
-      </SectionReveal>
-    </div>
+        <SectionReveal variant="fadeIn" duration={0.5}>
+          <Footer />
+        </SectionReveal>
+      </div>
+    </>
   );
 }
