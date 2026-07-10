@@ -692,7 +692,7 @@ export default function BannerMobile() {
           <div className="min-w-0">
             <p className="text-[10px] font-medium text-slate-500">Starting at</p>
             <p className="text-[clamp(1.15rem,5vw,1.4rem)] font-bold tracking-[-0.02em] text-slate-900">
-              ₹899<span className="text-[11px] font-normal text-slate-500">/mo</span>
+              ₹699<span className="text-[11px] font-normal text-slate-500">/mo</span>
             </p>
           </div>
           <button

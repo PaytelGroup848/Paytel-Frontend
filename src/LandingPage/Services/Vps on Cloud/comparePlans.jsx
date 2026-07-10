@@ -4,7 +4,7 @@ const plans = [
   {
     name: "Cloudedata Starter", // used only as a key, not displayed
     provider: "Cloudedata",
-    price: 899,
+    price: 699,
     logo: "/Cloudedata.svg", // ← replace with your actual logo path
     features: {
       vCPU: "2 Cores",

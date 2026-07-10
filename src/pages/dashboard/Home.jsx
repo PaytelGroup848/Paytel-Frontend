@@ -271,7 +271,7 @@ const Dashboard = () => {
       {
         name: "VPS Cloud Servers",
         desc: "NVMe SSD, dedicated IP, root access, DDoS protection.",
-        price: "₹899/mo",
+        price: "₹699/mo",
         icon: LifeBuoy,
         color: "from-emerald-500 to-emerald-600",
         tag: "Best Value",

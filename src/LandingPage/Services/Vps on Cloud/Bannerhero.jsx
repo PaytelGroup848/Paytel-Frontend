@@ -46,7 +46,7 @@ export default function BannerHero() {
               Starting at
             </p>
             <p className="mt-1 text-[clamp(1.7rem,3vw,2.2rem)] font-bold tracking-[-0.03em] text-slate-900 leading-none">
-              ₹899
+              ₹699
               <span className="text-[14px] font-normal text-slate-400 tracking-normal ml-1">
                 /mo
               </span>
