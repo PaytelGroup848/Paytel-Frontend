@@ -1,19 +1,27 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ChevronRight, Check, ArrowRight, Clock, Shield, Sparkles, Star } from 'lucide-react';
-import { motion } from 'framer-motion';
-import toast from 'react-hot-toast';
-import EmailConfigModal from './EmailConfigModal';
-import { useAuthStore } from '../../store/authStore';
-import { getPendingOrder } from '../../utils/pendingOrder';
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  ChevronRight,
+  Check,
+  ArrowRight,
+  Clock,
+  Shield,
+  Sparkles,
+  Star,
+} from "lucide-react";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
+import EmailConfigModal from "./EmailConfigModal";
+import { useAuthStore } from "../../store/authStore";
+import { getPendingOrder } from "../../utils/pendingOrder";
 
-import { useEmailPlans } from '../../hooks/useEmailHosting';
+import { useEmailPlans } from "../../hooks/useEmailHosting";
 
 /* ============================================================
    Plan Card – with memo for performance
    ============================================================ */
 const PlanCard = React.memo(({ plan, billingPeriod, onSelect }) => {
-  const monthlyPrice =  Math.floor(plan.price / 100);
+  const monthlyPrice = Math.floor(plan.price / 100);
   const displayPrice = monthlyPrice;
 
   return (
@@ -22,11 +30,13 @@ const PlanCard = React.memo(({ plan, billingPeriod, onSelect }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       className={`relative bg-white/80 backdrop-blur-md border rounded-3xl p-6 flex flex-col transition-all duration-300 hover:shadow-xl ${
-        plan.slug === 'business' ? 'border-indigo-300 shadow-md ring-1 ring-indigo-100' : 'border-slate-200/80 hover:border-indigo-200'
+        plan.slug === "business"
+          ? "border-indigo-300 shadow-md ring-1 ring-indigo-100"
+          : "border-slate-200/80 hover:border-indigo-200"
       }`}
     >
       {/* Popular badge */}
-      {plan.slug === 'business' && (
+      {plan.slug === "business" && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold px-4 py-1 rounded-full shadow-md flex items-center gap-1">
           <Star size={14} /> Most Popular
         </div>
@@ -34,14 +44,18 @@ const PlanCard = React.memo(({ plan, billingPeriod, onSelect }) => {
 
       {/* Header */}
       <div className="mb-4">
-        <p className="text-xs font-bold uppercase tracking-wider text-indigo-600 mb-1">{plan.name} Email</p>
+        <p className="text-xs font-bold uppercase tracking-wider text-indigo-600 mb-1">
+          {plan.name} Email
+        </p>
         <h3 className="text-2xl font-black text-slate-800">{plan.name}</h3>
       </div>
 
       {/* Price */}
       <div className="mb-6">
         <div className="flex items-baseline gap-1">
-          <span className="text-4xl font-black text-slate-900">₹ {displayPrice}</span>
+          <span className="text-4xl font-black text-slate-900">
+            ₹ {displayPrice}
+          </span>
           <span className="text-sm text-slate-500">/mo</span>
         </div>
         <p className="text-xs text-slate-400 mt-1">Price per mailbox</p>
@@ -50,7 +64,10 @@ const PlanCard = React.memo(({ plan, billingPeriod, onSelect }) => {
       {/* Features */}
       <ul className="space-y-3 mb-8 flex-1">
         {plan.features.map((feat, idx) => (
-          <li key={idx} className="flex items-start gap-2 text-sm text-slate-700">
+          <li
+            key={idx}
+            className="flex items-start gap-2 text-sm text-slate-700"
+          >
             <Check size={16} className="text-emerald-500 mt-0.5 shrink-0" />
             <span>{feat}</span>
           </li>
@@ -82,10 +99,10 @@ export default function EmailPlanPage() {
   useEffect(() => {
     if (!isAuthenticated || !plans) return;
     const pending = getPendingOrder();
-    if (!pending || pending.service !== 'email') return;
+    if (!pending || pending.service !== "email") return;
 
     if (pending.planId) {
-      const plan = plans.find(p => (p.id || p._id) === pending.planId);
+      const plan = plans.find((p) => (p.id || p._id) === pending.planId);
       if (plan) {
         setSelectedPlan(plan);
       }
@@ -106,13 +123,17 @@ export default function EmailPlanPage() {
         {/* Top bar + breadcrumb */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
           <div>
-            <div className="flex items-center gap-2 text-sm text-slate-500 mb-2">
+            {/* <div className="flex items-center gap-2 text-sm text-slate-500 mb-2">
               <button onClick={() => navigate('/emails')} className="hover:text-indigo-600 transition">Emails</button>
               <ChevronRight size={16} />
               <span className="font-medium text-slate-800">Select Plan</span>
-            </div>
-            <h1 className="text-3xl md:text-4xl font-black text-slate-900">Choose your email plan</h1>
-            <p className="text-slate-500 mt-2">Pick the perfect plan for your business. Upgrade anytime.</p>
+            </div> */}
+            <h1 className="text-3xl md:text-4xl font-black text-slate-900">
+              Choose your email plan
+            </h1>
+            <p className="text-slate-500 mt-2">
+              Pick the perfect plan for your business. Upgrade anytime.
+            </p>
           </div>
         </div>
 

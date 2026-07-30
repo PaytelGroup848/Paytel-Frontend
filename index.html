@@ -47,8 +47,37 @@
       content="Cloudedata provides secure cloud hosting, VPS, Tally on Cloud, ERP hosting, business email & 24/7 expert support across India."
     />
 
-    <!-- Facebook Pixel -->
+    <!-- New Facebook pixel code  -->
     <script>
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+          n.callMethod
+            ? n.callMethod.apply(n, arguments)
+            : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = "2.0";
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = !0;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(
+        window,
+        document,
+        "script",
+        "https://connect.facebook.net/en_US/fbevents.js",
+      );
+      fbq("init", "923284260705243");
+      fbq("track", "PageView");
+    </script>
+
+    <!-- Facebook Pixel -->
+    <!-- <script>
       !(function (f, b, e, v, n, t, s) {
         if (f.fbq) return;
         n = f.fbq = function () {
@@ -74,19 +103,26 @@
       );
       fbq("init", "982994494153500");
       fbq("track", "PageView");
-    </script>
+    </script> -->
   </head>
 
   <body>
-    <noscript>
+    <!-- <noscript>
       <img
         height="1"
         width="1"
         style="display: none"
         src="https://www.facebook.com/tr?id=982994494153500&ev=PageView&noscript=1"
       />
-    </noscript>
-
+    </noscript> -->
+    <!-- Facebook Pixel -->
+    <noscript
+      ><img
+        height="1"
+        width="1"
+        style="display: none"
+        src="https://www.facebook.com/tr?id=923284260705243&ev=PageView&noscript=1"
+    /></noscript>
     <div id="root"></div>
 
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>

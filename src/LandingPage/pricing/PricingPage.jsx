@@ -9,6 +9,7 @@ import PricingCards from "../C-panel/CpanelCards";
 import BusyPlans from "../Services/busy on cloud/BusyPlans";
 import TallyPlans from "../Services/tally on cloud/TallyPlans";
 import { Helmet } from "react-helmet-async";
+import EmailPlanPage from "../../pages/Emails/EmailPlan";
 
 export default function PricingPage() {
   return (
@@ -27,7 +28,9 @@ export default function PricingPage() {
       <PricingService />
       <Plans />
       <CloudePlans />
-      <PricingCards />
+      {/* <PricingCards /> */}
+
+      <EmailPlanPage/>
       <BusyPlans />
       <TallyPlans />
       <BenefitsPlan />
