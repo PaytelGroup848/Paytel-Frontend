@@ -25,6 +25,9 @@ const statusVariants = {
 };
 
 const InvoiceDetailModal = ({ invoice, isOpen, onClose }) => {
+  {
+    console.log("this is invoice", invoice);
+  }
   if (!invoice) return null;
 
   const handleDownload = () => {
