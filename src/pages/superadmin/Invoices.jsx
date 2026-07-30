@@ -27,6 +27,7 @@ import {
   Printer,
 } from "lucide-react";
 import CreateInvoiceModal from "./CreateInvoiceModal";
+import InvoiceDetailModal from "./InvoiceDetailModal";
 
 export default function Invoices() {
   const [page, setPage] = useState(1);
@@ -166,73 +167,62 @@ export default function Invoices() {
                   </td>
                 </tr>
               ) : (
-                data?.items.map(
-                  (inv) => (
-                    console.log("this is my invoice", inv),
-                    (
-                      <tr
-                        key={inv.id}
-                        className="text-sm hover:bg-white/5 transition-colors"
-                      >
-                        <td className="py-4 px-4 font-medium text-textPrimary">
-                          {inv?.invoiceNumber}
-                        </td>
-                        <td className="py-4 px-4">
-                          <div className="text-textPrimary">
-                            {inv.clientName}
-                          </div>
-                          <div className="text-[11px] text-textMuted">
-                            {inv.clientEmail}
-                          </div>
-                        </td>
-                        <td className="py-4 px-4 capitalize">
-                          <div className="text-textPrimary">
-                            {inv?.serviceName}
-                          </div>
-                          <div className="text-[11px] text-textMuted">
-                            {inv?.serviceModel}
-                          </div>
-                        </td>
-                        <td className="py-4 px-4 font-mono text-textPrimary">
-                          ₹{(inv?.totalAmount / 100).toFixed(2)}
-                        </td>
-                        <td className="py-4 px-4 text-center">
-                          <Badge
-                            variant={statusVariants[inv.status] || "default"}
-                          >
-                            {inv.status.replace("_", " ")}
-                          </Badge>
-                        </td>
+                data?.items.map((inv) => (
+                  <tr
+                    key={inv.id}
+                    className="text-sm hover:bg-white/5 transition-colors"
+                  >
+                    <td className="py-4 px-4 font-medium text-textPrimary">
+                      {inv?.invoiceNumber}
+                    </td>
+                    <td className="py-4 px-4">
+                      <div className="text-textPrimary">{inv.clientName}</div>
+                      <div className="text-[11px] text-textMuted">
+                        {inv.clientEmail}
+                      </div>
+                    </td>
+                    <td className="py-4 px-4 capitalize">
+                      <div className="text-textPrimary">{inv?.serviceName}</div>
+                      <div className="text-[11px] text-textMuted">
+                        {inv?.serviceModel}
+                      </div>
+                    </td>
+                    <td className="py-4 px-4 font-mono text-textPrimary">
+                      ₹{(inv?.totalAmount / 100).toFixed(2)}
+                    </td>
+                    <td className="py-4 px-4 text-center">
+                      <Badge variant={statusVariants[inv.status] || "default"}>
+                        {inv.status.replace("_", " ")}
+                      </Badge>
+                    </td>
 
-                        <td className="py-4 px-4 text-right">
-                          <div className="flex justify-end gap-1">
-                            <button
-                              onClick={() => setSelectedInvoice(inv)}
-                              className="p-2 text-indigo-400 hover:bg-indigo-400/10 rounded-lg transition-colors"
-                              title="View Details"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDownload(inv)}
-                              className="p-2 text-emerald-400 hover:bg-emerald-400/10 rounded-lg transition-colors"
-                              title="Download PDF"
-                            >
-                              <Download className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(inv.id)}
-                              className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
-                              title="Delete"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  ),
-                )
+                    <td className="py-4 px-4 text-right">
+                      <div className="flex justify-end gap-1">
+                        <button
+                          onClick={() => setSelectedInvoice(inv)}
+                          className="p-2 text-indigo-400 hover:bg-indigo-400/10 rounded-lg transition-colors"
+                          title="View Details"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDownload(inv)}
+                          className="p-2 text-emerald-400 hover:bg-emerald-400/10 rounded-lg transition-colors"
+                          title="Download PDF"
+                        >
+                          <Download className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(inv.id)}
+                          className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>
@@ -283,168 +273,189 @@ export default function Invoices() {
   );
 }
 
-function InvoiceDetailModal({ invoice, isOpen, onClose }) {
-  const statusVariants = {
-    paid: "success",
-    unpaid: "danger",
-    expire_soon: "warning",
-    renew: "info",
-  };
+// function InvoiceDetailModal({ invoice, isOpen, onClose }) {
+//   const statusVariants = {
+//     paid: "success",
+//     unpaid: "danger",
+//     expire_soon: "warning",
+//     renew: "info",
+//   };
 
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Invoice Details">
-      <div className="bg-[#111] border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
-        <div className="p-8 space-y-8">
-          {/* Header */}
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="text-2xl font-black text-indigo-500 mb-1">
-                CloudeData
-              </div>
-              <div className="text-sm text-textMuted">
-                Premium Hosting Infrastructure
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-xl font-bold text-textPrimary">INVOICE</div>
-              <div className="text-sm text-textMuted">#{invoice.invoiceNo}</div>
-              <Badge variant={statusVariants[invoice.status]} className="mt-2">
-                {invoice.status.toUpperCase()}
-              </Badge>
-            </div>
-          </div>
+//   console.log("this is my invoice", invoice);
 
-          <hr className="border-white/5" />
+//   return (
+//     <Modal isOpen={isOpen} onClose={onClose} title="Invoice Details">
+//       <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-xl">
+//         <div className="p-8 space-y-8">
+//           {/* Header */}
+//           <div className="flex justify-between items-start">
+//             <div>
+//               <div className="text-2xl font-black text-indigo-600 mb-1">
+//                 CloudeData
+//               </div>
+//               <div className="text-sm text-gray-500">
+//                 Premium Hosting Infrastructure
+//               </div>
+//             </div>
 
-          {/* Info Grid */}
-          <div className="grid grid-cols-2 gap-8">
-            <div className="space-y-4">
-              <div>
-                <div className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider mb-1">
-                  Billed To
-                </div>
-                <div className="text-textPrimary font-medium">
-                  {invoice.clientName}
-                </div>
-                <div className="text-sm text-textMuted">
-                  {invoice.clientEmail}
-                </div>
-                <div className="text-sm text-textMuted">
-                  {invoice.clientPhone}
-                </div>
-              </div>
-              <div>
-                <div className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider mb-1">
-                  Payment Method
-                </div>
-                <div className="text-sm text-textPrimary capitalize">
-                  {invoice.paymentMethod.replace("_", " ")}
-                </div>
-              </div>
-            </div>
-            <div className="space-y-4 text-right">
-              <div>
-                <div className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider mb-1">
-                  Invoice Date
-                </div>
-                <div className="text-sm text-textPrimary">
-                  {new Date(invoice.createdAt).toLocaleDateString()}
-                </div>
-              </div>
-              {invoice.renewalDate && (
-                <div>
-                  <div className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider mb-1">
-                    Renewal Date
-                  </div>
-                  <div className="text-sm text-textPrimary">
-                    {new Date(invoice.renewalDate).toLocaleDateString()}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+//             <div className="text-right">
+//               <div className="text-xl font-bold text-gray-900">INVOICE</div>
+//               <div className="text-sm text-gray-500">#{invoice.invoiceNo}</div>
 
-          {/* Items Table */}
-          <div className="bg-white/[0.02] rounded-xl border border-white/5 overflow-hidden">
-            <table className="w-full text-left">
-              <thead className="bg-white/[0.03] text-[11px] font-bold text-textMuted uppercase tracking-wider">
-                <tr>
-                  <th className="py-3 px-4">Description</th>
-                  <th className="py-3 px-4 text-right">Amount</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm divide-y divide-white/5">
-                <tr>
-                  <td className="py-4 px-4">
-                    <div className="text-textPrimary font-medium uppercase">
-                      {invoice.service} Subscription
-                    </div>
-                    <div className="text-textMuted text-xs mt-1">
-                      Package: {invoice.packageName} ({invoice.packageType})
-                      {invoice.specifications &&
-                        Object.entries(invoice.specifications).map(([k, v]) => (
-                          <span key={k}>
-                            {" "}
-                            • {k}: {v}
-                          </span>
-                        ))}
-                    </div>
-                  </td>
-                  <td className="py-4 px-4 text-right font-mono text-textPrimary">
-                    ₹{(invoice.subtotal / 100).toFixed(2)}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+//               <Badge variant={statusVariants[invoice.status]} className="mt-2">
+//                 {invoice.status.toUpperCase()}
+//               </Badge>
+//             </div>
+//           </div>
 
-          {/* Totals */}
-          <div className="flex justify-end">
-            <div className="w-64 space-y-3">
-              <div className="flex justify-between text-sm text-textMuted">
-                <span>Subtotal</span>
-                <span className="font-mono">
-                  ₹{(invoice.subtotal / 100).toFixed(2)}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm text-textMuted">
-                <span>GST (18%)</span>
-                <span className="font-mono">
-                  ₹{(invoice.gst / 100).toFixed(2)}
-                </span>
-              </div>
-              <hr className="border-white/5" />
-              <div className="flex justify-between text-lg font-bold text-textPrimary">
-                <span>Total</span>
-                <span className="text-indigo-500 font-mono">
-                  ₹{(invoice.total / 100).toFixed(2)}
-                </span>
-              </div>
-            </div>
-          </div>
+//           <hr className="border-gray-200" />
 
-          {/* Footer */}
-          <div className="text-center pt-8">
-            <div className="text-[10px] text-textMuted italic">
-              This is a computer-generated invoice. No signature required.
-            </div>
-          </div>
-        </div>
+//           {/* Info Grid */}
+//           <div className="grid grid-cols-2 gap-8">
+//             <div className="space-y-4">
+//               <div>
+//                 <div className="text-[11px] font-bold text-indigo-600 uppercase tracking-wider mb-1">
+//                   Billed To
+//                 </div>
 
-        {/* Action Bar */}
-        <div className="bg-white/[0.02] border-t border-white/5 p-4 flex justify-end gap-3">
-          <Button variant="outline" onClick={onClose}>
-            Close
-          </Button>
-          <Button
-            className="bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-2"
-            onClick={() => downloadInvoicePdf(invoice.id, invoice.invoiceNo)}
-          >
-            <Download className="w-4 h-4" />
-            Download PDF
-          </Button>
-        </div>
-      </div>
-    </Modal>
-  );
-}
+//                 <div className="text-gray-900 font-semibold">
+//                   {invoice.clientName}
+//                 </div>
+
+//                 <div className="text-sm text-gray-600">
+//                   {invoice.clientEmail}
+//                 </div>
+
+//                 <div className="text-sm text-gray-600">
+//                   {invoice.clientPhone}
+//                 </div>
+//               </div>
+
+//               <div>
+//                 <div className="text-[11px] font-bold text-indigo-600 uppercase tracking-wider mb-1">
+//                   Payment Method
+//                 </div>
+
+//                 <div className="text-sm text-gray-800 capitalize">
+//                   {invoice.paymentMethod.replace("_", " ")}
+//                 </div>
+//               </div>
+//             </div>
+
+//             <div className="space-y-4 text-right">
+//               <div>
+//                 <div className="text-[11px] font-bold text-indigo-600 uppercase tracking-wider mb-1">
+//                   Invoice Date
+//                 </div>
+
+//                 <div className="text-sm text-gray-800">
+//                   {new Date(invoice.createdAt).toLocaleDateString()}
+//                 </div>
+//               </div>
+
+//               {invoice.renewalDate && (
+//                 <div>
+//                   <div className="text-[11px] font-bold text-indigo-600 uppercase tracking-wider mb-1">
+//                     Renewal Date
+//                   </div>
+
+//                   <div className="text-sm text-gray-800">
+//                     {new Date(invoice.renewalDate).toLocaleDateString()}
+//                   </div>
+//                 </div>
+//               )}
+//             </div>
+//           </div>
+
+//           {/* Items Table */}
+//           <div className="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
+//             <table className="w-full text-left">
+//               <thead className="bg-gray-100 text-[11px] font-bold text-gray-600 uppercase tracking-wider">
+//                 <tr>
+//                   <th className="py-3 px-4">Description</th>
+//                   <th className="py-3 px-4 text-right">Amount</th>
+//                 </tr>
+//               </thead>
+
+//               <tbody className="text-sm divide-y divide-gray-200">
+//                 <tr>
+//                   <td className="py-4 px-4">
+//                     <div className="text-gray-900 font-semibold uppercase">
+//                       {invoice.service} Subscription
+//                     </div>
+
+//                     <div className="text-gray-500 text-xs mt-1">
+//                       Package: {invoice.packageName} ({invoice.packageType})
+//                       {invoice.specifications &&
+//                         Object.entries(invoice.specifications).map(([k, v]) => (
+//                           <span key={k}>
+//                             {" "}
+//                             • {k}: {v}
+//                           </span>
+//                         ))}
+//                     </div>
+//                   </td>
+
+//                   <td className="py-4 px-4 text-right font-mono text-gray-900">
+//                     ₹{(invoice.subtotal / 100).toFixed(2)}
+//                   </td>
+//                 </tr>
+//               </tbody>
+//             </table>
+//           </div>
+
+//           {/* Totals */}
+//           <div className="flex justify-end">
+//             <div className="w-64 space-y-3">
+//               <div className="flex justify-between text-sm text-gray-600">
+//                 <span>Subtotal</span>
+//                 <span className="font-mono">
+//                   ₹{(invoice.subtotal / 100).toFixed(2)}
+//                 </span>
+//               </div>
+
+//               <div className="flex justify-between text-sm text-gray-600">
+//                 <span>GST (18%)</span>
+//                 <span className="font-mono">
+//                   ₹{(invoice.gst / 100).toFixed(2)}
+//                 </span>
+//               </div>
+
+//               <hr className="border-gray-200" />
+
+//               <div className="flex justify-between text-lg font-bold text-gray-900">
+//                 <span>Total</span>
+
+//                 <span className="text-indigo-600 font-mono">
+//                   ₹{(invoice.total / 100).toFixed(2)}
+//                 </span>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* Footer */}
+//           <div className="text-center pt-8">
+//             <div className="text-[10px] text-gray-500 italic">
+//               This is a computer-generated invoice. No signature required.
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Action Bar */}
+//         <div className="bg-gray-50 border-t border-gray-200 p-4 flex justify-end gap-3">
+//           <Button variant="outline" onClick={onClose}>
+//             Close
+//           </Button>
+
+//           <Button
+//             className="bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-2"
+//             onClick={() => downloadInvoicePdf(invoice.id, invoice.invoiceNo)}
+//           >
+//             <Download className="w-4 h-4" />
+//             Download PDF
+//           </Button>
+//         </div>
+//       </div>
+//     </Modal>
+//   );
+// }
