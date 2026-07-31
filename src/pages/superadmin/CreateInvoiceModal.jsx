@@ -110,14 +110,14 @@ export default function CreateInvoiceModal({ isOpen, onClose }) {
       <div className="space-y-8">
         {/* Stepper */}
         <div className="flex items-center justify-between px-4 relative">
-          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/5 -translate-y-1/2 z-0" />
+          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -translate-y-1/2 z-0" />
           {[1, 2, 3].map((s) => (
             <div
               key={s}
               className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                 step >= s
                   ? "bg-indigo-600 text-white"
-                  : "bg-[#222] text-textMuted border border-white/10"
+                  : "bg-gray-100 text-gray-400 border border-gray-200"
               }`}
             >
               {step > s ? <CheckCircle className="w-5 h-5" /> : s}
@@ -129,11 +129,11 @@ export default function CreateInvoiceModal({ isOpen, onClose }) {
         {step === 1 && (
           <div className="space-y-6">
             <div className="relative">
-              <label className="block text-sm font-medium text-textMuted mb-2">
+              <label className="block text-sm font-medium text-gray-500 mb-2">
                 Search Client
               </label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-textMuted" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
                   placeholder="Search by name or email..."
                   className="pl-10"
@@ -142,22 +142,22 @@ export default function CreateInvoiceModal({ isOpen, onClose }) {
                 />
               </div>
               {userSearch && usersData?.items?.length > 0 && (
-                <div className="absolute top-full left-0 w-full mt-1 bg-[#1a1a1a] border border-white/10 rounded-xl overflow-hidden z-50 shadow-2xl">
+                <div className="absolute top-full left-0 w-full mt-1 bg-white border border-gray-200 rounded-xl overflow-hidden z-50 shadow-lg">
                   {usersData.items.map((user) => (
                     <button
                       key={user.id}
                       onClick={() => handleUserSelect(user)}
-                      className="w-full px-4 py-3 text-left hover:bg-white/5 flex items-center justify-between group"
+                      className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center justify-between group"
                     >
                       <div>
-                        <div className="text-sm font-medium text-textPrimary">
+                        <div className="text-sm font-medium text-gray-900">
                           {user.name}
                         </div>
-                        <div className="text-xs text-textMuted">
+                        <div className="text-xs text-gray-500">
                           {user.email}
                         </div>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-textMuted opacity-0 group-hover:opacity-100" />
+                      <ChevronRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100" />
                     </button>
                   ))}
                 </div>
@@ -165,15 +165,15 @@ export default function CreateInvoiceModal({ isOpen, onClose }) {
             </div>
 
             {formData.userId && (
-              <div className="bg-indigo-600/10 border border-indigo-600/20 rounded-xl p-4 flex items-center gap-4">
+              <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 flex items-center gap-4">
                 <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold">
                   {formData.clientName.charAt(0)}
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-textPrimary">
+                  <div className="text-sm font-medium text-gray-900">
                     {formData.clientName}
                   </div>
-                  <div className="text-xs text-textMuted">
+                  <div className="text-xs text-gray-500">
                     {formData.clientEmail} • {formData.clientPhone}
                   </div>
                 </div>
@@ -181,7 +181,7 @@ export default function CreateInvoiceModal({ isOpen, onClose }) {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-textMuted mb-2">
+              <label className="block text-sm font-medium text-gray-500 mb-2">
                 Payment Method
               </label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -195,7 +195,7 @@ export default function CreateInvoiceModal({ isOpen, onClose }) {
                       className={`px-4 py-2.5 rounded-xl border text-sm font-medium capitalize transition-all ${
                         formData.paymentMethod === m
                           ? "bg-indigo-600 border-indigo-600 text-white"
-                          : "bg-white/5 border-white/10 text-textMuted hover:border-white/20"
+                          : "bg-gray-50 border-gray-200 text-gray-500 hover:border-gray-300"
                       }`}
                     >
                       {m.replace("_", " ")}
@@ -211,7 +211,7 @@ export default function CreateInvoiceModal({ isOpen, onClose }) {
         {step === 2 && (
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-textMuted mb-2">
+              <label className="block text-sm font-medium text-gray-500 mb-2">
                 Select Service
               </label>
               <div className="grid grid-cols-4 gap-3">
@@ -234,7 +234,7 @@ export default function CreateInvoiceModal({ isOpen, onClose }) {
                     className={`flex flex-col items-center gap-2 p-3 rounded-xl border transition-all ${
                       formData.service === s.id
                         ? "bg-indigo-600 border-indigo-600 text-white"
-                        : "bg-white/5 border-white/10 text-textMuted hover:border-white/20"
+                        : "bg-gray-50 border-gray-200 text-gray-500 hover:border-gray-300"
                     }`}
                   >
                     <s.icon className="w-5 h-5" />
@@ -247,7 +247,7 @@ export default function CreateInvoiceModal({ isOpen, onClose }) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-textMuted mb-2">
+              <label className="block text-sm font-medium text-gray-500 mb-2">
                 Select Plan
               </label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[240px] overflow-y-auto pr-2 custom-scrollbar">
@@ -264,19 +264,19 @@ export default function CreateInvoiceModal({ isOpen, onClose }) {
                     onClick={() => handlePlanSelect(plan)}
                     className={`p-4 rounded-xl border text-left transition-all ${
                       formData.planId === plan.id
-                        ? "bg-indigo-600/10 border-indigo-600"
-                        : "bg-white/5 border-white/10 hover:border-white/20"
+                        ? "bg-indigo-50 border-indigo-600"
+                        : "bg-gray-50 border-gray-200 hover:border-gray-300"
                     }`}
                   >
                     <div className="flex justify-between items-start mb-1">
-                      <span className="text-sm font-bold text-textPrimary">
+                      <span className="text-sm font-bold text-gray-900">
                         {plan.name}
                       </span>
-                      <span className="text-xs font-mono text-indigo-400">
+                      <span className="text-xs font-mono text-indigo-600">
                         ₹{((plan.priceMonthly || plan.price) / 100).toFixed(0)}
                       </span>
                     </div>
-                    <div className="text-[10px] text-textMuted line-clamp-1">
+                    <div className="text-[10px] text-gray-500 line-clamp-1">
                       {plan.ram || plan.storage} •{" "}
                       {plan.vcpu || plan.maxMailboxes || plan.bandwidth}
                     </div>
@@ -287,7 +287,7 @@ export default function CreateInvoiceModal({ isOpen, onClose }) {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-textMuted mb-2">
+                <label className="block text-sm font-medium text-gray-500 mb-2">
                   Billing Cycle
                 </label>
                 <select
@@ -295,24 +295,24 @@ export default function CreateInvoiceModal({ isOpen, onClose }) {
                   onChange={(e) =>
                     setFormData({ ...formData, packageType: e.target.value })
                   }
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-textPrimary focus:outline-none focus:ring-2 focus:ring-indigo-500/50 appearance-none"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 appearance-none"
                 >
-                  <option value="monthly" className="bg-[#1a1a1a]">
+                  <option value="monthly" className="bg-white">
                     Monthly
                   </option>
-                  <option value="yearly-1" className="bg-[#1a1a1a]">
+                  <option value="yearly-1" className="bg-white">
                     1 Year
                   </option>
-                  <option value="yearly-2" className="bg-[#1a1a1a]">
+                  <option value="yearly-2" className="bg-white">
                     2 Years
                   </option>
-                  <option value="yearly-3" className="bg-[#1a1a1a]">
+                  <option value="yearly-3" className="bg-white">
                     3 Years
                   </option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-textMuted mb-2">
+                <label className="block text-sm font-medium text-gray-500 mb-2">
                   Custom Subtotal (Paise)
                 </label>
                 <Input
@@ -333,58 +333,58 @@ export default function CreateInvoiceModal({ isOpen, onClose }) {
         {/* Step 3: Summary */}
         {step === 3 && (
           <div className="space-y-6">
-            <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 space-y-4">
+            <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6 space-y-4">
               <div className="flex justify-between text-sm">
-                <span className="text-textMuted">Client</span>
-                <span className="text-textPrimary font-medium">
+                <span className="text-gray-500">Client</span>
+                <span className="text-gray-900 font-medium">
                   {formData.clientName}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-textMuted">Service</span>
-                <span className="text-textPrimary font-medium capitalize">
+                <span className="text-gray-500">Service</span>
+                <span className="text-gray-900 font-medium capitalize">
                   {formData.service}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-textMuted">Package</span>
-                <span className="text-textPrimary font-medium">
+                <span className="text-gray-500">Package</span>
+                <span className="text-gray-900 font-medium">
                   {formData.packageName}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-textMuted">Billing</span>
-                <span className="text-textPrimary font-medium capitalize">
+                <span className="text-gray-500">Billing</span>
+                <span className="text-gray-900 font-medium capitalize">
                   {formData.packageType}
                 </span>
               </div>
-              <hr className="border-white/5" />
+              <hr className="border-gray-200" />
               <div className="flex justify-between text-sm">
-                <span className="text-textMuted">Subtotal</span>
-                <span className="text-textPrimary font-mono">
+                <span className="text-gray-500">Subtotal</span>
+                <span className="text-gray-900 font-mono">
                   ₹{(formData.subtotal / 100).toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-textMuted">GST (18%)</span>
-                <span className="text-textPrimary font-mono">
+                <span className="text-gray-500">GST (18%)</span>
+                <span className="text-gray-900 font-mono">
                   ₹{(gst / 100).toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between text-lg font-bold">
-                <span className="text-textPrimary">Total Due</span>
-                <span className="text-indigo-500 font-mono">
+                <span className="text-gray-900">Total Due</span>
+                <span className="text-indigo-600 font-mono">
                   ₹{(total / 100).toFixed(2)}
                 </span>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-textMuted mb-2">
+              <label className="block text-sm font-medium text-gray-500 mb-2">
                 Notes (Internal)
               </label>
               <textarea
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-textPrimary focus:outline-none focus:ring-2 focus:ring-indigo-500/50 min-h-[80px]"
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 min-h-[80px]"
                 placeholder="Any special instructions..."
                 value={formData.notes}
                 onChange={(e) =>
@@ -396,7 +396,7 @@ export default function CreateInvoiceModal({ isOpen, onClose }) {
         )}
 
         {/* Navigation Buttons */}
-        <div className="flex justify-between pt-4 border-t border-white/5">
+        <div className="flex justify-between pt-4 border-t border-gray-200">
           <Button
             variant="outline"
             onClick={() => (step === 1 ? onClose() : setStep((s) => s - 1))}

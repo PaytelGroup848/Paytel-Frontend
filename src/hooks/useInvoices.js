@@ -7,10 +7,25 @@ export const useAdminInvoices = (params = {}) =>
   useQuery({
     queryKey: ['admin', 'invoices', params],
     queryFn: () =>
-      api.get('/invoices', { params }).then((r) => ({
-        items: r.data?.data || [],
-        meta: r.data?.meta || {},
-      })),
+      api
+        .get('/invoices', {
+          params: { ...params, populate: 'userId' },
+        })
+        .then((r) => ({
+          items: r.data?.data || [],
+          meta: r.data?.meta || {},
+        })),
+    staleTime: 0,
+  });
+
+export const useAdminInvoice = (id) =>
+  useQuery({
+    queryKey: ['admin', 'invoice', id],
+    queryFn: () =>
+      api
+        .get(`/invoices/${id}`, { params: { populate: 'userId' } })
+        .then((r) => r.data?.data),
+    enabled: !!id,
     staleTime: 0,
   });
 

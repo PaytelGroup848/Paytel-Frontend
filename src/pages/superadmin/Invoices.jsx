@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   useAdminInvoices,
   useUpdateInvoiceStatus,
   useDeleteInvoice,
   downloadInvoicePdf,
 } from "../../hooks/useInvoices";
+import { useAdminUsers } from "../../hooks/useAdminUsers";
+import { api } from "../../services/api";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import Card from "../../components/ui/Card";
@@ -17,17 +19,50 @@ import {
   Download,
   Eye,
   Trash2,
-  Filter,
-  FileText,
-  Calendar,
-  User,
-  CreditCard,
   ChevronLeft,
   ChevronRight,
-  Printer,
 } from "lucide-react";
 import CreateInvoiceModal from "./CreateInvoiceModal";
 import InvoiceDetailModal from "./InvoiceDetailModal";
+
+const getClientName = (inv, userMap) => {
+  if (inv?.clientName) return inv.clientName;
+  if (inv?.userId && typeof inv.userId === "object" && inv.userId !== null) {
+    const u = inv.userId;
+    const fn = u.firstName || u.name || u.fullName || "";
+    const ln = u.lastName || "";
+    return `${fn} ${ln}`.trim() || u.email?.split("@")[0] || "N/A";
+  }
+  const uid = typeof inv?.userId === "string" ? inv.userId : inv?.userId?._id;
+  if (uid && userMap[uid]) {
+    const u = userMap[uid];
+    const fn = u.firstName || u.name || u.fullName || "";
+    const ln = u.lastName || "";
+    return `${fn} ${ln}`.trim() || u.email?.split("@")[0] || "N/A";
+  }
+  return "N/A";
+};
+
+const getClientEmail = (inv, userMap) => {
+  if (inv?.clientEmail) return inv.clientEmail;
+  if (inv?.userId && typeof inv.userId === "object" && inv.userId !== null) {
+    return inv.userId.email || "N/A";
+  }
+  const uid = typeof inv?.userId === "string" ? inv.userId : inv?.userId?._id;
+  if (uid && userMap[uid]) return userMap[uid].email || "N/A";
+  return "N/A";
+};
+
+const getClientPhone = (inv, userMap) => {
+  if (inv?.clientPhone) return inv.clientPhone;
+  if (inv?.userId && typeof inv.userId === "object" && inv.userId !== null) {
+    return inv.userId.phone || inv.userId.mobile || "";
+  }
+  const uid = typeof inv?.userId === "string" ? inv.userId : inv?.userId?._id;
+  if (uid && userMap[uid])
+    return userMap[uid].phone || userMap[uid].mobile || "";
+  return "";
+};
 
 export default function Invoices() {
   const [page, setPage] = useState(1);
@@ -45,10 +80,111 @@ export default function Invoices() {
   };
 
   const { data, isLoading } = useAdminInvoices(params);
+  const { data: usersData } = useAdminUsers({
+    page: 1,
+    pageSize: 10000,
+    limit: 10000,
+    perPage: 10000,
+    size: 10000,
+  });
   const deleteMutation = useDeleteInvoice();
+  const [allUsers, setAllUsers] = useState([]);
+  const [allUsersLoaded, setAllUsersLoaded] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const itemsOnPage1 = usersData?.items || [];
+    const totalPages = Math.max(1, usersData?.meta?.totalPages || 1);
+
+    setAllUsers((prev) => {
+      const map = new Map();
+      [...prev, ...itemsOnPage1].forEach((u) => {
+        const id = u._id || u.id;
+        if (id) map.set(id, u);
+      });
+      return Array.from(map.values());
+    });
+
+    const fetchRest = async () => {
+      if (totalPages <= 1) {
+        if (!cancelled) setAllUsersLoaded(true);
+        return;
+      }
+      try {
+        const pagePromises = [];
+        for (let p = 2; p <= totalPages; p += 1) {
+          pagePromises.push(
+            api
+              .get("/auth/admin/users", {
+                params: {
+                  page: p,
+                  pageSize: 10000,
+                  limit: 10000,
+                  perPage: 10000,
+                  size: 10000,
+                },
+              })
+              .then((r) => r.data?.data || [])
+              .catch(() => []),
+          );
+        }
+        const results = await Promise.all(pagePromises);
+        if (cancelled) return;
+        setAllUsers((prev) => {
+          const map = new Map();
+          [...prev, ...itemsOnPage1, ...results.flat()].forEach((u) => {
+            const id = u._id || u.id;
+            if (id) map.set(id, u);
+          });
+          return Array.from(map.values());
+        });
+      } catch (err) {
+        /* no-op */
+      } finally {
+        if (!cancelled) setAllUsersLoaded(true);
+      }
+    };
+
+    fetchRest();
+    return () => {
+      cancelled = true;
+    };
+  }, [usersData]);
+
+  const uniqueUserIdsInInvoices = useMemo(() => {
+    const set = new Set();
+    (data?.items || []).forEach((inv) => {
+      const uid =
+        typeof inv?.userId === "string"
+          ? inv.userId
+          : inv?.userId?._id || inv?.userId?.id;
+      if (uid) set.add(uid);
+    });
+    return set;
+  }, [data]);
+
+  const userMap = useMemo(() => {
+    const map = {};
+    const source =
+      allUsers && allUsers.length > 0 ? allUsers : usersData?.items || [];
+    source.forEach((u) => {
+      const id = u._id || u.id;
+      if (id) map[id] = u;
+    });
+    return map;
+  }, [usersData, allUsers]);
+
+  const enrichedInvoices = useMemo(() => {
+    return (data?.items || []).map((inv) => ({
+      ...inv,
+      clientName: getClientName(inv, userMap),
+      clientEmail: getClientEmail(inv, userMap),
+      clientPhone: getClientPhone(inv, userMap),
+    }));
+  }, [data, userMap]);
 
   const handleDownload = (invoice) => {
-    downloadInvoicePdf(invoice.id, invoice.invoiceNo);
+    downloadInvoicePdf(invoice.id, invoice.invoiceNumber);
   };
 
   const handleDelete = (id) => {
@@ -83,7 +219,7 @@ export default function Invoices() {
       </div>
 
       <Card className="p-4 bg-white/5 border-white/10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="md:col-span-2 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-textMuted" />
             <Input
@@ -99,46 +235,46 @@ export default function Invoices() {
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-textPrimary focus:outline-none focus:ring-2 focus:ring-indigo-500/50 appearance-none"
+            className="bg-white/5 border border-gray-300 rounded-xl px-4 py-2 text-textPrimary focus:outline-none focus:ring-2 focus:ring-indigo-500/50 appearance-none"
           >
-            <option value="" className="bg-[#1a1a1a]">
+            <option value="" className="bg-[#fff]">
               All Status
             </option>
-            <option value="paid" className="bg-[#1a1a1a]">
+            <option value="paid" className="bg-[#ffff]">
               Paid
             </option>
-            <option value="unpaid" className="bg-[#1a1a1a]">
+            <option value="unpaid" className="bg-[#ffff]">
               Unpaid
             </option>
-            <option value="expire_soon" className="bg-[#1a1a1a]">
+            <option value="expire_soon" className="bg-[#fff]">
               Expire Soon
             </option>
-            <option value="renew" className="bg-[#1a1a1a]">
+            <option value="renew" className="bg-[#fff]">
               Renew
             </option>
           </select>
           <select
             value={service}
             onChange={(e) => setService(e.target.value)}
-            className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-textPrimary focus:outline-none focus:ring-2 focus:ring-indigo-500/50 appearance-none"
+            className="bg-white/5 border border-gray-300 rounded-xl px-4 py-2 text-textPrimary focus:outline-none focus:ring-2 focus:ring-indigo-500/50 appearance-none"
           >
-            <option value="" className="bg-[#1a1a1a]">
+            <option value="" className="bg-[#ffff]">
               All Services
             </option>
-            <option value="vps" className="bg-[#1a1a1a]">
+            <option value="vps" className="bg-[#ffff]">
               VPS
             </option>
-            <option value="wordpress" className="bg-[#1a1a1a]">
+            <option value="wordpress" className="bg-[#ffff]">
               WordPress
             </option>
-            <option value="php" className="bg-[#1a1a1a]">
+            <option value="php" className="bg-[#ffff]">
               PHP+HTML
             </option>
-            <option value="email" className="bg-[#1a1a1a]">
+            <option value="email" className="bg-[#ffff]">
               Email
             </option>
           </select>
-        </div>
+        </div> */}
 
         <div className="overflow-x-auto">
           <table className="w-full text-left">
@@ -148,7 +284,7 @@ export default function Invoices() {
                 <th className="py-4 px-4 font-medium">Client</th>
                 <th className="py-4 px-4 font-medium">Service</th>
                 <th className="py-4 px-4 font-medium">Amount</th>
-                <th className="py-4 px-4 font-medium text-center">Status</th>
+                {/* <th className="py-4 px-4 font-medium text-center">Status</th> */}
 
                 <th className="py-4 px-4 font-medium text-right">Actions</th>
               </tr>
@@ -160,20 +296,20 @@ export default function Invoices() {
                     <Spinner className="w-8 h-8 mx-auto" />
                   </td>
                 </tr>
-              ) : data?.items?.length === 0 ? (
+              ) : enrichedInvoices.length === 0 ? (
                 <tr>
                   <td colSpan="7" className="py-12 text-center text-textMuted">
                     No invoices found.
                   </td>
                 </tr>
               ) : (
-                data?.items.map((inv) => (
+                enrichedInvoices.map((inv) => (
                   <tr
                     key={inv.id}
                     className="text-sm hover:bg-white/5 transition-colors"
                   >
                     <td className="py-4 px-4 font-medium text-textPrimary">
-                      {inv?.invoiceNumber}
+                      {inv?.invoiceNumber || inv?.invoiceNo}
                     </td>
                     <td className="py-4 px-4">
                       <div className="text-textPrimary">{inv.clientName}</div>
@@ -182,19 +318,21 @@ export default function Invoices() {
                       </div>
                     </td>
                     <td className="py-4 px-4 capitalize">
-                      <div className="text-textPrimary">{inv?.serviceName}</div>
+                      <div className="text-textPrimary">
+                        {inv?.serviceName || inv?.service}
+                      </div>
                       <div className="text-[11px] text-textMuted">
                         {inv?.serviceModel}
                       </div>
                     </td>
                     <td className="py-4 px-4 font-mono text-textPrimary">
-                      ₹{(inv?.totalAmount / 100).toFixed(2)}
+                      ₹{(inv?.totalAmount / 100 || inv?.total / 100).toFixed(2)}
                     </td>
-                    <td className="py-4 px-4 text-center">
+                    {/* <td className="py-4 px-4 text-center">
                       <Badge variant={statusVariants[inv.status] || "default"}>
                         {inv.status.replace("_", " ")}
                       </Badge>
-                    </td>
+                    </td> */}
 
                     <td className="py-4 px-4 text-right">
                       <div className="flex justify-end gap-1">
@@ -205,13 +343,13 @@ export default function Invoices() {
                         >
                           <Eye className="w-4 h-4" />
                         </button>
-                        <button
+                        {/* <button
                           onClick={() => handleDownload(inv)}
                           className="p-2 text-emerald-400 hover:bg-emerald-400/10 rounded-lg transition-colors"
                           title="Download PDF"
                         >
                           <Download className="w-4 h-4" />
-                        </button>
+                        </button> */}
                         <button
                           onClick={() => handleDelete(inv.id)}
                           className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
