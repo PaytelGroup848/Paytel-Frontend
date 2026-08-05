@@ -138,7 +138,7 @@ export default function PhpConfigModal({ plan, onClose }) {
   const grandTotal = subtotal + taxes;
 
   return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-gradient-to-br from-slate-900/60 via-indigo-900/40 to-purple-900/60 backdrop-blur-md">
+    <div className="fixed inset-0 z-[999] mt-10 flex items-center justify-center p-4 bg-gradient-to-br from-slate-900/60 via-indigo-900/40 to-purple-900/60 backdrop-blur-md">
       <motion.div
         initial={{ opacity: 0, scale: 0.96, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}

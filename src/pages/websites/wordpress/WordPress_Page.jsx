@@ -55,15 +55,22 @@ const googleReviews = [
 export default function Wordpress_Page() {
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+    },
   };
   const itemVariants = {
     hidden: { y: 40, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100, damping: 15 } },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 100, damping: 15 },
+    },
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans antialiased selection:bg-indigo-100 selection:text-indigo-900">
+    <div className=" bg-white font-sans antialiased selection:bg-indigo-100 selection:text-indigo-900">
       {/* Subtle dynamic background */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-100/20 rounded-full blur-3xl animate-float-slow" />
@@ -71,7 +78,8 @@ export default function Wordpress_Page() {
         <div className="absolute top-1/3 left-0 w-72 h-72 bg-cyan-100/20 rounded-full blur-3xl animate-float-slowest" />
       </div>
 
-      <main className="relative z-10 pt-1 pb-20">
+      <main className="relative z-10 ">
+        <Plans />
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -79,7 +87,7 @@ export default function Wordpress_Page() {
           className="w-[85vw] mx-auto px-4 sm:px-6 lg:px-8 space-y-20"
         >
           {/* HERO SECTION */}
-          <motion.section variants={itemVariants} className="text-center max-w-4xl mx-auto">
+          {/* <motion.section variants={itemVariants} className="text-center max-w-4xl mx-auto">
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -103,10 +111,10 @@ export default function Wordpress_Page() {
                 </svg>
               </span>
             </h1>
-          </motion.section>
+          </motion.section> */}
 
           {/* PROMO CARD */}
-          <motion.section
+          {/* <motion.section
             variants={itemVariants}
             className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-violet-700 p-8 md:p-14 rounded-[3rem] overflow-hidden shadow-2xl shadow-indigo-200/60"
           >
@@ -124,8 +132,9 @@ export default function Wordpress_Page() {
                   <span className="text-cyan-200">blazing performance.</span>
                 </h2>
                 <p className="mt-6 text-indigo-100 text-lg font-medium max-w-lg">
-                  Launch your WordPress site in seconds. We handle caching, updates, and security
-                  so you can focus on what matters: your content.
+                  Launch your WordPress site in seconds. We handle caching,
+                  updates, and security so you can focus on what matters: your
+                  content.
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3 justify-center lg:justify-start">
                   {[
@@ -159,54 +168,89 @@ export default function Wordpress_Page() {
                   className="absolute -top-4 -right-4 bg-fuchsia-500 text-black p-3 rounded-xl shadow-lg flex items-center gap-2"
                 >
                   <span className="text-lg font-black"></span>
-                  <span className="text-[10px] font-bold uppercase">Wordpress</span>
+                  <span className="text-[10px] font-bold uppercase">
+                    Wordpress
+                  </span>
                 </motion.div>
               </div>
             </div>
-          </motion.section>
+          </motion.section> */}
 
           {/* STATS */}
-          <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {/* <motion.div
+            variants={itemVariants}
+            className="grid grid-cols-2 md:grid-cols-4 gap-6"
+          >
             {[
-              { icon: Globe, value: "10M+", label: "Websites", color: "bg-indigo-100 text-indigo-600" },
-              { icon: Zap, value: "0.3s", label: "Avg Load Time", color: "bg-purple-100 text-purple-600" },
-              { icon: Globe, value: "200+", label: "CDN PoPs", color: "bg-cyan-100 text-cyan-600" },
-              { icon: Headphones, value: "24/7", label: "Expert Support", color: "bg-emerald-100 text-emerald-600" },
+              {
+                icon: Globe,
+                value: "10M+",
+                label: "Websites",
+                color: "bg-indigo-100 text-indigo-600",
+              },
+              {
+                icon: Zap,
+                value: "0.3s",
+                label: "Avg Load Time",
+                color: "bg-purple-100 text-purple-600",
+              },
+              {
+                icon: Globe,
+                value: "200+",
+                label: "CDN PoPs",
+                color: "bg-cyan-100 text-cyan-600",
+              },
+              {
+                icon: Headphones,
+                value: "24/7",
+                label: "Expert Support",
+                color: "bg-emerald-100 text-emerald-600",
+              },
             ].map((stat) => (
               <motion.div
                 key={stat.label}
                 whileHover={{ y: -4, scale: 1.02 }}
                 className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-all"
               >
-                <div className={`w-12 h-12 rounded-xl ${stat.color} flex items-center justify-center mb-4`}>
+                <div
+                  className={`w-12 h-12 rounded-xl ${stat.color} flex items-center justify-center mb-4`}
+                >
                   <stat.icon size={22} />
                 </div>
-                <p className="text-2xl font-extrabold text-slate-900">{stat.value}</p>
-                <p className="text-xs text-slate-500 mt-1 font-medium">{stat.label}</p>
+                <p className="text-2xl font-extrabold text-slate-900">
+                  {stat.value}
+                </p>
+                <p className="text-xs text-slate-500 mt-1 font-medium">
+                  {stat.label}
+                </p>
               </motion.div>
             ))}
-          </motion.div>
+          </motion.div> */}
 
           {/* FEATURES */}
-          <motion.div id="features" variants={itemVariants} className="grid md:grid-cols-3 gap-6">
+          {/* <motion.div
+            id="features"
+            variants={itemVariants}
+            className="grid md:grid-cols-3 gap-6"
+          >
             {[
               {
                 icon: Zap,
                 title: "LiteSpeed Caching",
                 desc: "4× faster page loads with server‑side caching and automatic optimization.",
-                image: "/LiteSpeed Caching.png"
+                image: "/LiteSpeed Caching.png",
               },
               {
                 icon: ShieldCheck,
                 title: "Secure Auto‑Updates",
                 desc: "We keep your WordPress core, themes, and plugins up‑to‑date automatically.",
-                image: "/Secure Auto‑Updates.webp"
+                image: "/Secure Auto‑Updates.webp",
               },
               {
                 icon: Cpu,
                 title: "NVMe SSD Storage",
                 desc: "Ultra‑fast read/write speeds for database‑heavy WordPress sites.",
-                image: "/NVMe SSD Storage.webp"
+                image: "/NVMe SSD Storage.webp",
               },
             ].map((feature) => (
               <motion.div
@@ -226,36 +270,62 @@ export default function Wordpress_Page() {
                   <div className="w-11 h-11 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-5 group-hover:bg-indigo-600 group-hover:text-white transition-all">
                     <feature.icon size={22} />
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-2">{feature.title}</h3>
-                  <p className="text-sm text-slate-500 leading-relaxed">{feature.desc}</p>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">
+                    {feature.desc}
+                  </p>
                 </div>
               </motion.div>
             ))}
-          </motion.div>
+          </motion.div> */}
 
           {/* PRICING */}
-          <motion.section
+          {/* <motion.section
             id="pricing-section"
             variants={itemVariants}
             className="bg-white rounded-[3rem] border border-slate-100 shadow-xl overflow-hidden -mt-18"
           >
             <div>
-              <Plans />
+            
             </div>
-          </motion.section>
+          </motion.section> */}
 
           {/* STEPS */}
-          <motion.section variants={itemVariants} className="bg-white rounded-[3rem] p-10 md:p-14 border border-slate-200 shadow-sm relative">
+          {/* <motion.section
+            variants={itemVariants}
+            className="bg-white rounded-[3rem] p-10 md:p-14 border border-slate-200 shadow-sm relative"
+          >
             <div className="text-center mb-14">
-              <h3 className="text-3xl font-extrabold text-slate-900">Three steps to launch</h3>
-              <p className="text-slate-500 mt-2 font-medium">From zero to live website in under 60 seconds.</p>
+              <h3 className="text-3xl font-extrabold text-slate-900">
+                Three steps to launch
+              </h3>
+              <p className="text-slate-500 mt-2 font-medium">
+                From zero to live website in under 60 seconds.
+              </p>
             </div>
             <div className="grid md:grid-cols-3 gap-8 relative">
               <div className="hidden md:block absolute top-16 left-[12%] right-[12%] h-0.5 bg-slate-200 -z-10" />
               {[
-                { step: "1", icon: Cpu, title: "Choose a Plan", desc: "Select the WordPress plan that fits your needs and budget." },
-                { step: "2", icon: Cpu, title: "Install in 1‑Click", desc: "Our auto‑installer sets up WordPress instantly, with pre‑configured caching." },
-                { step: "3", icon: Cpu, title: "Go Live", desc: "Connect your domain and share your site with the world." },
+                {
+                  step: "1",
+                  icon: Cpu,
+                  title: "Choose a Plan",
+                  desc: "Select the WordPress plan that fits your needs and budget.",
+                },
+                {
+                  step: "2",
+                  icon: Cpu,
+                  title: "Install in 1‑Click",
+                  desc: "Our auto‑installer sets up WordPress instantly, with pre‑configured caching.",
+                },
+                {
+                  step: "3",
+                  icon: Cpu,
+                  title: "Go Live",
+                  desc: "Connect your domain and share your site with the world.",
+                },
               ].map((s) => (
                 <motion.div
                   key={s.step}
@@ -269,17 +339,16 @@ export default function Wordpress_Page() {
                     <s.icon size={22} />
                   </div>
                   <h4 className="font-bold text-slate-900 mb-2">{s.title}</h4>
-                  <p className="text-sm text-slate-500 max-w-[200px] mx-auto">{s.desc}</p>
+                  <p className="text-sm text-slate-500 max-w-[200px] mx-auto">
+                    {s.desc}
+                  </p>
                 </motion.div>
               ))}
             </div>
-          </motion.section>
+          </motion.section> */}
 
           {/* ---------- TRUSTED BY 5K+ USERS WITH GOOGLE REVIEW CARDS ---------- */}
-          <motion.section
-            variants={itemVariants}
-            className="space-y-8"
-          >
+          {/* <motion.section variants={itemVariants} className="space-y-8">
             <div className="text-center">
               <div className="inline-flex items-center gap-2 mb-4 bg-amber-50 border border-amber-200 rounded-full px-4 py-1.5 text-sm font-semibold text-amber-800 shadow-sm">
                 <Star size={16} className="fill-amber-400 text-amber-400" />
@@ -293,16 +362,16 @@ export default function Wordpress_Page() {
               </p>
             </div>
 
-            {/* Auto‑scrolling review carousel */}
+         
             <div className="relative w-full overflow-hidden">
               <motion.div
                 className="flex w-max gap-4 py-2"
-                animate={{ x: ['0%', '-50%'] }}
+                animate={{ x: ["0%", "-50%"] }}
                 transition={{
                   repeat: Infinity,
-                  repeatType: 'loop',
+                  repeatType: "loop",
                   duration: 25,
-                  ease: 'linear',
+                  ease: "linear",
                 }}
               >
                 {[...googleReviews, ...googleReviews].map((review, idx) => (
@@ -310,19 +379,23 @@ export default function Wordpress_Page() {
                     key={idx}
                     className="flex-shrink-0 w-72 sm:w-80 lg:w-96 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-lg transition-shadow"
                   >
-                    {/* Star rating */}
+                   
                     <div className="flex items-center gap-1 mb-3">
                       {Array.from({ length: review.rating }).map((_, i) => (
-                        <Star key={i} size={16} className="fill-amber-400 text-amber-400" />
+                        <Star
+                          key={i}
+                          size={16}
+                          className="fill-amber-400 text-amber-400"
+                        />
                       ))}
                     </div>
 
-                    {/* Review text */}
+                  
                     <p className="text-sm text-slate-600 leading-6">
                       “{review.text}”
                     </p>
 
-                    {/* Real avatar + name + Google badge */}
+                   
                     <div className="mt-4 flex items-center gap-3">
                       <img
                         src={review.avatarUrl}
@@ -345,7 +418,7 @@ export default function Wordpress_Page() {
                 ))}
               </motion.div>
             </div>
-          </motion.section>
+          </motion.section> */}
         </motion.div>
       </main>
 

@@ -104,7 +104,7 @@ export default function VpsPlans() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 font-sans text-slate-900 selection:bg-indigo-100 overflow-x-hidden">
+    <div className="min-h-[90vh] bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 font-sans text-slate-900 selection:bg-indigo-100 overflow-x-hidden">
       {/* Background blobs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-[30%] -left-[20%] w-[60%] h-[60%] bg-indigo-100/30 rounded-full blur-[120px] animate-pulse" />
@@ -119,7 +119,7 @@ export default function VpsPlans() {
       </div>
 
       {/* ─── NEW LIGHT HERO SECTION ─── */}
-      <section className="relative z-10 px-4 sm:px-6 lg:px-8 pt-14 md:pt-20 pb-10">
+      {/* <section className="relative z-10 px-4 sm:px-6 lg:px-8 pt-14 md:pt-20 pb-10">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -127,7 +127,6 @@ export default function VpsPlans() {
             transition={{ duration: 0.7 }}
             className="flex flex-col lg:flex-row items-center gap-12"
           >
-            {/* Left: Text + CTA */}
             <div className="flex-1 max-w-2xl text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-100/80 text-indigo-700 rounded-full text-xs font-semibold tracking-wider uppercase mb-6 border border-indigo-200">
                 <Cloud size={16} />
@@ -159,7 +158,6 @@ export default function VpsPlans() {
               </button>
             </div>
 
-            {/* Right: Specs Card */}
             <div className="flex-1 w-full max-w-md lg:max-w-none">
               <div className="bg-white/80 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-xl shadow-indigo-100/50 border border-indigo-100 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-white pointer-events-none" />
@@ -192,10 +190,10 @@ export default function VpsPlans() {
             </div>
           </motion.div>
         </div>
-      </section>
+      </section> */}
 
       {/* Feature Highlights */}
-      <section className="max-w-7xl mx-auto px-6 py-12 relative z-10">
+      {/* <section className="max-w-7xl mx-auto px-6 py-12 relative z-10">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -249,29 +247,25 @@ export default function VpsPlans() {
             </motion.div>
           ))}
         </motion.div>
-      </section>
+      </section> */}
 
       {/* Plans Section (ref for scrolling) */}
-      <div ref={pricingRef} className="max-w-[1600px] mx-auto px-6 py-16">
+      <div ref={pricingRef} className="max-w-[1600px] mx-auto px-6 py-6">
         {/* Header */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-white shadow-sm border border-slate-100 px-6 py-2 rounded-full mb-6">
-         
-          </div>
-          <h1 className="text-5xl md:text-6xl font-bold tracking-tighter text-slate-900 mb-4">
-            Choose Your{" "}
+        <div className="text-center mb-6">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tighter text-slate-900 mb-1">
+            Choose Your&nbsp;
             <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
               VPS Power
             </span>
           </h1>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto font-light">
-            High-performance NVMe VPS with dedicated resources. Lightning-fast
-            deployment in under 60 seconds.
+            High-performance NVMe VPS with dedicated resources.
           </p>
         </div>
 
         {/* OS Toggle */}
-        <div className="flex justify-center mb-12">
+        <div className="flex justify-center mb-8">
           <div className="bg-white p-1.5 rounded-3xl shadow-lg shadow-slate-200/80 border border-slate-100 flex">
             <button
               onClick={() => setType("linux")}
@@ -418,7 +412,11 @@ export default function VpsPlans() {
                       </div>
 
                       <button
-                        onClick={() => navigate(`/vps/configure/${type}/${plan.id || plan._id}`)}
+                        onClick={() =>
+                          navigate(
+                            `/vps/configure/${type}/${plan.id || plan._id}`,
+                          )
+                        }
                         className={`w-full py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300
                           flex items-center justify-center gap-2 group-hover:gap-3
                           ${

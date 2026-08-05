@@ -242,7 +242,7 @@ export default function App() {
           path="/php-hosting"
           element={
             <PublicRoute>
-              <PhpLandingPage />
+              <PhpPlans />
             </PublicRoute>
           }
         />
@@ -317,7 +317,6 @@ export default function App() {
             <Route path="/wordpress/:id/backups" element={<BackupsPage />} />
             <Route path="wordpress/:id/database" element={<DatabasePage />} />
 
-            <Route path="/php-hosting" element={<PhpPlans />} />
             <Route path="/php-hosting/paid" element={<MyPhpSites />} />
             <Route
               path="/php-hosting/dns/:instanceId"
@@ -352,6 +351,7 @@ export default function App() {
             <Route path="/email/plan" element={<EmailPlanPage />} />
             <Route path="emails/dkim" element={<DkimPage />} />
             <Route path="/emails/connect" element={<EmailConnect />} />
+            {/* <Route path="/php-hosting" element={<PhpLandingPage />} /> */}
 
             <Route
               path="/billing/subscriptions"

@@ -320,9 +320,6 @@ const Dashboard = () => {
                 <h1 className="text-[22px] sm:text-[26px] font-black text-slate-900">
                   {getGreeting()}, {user.name.split(" ")[0]}!
                 </h1>
-                <p className="text-sm text-slate-500 mt-0.5">
-                  Your cloud command center - everything at a glance.
-                </p>
               </div>
             </motion.div>
 
@@ -663,7 +660,7 @@ const Dashboard = () => {
             </div>
 
             {/* ─── New Services ─── */}
-            <section>
+            {/* <section>
               <div className="flex items-center gap-2 mb-4">
                 <h2 className="font-black text-[15px] text-slate-900">
                   Add New Services
@@ -754,7 +751,7 @@ const Dashboard = () => {
                   </motion.div>
                 ))}
               </div>
-            </section>
+            </section> */}
           </div>
         </main>
 

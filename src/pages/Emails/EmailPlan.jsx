@@ -17,10 +17,8 @@ import { getPendingOrder } from "../../utils/pendingOrder";
 
 import { useEmailPlans } from "../../hooks/useEmailHosting";
 
-/* ============================================================
-   Plan Card – with memo for performance
-   ============================================================ */
 const PlanCard = React.memo(({ plan, billingPeriod, onSelect }) => {
+  const isPopular = plan.name === "Pro";
   const monthlyPrice = Math.floor(plan.price / 100);
   const displayPrice = monthlyPrice;
 
@@ -35,18 +33,21 @@ const PlanCard = React.memo(({ plan, billingPeriod, onSelect }) => {
           : "border-slate-200/80 hover:border-indigo-200"
       }`}
     >
-      {/* Popular badge */}
-      {plan.slug === "business" && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold px-4 py-1 rounded-full shadow-md flex items-center gap-1">
-          <Star size={14} /> Most Popular
+      {isPopular && (
+        <div className="absolute -top-px left-0 right-0 z-20 flex justify-center">
+          <div className="bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[10px] font-black px-5 py-1 rounded-b-xl flex items-center gap-1.5 shadow-md">
+            <Star className="w-3 h-3" fill="currentColor" />
+            MOST POPULAR
+          </div>
         </div>
       )}
+      {/* Popular badge */}
 
       {/* Header */}
       <div className="mb-4">
-        <p className="text-xs font-bold uppercase tracking-wider text-indigo-600 mb-1">
+        {/* <p className="text-xs font-bold uppercase tracking-wider text-indigo-600 mb-1">
           {plan.name} Email
-        </p>
+        </p> */}
         <h3 className="text-2xl font-black text-slate-800">{plan.name}</h3>
       </div>
 
@@ -77,7 +78,13 @@ const PlanCard = React.memo(({ plan, billingPeriod, onSelect }) => {
       {/* CTA */}
       <button
         onClick={() => onSelect(plan)}
-        className="w-full py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md hover:shadow-lg"
+        className={`w-full py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300
+                          flex cursor-pointer items-center justify-center gap-2 group-hover:gap-3
+                          ${
+                            isPopular
+                              ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-md shadow-orange-200 hover:shadow-lg hover:shadow-orange-300"
+                              : "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-200 hover:shadow-lg hover:shadow-indigo-300"
+                          }`}
       >
         Select Plan
         <ArrowRight size={18} />
@@ -86,9 +93,6 @@ const PlanCard = React.memo(({ plan, billingPeriod, onSelect }) => {
   );
 });
 
-/* ============================================================
-   Main Plan Selection Page
-   ============================================================ */
 export default function EmailPlanPage() {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -121,21 +125,23 @@ export default function EmailPlanPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 p-6 md:p-10">
       <div className="max-w-7xl mx-auto">
         {/* Top bar + breadcrumb */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
-          <div>
-            {/* <div className="flex items-center gap-2 text-sm text-slate-500 mb-2">
-              <button onClick={() => navigate('/emails')} className="hover:text-indigo-600 transition">Emails</button>
-              <ChevronRight size={16} />
-              <span className="font-medium text-slate-800">Select Plan</span>
-            </div> */}
-            <h1 className="text-3xl md:text-4xl font-black text-slate-900">
-              Choose your email plan
-            </h1>
-            <p className="text-slate-500 mt-2">
-              Pick the perfect plan for your business. Upgrade anytime.
-            </p>
-          </div>
-        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55 }}
+          className="text-center mb-14"
+        >
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-slate-900 leading-[1.06] mb-1">
+            Pick the email plan that fits{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-500">
+              in your business
+            </span>
+          </h1>
+          <p className="text-base sm:text-lg text-slate-500 max-w-xl mx-auto font-normal">
+            Pick the perfect plan for your business. Upgrade anytime.
+          </p>
+        </motion.div>
 
         {/* Plans grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
