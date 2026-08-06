@@ -65,7 +65,7 @@ export default function Input({
 
             error
               ? "border-danger focus:ring-danger/40"
-              : "border-white/10 focus:ring-primary/40",
+              : "border-primary/60 focus:ring-primary/40",
 
             "text-textPrimary placeholder:text-textMuted",
 
@@ -76,7 +76,7 @@ export default function Input({
             isPassword ? "pr-10" : "pr-3",
 
             "focus:outline-none focus:ring-2",
-            "hover:border-white/20",
+            "hover:border-primary/90",
           ].join(" ")}
         />
 

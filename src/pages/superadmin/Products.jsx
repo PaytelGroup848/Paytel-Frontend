@@ -326,9 +326,7 @@ function EditPlanModal({ plan, type, isOpen, onClose }) {
     // FIX: Get the correct ID from plan object
     const planId = plan.id || plan._id || plan.slug;
 
-    console.log("Plan object:", plan);
-    console.log("Using Plan ID:", planId);
-
+  
     if (!planId) {
       toast.error("Plan ID is missing. Please refresh and try again.");
       return;

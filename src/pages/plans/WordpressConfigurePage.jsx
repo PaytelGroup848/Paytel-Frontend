@@ -218,15 +218,15 @@ export default function WordpressConfigurePage() {
         className="bg-white w-full max-w-2xl rounded-3xl shadow-xl border border-slate-100 overflow-hidden flex flex-col"
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-indigo-50/60 to-white">
+        <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-green-50/60 to-white">
           <div>
-            <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-[0.18em] mb-0.5">
+            <p className="text-[10px] font-bold text-green-600 uppercase tracking-[0.18em] mb-0.5">
               Billing Configuration
             </p>
             <p className="text-sm font-bold text-slate-900">
               {plan.name}{" "}
               <span className="text-slate-400 font-medium">
-                · {duration} months
+                · {duration} {duration === 1 ? "month" : "months"}
               </span>
             </p>
           </div>
@@ -249,15 +249,15 @@ export default function WordpressConfigurePage() {
                   onClick={() => setDuration(item.months)}
                   className={`p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 flex items-center justify-between ${
                     isSelected
-                      ? "border-indigo-500 bg-indigo-50/70 shadow-sm shadow-indigo-100"
-                      : "border-slate-100 hover:border-indigo-200 hover:bg-slate-50"
+                      ? "border-green-500 bg-green-50/70 shadow-sm shadow-green-100"
+                      : "border-slate-100 hover:border-green-200 hover:bg-slate-50"
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <div
                       className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
                         isSelected
-                          ? "border-indigo-600 bg-indigo-600"
+                          ? "border-green-600 bg-green-600"
                           : "border-slate-300"
                       }`}
                     >
@@ -286,7 +286,7 @@ export default function WordpressConfigurePage() {
                   </div>
                   <p
                     className={`text-sm font-black ${
-                      isSelected ? "text-indigo-600" : "text-slate-800"
+                      isSelected ? "text-green-600" : "text-slate-800"
                     }`}
                   >
                     ₹{price.toLocaleString()}
@@ -338,7 +338,7 @@ export default function WordpressConfigurePage() {
             onClick={handleCheckout}
             disabled={isProcessing}
             whileTap={{ scale: 0.98 }}
-            className="w-full py-3.5 bg-gradient-to-r cursor-pointer from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-bold tracking-wide shadow-lg shadow-indigo-200/60 transition-all duration-300 hover:shadow-xl hover:from-indigo-700 hover:to-violet-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full py-3.5 cursor-pointer bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl text-sm font-bold tracking-wide shadow-lg shadow-emerald-200/60 transition-all duration-300 hover:shadow-xl hover:from-emerald-700 hover:to-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isProcessing ? (
               <span className="flex items-center gap-2">
@@ -346,7 +346,7 @@ export default function WordpressConfigurePage() {
               </span>
             ) : (
               <>
-                Complete Checkout <ArrowRight size={15} />
+                Pay Now <ArrowRight size={15} />
               </>
             )}
           </motion.button>

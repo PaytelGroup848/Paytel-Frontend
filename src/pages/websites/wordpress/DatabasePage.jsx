@@ -16,7 +16,6 @@ import { useDbTables, useDbCredentials } from '../../../hooks/useWordPress';
  
 // phpMyAdmin Modal 
 function PmaModal({ instanceId, isOpen, onClose, userData }) { 
-  console.log("our fault", userData)
   const [showPass, setShowPass] = useState(false); 
   const { data: creds, isLoading } = useDbCredentials(instanceId, isOpen); 
  

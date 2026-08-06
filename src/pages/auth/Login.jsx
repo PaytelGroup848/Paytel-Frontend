@@ -141,7 +141,7 @@ export default function Login() {
                   label="Email Address"
                   name="email"
                   type="email"
-                  placeholder="admin@cloudedata.com"
+                  placeholder="enter email"
                   value={form.email}
                   onChange={onChange}
                   error={errors.email}
@@ -152,7 +152,7 @@ export default function Login() {
                   label="Password"
                   name="password"
                   type="password"
-                  placeholder="••••••••••••"
+                  placeholder="enter password"
                   value={form.password}
                   onChange={onChange}
                   error={errors.password}

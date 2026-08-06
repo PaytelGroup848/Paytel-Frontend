@@ -6,6 +6,14 @@ import {
   Shield,
   ChevronRight,
   ArrowLeft,
+  Cpu,
+  HardDrive,
+  EthernetPort,
+  DatabaseBackup,
+  Package,
+  MemoryStick,
+  Wifi,
+  ShieldCheck,
 } from "lucide-react";
 import { useCreateOrder, useVerifyPayment } from "../../hooks/useBilling";
 import toast from "react-hot-toast";
@@ -219,6 +227,14 @@ export default function VpsConfigurePage() {
   }, [plan]);
 
   useEffect(() => {
+    if (!plan) return;
+
+    const password = `${plan?.name || "Cloudedata"}@Vps123`;
+    setRootPassword(password);
+    checkPasswordStrength(password);
+  }, [plan]);
+
+  useEffect(() => {
     const pending = getPendingOrder();
     if (!pending || pending.service !== "vps") return;
     if (pending.planId?.toString() !== planId) return;
@@ -272,15 +288,15 @@ export default function VpsConfigurePage() {
   };
 
   const handleCheckout = async () => {
-    if (!hostname.trim()) {
-      toast.error("Please enter a hostname");
-      return;
-    }
-    if (!rootPassword) {
-      toast.error("Please enter a root password");
-      return;
-    }
-    if (!validatePassword()) return;
+    // if (!hostname.trim()) {
+    //   toast.error("Please enter a hostname");
+    //   return;
+    // }
+    // if (!rootPassword) {
+    //   toast.error("Please enter a root password");
+    //   return;
+    // }
+    // if (!validatePassword()) return;
 
     if (!isAuthenticated) {
       savePendingOrder({
@@ -521,7 +537,7 @@ export default function VpsConfigurePage() {
                 textOverflow: "ellipsis",
               }}
             >
-              Configure {plan.name}
+              Configure {plan.name} plan
             </div>
             <div style={{ fontSize: 11, color: "#94A3B8" }}>
               Customize your server specifications
@@ -583,11 +599,11 @@ export default function VpsConfigurePage() {
                         minWidth: 0,
                       }}
                     >
-                      <OsIcon name={os.icon} size={isMobile ? 18 : 22} />
+                      <OsIcon name={os.icon} size={isMobile ? 18 : 25} />
                       <div style={{ minWidth: 0 }}>
                         <div
                           style={{
-                            fontSize: isMobile ? 10 : 12,
+                            fontSize: isMobile ? 10 : 13,
                             fontWeight: active ? 700 : 500,
                             color: active ? "#4F46E5" : "#374151",
                             lineHeight: 1.3,
@@ -621,8 +637,64 @@ export default function VpsConfigurePage() {
               </div>
             </div>
 
+            {!isMobile && (
+              <div
+                style={{
+                  marginTop: 18,
+                  border: "1.5px solid #E2E8F0",
+                  borderRadius: 14,
+                  background: "#F8FAFC",
+                  padding: 16,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 700,
+                    color: "#64748B",
+                    textTransform: "uppercase",
+                    letterSpacing: ".08em",
+                    marginBottom: 14,
+                  }}
+                >
+                  Plan Specifications
+                </div>
+
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(2,1fr)",
+                    gap: 12,
+                  }}
+                >
+                  <SpecItem
+                    icon={Cpu}
+                    label="vCPU"
+                    value={`${plan.vcpu} Cores`}
+                  />
+                  <SpecItem icon={Server} label="RAM" value={plan.ram} />
+                  <SpecItem
+                    icon={HardDrive}
+                    label="Storage"
+                    value={plan.storage}
+                  />
+                  <SpecItem
+                    icon={Wifi}
+                    label="Port Speed"
+                    value={plan.portSpeed}
+                  />
+                  <SpecItem
+                    icon={ShieldCheck}
+                    label="Backups"
+                    value={plan.backups}
+                  />
+                  <SpecItem icon={Package} label="Plan" value={plan.name} />
+                </div>
+              </div>
+            )}
+
             {/* Hostname */}
-            <div>
+            {/* <div>
               <div style={labelStyle}>Hostname</div>
               <input
                 type="text"
@@ -641,10 +713,10 @@ export default function VpsConfigurePage() {
                   fontFamily: "inherit",
                 }}
               />
-            </div>
+            </div> */}
 
             {/* Password */}
-            <div>
+            {/* <div>
               <div style={labelStyle}>Root Password</div>
               <div style={{ position: "relative" }}>
                 <input
@@ -749,7 +821,7 @@ export default function VpsConfigurePage() {
                   </div>
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
 
           {/* ──────────── RIGHT PANEL ──────────── */}
@@ -917,7 +989,7 @@ export default function VpsConfigurePage() {
                 border: "none",
                 cursor: isFormValid ? "pointer" : "not-allowed",
                 background: isFormValid
-                  ? "linear-gradient(135deg,#1a11ce,#292079)"
+                  ? "linear-gradient(135deg,#009d5d,#009d5d)"
                   : "#E2E8F0",
                 color: isFormValid ? "#fff" : "#94A3B8",
                 fontSize: isMobile ? 14 : 13,
@@ -935,7 +1007,7 @@ export default function VpsConfigurePage() {
                 "Processing..."
               ) : (
                 <>
-                  <span>Proceed to Checkout</span>
+                  <span>Pay Now</span>
                   <ChevronRight size={15} />
                 </>
               )}
@@ -968,6 +1040,57 @@ export default function VpsConfigurePage() {
     </div>
   );
 }
+
+const SpecItem = ({ icon: Icon, label, value }) => (
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: 12,
+      padding: "12px",
+      borderRadius: 10,
+      background: "#fff",
+      border: "1px solid #E2E8F0",
+    }}
+  >
+    <div
+      style={{
+        width: 40,
+        height: 40,
+        borderRadius: 10,
+        background: "#EEF2FF",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#4F46E5",
+        flexShrink: 0,
+      }}
+    >
+      <Icon size={20} />
+    </div>
+
+    <div>
+      <div
+        style={{
+          fontSize: 11,
+          color: "#94A3B8",
+        }}
+      >
+        {label}
+      </div>
+
+      <div
+        style={{
+          fontSize: 14,
+          fontWeight: 700,
+          color: "#0F172A",
+        }}
+      >
+        {value}
+      </div>
+    </div>
+  </div>
+);
 
 /* shared label style */
 const labelStyle = {

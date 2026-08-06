@@ -49,7 +49,7 @@ export default function PaidWordpress() {
     (s) => s.type === "wordpress" && s.status === "Active",
   );
   const siteLimit = wpSubscription?.planDetails?.maxInstances ?? 1;
-  console.log("this is my sites", wpSubscription);
+
   const hasReachedLimit = websites.length >= siteLimit;
 
   const siteLimitOrReached = hasReachedLimit;

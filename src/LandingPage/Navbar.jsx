@@ -73,28 +73,37 @@ const megaMenuSections = [
     icon: Server,
     items: [
       {
-        label: "cPanel Hosting",
-        href: "/c-panel",
-        description: "User-friendly control panel with one-click installs.",
-        tag: { label: "POPULAR", color: "popular" },
-      },
-      {
-        label: "PHP Hosting",
-        href: "/php-hosting",
-        description: "Optimized PHP environment with full framework support.",
-      },
-      {
         label: "VPS Hosting",
         href: "/vps-cloud",
         description: "Scalable virtual private servers with root access.",
         tag: { label: "NEW", color: "new" },
       },
       {
-        label: "Node.js Hosting",
-        href: "#",
+        label: "Wordpress Hosting",
+        href: "/wordpress-hosting",
         description:
-          "High-performance Node.js hosting with PM2 and auto-scaling.",
+          "Fully managed, secured, speed-optimized WordPress hosting with daily backups.",
+        tag: { label: "NEW", color: "new" },
       },
+
+      {
+        label: "PHP+MySql Hosting",
+        href: "/php-hosting",
+        description: "Optimized PHP environment with full framework support.",
+        tag: { label: "POPULAR", color: "popular" },
+      },
+      {
+        label: "cPanel Hosting",
+        href: "/c-panel",
+        description: "User-friendly control panel with one-click installs.",
+      },
+
+      // {
+      //   label: "Node.js Hosting",
+      //   href: "#",
+      //   description:
+      //     "High-performance Node.js hosting with PM2 and auto-scaling.",
+      // },
     ],
   },
   {
@@ -122,23 +131,7 @@ const megaMenuSections = [
       },
     ],
   },
-  {
-    title: "Other",
-    icon: Cloud,
-    items: [
-      {
-        label: "Business Email",
-        href: "/emails/plan",
-        description: "Professional email hosting with collaboration tools.",
-        tag: { label: "SALE", color: "sale" },
-      },
-      {
-        label: "Self Hosted",
-        href: "#",
-        description: "Bring your own server. We manage the infrastructure.",
-      },
-    ],
-  },
+
   {
     title: "Softwares",
     icon: GraduationCap,
@@ -153,6 +146,23 @@ const megaMenuSections = [
         href: "/restaurant-management-system",
         description: "All-in-one restaurant POS and management system.",
         tag: { label: "NEW", color: "new" },
+      },
+    ],
+  },
+  {
+    title: "Other",
+    icon: Cloud,
+    items: [
+      {
+        label: "Business Email",
+        href: "/emails/plan",
+        description: "Professional email hosting with collaboration tools.",
+        tag: { label: "SALE", color: "sale" },
+      },
+      {
+        label: "Self Hosted",
+        href: "#",
+        description: "Bring your own server. We manage the infrastructure.",
       },
     ],
   },

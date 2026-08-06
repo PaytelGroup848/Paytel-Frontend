@@ -5,7 +5,6 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 export default function DkimVerificationModal({ emailOrderId, isOpen, onClose, onVerified }) {
-  console.log('DkimVerificationModal Rendering:', { emailOrderId, isOpen });
   const { data: dnsRecords, isLoading: isDnsLoading } = useDnsRecords(emailOrderId);
   const { data: dnsStatus, isLoading: isStatusLoading, refetch: refetchStatus } = useDnsStatus(emailOrderId);
   const [expandedDkim, setExpandedDkim] = useState(false);

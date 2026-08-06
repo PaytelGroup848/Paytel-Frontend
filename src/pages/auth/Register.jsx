@@ -15,12 +15,10 @@ const handleGoogleAuth = async () => {
   let clientIp = null;
   try {
     clientIp = await getUserIp();
-    
 
     // Save IP in localStorage
     if (clientIp) {
       localStorage.setItem("oauth_client_ip", clientIp);
-    
     }
   } catch (error) {
     console.error("[GoogleAuth] Failed to get IP:", error);
@@ -51,7 +49,6 @@ export default function Register() {
       try {
         const ip = await getUserIp();
         setClientIp(ip);
-       
       } catch (error) {
         console.error("[Register] Failed to get IP:", error);
       } finally {
@@ -139,7 +136,7 @@ export default function Register() {
                   label="Email Address"
                   name="email"
                   type="email"
-                  placeholder="you@gmail.com"
+                  placeholder="enter email"
                   value={form.email}
                   onChange={onChange}
                   error={errors.email}
@@ -151,7 +148,7 @@ export default function Register() {
                   label="Password"
                   name="password"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder="enter password"
                   value={form.password}
                   onChange={onChange}
                   error={errors.password}

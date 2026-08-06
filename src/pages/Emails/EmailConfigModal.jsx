@@ -164,7 +164,6 @@ export default function EmailConfigModal({ plan, isOpen, onClose }) {
         },
         modal: {
           ondismiss: function () {
-            console.log("Razorpay modal closed");
           },
         },
       };

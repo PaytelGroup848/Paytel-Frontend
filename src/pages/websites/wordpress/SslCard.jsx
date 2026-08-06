@@ -52,8 +52,7 @@ export const SslCard = ({ instanceId }) => {
   const retryTimeIST = getFormattedRetryTime();
   const hoursRemaining = getHoursRemaining();
 
-  console.log("Retry time (IST):", retryTimeIST);
-  console.log("Hours remaining:", hoursRemaining);
+
 
   const handleInstallSsl = () => {
     if (isRateLimited) {

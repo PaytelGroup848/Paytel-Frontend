@@ -486,7 +486,7 @@ export default function ConfigurationModal({
         order_id: orderData.orderId,
         handler: async (response) => {
           try {
-            console.log(" Razorpay response:", response);
+
             await verifyPayment.mutateAsync({
               instanceId: orderData.instanceId,
               razorpay_payment_id: response.razorpay_payment_id,
