@@ -33,7 +33,7 @@ const ReplyBubble = ({ reply }) => {
         <p
           className={`text-xs font-semibold mb-1 ${isUser ? "text-indigo-200" : "text-slate-500"}`}
         >
-          {reply.senderName || (isUser ? "User" : "Support")}
+          {reply.senderEmail || reply.senderName || (isUser ? "User" : "Support")}
         </p>
         <p className="text-sm whitespace-pre-wrap leading-relaxed">
           {reply.text}
@@ -67,6 +67,7 @@ const statusBadge = {
 
 export default function AdminReplyModal({ ticketId, isOpen, onClose }) {
   const { data: ticket, refetch } = useAdminTicket(ticketId, isOpen);
+  console.log("this is my reply ==>>", ticket);
   const replyMutation = useAdminReply(ticketId);
   const updateStatus = useUpdateTicketStatus();
 

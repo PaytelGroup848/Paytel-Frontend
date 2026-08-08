@@ -94,20 +94,30 @@ export default function AdminSupport() {
             value: status,
             setter: setStatus,
             options: ["All", "Open", "Pending", "Closed"],
-            placeholder: "Status",
+            placeholder: "Statu",
           },
           {
             value: department,
             setter: setDepartment,
-            options: ["All", "General Enquiry", "Technical", "Other"],
+            options: [
+              "All",
+              "Tally On Cloud",
+              "Jewellery On Cloud",
+              "Marg On Cloud",
+              "Busy On Cloud",
+              "Vps Enquiry",
+              "Wordpress Enquiry",
+              "Php+Mysql Enquiry",
+              "Other",
+            ],
             placeholder: "Department",
           },
-          {
-            value: priority,
-            setter: setPriority,
-            options: ["All", "Low", "Medium", "High"],
-            placeholder: "Priority",
-          },
+          // {
+          //   value: priority,
+          //   setter: setPriority,
+          //   options: ["All", "Low", "Medium", "High"],
+          //   placeholder: "Priority",
+          // },
         ].map(({ value, setter, options, placeholder }) => (
           <div key={placeholder} className="relative">
             <select

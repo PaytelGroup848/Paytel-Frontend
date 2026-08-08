@@ -24,7 +24,9 @@ const ReplyBubble = ({ reply }) => {
         <p
           className={`text-xs font-semibold mb-1 ${isUser ? "text-indigo-200" : "text-slate-400"}`}
         >
-          {reply.senderName || (isUser ? "You" : "Support")}
+          {reply.senderEmail ||
+            reply.senderName ||
+            (isUser ? "You" : "Support")}
         </p>
         <p className="text-sm whitespace-pre-wrap leading-relaxed">
           {reply.text}
@@ -165,7 +167,7 @@ const ReplyModal = ({ isOpen, onClose, ticket: initialTicket }) => {
           ref={scrollRef}
           className="flex-1 overflow-y-auto scrollbar-hide px-6 py-4 min-h-0"
         >
-          <div className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-3">
+          <div className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 mb-5">
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">
               First Message
             </p>

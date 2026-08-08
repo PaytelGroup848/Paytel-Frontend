@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Plus, Paperclip, Loader2, Send } from "lucide-react";
+import { X, Plus, Paperclip, Loader2, Send, Hash } from "lucide-react";
 import { useCreateTicket } from "../../hooks/useSupport";
 import { useAuthStore } from "../../store/authStore";
 
@@ -15,8 +15,17 @@ const RaiseTicketModal = ({ isOpen, onClose }) => {
     subject: "",
     message: "",
     file: null,
+    iconNumber: "", // New field for icon number
   });
   const [fileName, setFileName] = useState("");
+
+  // Check if selected department is one of the cloud services
+  const isCloudService = [
+    "Tally On Cloud",
+    "Jewellery On Cloud",
+    "Marg On Cloud",
+    "Busy On Cloud",
+  ].includes(formData.department);
 
   if (!isOpen) return null;
 
@@ -43,13 +52,25 @@ const RaiseTicketModal = ({ isOpen, onClose }) => {
       return;
     }
 
+    // Validate icon number if cloud service is selected
+    if (isCloudService && !formData.iconNumber.trim()) {
+      alert("Please enter the icon number for the cloud service");
+      return;
+    }
+
+    // Prepare message with icon number if present
+    let finalMessage = formData.message;
+    if (isCloudService && formData.iconNumber.trim()) {
+      finalMessage = `Icon Number: ${formData.iconNumber}\n\n${formData.message}`;
+    }
+
     const fd = new FormData();
     fd.append("name", formData.name);
     fd.append("email", formData.email);
     fd.append("department", formData.department);
     fd.append("priority", formData.priority);
     fd.append("subject", formData.subject);
-    fd.append("message", formData.message);
+    fd.append("message", finalMessage);
     if (formData.file) fd.append("attachment", formData.file);
 
     await mutation.mutateAsync(fd);
@@ -61,6 +82,7 @@ const RaiseTicketModal = ({ isOpen, onClose }) => {
       subject: "",
       message: "",
       file: null,
+      iconNumber: "",
     });
     setFileName("");
     onClose();
@@ -106,36 +128,6 @@ const RaiseTicketModal = ({ isOpen, onClose }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
-          {/* Name + Email */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>
-                Full Name <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="John Doe"
-              />
-            </div>
-            <div>
-              <label className={labelClass}>
-                Email <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className={inputClass}
-                placeholder="user@example.com"
-              />
-            </div>
-          </div>
-
           {/* Subject */}
           <div>
             <label className={labelClass}>
@@ -162,12 +154,17 @@ const RaiseTicketModal = ({ isOpen, onClose }) => {
                 onChange={handleChange}
                 className={inputClass}
               >
-                <option>General Enquiry</option>
-                <option>Technical</option>
+                <option>Vps Enquiry</option>
+                <option>Wordpress Enquiry</option>
+                <option>Php+Mysql Enquiry</option>
+                <option>Tally On Cloud</option>
+                <option>Jewellery On Cloud</option>
+                <option>Marg On Cloud</option>
+                <option>Busy On Cloud</option>
                 <option>Other</option>
               </select>
             </div>
-            <div>
+            {/* <div>
               <label className={labelClass}>Priority</label>
               <select
                 name="priority"
@@ -179,7 +176,27 @@ const RaiseTicketModal = ({ isOpen, onClose }) => {
                 <option>Medium</option>
                 <option>High</option>
               </select>
-            </div>
+            </div> */}
+
+            {/* Icon Number - Conditional Input */}
+            {isCloudService && (
+              <div className="animate-slideDown">
+                <label className={labelClass}>
+                  Icon Number <span className="text-red-400">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    name="iconNumber"
+                    value={formData.iconNumber}
+                    onChange={handleChange}
+                    className={`${inputClass} `}
+                    placeholder="Enter your icon number"
+                    required={isCloudService}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Message */}
