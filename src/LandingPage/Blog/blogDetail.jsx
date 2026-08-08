@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Calendar,
   User,
@@ -15,17 +15,23 @@ import {
   Folder,
   ChevronUp,
   ExternalLink,
-} from 'lucide-react';
-import axios from 'axios';
-import toast from 'react-hot-toast';
+} from "lucide-react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const BlogDetail = () => {
-  const { id } = useParams();
+  // const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
   const [blog, setBlog] = useState(null);
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [commentForm, setCommentForm] = useState({ name: '', email: '', comment: '' });
+  const [relatedPosts, setRelatedPosts] = useState([]);
+  const [commentForm, setCommentForm] = useState({
+    name: "",
+    email: "",
+    comment: "",
+  });
   const [submitting, setSubmitting] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -36,13 +42,13 @@ const BlogDetail = () => {
 
   const getEmbedUrl = (url) => {
     if (!url) return null;
-    if (url.includes('/embed/')) return url;
+    if (url.includes("/embed/")) return url;
     let videoId = null;
-    if (url.includes('youtu.be/')) {
-      videoId = url.split('youtu.be/')[1]?.split('?')[0];
-    } else if (url.includes('watch?v=')) {
-      videoId = url.split('watch?v=')[1]?.split('&')[0];
-    } else if (url.includes('youtube.com/embed/')) {
+    if (url.includes("youtu.be/")) {
+      videoId = url.split("youtu.be/")[1]?.split("?")[0];
+    } else if (url.includes("watch?v=")) {
+      videoId = url.split("watch?v=")[1]?.split("&")[0];
+    } else if (url.includes("youtube.com/embed/")) {
       return url;
     }
     if (videoId) return `https://www.youtube.com/embed/${videoId}`;
@@ -57,61 +63,123 @@ const BlogDetail = () => {
     }
     if (blog.images && blog.images.length) {
       const primary = blog.primaryImage;
-      const filtered = primary ? blog.images.filter((img) => img !== primary) : blog.images;
+      const filtered = primary
+        ? blog.images.filter((img) => img !== primary)
+        : blog.images;
       images.push(...filtered);
     }
     return images;
   };
 
+  const parseMaybeArray = (value) => {
+    if (Array.isArray(value)) return value;
+    if (!value) return [];
+
+    if (typeof value !== "string") return [];
+
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return value
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
+
       try {
         const [blogRes, commentsRes] = await Promise.all([
-          axios.get(`${API_URL}/api/blogs/${id}`),
-          axios.get(`${API_URL}/api/blogs/${id}/comments`),
+          axios.get(`${API_URL}/api/blogs/slug/${slug}`),
+          axios
+            .get(`${API_URL}/api/blogs/slug/${slug}/comments`)
+            .catch(() => ({ data: [] })),
         ]);
-        setBlog(blogRes.data);
-        setComments(commentsRes.data);
+
+        const loadedBlog = {
+          ...blogRes.data,
+          tags: parseMaybeArray(blogRes.data.tags),
+          secondaryImages: parseMaybeArray(blogRes.data.secondaryImages),
+          images: parseMaybeArray(blogRes.data.images),
+          metaKeywords: parseMaybeArray(blogRes.data.metaKeywords),
+        };
+
+        setBlog(loadedBlog);
+        setComments(commentsRes.data || []);
+
+        if (loadedBlog.category) {
+          axios
+            .get(`${API_URL}/api/blogs`)
+            .then(({ data }) => {
+              setRelatedPosts(
+                (data || [])
+                  .filter(
+                    (item) =>
+                      item.slug !== slug &&
+                      item.category === loadedBlog.category,
+                  )
+                  .slice(0, 3),
+              );
+            })
+            .catch(() => {});
+        }
       } catch (error) {
-        console.error(error);
-        toast.error('Blog not found');
-        navigate('/cloud-hosting-blog');
+        toast.error("Blog not found");
+        navigate("/cloud-hosting-blog");
       } finally {
         setLoading(false);
       }
     };
+
     fetchData();
-  }, [id, navigate]);
+  }, [slug, navigate]);
 
   useEffect(() => {
     const handleScroll = () => setShowScrollTop(window.scrollY > 600);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
+
     if (!commentForm.name || !commentForm.email || !commentForm.comment) {
-      toast.error('All fields are required');
+      toast.error("All fields are required");
       return;
     }
+
     setSubmitting(true);
+
     try {
-      const { data } = await axios.post(`${API_URL}/api/blogs/${id}/comments`, commentForm);
-      setComments([data, ...comments]);
-      setCommentForm({ name: '', email: '', comment: '' });
-      toast.success('Comment posted');
-    } catch (error) {
-      toast.error('Failed to post comment');
+      const { data } = await axios.post(
+        `${API_URL}/api/blogs/${blog._id}/comments`,
+        commentForm,
+      );
+
+      setComments((prev) => [data, ...prev]);
+
+      setCommentForm({
+        name: "",
+        email: "",
+        comment: "",
+      });
+
+      toast.success("Comment posted");
+    } catch {
+      toast.error("Failed to post comment");
     } finally {
       setSubmitting(false);
     }
   };
 
   const stripHtml = (html) => {
-    const tmp = document.createElement('div');
+    const tmp = document.createElement("div");
     tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || '';
+    return tmp.textContent || tmp.innerText || "";
   };
 
   const getReadingTime = (content) => {
@@ -125,10 +193,10 @@ const BlogDetail = () => {
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-    toast.success('Link copied!');
+    toast.success("Link copied!");
   };
 
-  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   if (loading) {
     return (
@@ -179,17 +247,17 @@ const BlogDetail = () => {
           <div className="flex flex-wrap items-center justify-center gap-5 text-slate-300 text-sm">
             <span className="flex items-center gap-2">
               <Calendar size={16} />
-              {new Date(blog.createdAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
+              {new Date(blog.createdAt).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
               })}
             </span>
             <span className="flex items-center gap-2">
               <Clock size={16} /> {getReadingTime(blog.description)}
             </span>
             <span className="flex items-center gap-2">
-              <User size={16} /> {blog.author || 'Admin'}
+              <User size={16} /> {blog.author || "Admin"}
             </span>
           </div>
         </div>
@@ -199,7 +267,7 @@ const BlogDetail = () => {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-10">
         {/* Back Navigation */}
         <button
-          onClick={() => navigate('/cloud-hosting-blog')}
+          onClick={() => navigate("/cloud-hosting-blog")}
           className="flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-6 transition bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-gray-200"
         >
           <ArrowLeft size={18} /> Back to Blog
@@ -229,18 +297,22 @@ const BlogDetail = () => {
             <div className="px-8 pb-4">
               <div
                 className={`grid gap-4 ${
-                  galleryImages.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
+                  galleryImages.length === 1 ? "grid-cols-1" : "grid-cols-2"
                 }`}
               >
                 {galleryImages.map((img, idx) => (
-                  <div key={idx} className="overflow-hidden rounded-xl shadow-md">
+                  <div
+                    key={idx}
+                    className="overflow-hidden rounded-xl shadow-md"
+                  >
                     <img
                       src={img}
                       alt={`${blog.title} - ${idx + 1}`}
                       className="w-full h-64 object-cover hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                       onError={(e) => {
-                        e.target.src = 'https://placehold.co/800x600?text=No+Image';
+                        e.target.src =
+                          "https://placehold.co/800x600?text=No+Image";
                       }}
                     />
                   </div>
@@ -279,27 +351,21 @@ const BlogDetail = () => {
                   rel="noopener noreferrer"
                   className="p-2 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition"
                   title="Facebook"
-                >
-                 
-                </a>
+                ></a>
                 <a
                   href={`https://twitter.com/intent/tweet?text=${shareTitle}&url=${shareUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-2 rounded-full bg-sky-50 text-sky-500 hover:bg-sky-100 transition"
                   title="Twitter"
-                >
-                 
-                </a>
+                ></a>
                 <a
                   href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-2 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 transition"
                   title="LinkedIn"
-                >
-                
-                </a>
+                ></a>
                 <button
                   onClick={copyCurrentUrl}
                   className="p-2 rounded-full bg-gray-50 text-slate-600 hover:bg-gray-100 transition relative"
@@ -326,14 +392,15 @@ const BlogDetail = () => {
         {/* Author Bio */}
         <div className="mt-10 bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex items-center gap-5">
           <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-2xl flex-shrink-0">
-            {blog.author?.charAt(0) || 'A'}
+            {blog.author?.charAt(0) || "A"}
           </div>
           <div>
             <h4 className="font-semibold text-slate-800 text-lg">
-              {blog.author || 'Admin'}
+              {blog.author || "Admin"}
             </h4>
             <p className="text-slate-600 text-sm">
-              Cloud infrastructure specialist and DevOps enthusiast. Sharing insights on modern cloud architecture.
+              Cloud infrastructure specialist and DevOps enthusiast. Sharing
+              insights on modern cloud architecture.
             </p>
           </div>
         </div>
@@ -362,12 +429,14 @@ const BlogDetail = () => {
                 </div>
                 <div className="flex-1 pb-4 border-b border-gray-100">
                   <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <span className="font-semibold text-slate-800">{comment.name}</span>
+                    <span className="font-semibold text-slate-800">
+                      {comment.name}
+                    </span>
                     <span className="text-xs text-slate-400">
-                      {new Date(comment.createdAt).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
+                      {new Date(comment.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
                       })}
                     </span>
                   </div>
@@ -380,14 +449,21 @@ const BlogDetail = () => {
           </div>
 
           {/* Comment Form */}
-          <form onSubmit={handleCommentSubmit} className="space-y-5 pt-4 border-t border-gray-100">
-            <h4 className="font-semibold text-slate-800 text-lg">Leave a comment</h4>
+          <form
+            onSubmit={handleCommentSubmit}
+            className="space-y-5 pt-4 border-t border-gray-100"
+          >
+            <h4 className="font-semibold text-slate-800 text-lg">
+              Leave a comment
+            </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <input
                 type="text"
                 placeholder="Your name *"
                 value={commentForm.name}
-                onChange={(e) => setCommentForm({ ...commentForm, name: e.target.value })}
+                onChange={(e) =>
+                  setCommentForm({ ...commentForm, name: e.target.value })
+                }
                 className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                 required
               />
@@ -395,7 +471,9 @@ const BlogDetail = () => {
                 type="email"
                 placeholder="Your email *"
                 value={commentForm.email}
-                onChange={(e) => setCommentForm({ ...commentForm, email: e.target.value })}
+                onChange={(e) =>
+                  setCommentForm({ ...commentForm, email: e.target.value })
+                }
                 className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                 required
               />
@@ -404,7 +482,9 @@ const BlogDetail = () => {
               rows="4"
               placeholder="Your comment *"
               value={commentForm.comment}
-              onChange={(e) => setCommentForm({ ...commentForm, comment: e.target.value })}
+              onChange={(e) =>
+                setCommentForm({ ...commentForm, comment: e.target.value })
+              }
               className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
               required
             />
@@ -418,14 +498,16 @@ const BlogDetail = () => {
               ) : (
                 <Send size={18} />
               )}
-              {submitting ? 'Posting...' : 'Post Comment'}
+              {submitting ? "Posting..." : "Post Comment"}
             </button>
           </form>
         </div>
 
         {/* Newsletter */}
         <div className="mt-10 bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center">
-          <h3 className="text-2xl font-bold text-slate-800 mb-2">Stay in the loop</h3>
+          <h3 className="text-2xl font-bold text-slate-800 mb-2">
+            Stay in the loop
+          </h3>
           <p className="text-slate-600 mb-6">
             Get the latest cloud insights delivered straight to your inbox.
           </p>
