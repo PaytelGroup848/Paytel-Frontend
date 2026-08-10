@@ -261,7 +261,7 @@ const BlogListing = () => {
                     <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
                       <div className="flex items-center gap-2 text-sm text-gray-500">
                         <User size={14} />
-                        <span>{blog.author || "Admin"}</span>
+                        <span>{blog.author || "Cloudedata"}</span>
                       </div>
                       <Link
                         to={`/blog/${blog.slug}`}
