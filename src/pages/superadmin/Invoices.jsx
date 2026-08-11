@@ -309,6 +309,8 @@ export default function Invoices() {
                     className="text-sm hover:bg-white/5 transition-colors"
                   >
                     <td className="py-4 px-4 font-medium text-textPrimary">
+                      {console.log("this is my invoice", inv)}
+
                       {inv?.invoiceNumber || inv?.invoiceNo}
                     </td>
                     <td className="py-4 px-4">

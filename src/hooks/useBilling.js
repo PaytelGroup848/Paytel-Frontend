@@ -192,5 +192,31 @@ export const useVerifyPayment = () => {
   });
 };
 
+// ADMIN: Get all upcoming renewals with filters and pagination
+export const useAdminRenewals = (params = {}) =>
+  useQuery({
+    queryKey: ['admin', 'renewals', params],
+    queryFn: () =>
+      api
+        .get('/billing/admin/renewals', {
+          params: {
+            page: params.page || 1,
+            pageSize: params.pageSize || 10,
+            daysRange: params.daysRange || 365,
+            ...(params.service && { service: params.service }),
+            ...(params.search && { search: params.search }),
+          },
+        })
+        .then((r) => ({
+          items: r.data?.data || [],
+          meta: r.data?.meta || {
+            page: params.page || 1,
+            totalPages: 1,
+            total: r.data?.data?.length || 0,
+          },
+        })),
+    staleTime: 0,
+  });
+
 
 

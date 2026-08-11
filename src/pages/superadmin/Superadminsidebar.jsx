@@ -27,6 +27,11 @@ export default function SuperAdminSidebar() {
           { to: "/superadmin/users", label: "Users", icon: Users },
           { to: "/superadmin/products", label: "Products", icon: Package },
           { to: "/superadmin/invoices", label: "Invoices", icon: FileText },
+          {
+            to: "/superadmin/upcomming-renewals",
+            label: "Upcomming-Renewals",
+            icon: FileText,
+          },
         ];
 
   return (

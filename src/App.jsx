@@ -104,6 +104,7 @@ import EmailLandingPage from "./LandingPage/email/EmailLandingPage";
 import PublicSupportPage from "./pages/support/PublicSupportPage";
 import PublicTicketDetail from "./pages/support/PublicTicketDetail";
 import WordpressConfigurePage from "./pages/plans/WordpressConfigurePage";
+import Renewals from "./pages/superadmin/Renewals";
 
 // Protected Route wrapper
 const ProtectedRoute = () => {
@@ -370,6 +371,7 @@ export default function App() {
           <Route path="users" element={<UserManagement />} />
           <Route path="products" element={<Products />} />
           <Route path="invoices" element={<Invoices />} />
+          <Route path="upcomming-renewals" element={<Renewals />} />
         </Route>
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/home" replace />} />
