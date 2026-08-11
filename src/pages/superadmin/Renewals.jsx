@@ -80,7 +80,17 @@ const getClientDisplay = (item) => {
       : "") ||
     "";
 
-  return { primary, secondary };
+  const phoneNumber =
+    item?.clientPhone ||
+    item?.contactPerson ||
+    item?.billingName ||
+    item?.clientContact ||
+    (item?.userId && typeof item.userId === "object"
+      ? item.userId.email
+      : "") ||
+    "";
+
+  return { primary, secondary, phoneNumber };
 };
 
 export default function Renewals() {
@@ -273,9 +283,13 @@ export default function Renewals() {
                 <th className="py-4 px-5 font-semibold uppercase tracking-wider text-xs">
                   Client
                 </th>
-                <th className="py-4 px-5 font-semibold uppercase tracking-wider text-xs">
+                <th className=" font-semibold uppercase tracking-wider text-xs">
+                  Domain
+                </th>
+                <th className=" font-semibold uppercase tracking-wider text-xs">
                   Service
                 </th>
+
                 <th className="py-4 px-5 font-semibold uppercase tracking-wider text-xs">
                   Amount
                 </th>
@@ -326,13 +340,23 @@ export default function Renewals() {
                       <div className="text-textPrimary font-medium">
                         {item._client.primary}
                       </div>
-                      {item._client.secondary && (
+                      {item._client?.secondary && (
                         <div className="text-xs text-textMuted mt-0.5">
                           {item._client.secondary}
                         </div>
                       )}
+
+                      {item._client.phoneNumber && (
+                        <div className="text-xs text-textMuted mt-0.5">
+                          {item._client?.phoneNumber}
+                        </div>
+                      )}
                     </td>
-                    <td className="py-4 px-5 capitalize">
+                    <td className=" font-semibold text-gray-700 font-mono">
+                      {console.log("this is domain", item)}
+                      {item?.domain || "NA"}
+                    </td>
+                    <td className="capitalize">
                       <span className="text-textPrimary">
                         {typeof item._serviceName === "string"
                           ? item._serviceName.charAt(0).toUpperCase() +
