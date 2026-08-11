@@ -1,9 +1,16 @@
 import React, { useState, useMemo } from "react";
-import { useAdminRenewals } from "../../hooks/useBilling";
+import { useAdminRenewals, useSendAlert } from "../../hooks/useBilling";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import Spinner from "../../components/ui/Spinner";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  Bell,
+  RefreshCw,
+} from "lucide-react";
+import toast from "react-hot-toast";
 
 const DAYS_RANGE_OPTIONS = [
   { label: "Next 30 days", value: 30 },
@@ -93,6 +100,67 @@ const getClientDisplay = (item) => {
   return { primary, secondary, phoneNumber };
 };
 
+// ✅ Send Alert Button Component
+const SendAlertButton = ({ subscriptionId, daysLeft, domain }) => {
+  const { mutate: sendAlert, isLoading } = useSendAlert();
+
+  const getAlertType = () => {
+    if (daysLeft === null || isNaN(daysLeft)) return "7days";
+    if (daysLeft < 0) return "suspended";
+    if (daysLeft === 0) return "expiry_day";
+    if (daysLeft <= 7) return "7days";
+    return "7days";
+  };
+
+  const getButtonStyle = () => {
+    if (daysLeft === null || isNaN(daysLeft)) {
+      return "bg-blue-500 hover:bg-blue-600 text-white border-blue-500";
+    }
+    if (daysLeft < 0) {
+      return "bg-red-500 hover:bg-red-600 text-white border-red-500";
+    }
+    if (daysLeft <= 7) {
+      return "bg-amber-500 hover:bg-amber-600 text-white border-amber-500";
+    }
+    return "bg-blue-500 hover:bg-blue-600 text-white border-blue-500";
+  };
+
+  const getButtonLabel = () => {
+    if (daysLeft === null || isNaN(daysLeft)) return "Send Alert";
+    if (daysLeft < 0) return ` Expired (${Math.abs(daysLeft)}d)`;
+    if (daysLeft <= 7) return `Remind (${daysLeft}d)`;
+    return ` Send Reminder`;
+  };
+
+  const handleSendAlert = () => {
+    const alertType = getAlertType();
+    const confirmMessage =
+      daysLeft < 0
+        ? ` This subscription expired ${Math.abs(daysLeft)} days ago. Send suspension alert to ${domain}?`
+        : daysLeft <= 7
+          ? ` Send ${daysLeft} day renewal reminder to ${domain}?`
+          : ` Send renewal reminder to ${domain}?`;
+
+    if (!window.confirm(confirmMessage)) return;
+
+    sendAlert({
+      subscriptionId,
+      alertType,
+    });
+  };
+
+  return (
+    <Button
+      size="sm"
+      onClick={handleSendAlert}
+      disabled={isLoading}
+      className={`whitespace-nowrap ${getButtonStyle()}`}
+    >
+      {isLoading ? <Spinner className="w-4 h-4" /> : <>{getButtonLabel()}</>}
+    </Button>
+  );
+};
+
 export default function Renewals() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -109,7 +177,7 @@ export default function Renewals() {
     ...(searchDebounced.trim() && { search: searchDebounced.trim() }),
   };
 
-  const { data, isLoading } = useAdminRenewals(params);
+  const { data, isLoading, refetch } = useAdminRenewals(params);
 
   const enrichedItems = useMemo(() => {
     const items = (data?.items || []).map((item) => {
@@ -211,13 +279,24 @@ export default function Renewals() {
 
   return (
     <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-textPrimary">
-          Upcoming Renewals
-        </h1>
-        <p className="text-textMuted text-sm mt-1">
-          Track and manage all client renewals in one place
-        </p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-textPrimary">
+            Upcoming Renewals
+          </h1>
+          <p className="text-textMuted text-sm mt-1">
+            Track and manage all client renewals in one place
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => refetch()}
+          className="border-slate-300"
+        >
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Refresh
+        </Button>
       </div>
 
       <Card className="p-4 bg-surface border border-slate-200">
@@ -283,13 +362,12 @@ export default function Renewals() {
                 <th className="py-4 px-5 font-semibold uppercase tracking-wider text-xs">
                   Client
                 </th>
-                <th className=" font-semibold uppercase tracking-wider text-xs">
+                <th className="font-semibold uppercase tracking-wider text-xs">
                   Domain
                 </th>
-                <th className=" font-semibold uppercase tracking-wider text-xs">
+                <th className="font-semibold uppercase tracking-wider text-xs">
                   Service
                 </th>
-
                 <th className="py-4 px-5 font-semibold uppercase tracking-wider text-xs">
                   Amount
                 </th>
@@ -299,12 +377,15 @@ export default function Renewals() {
                 <th className="py-4 px-5 font-semibold uppercase tracking-wider text-xs">
                   Status
                 </th>
+                <th className="py-4 px-5 font-semibold uppercase tracking-wider text-xs text-center">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan="6" className="py-16 text-center">
+                  <td colSpan="8" className="py-16 text-center">
                     <Spinner className="w-8 h-8 mx-auto" />
                     <p className="mt-3 text-sm text-textMuted">
                       Loading renewals...
@@ -313,7 +394,7 @@ export default function Renewals() {
                 </tr>
               ) : enrichedItems.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="py-16 text-center text-textMuted">
+                  <td colSpan="8" className="py-16 text-center text-textMuted">
                     <div className="flex flex-col items-center gap-2">
                       <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center mb-2">
                         <Search className="w-7 h-7 text-slate-400" />
@@ -345,15 +426,13 @@ export default function Renewals() {
                           {item._client.secondary}
                         </div>
                       )}
-
                       {item._client.phoneNumber && (
                         <div className="text-xs text-textMuted mt-0.5">
                           {item._client?.phoneNumber}
                         </div>
                       )}
                     </td>
-                    <td className=" font-semibold text-gray-700 font-mono">
-                      {console.log("this is domain", item)}
+                    <td className="font-semibold text-gray-700 font-mono">
                       {item?.domain || "NA"}
                     </td>
                     <td className="capitalize">
@@ -372,6 +451,13 @@ export default function Renewals() {
                     </td>
                     <td className="py-4 px-5">
                       {renderDaysLeftBadge(item._daysLeft)}
+                    </td>
+                    <td className="py-4 px-5 text-center">
+                      <SendAlertButton
+                        subscriptionId={item._id}
+                        daysLeft={item._daysLeft}
+                        domain={item?.domain || "your website"}
+                      />
                     </td>
                   </tr>
                 ))
@@ -399,7 +485,7 @@ export default function Renewals() {
                 disabled={page === 1}
                 className="border border-slate-300 bg-white hover:bg-slate-50 text-textPrimary"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-4 h-4 mr-1" />
                 Prev
               </Button>
               <Button
@@ -410,7 +496,7 @@ export default function Renewals() {
                 className="border border-slate-300 bg-white hover:bg-slate-50 text-textPrimary"
               >
                 Next
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </div>
           </div>
