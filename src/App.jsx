@@ -105,6 +105,7 @@ import PublicSupportPage from "./pages/support/PublicSupportPage";
 import PublicTicketDetail from "./pages/support/PublicTicketDetail";
 import WordpressConfigurePage from "./pages/plans/WordpressConfigurePage";
 import Renewals from "./pages/superadmin/Renewals";
+import TallyOnCloud from "./pages/TallyOnCloud/TallyOnCloud";
 
 // Protected Route wrapper
 const ProtectedRoute = () => {
@@ -256,6 +257,14 @@ export default function App() {
         <Route path="/restaurant-management-system" element={<RmsPage />} />
         <Route path="/vps-cloud" element={<VpsLandingpage />} />
         <Route path="/busy-on-cloud" element={<BusyPage />} />
+        <Route
+          path="/tally-on-cloud"
+          element={
+            <PublicRoute>
+              <TallyOnCloud />
+            </PublicRoute>
+          }
+        />
         <Route path="/tally-on-cloud" element={<TallyPage />} />
         <Route path="/marg-on-cloud" element={<Margpage />} />
         <Route path="/contact" element={<ContactUs />} />
@@ -296,6 +305,8 @@ export default function App() {
             <Route path="/domains/:id" element={<ManageDomain />} />
             <Route path="/settings/*" element={<Settings />} />
             <Route path="/plans" element={<Plans />} />
+
+            <Route path="/tallyoncloud" element={<TallyOnCloud />} />
             {/* <Route path="/websites/wordpress" element={<Wordpress_Page />} /> */}
             <Route
               path="/websites/wordpress/paid"

@@ -5,14 +5,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Home, ChevronRight, CreditCard, RefreshCw, Calendar, X, ArrowRight,
   TrendingUp, Globe, Server, Mail, CheckCircle, Shield, Clock, Tag,
-  Layers, AlertCircle, Banknote
+  Layers, AlertCircle, Banknote, Calculator
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useSubscription } from "../../hooks/useBilling";
 import RenewModal from "../../components/RenewModal";
 
 /* ─── Helpers ────────────────────────────────────────────── */
-const typeIcons = { hosting: Globe, vps: Server, email: Mail, domain: Globe, php: Server };
+const typeIcons = {
+  hosting: Globe,
+  vps: Server,
+  email: Mail,
+  'email-hosting': Mail,
+  domain: Globe,
+  php: Server,
+  tally: Calculator,
+};
 const getIcon = (type) => typeIcons[type] || CreditCard;
 
 /* ─── Subscription Card (mobile) ─────────────────────────── */
@@ -298,6 +306,14 @@ export default function SubscriptionsPage() {
   const [selectedSubscription, setSelectedSubscription] = useState(null);
   const [renewingSubscription, setRenewingSubscription] = useState(null);
 
+  const handleRenew = (subscription) => {
+    if (subscription?.type === 'tally') {
+      navigate('/tally-on-cloud');
+      return;
+    }
+    setRenewingSubscription(subscription);
+  };
+
   const summary = {
     total: subscriptions?.length || 0,
     active: subscriptions?.filter(s => s.status === 'Active')?.length || 0,
@@ -366,7 +382,7 @@ export default function SubscriptionsPage() {
                 key={sub.id}
                 subscription={sub}
                 onOpenDetail={setSelectedSubscription}
-                onRenew={setRenewingSubscription}
+                onRenew={handleRenew}
                 index={idx}
               />
             ))}
@@ -391,7 +407,7 @@ export default function SubscriptionsPage() {
                       key={sub.id}
                       subscription={sub}
                       onOpenDetail={setSelectedSubscription}
-                      onRenew={setRenewingSubscription}
+                      onRenew={handleRenew}
                       index={idx}
                     />
                   ))}
@@ -407,7 +423,7 @@ export default function SubscriptionsPage() {
         <SubscriptionDetailModal
           subscription={selectedSubscription}
           onClose={() => setSelectedSubscription(null)}
-          onRenew={setRenewingSubscription}
+          onRenew={handleRenew}
         />
       )}
 

@@ -311,7 +311,8 @@ const InvoicePDF = ({ invoiceData, userEmail, userName, userPhone }) => {
             const qty = item.qty || 0;
             const unit = item.unit || "";
             const rateEx = item.rateExclusive || item.rate || 0;
-            const rateIn = item.rateInclusive || 0;
+            // const rateIn = 0 || item.rateInclusive;
+            const rateIn = "0";
             const amt = item.amount || 0;
 
             return (
@@ -425,6 +426,8 @@ const InvoicePDF = ({ invoiceData, userEmail, userName, userPhone }) => {
           {bankAccountNumber && (
             <Text>Account Number : {bankAccountNumber}</Text>
           )}
+
+          <Text>SWIFT/BIC Code : YESBINBBXXX</Text>
           {(bankBranch || bankIFSC) && (
             <Text>
               Branch & IFSC Code : {bankBranch} {bankIFSC}

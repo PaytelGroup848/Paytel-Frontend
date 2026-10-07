@@ -217,7 +217,8 @@ const InvoiceDetailModal = ({ invoice, isOpen, onClose }) => {
       const unit = item?.unit || "";
       const rateEx =
         item?.rateExclusive || item?.rate || item?.subtotal / 100 || 0;
-      const rateIn = item.rateInclusive || item?.total / 100 || 0;
+      // const rateIn = item.rateInclusive || item?.total / 100 || 0;
+      const rateIn = "0";
       const amt = item.amount || item?.subtotal / 100 || 0;
 
       return (
@@ -541,6 +542,10 @@ const InvoiceDetailModal = ({ invoice, isOpen, onClose }) => {
                         <td>: {bankAccountNumber}</td>
                       </tr>
                     )}
+                    <tr>
+                      <td>SWIFT/BIC Code</td>
+                      <td>: YESBINBBXXX</td>
+                    </tr>
                     {(bankBranch || bankIFSC) && (
                       <tr>
                         <td>Branch & IFSC Code</td>

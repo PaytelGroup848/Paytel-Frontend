@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { useSubscription } from "../../hooks/useBilling";
 import { useLogout, useMe } from "../../hooks/useAuth";
-import { MdSupportAgent } from "react-icons/md";
+import { MdAccountBalance, MdSupportAgent } from "react-icons/md";
 
 export default function Sidebar({
   mobileOpen = false,
@@ -76,6 +76,12 @@ export default function Sidebar({
         { label: "VPS Plans", to: "/vps" },
         ...(hasVps ? [{ label: "VPS Dashboard", to: "/vps/paid" }] : []),
       ].filter(Boolean),
+    },
+
+    {
+      label: "ERP On Cloud",
+      to: "/tallyoncloud",
+      icon: MdAccountBalance,
     },
 
     {

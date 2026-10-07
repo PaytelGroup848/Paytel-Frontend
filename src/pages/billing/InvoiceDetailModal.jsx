@@ -24,6 +24,8 @@ const InvoiceDetailModal = ({ invoiceData, onClose }) => {
   const userName = profile?.firstName;
   const userPhone = profile?.phone;
 
+  console.log("this is my invoiceData", invoiceData);
+
   if (!invoiceData) return null;
 
   const {
@@ -79,7 +81,8 @@ const InvoiceDetailModal = ({ invoiceData, onClose }) => {
       const qty = item.qty || 0;
       const unit = item.unit || "";
       const rateEx = item.rateExclusive || item.rate || 0;
-      const rateIn = item.rateInclusive || 0;
+      // const rateIn = 0 || item.rateInclusive;
+       const rateIn = "0";
       const amt = item.amount || 0;
 
       return (
@@ -411,6 +414,10 @@ const InvoiceDetailModal = ({ invoiceData, onClose }) => {
                       <td>: {bankAccountNumber}</td>
                     </tr>
                   )}
+                  <tr>
+                    <td>SWIFT/BIC Code</td>
+                    <td>: YESBINBBXXX</td>
+                  </tr>
                   {(bankBranch || bankIFSC) && (
                     <tr>
                       <td>Branch & IFSC Code</td>
