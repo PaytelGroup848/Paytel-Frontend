@@ -1,0 +1,47 @@
+@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@theme {
+  /* App surfaces */
+  --color-dark: #f6f7fb; /* main app background (kept name to avoid refactors) */
+  --color-surface: #ffffff; /* cards/containers */
+
+  /* Text */
+  --color-textPrimary: #0f172a; /* slate-900 */
+  --color-textMuted: #64748b; /* slate-500 */
+
+  /* Brand + status */
+  --color-primary: #4f46e5; /* indigo-600 */
+  --color-secondary: #0ea5e9; /* sky-500 */
+  --color-danger: #ef4444; /* red-500 */
+  --color-success: #22c55e; /* green-500 */
+  --color-warning: #f59e0b; /* amber-500 */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-dark);
+  color: var(--color-textPrimary);
+}
+
+* {
+  @apply antialiased;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-primary) 20%, white);
+}
