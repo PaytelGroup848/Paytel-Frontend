@@ -107,7 +107,7 @@ const megaMenuSections = [
     ],
   },
   {
-    title: "Cloud ERP",
+    title: "Cloud ",
     icon: CloudLightning,
     items: [
       {
