@@ -106,6 +106,8 @@ import PublicTicketDetail from "./pages/support/PublicTicketDetail";
 import WordpressConfigurePage from "./pages/plans/WordpressConfigurePage";
 import Renewals from "./pages/superadmin/Renewals";
 import TallyOnCloud from "./pages/TallyOnCloud/TallyOnCloud";
+import LR from "./pages/LR/LR";
+import Index from "./pages/CtrlBooks"
 
 // Protected Route wrapper
 const ProtectedRoute = () => {
@@ -273,6 +275,8 @@ export default function App() {
         <Route path="/term-and-conditions" element={<TermsOfService />} />
         <Route path="/about-us" element={<AboutPage />} />
         <Route path="/c-panel" element={<CPanelPage />} />
+        <Route path="/lr" element={<LR />} />
+        <Route path="/ctrl-books" element={<Index/>}/>
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/refund-policy-cloude " element={<RefundPolicy />} />
         <Route path="/term-and-conditions" element={<TermsOfService />} />

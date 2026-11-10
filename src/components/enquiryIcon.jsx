@@ -43,6 +43,7 @@ const COUNTRIES = [
 const HOSTING_PLANS = [
   "Vps on Cloud", "WordPress", "Busy on Cloud",
   "Marg on Cloud", "Tally on Cloud", "School CRM", "Restaurant Management",
+  "Remote Access (LR)","Ctrl Books",
 ];
 
 const inputClass = "w-full py-2 px-2.5 rounded-lg text-xs text-slate-900 bg-white border outline-none transition focus:ring-2";
@@ -234,6 +235,7 @@ export default function EnquiryFloatingButton({
     "/about-us",
     "/cloud-hosting-blog",
     "/contact",
+    "/lr",
   ];
 
   const isControlled = externalOpen !== undefined;
