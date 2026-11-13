@@ -245,7 +245,7 @@ export default function Footer({ logoImg = "/Cloudedata.svg" }) {
           {...fadeUp(0.35)}
           className="border-t border-slate-800/70 py-5 sm:py-6 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-[11px] sm:text-[12px] text-slate-500"
         >
-          <p className="text-center sm:text-left">© {new Date().getFullYear()} Paytel Terminal Pvt. Ltd. All rights reserved.</p>
+          <p className="text-center sm:text-left">© {new Date().getFullYear()} Paytel Financial Technologies Pvt. Ltd. All rights reserved.</p>
           <div className="flex items-center gap-1 flex-wrap justify-center">
             {legalLinks.map((link, i, arr) => (
               <span key={link.label} className="flex items-center gap-1">

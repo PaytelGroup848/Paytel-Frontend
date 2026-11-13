@@ -745,7 +745,7 @@ export default function ContactUs() {
                   </h2>
                 </div>
                 <p className="text-sm text-gray-800 leading-relaxed font-semibold">
-                  Paytel Terminal Pvt. Ltd.
+                 Paytel Financial Technologies Pvt. Ltd.
                 </p>
                 <div className="flex items-start gap-2 mt-2">
                   <MapPin size={14} className="text-gray-400 mt-0.5 shrink-0" />
