@@ -107,7 +107,7 @@ const megaMenuSections = [
     ],
   },
   {
-    title: "Cloud ERP",
+    title: "Accounting ERP on Cloud",
     icon: CloudLightning,
     items: [
       {
@@ -129,6 +129,7 @@ const megaMenuSections = [
           "TallyPrime on cloud with auto backup and bank-grade security.",
         tag: { label: "HOT", color: "hot" },
       },
+      
     ],
   },
 
@@ -137,16 +138,26 @@ const megaMenuSections = [
     icon: GraduationCap,
     items: [
       {
-        label: "Education Management",
-        href: "/education-management-system",
-        description: "Complete LMS and school management solutions.",
+        label: "Ctrl Books",
+        href: "/ctrl-books",
+        description:
+          "CtrlBooks brings your accounting, inventory, invoicing and business insights together",
+        tag: { label: "New", color: "new" },
       },
+      {
+        label: "LR",
+        href: "/lr",
+        description: "A cost-effective, lightweight alternative to enterprise solutions like Citrix, Microsoft Remote Desktop Services (RDS), and Parallels RAS",
+        tag: { label: "New", color: "new" },
+      },
+      
       {
         label: "Restaurant Management",
         href: "/restaurant-management-system",
         description: "All-in-one restaurant POS and management system.",
         tag: { label: "NEW", color: "new" },
       },
+      
     ],
   },
   {
@@ -164,6 +175,12 @@ const megaMenuSections = [
         href: "#",
         description: "Bring your own server. We manage the infrastructure.",
       },
+      {
+        label: "Education Management",
+        href: "/education-management-system",
+        description: "Complete LMS and school management solutions.",
+      },
+      
     ],
   },
 ];
@@ -234,9 +251,8 @@ export default function Navbar({
   const PhoneButton = ({ className = "", forceShow = false }) => (
     <a
       href={`tel:${phoneNumber}`}
-      className={`flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition-all hover:shadow-xl active:scale-95 ${className} ${
-        forceShow ? "justify-center" : ""
-      }`}
+      className={`flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition-all hover:shadow-xl active:scale-95 ${className} ${forceShow ? "justify-center" : ""
+        }`}
     >
       <Phone size={18} />
       <span className={`${forceShow ? "inline" : "hidden sm:inline"}`}>
@@ -249,9 +265,8 @@ export default function Navbar({
     <>
       {/* Top Navbar – hidden when mobile menu is open */}
       <nav
-        className={`fixed left-0 right-0 top-0 z-50 border-b border-blue-200/60 bg-white/70 shadow-sm backdrop-blur-2xl transition-all ${
-          mobileOpen ? "hidden" : ""
-        }`}
+        className={`fixed left-0 right-0 top-0 z-50 border-b border-blue-200/60 bg-white/70 shadow-sm backdrop-blur-2xl transition-all ${mobileOpen ? "hidden" : ""
+          }`}
       >
         <div className="mx-auto max-w-screen-2xl px-6 lg:px-12">
           <div className="flex h-20 items-center justify-between">
@@ -271,11 +286,10 @@ export default function Navbar({
               <div className="flex items-center rounded-3xl border border-white/70 bg-white/90 px-3 py-1.5 shadow backdrop-blur-md">
                 <Link
                   to="/pricing"
-                  className={`group relative rounded-3xl px-6 py-2.5 text-sm font-medium transition-all ${
-                    isActive("/pricing")
+                  className={`group relative rounded-3xl px-6 py-2.5 text-sm font-medium transition-all ${isActive("/pricing")
                       ? "text-indigo-600"
                       : "text-slate-700 hover:text-slate-900"
-                  }`}
+                    }`}
                 >
                   <span>Pricing</span>
                   <div className="absolute bottom-0 left-1/2 h-0.5 w-0 -translate-x-1/2 bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-300 group-hover:w-4/5" />
@@ -286,11 +300,10 @@ export default function Navbar({
                   onMouseEnter={() => setMegaMenuOpen(true)}
                 >
                   <button
-                    className={`flex items-center gap-1 rounded-3xl px-6 py-2.5 text-sm font-medium transition-all ${
-                      megaMenuOpen
+                    className={`flex items-center gap-1 rounded-3xl px-6 py-2.5 text-sm font-medium transition-all ${megaMenuOpen
                         ? "text-indigo-600"
                         : "text-slate-700 hover:text-slate-900"
-                    }`}
+                      }`}
                   >
                     Services
                     <ChevronDown
@@ -306,11 +319,10 @@ export default function Navbar({
                     <Link
                       key={link.label}
                       to={link.href}
-                      className={`group relative flex items-center gap-1.5 rounded-3xl px-6 py-2.5 text-sm font-medium transition-all ${
-                        isActive(link.href)
+                      className={`group relative flex items-center gap-1.5 rounded-3xl px-6 py-2.5 text-sm font-medium transition-all ${isActive(link.href)
                           ? "text-indigo-600"
                           : "text-slate-700 hover:text-slate-900"
-                      }`}
+                        }`}
                     >
                       <Icon size={17} />
                       {link.label}
@@ -400,10 +412,10 @@ export default function Navbar({
                 </button>
               </div>
 
-              <div className="mt-6 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5">
+              <div className="mt-6 grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-5">
                 {megaMenuSections.map((section) => (
                   <div key={section.title} className="space-y-4">
-                    <div className="flex items-center gap-2 border-b border-indigo-100 pb-3 font-semibold text-indigo-600">
+                    <div className="flex items-center gap-1 border-b border-indigo-100 pb-3 font-semibold text-indigo-600">
                       <section.icon size={20} />
                       {section.title}
                     </div>
@@ -501,11 +513,10 @@ export default function Navbar({
                 <Link
                   to="/pricing"
                   onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-3 rounded-xl px-4 py-3 text-lg font-semibold transition-colors ${
-                    isActive("/pricing")
+                  className={`flex items-center gap-3 rounded-xl px-4 py-3 text-lg font-semibold transition-colors ${isActive("/pricing")
                       ? "bg-indigo-50 text-indigo-600"
                       : "text-slate-800 hover:bg-slate-50 hover:text-indigo-600"
-                  }`}
+                    }`}
                 >
                   <IndianRupee size={22} /> Pricing
                 </Link>
@@ -587,11 +598,10 @@ export default function Navbar({
                         key={link.label}
                         to={link.href}
                         onClick={() => setMobileOpen(false)}
-                        className={`flex items-center gap-3 rounded-xl px-4 py-3.5 text-lg font-medium transition-all ${
-                          isActive(link.href)
+                        className={`flex items-center gap-3 rounded-xl px-4 py-3.5 text-lg font-medium transition-all ${isActive(link.href)
                             ? "bg-indigo-50 text-indigo-600"
                             : "text-slate-800 hover:bg-slate-50 hover:text-indigo-600"
-                        }`}
+                          }`}
                       >
                         <Icon size={20} /> {link.label}
                       </Link>

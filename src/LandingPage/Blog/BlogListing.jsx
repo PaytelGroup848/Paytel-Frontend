@@ -13,6 +13,7 @@ import {
   Folder,
 } from "lucide-react";
 import axios from "axios";
+import { dataTagErrorSymbol } from "@tanstack/react-query";
 
 const BlogListing = () => {
   const [allBlogs, setAllBlogs] = useState([]);
@@ -27,18 +28,25 @@ const BlogListing = () => {
   const API_URL = "https://api.marketing.cloudedata.com";
 
   useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        const { data } = await axios.get(`${API_URL}/api/blogs`);
-        setAllBlogs(data);
-      } catch (error) {
-        console.error("Failed to fetch blogs:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBlogs();
-  }, []);
+  const fetchBlogs = async () => {
+    try {
+      const { data } = await axios.get(`${API_URL}/api/blogs`);
+      
+      // Filter the array to exclude "patwatoli" and "ctrlbooks"
+      const filteredBlogs = data.filter(
+        (blog) => blog.type !== "patwatoli" && blog.type !== "ctrlbooks"
+      );
+console.log("Filtered Blogs:", filteredBlogs); // Log the filtered blogs
+      setAllBlogs(filteredBlogs);
+    } catch (error) {
+      console.error("Failed to fetch blogs:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchBlogs();
+}, []);
+
   const categories = useMemo(() => {
     const cats = new Set();
     allBlogs.forEach((blog) => {
@@ -105,6 +113,7 @@ const BlogListing = () => {
 
   if (loading) {
     return (
+      
       <div className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

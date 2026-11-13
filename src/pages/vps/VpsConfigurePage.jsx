@@ -8,10 +8,7 @@ import {
   ArrowLeft,
   Cpu,
   HardDrive,
-  EthernetPort,
-  DatabaseBackup,
   Package,
-  MemoryStick,
   Wifi,
   ShieldCheck,
 } from "lucide-react";
@@ -221,14 +218,25 @@ export default function VpsConfigurePage() {
   const formatINR = (paise) =>
     `₹${(Number(paise || 0) / 100).toLocaleString()}`;
 
+  const checkPasswordStrength = (pw) => {
+    let s = 0;
+    if (pw.length >= 8) s++;
+    if (/[a-z]/.test(pw)) s++;
+    if (/[A-Z]/.test(pw)) s++;
+    if (/[0-9]/.test(pw)) s++;
+    if (/[$@#&!]/.test(pw)) s++;
+    setPasswordStrength(s);
+  };
+
+  // Auto-fill hostname (user can edit)
   useEffect(() => {
     if (!plan) return;
     setHostname(`${plan.slug || "server"}-vps`);
   }, [plan]);
 
+  // Auto-fill password (user can edit)
   useEffect(() => {
     if (!plan) return;
-
     const password = `${plan?.name || "Cloudedata"}@Vps123`;
     setRootPassword(password);
     checkPasswordStrength(password);
@@ -255,16 +263,6 @@ export default function VpsConfigurePage() {
     }
     clearPendingOrder();
   }, [planId]);
-
-  const checkPasswordStrength = (pw) => {
-    let s = 0;
-    if (pw.length >= 8) s++;
-    if (/[a-z]/.test(pw)) s++;
-    if (/[A-Z]/.test(pw)) s++;
-    if (/[0-9]/.test(pw)) s++;
-    if (/[$@#&!]/.test(pw)) s++;
-    setPasswordStrength(s);
-  };
 
   const handlePasswordChange = (e) => {
     setRootPassword(e.target.value);
@@ -379,6 +377,19 @@ export default function VpsConfigurePage() {
   ];
   const strengthLabels = ["", "Weak", "Weak", "Fair", "Good", "Strong"];
   const isFormValid = hostname.trim() && rootPassword && passwordStrength >= 3;
+
+  const inputStyle = {
+    width: "100%",
+    background: "#F8FAFC",
+    border: "1.5px solid #E2E8F0",
+    borderRadius: 10,
+    padding: isMobile ? "10px 11px" : "9px 11px",
+    fontSize: isMobile ? 14 : 13,
+    outline: "none",
+    boxSizing: "border-box",
+    fontFamily: "inherit",
+    color: "#0F172A",
+  };
 
   /* ── Loading ── */
   if (plansLoading) {
@@ -637,10 +648,137 @@ export default function VpsConfigurePage() {
               </div>
             </div>
 
+            {/* ── Hostname + Root Password (2 columns on desktop) ── */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)",
+                gap: isMobile ? 14 : 12,
+                alignItems: "start",
+                marginTop: isMobile ? 0 : 2,
+              }}
+            >
+              {/* Hostname */}
+              <div style={{ minWidth: 0 }}>
+                <div style={labelStyle}>Hostname</div>
+                <input
+                  type="text"
+                  value={hostname}
+                  onChange={(e) => setHostname(e.target.value)}
+                  placeholder="my-server-hostname"
+                  style={inputStyle}
+                />
+              </div>
+
+              {/* Root Password */}
+              <div style={{ minWidth: 0 }}>
+                <div style={labelStyle}>Root Password</div>
+                <div style={{ position: "relative" }}>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={rootPassword}
+                    onChange={handlePasswordChange}
+                    placeholder="Enter a strong password"
+                    style={{
+                      ...inputStyle,
+                      padding: isMobile
+                        ? "10px 44px 10px 11px"
+                        : "9px 40px 9px 11px",
+                      fontFamily: '"SF Mono","Fira Code",monospace',
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{
+                      position: "absolute",
+                      right: 10,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      color: "#94A3B8",
+                      display: "flex",
+                      padding: 4,
+                    }}
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+
+                {rootPassword && (
+                  <div style={{ marginTop: 8 }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        marginBottom: 6,
+                      }}
+                    >
+                      <div
+                        style={{
+                          flex: 1,
+                          height: 3,
+                          background: "#F1F5F9",
+                          borderRadius: 3,
+                          overflow: "hidden",
+                        }}
+                      >
+                        <div
+                          style={{
+                            height: "100%",
+                            width: `${(passwordStrength / 5) * 100}%`,
+                            background: strengthColors[passwordStrength],
+                            borderRadius: 3,
+                            transition: "all .3s",
+                          }}
+                        />
+                      </div>
+                      <span
+                        style={{
+                          fontSize: 9,
+                          fontWeight: 700,
+                          textTransform: "uppercase",
+                          color: strengthColors[passwordStrength],
+                          minWidth: 32,
+                        }}
+                      >
+                        {strengthLabels[passwordStrength]}
+                      </span>
+                    </div>
+                    <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                      {[
+                        { ok: rootPassword.length >= 8, label: "8+ chars" },
+                        { ok: /[A-Z]/.test(rootPassword), label: "Uppercase" },
+                        { ok: /[0-9]/.test(rootPassword), label: "Number" },
+                      ].map((c) => (
+                        <span
+                          key={c.label}
+                          style={{
+                            fontSize: 10,
+                            fontWeight: 700,
+                            color: c.ok ? "#10B981" : "#CBD5E1",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 3,
+                          }}
+                        >
+                          {c.ok ? "✓" : "○"} {c.label}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Plan Specifications */}
             {!isMobile && (
               <div
                 style={{
-                  marginTop: 18,
+                  marginTop: 6,
                   border: "1.5px solid #E2E8F0",
                   borderRadius: 14,
                   background: "#F8FAFC",
@@ -692,136 +830,6 @@ export default function VpsConfigurePage() {
                 </div>
               </div>
             )}
-
-            {/* Hostname */}
-            {/* <div>
-              <div style={labelStyle}>Hostname</div>
-              <input
-                type="text"
-                value={hostname}
-                onChange={(e) => setHostname(e.target.value)}
-                placeholder="my-server-hostname"
-                style={{
-                  width: "100%",
-                  background: "#F8FAFC",
-                  border: "1.5px solid #E2E8F0",
-                  borderRadius: 10,
-                  padding: isMobile ? "10px 11px" : "9px 11px",
-                  fontSize: isMobile ? 14 : 13,
-                  outline: "none",
-                  boxSizing: "border-box",
-                  fontFamily: "inherit",
-                }}
-              />
-            </div> */}
-
-            {/* Password */}
-            {/* <div>
-              <div style={labelStyle}>Root Password</div>
-              <div style={{ position: "relative" }}>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={rootPassword}
-                  onChange={handlePasswordChange}
-                  placeholder="Enter a strong password"
-                  style={{
-                    width: "100%",
-                    background: "#F8FAFC",
-                    border: "1.5px solid #E2E8F0",
-                    borderRadius: 10,
-                    padding: isMobile
-                      ? "10px 44px 10px 11px"
-                      : "9px 40px 9px 11px",
-                    fontSize: isMobile ? 14 : 13,
-                    outline: "none",
-                    boxSizing: "border-box",
-                    fontFamily: '"SF Mono","Fira Code",monospace',
-                  }}
-                />
-                <button
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{
-                    position: "absolute",
-                    right: 10,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    color: "#94A3B8",
-                    display: "flex",
-                    padding: 4,
-                  }}
-                >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-
-              {rootPassword && (
-                <div style={{ marginTop: 8 }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                      marginBottom: 6,
-                    }}
-                  >
-                    <div
-                      style={{
-                        flex: 1,
-                        height: 3,
-                        background: "#F1F5F9",
-                        borderRadius: 3,
-                        overflow: "hidden",
-                      }}
-                    >
-                      <div
-                        style={{
-                          height: "100%",
-                          width: `${(passwordStrength / 5) * 100}%`,
-                          background: strengthColors[passwordStrength],
-                          borderRadius: 3,
-                          transition: "all .3s",
-                        }}
-                      />
-                    </div>
-                    <span
-                      style={{
-                        fontSize: 9,
-                        fontWeight: 700,
-                        textTransform: "uppercase",
-                        color: strengthColors[passwordStrength],
-                        minWidth: 32,
-                      }}
-                    >
-                      {strengthLabels[passwordStrength]}
-                    </span>
-                  </div>
-                  <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                    {[
-                      { ok: rootPassword.length >= 8, label: "8+ chars" },
-                      { ok: /[A-Z]/.test(rootPassword), label: "Uppercase" },
-                      { ok: /[0-9]/.test(rootPassword), label: "Number" },
-                    ].map((c) => (
-                      <span
-                        key={c.label}
-                        style={{
-                          fontSize: 10,
-                          fontWeight: 700,
-                          color: c.ok ? "#10B981" : "#CBD5E1",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 3,
-                        }}
-                      >
-                        {c.ok ? "✓" : "○"} {c.label}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div> */}
           </div>
 
           {/* ──────────── RIGHT PANEL ──────────── */}
