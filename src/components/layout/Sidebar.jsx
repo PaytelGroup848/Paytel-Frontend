@@ -78,11 +78,11 @@ export default function Sidebar({
       ].filter(Boolean),
     },
 
-    {
-      label: "ERP On Cloud",
-      to: "/tallyoncloud",
-      icon: MdAccountBalance,
-    },
+    // {
+    //   label: "ERP On Cloud",
+    //   to: "/tallyoncloud",
+    //   icon: MdAccountBalance,
+    // },
 
     {
       label: "Emails",

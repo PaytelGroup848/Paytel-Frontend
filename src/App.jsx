@@ -257,14 +257,14 @@ export default function App() {
         <Route path="/restaurant-management-system" element={<RmsPage />} />
         <Route path="/vps-cloud" element={<VpsLandingpage />} />
         <Route path="/busy-on-cloud" element={<BusyPage />} />
-        <Route
+        {/* <Route
           path="/tally-on-cloud"
           element={
             <PublicRoute>
               <TallyOnCloud />
             </PublicRoute>
           }
-        />
+        /> */}
         <Route path="/tally-on-cloud" element={<TallyPage />} />
         <Route path="/marg-on-cloud" element={<Margpage />} />
         <Route path="/contact" element={<ContactUs />} />

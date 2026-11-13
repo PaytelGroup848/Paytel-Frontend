@@ -135,11 +135,7 @@ const teamMembers = [
     role: "Server administrator",
     image: "/Umesh yadav.avif",
   },
-  {
-    name: " Mr.Nikhil Batham ",
-    role: "Marketing Head",
-    image: "/nkhil",
-  },
+
   {
     name: "Mr. Balram Rana  ",
     role: "Head of Server Department",
